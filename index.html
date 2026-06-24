@@ -321,10 +321,10 @@ tbody tr:hover{background:var(--surface2)}
   <div class="metrics-grid" id="dash-metrics">
     <div class="metric-card blue"><div class="m-label">Receita Bruta</div><div class="m-value" id="d-receita">R$ 0</div><div class="m-sub">Total vendas</div><div class="m-icon">💼</div></div>
     <div class="metric-card gold"><div class="m-label">Comissões Totais</div><div class="m-value" id="d-comissao">R$ 0</div><div class="m-sub">Do período filtrado</div><div class="m-icon">🤝</div></div>
-    <div class="metric-card green"><div class="m-label">Comissões Recebidas</div><div class="m-value" id="d-recebido">R$ 0</div><div class="m-sub" id="d-recebido-pct">0% recebido</div><div class="m-icon">✅</div></div>
-    <div class="metric-card orange"><div class="m-label">A Receber</div><div class="m-value" id="d-areceber">R$ 0</div><div class="m-sub">Comissões pendentes</div><div class="m-icon">⏳</div></div>
-    <div class="metric-card red"><div class="m-label">Saídas do Período</div><div class="m-value" id="d-saidas">R$ 0</div><div class="m-sub">Despesas registradas</div><div class="m-icon">📤</div></div>
-    <div class="metric-card teal"><div class="m-label">Saldo Caixa</div><div class="m-value" id="d-caixa">R$ 0</div><div class="m-sub">Recebido − Saídas</div><div class="m-icon">🏦</div></div>
+    <div class="metric-card green mkt-hidden"><div class="m-label">Comissões Recebidas</div><div class="m-value" id="d-recebido">R$ 0</div><div class="m-sub" id="d-recebido-pct">0% recebido</div><div class="m-icon">✅</div></div>
+    <div class="metric-card orange mkt-hidden"><div class="m-label">A Receber</div><div class="m-value" id="d-areceber">R$ 0</div><div class="m-sub">Comissões pendentes</div><div class="m-icon">⏳</div></div>
+    <div class="metric-card red mkt-hidden"><div class="m-label">Saídas do Período</div><div class="m-value" id="d-saidas">R$ 0</div><div class="m-sub">Despesas registradas</div><div class="m-icon">📤</div></div>
+    <div class="metric-card teal mkt-hidden"><div class="m-label">Saldo Caixa</div><div class="m-value" id="d-caixa">R$ 0</div><div class="m-sub">Recebido − Saídas</div><div class="m-icon">🏦</div></div>
     <div class="metric-card purple"><div class="m-label">% Média de Comissão</div><div class="m-value" id="d-pct-comissao" style="font-size:28px">0%</div><div class="m-sub">Comissão ÷ Receita do período</div><div class="m-icon">📊</div></div>
   </div>
 
@@ -468,7 +468,7 @@ tbody tr:hover{background:var(--surface2)}
     <p>Gestão das comissões internas por vendedor e período</p>
   </div>
 
-  <div class="card" style="margin-bottom:18px">
+  <div class="card mkt-hidden" style="margin-bottom:18px">
     <div class="card-title">Regra de Divisão Padrão</div>
     <div class="alert alert-info">As divisões abaixo são aplicadas por padrão. Cada venda pode ter sua divisão ajustada individualmente na tabela de vendas.</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:10px" id="division-cards"></div>
@@ -489,10 +489,10 @@ tbody tr:hover{background:var(--surface2)}
   </div>
 
   <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchCommTab('mensal',this)">Por Vendedor — Mensal</button>
-    <button class="tab-btn" onclick="switchCommTab('total',this)">Total Acumulado</button>
+    <button class="tab-btn active mkt-hidden" onclick="switchCommTab('mensal',this)">Por Vendedor — Mensal</button>
+    <button class="tab-btn mkt-hidden" onclick="switchCommTab('total',this)">Total Acumulado</button>
     <button class="tab-btn" onclick="switchCommTab('setor',this)">Por Setor</button>
-    <button class="tab-btn" onclick="switchCommTab('vendas',this)">Por Venda</button>
+    <button class="tab-btn mkt-hidden" onclick="switchCommTab('vendas',this)">Por Venda</button>
   </div>
 
   <div id="comm-tab-mensal" class="tab-panel active">
@@ -1499,6 +1499,10 @@ body[data-perfil="mkt"] .modal-footer .btn-danger,
 body[data-perfil="mkt"] .modal-footer .btn-accent {
   display: none !important;
 }
+/* MKT: ocultar elementos marcados como mkt-hidden */
+body[data-perfil="mkt"] .mkt-hidden {
+  display: none !important;
+}
 
 /* ═══ USER MENU ═══ */
 #user-menu.open{ display:block !important; }
@@ -1833,6 +1837,8 @@ function toast(msg, type='success'){
 function showPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  // MKT: bloquear acesso às abas Caixa e Recebimentos
+  if((page==='caixa' || page==='recebimentos') && isMkt()){ toast('Acesso restrito ao perfil Marketing','error'); return; }
   const _pageEl = document.getElementById('page-'+page);
   if(!_pageEl){ console.warn('showPage: página desconhecida:', page); return; }
   _pageEl.classList.add('active');
@@ -2586,6 +2592,19 @@ function getCommResultCache(key){ return _commResultKey===key ? _commResultCache
 function setCommResultCache(key, val){ _commResultCache=val; _commResultKey=key; }
 
 function renderComissionamento(){
+  // MKT: redirecionar para aba "Por Setor" (única com conteúdo visível)
+  if(isMkt()){
+    const activeTabs = document.querySelectorAll('#page-comissionamento .tab-btn:not(.mkt-hidden)');
+    const activePanel = document.querySelector('#page-comissionamento .tab-panel.active');
+    if(activePanel && activePanel.id !== 'comm-tab-setor'){
+      document.querySelectorAll('#page-comissionamento .tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('#page-comissionamento .tab-panel').forEach(p=>p.classList.remove('active'));
+      const sBtn = document.querySelector('.tab-btn[onclick*="setor"]');
+      if(sBtn) sBtn.classList.add('active');
+      const sPanel = document.getElementById('comm-tab-setor');
+      if(sPanel) sPanel.classList.add('active');
+    }
+  }
   renderDivisionCards();
   const year = document.getElementById('com-year').value;
   const month = document.getElementById('com-month').value;
@@ -2600,7 +2619,7 @@ function renderComissionamento(){
   if(tbody){
     tbody.innerHTML = '';
     // ── Per-vendedor rows ────────────────────────────────────────────────────
-    allVendedores.forEach(nome=>{
+    if(!isMkt()) allVendedores.forEach(nome=>{
       const isThomaz = nome === 'Thomaz';
       const isCamila = nome === 'Camila';
       const minhas = filtradas.filter(v=>v.vendedor===nome);
@@ -2688,6 +2707,11 @@ function renderComissionamento(){
     const mkt = filtradas.reduce((s,v)=>s+(v.comissao*(v.divMkt||DB.divisaoPadrao.mkt)/100),0);
     const empresa = filtradas.reduce((s,v)=>s+(v.comissao*(v.divEmpresa||DB.divisaoPadrao.empresa)/100),0);
 
+    // Se perfil MKT: substituir tabela inteira por apenas linha MKT
+    if(isMkt()){
+      tbody.innerHTML = '';
+      // Renderizar apenas linha de Marketing
+    }
     // MKT — mesma regra: pré-corte = pago, pós-corte = verifica commPagamentos
     const corte2 = DB.config.dataCorteComissoes||'2026-06';
     const mktPago = filtradas.filter(function(v){ return v.data<corte2; }).reduce((s,v)=>s+(v.comissao*(v.divMkt||DB.divisaoPadrao.mkt)/100),0);
@@ -2708,15 +2732,17 @@ function renderComissionamento(){
       <td style="font-weight:700;color:var(--accent)">${fmtR(mkt)}</td>
       <td>${mktStatus} ${mktBtn}</td>
     </tr>`;
-    // Empresa/Caixa — always 'em caixa' (não é pago para fora)
-    tbody.innerHTML += `<tr style="background:var(--surface2)">
-      <td><i>Fluxo de Caixa (Empresa)</i></td>
-      <td>—</td>
-      <td>${fmtR(totalCom)}</td>
-      <td>${fmtPct(DB.divisaoPadrao.empresa)}</td>
-      <td style="font-weight:700;color:var(--accent)">${fmtR(empresa)}</td>
-      <td><span class="badge badge-info">🏦 No Caixa</span></td>
-    </tr>`;
+    // Empresa/Caixa — ocultar para MKT (info financeira interna)
+    if(!isMkt()){
+      if(!isMkt()) tbody.innerHTML += `<tr style="background:var(--surface2)">
+        <td><i>Fluxo de Caixa (Empresa)</i></td>
+        <td>—</td>
+        <td>${fmtR(totalCom)}</td>
+        <td>${fmtPct(DB.divisaoPadrao.empresa)}</td>
+        <td style="font-weight:700;color:var(--accent)">${fmtR(empresa)}</td>
+        <td><span class="badge badge-info">🏦 No Caixa</span></td>
+      </tr>`;
+    }
   }
 
   // Tab Total
@@ -2774,13 +2800,18 @@ function renderComissionamento(){
     const camilaV = allF.reduce((s,v)=>s+(v.comissao*(v.divCamila||DB.divisaoPadrao.camila)/100),0);
     const empresaV = allF.reduce((s,v)=>s+(v.comissao*(v.divEmpresa||DB.divisaoPadrao.empresa)/100),0);
     const vendV = allF.reduce((s,v)=>s+(v.comissao*(v.divVendedor||DB.divisaoPadrao.vendedor)/100),0);
-    const setoresCards = [
+    // MKT: exibe apenas o card de Marketing
+    const allSetores = [
       {label:'Vendedores',val:vendV,color:'#2C6AA3'},
       {label:'Marketing',val:mktV,color:'#79ACD9'},
       {label:'Thomaz (Sócio)',val:thomazV,color:'#1a4570'},
       {label:'Camila (Sócia)',val:camilaV,color:'#A4B56E'},
       {label:'Fluxo de Caixa',val:empresaV,color:'#2e7d4f'}
     ];
+    const setoresCards = isMkt()
+      ? allSetores.filter(s=>s.label==='Marketing')
+      : allSetores;
+    const mktTotal = isMkt() ? mktV : comTotal;
     setorEl.innerHTML = setoresCards.map(s=>`
       <div style="background:var(--surface);border:2px solid ${s.color}22;border-radius:12px;padding:18px;text-align:center">
         <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${s.label}</div>
@@ -4551,7 +4582,8 @@ function applySidebarPermissions(){
       const allowed = ['crm','calendario','ranking','vendas'];
       item.style.display = (allowed.includes(page)||page==='') ? '' : 'none';
     } else if(u.perfil==='mkt'){
-      item.style.display = ''; // MKT sees all
+      // MKT: bloqueia abas Caixa e Recebimentos no menu
+      item.style.display = (page === 'caixa' || page === 'recebimentos') ? 'none' : '';
     } else {
       item.style.display = ''; // ADM sees all
     }
