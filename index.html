@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v2.0</title>
+<title>Desenrola Turismo — Sistema de Gestão v2.2 Autenticado</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet"/>
@@ -277,7 +277,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v2.0
+    ✦ Desenrola Turismo · v2.2
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -1266,7 +1266,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="" id="login-logo-img" alt="Desenrola" style="width:60px;height:60px;object-fit:cover;border-radius:12px"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v2.0</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v2.2 Autenticado</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -1290,7 +1290,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · Sistema Interno v2.0</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v2.2 Autenticado</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -1539,16 +1539,16 @@ const DB = {
     servicos: ['Ingressos','Hotel','Voo','Pacote','Guiamento Virtual','Outros'],
     categorias: ['Tráfego Pago','Comissão interna','MKT','Imposto','Cursos','Brindes','Eventos','Recebimento Operadora','Outros'],
     dataCorteComissoes: '2026-06',
-    senhaMestre: 'DesenrolaBate',
+    senhaMestre: '9bada10fd1e9ffbca9b397fc91dc843e37265c5a4c81f59e457d296be8100cb4',
     formas: ['Pix','Crédito','Débito','Boleto'],
     anos: [2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050]
   },
   usuarios: [
-    {id:1,login:'Thbignotto',senha:'11Cb7d##',nome:'Thomaz',perfil:'adm',vendedorRef:'Thomaz'},
-    {id:2,login:'CaPascholati',senha:'Desenrola123##',nome:'Camila',perfil:'adm',vendedorRef:'Camila'},
-    {id:3,login:'MKT',senha:'Disney123##',nome:'Equipe MKT',perfil:'mkt',vendedorRef:null},
-    {id:4,login:'Marcelo',senha:'Disney123##',nome:'Marcelo',perfil:'vendedor',vendedorRef:'Marcelo'},
-    {id:5,login:'Paula',senha:'Disney123##',nome:'Paula',perfil:'vendedor',vendedorRef:'Paula'}
+    {id:1,login:'Thbignotto',senha:'81225b48d34c22b58b434250285101c19c7ca435dd821442c91c5d0a39e80169',nome:'Thomaz',perfil:'adm',vendedorRef:'Thomaz'},
+    {id:2,login:'CaPascholati',senha:'b57750c924b9867db34ce54b276a361e15b421e02863c8091b9cdc867f6e23b1',nome:'Camila',perfil:'adm',vendedorRef:'Camila'},
+    {id:3,login:'MKT',senha:'18057dd6d24656531794f97d0dccbbe166e49eabdc669845e29e64ae23c9fcf3',nome:'Equipe MKT',perfil:'mkt',vendedorRef:null},
+    {id:4,login:'Marcelo',senha:'18057dd6d24656531794f97d0dccbbe166e49eabdc669845e29e64ae23c9fcf3',nome:'Marcelo',perfil:'vendedor',vendedorRef:'Marcelo'},
+    {id:5,login:'Paula',senha:'18057dd6d24656531794f97d0dccbbe166e49eabdc669845e29e64ae23c9fcf3',nome:'Paula',perfil:'vendedor',vendedorRef:'Paula'}
   ],
   crm: [],
   calendario: [],
@@ -1621,17 +1621,29 @@ const FIREBASE_CONFIG = {
   databaseURL: "https://desenrola-sistema-a7a56-default-rtdb.firebaseio.com",
   projectId: "desenrola-sistema-a7a56"
 };
-let _fbApp = null, _fbDb = null, _fbOnline = false;
+let _fbApp=null, _fbDb=null, _fbOnline=false, _fbListener=null, _pendingSync=false;
+const _sessionId = Math.random().toString(36).slice(2)+Date.now().toString(36);
 function initFirebase(){
   try {
     _fbApp = firebase.initializeApp(FIREBASE_CONFIG);
     _fbDb  = firebase.database();
     _fbOnline = true;
-    // Detecta conexão com Firebase
-    firebase.database().ref('.info/connected').on('value', function(snap){
+    // Detecta conexão com Firebase (usa _fbDb já instanciado — não cria 2ª conexão)
+    _fbDb.ref('.info/connected').on('value', function(snap){
+      var wasOffline = !_fbOnline;
       _fbOnline = !!snap.val();
-      const ind = document.getElementById('sync-indicator');
+      var ind = document.getElementById('sync-indicator');
       if(ind) ind.style.background = _fbOnline ? 'var(--success)' : 'var(--warning)';
+      // Reconectou offline→online: sincronizar dados acumulados offline
+      if(wasOffline && _fbOnline && DB._lastSaved){
+        var payload = {};
+        Object.keys(DB).forEach(function(k){ if(!NON_SERIALIZABLE.has(k)) payload[k]=DB[k]; });
+        payload._lastSaved = Date.now();
+    payload._savedBy = _sessionId; // identifica a sessão que salvou
+        payload._savedBy = _sessionId;
+        saveToFirebase(payload);
+        updateSyncIndicator('🔄 Reconectado — dados sincronizados');
+      }
     });
   } catch(e) {
     console.warn('Firebase init error:', e);
@@ -1655,34 +1667,53 @@ function loadFromFirebase(callback){
     callback(null);
     return;
   }
+  var _called = false;
+  function done(val){ if(!_called){ _called=true; callback(val); } }
+  // Timeout de 8s: se Firebase não responder, usa localStorage
+  var _t = setTimeout(function(){
+    console.warn('Firebase load timeout — usando localStorage');
+    done(null);
+  }, 8000);
   _fbDb.ref('desenrola_v3').once('value').then(function(snap){
-    callback(snap.val());
+    clearTimeout(_t);
+    done(snap.val());
   }).catch(function(e){
+    clearTimeout(_t);
     console.warn('Firebase load error:', e);
-    callback(null);
+    done(null);
   });
 }
 
 // Sincronização em tempo real: quando outro usuário salva, este recebe
 function subscribeFirebaseUpdates(){
   if(!_fbDb) return;
-  _fbDb.ref('desenrola_v3').on('value', function(snap){
+  // Remove listener anterior para evitar acúmulo a cada recarga
+  if(_fbListener) _fbDb.ref('desenrola_v3').off('value', _fbListener);
+  _fbListener = _fbDb.ref('desenrola_v3').on('value', function(snap){
     const remote = snap.val();
     if(!remote) return;
+    // Ignorar próprio save usando sessionId (evita receber de volta o que acabou de enviar)
+    if(remote._savedBy === _sessionId) return;
     // Só atualiza se a versão remota for mais recente
     const remoteTs = remote._lastSaved || 0;
     const localTs  = DB._lastSaved  || 0;
-    if(remoteTs > localTs + 1000){ // margem de 1 segundo para ignorar save próprio
+    if(remoteTs > localTs){
       Object.keys(remote).forEach(function(k){
         if(!NON_SERIALIZABLE.has(k)) DB[k] = remote[k];
       });
-      // Re-render página ativa sem resetar estado de edição
-      const activePage = document.querySelector('.page.active');
-      if(activePage){
-        const pageId = activePage.id.replace('page-','');
-        if(pageId && pageId !== 'perfil') showPage(pageId);
+      // Não re-renderizar se há modal aberto (evita perda de dados em edição)
+      const openModal = document.querySelector('.modal-overlay.open');
+      if(openModal){
+        _pendingSync = true;
+        updateSyncIndicator('🔄 Dados atualizados — feche o modal para sincronizar a tela');
+      } else {
+        const activePage = document.querySelector('.page.active');
+        if(activePage){
+          const pageId = activePage.id.replace('page-','');
+          if(pageId && pageId !== 'perfil') showPage(pageId);
+        }
+        updateSyncIndicator('🔄 Atualizado de outro usuário');
       }
-      updateSyncIndicator('🔄 Atualizado de outro usuário');
     }
   });
 }
@@ -1699,17 +1730,22 @@ function initBroadcastChannel(){
     _syncChannel = new BroadcastChannel('desenrola-sync');
     _syncChannel.onmessage = function(ev){
       if(ev.data && ev.data.type === 'SAVED'){
-        const remote = ev.data.payload;
-        if(!remote) return;
-        Object.keys(remote).forEach(function(k){
-          if(!NON_SERIALIZABLE.has(k)) DB[k] = remote[k];
-        });
-        const activePage = document.querySelector('.page.active');
-        if(activePage){
-          const pageId = activePage.id.replace('page-','');
-          if(pageId && pageId !== 'perfil') showPage(pageId);
+        // Ignorar notificações da própria aba
+        if(ev.data.by === _sessionId) return;
+        // Ler dados do localStorage em vez de receber 85KB via BroadcastChannel
+        loadFromStorage();
+        const openModal = document.querySelector('.modal-overlay.open');
+        if(openModal){
+          _pendingSync = true;
+          updateSyncIndicator('🔄 Dados atualizados — feche o modal para sincronizar a tela');
+        } else {
+          const activePage = document.querySelector('.page.active');
+          if(activePage){
+            const pageId = activePage.id.replace('page-','');
+            if(pageId && pageId !== 'perfil') showPage(pageId);
+          }
+          updateSyncIndicator('🔄 Sincronizado (outra aba)');
         }
-        updateSyncIndicator('🔄 Sincronizado (outra aba)');
       } else if(ev.data && ev.data.type === 'LOGOUT'){
         if(DB.currentUser) doLogout();
       }
@@ -1724,7 +1760,7 @@ const NON_SERIALIZABLE = new Set([
   'editingVenda','editingVendedor','editingOperadora',
   'editingDivisaoId','editingMetaType','editingMetaKey',
   'editingCaixa','editingRecebimento',
-  'currentUser','_movingLeadId'
+  'currentUser','_movingLeadId','_bootSaved','_savedBy'
 ]);
 
 // ── Save lock: previne duplo clique ───────────────────────────────────
@@ -1752,13 +1788,14 @@ function saveToStorage(){
     Object.keys(DB).forEach(k=>{ if(!NON_SERIALIZABLE.has(k)) payload[k] = DB[k]; });
     // Timestamp para resolução de conflitos
     payload._lastSaved = Date.now();
+    payload._savedBy = _sessionId; // identifica a sessão que salvou
     const data = JSON.stringify(payload);
     localStorage.setItem(STORAGE_KEY, data);
     try { sessionStorage.setItem(STORAGE_KEY, data); } catch(e){}
     // Salvar no Firebase (fonte de verdade compartilhada)
     saveToFirebase(payload);
-    // Notificar outras abas do mesmo dispositivo
-    if(_syncChannel){ try{ _syncChannel.postMessage({type:'SAVED',payload}); }catch(e){} }
+    // Notificar outras abas: sinal mínimo (ts apenas), receptor lê localStorage
+    if(_syncChannel){ try{ _syncChannel.postMessage({type:'SAVED',ts:payload._lastSaved,by:_sessionId}); }catch(e){} }
     updateSyncIndicator();
   } catch(e){
     console.warn('Storage save error:', e);
@@ -1842,6 +1879,13 @@ function closeModal(id){
     var _err=document.getElementById('erro-senha-mestre');
     if(_inp) _inp.value='';
     if(_err) _err.style.display='none';
+  }
+  // Se havia sync pendente enquanto modal estava aberto, renderizar agora
+  if(_pendingSync && !document.querySelector('.modal-overlay.open')){
+    _pendingSync = false;
+    const ap = document.querySelector('.page.active');
+    if(ap){ const pid=ap.id.replace('page-',''); if(pid&&pid!=='perfil') showPage(pid); }
+    updateSyncIndicator('🔄 Tela sincronizada');
   }
 }
 
@@ -2528,7 +2572,7 @@ function pagarComissao(beneficiario, valor, year, month){
 }
 
 // ── Cache de comissões (evita recalcular a cada render) ───────────────
-var _commCache = null, _commCacheKey = '';
+let _commCache = null, _commCacheKey = '';
 function getCommPeriodSplit(filtradas){
   return {
     preJun: filtradas.filter(function(v){ return v.data<(DB.config.dataCorteComissoes||'2026-06'); }),
@@ -2537,7 +2581,7 @@ function getCommPeriodSplit(filtradas){
 }
 function invalidateCommCache(){ _commCache=null; _commCacheKey=''; }
 // Cache de resultado por vendedor/período (evita recalcular O(n*m))
-var _commResultCache = null, _commResultKey = '';
+let _commResultCache = null, _commResultKey = '';
 function getCommResultCache(key){ return _commResultKey===key ? _commResultCache : null; }
 function setCommResultCache(key, val){ _commResultCache=val; _commResultKey=key; }
 
@@ -3246,14 +3290,15 @@ function addAno(){
 
 function removeConfigItem(key, idx){
   const item = DB.config[key][idx];
-  openConfirm('Remover "'+item+'"?',function(){return;}); // placeholder
-  DB.config[key].splice(idx,1);
-  saveToStorage();
-  renderConfig();
-  if(key==='destinos') rebuildDestinoSelect();
-  if(key==='servicos') rebuildServicosContainer();
-  if(key==='categorias') rebuildCategoriaSelect();
-  toast(`"${item}" removido.`,'error');
+  openConfirm('Remover "'+item+'"? Esta ação não pode ser desfeita.',function(){
+    DB.config[key].splice(idx,1);
+    saveToStorage();
+    renderConfig();
+    if(key==='destinos') rebuildDestinoSelect();
+    if(key==='servicos') rebuildServicosContainer();
+    if(key==='categorias') rebuildCategoriaSelect();
+    toast('"'+item+'" removido.','error');
+  });
 }
 
 function rebuildYearSelects(){
@@ -3340,10 +3385,11 @@ function deleteVendedor(id){
   const v = DB.vendedores.find(x=>x.id===id); if(!v) return;
   const temVendas = DB.vendas.some(s=>s.vendedor===v.nome && s.sitCom!=='cancelado');
   if(temVendas){ toast(`Não é possível excluir ${v.nome}: há vendas em aberto.`,'error'); return; }
-  // confirm replaced below
-  DB.vendedores = DB.vendedores.filter(x=>x.id!==id);
-  saveToStorage(); renderRegistros(); populateSelects();
-  toast('Vendedor excluído.','error');
+  openConfirm('Excluir o vendedor '+v.nome+'? Esta ação não pode ser desfeita.',function(){
+    DB.vendedores = DB.vendedores.filter(x=>x.id!==id);
+    saveToStorage(); renderRegistros(); populateSelects();
+    toast('Vendedor excluído.','error');
+  });
 }
 
 function saveOperadora(){
@@ -3399,10 +3445,11 @@ function deleteOperadora(id){
   const o = DB.operadoras.find(x=>x.id===id); if(!o) return;
   const temAberto = DB.vendas.some(v=>v.operadora===o.nome && v.sitCom==='em aberto');
   if(temAberto){ toast(`Não é possível excluir ${o.nome}: há comissões em aberto.`,'error'); return; }
-  // confirm replaced below
-  DB.operadoras = DB.operadoras.filter(x=>x.id!==id);
-  saveToStorage(); renderRegistros(); populateSelects();
-  toast('Operadora excluída.','error');
+  openConfirm('Excluir a operadora '+o.nome+'? Esta ação não pode ser desfeita.',function(){
+    DB.operadoras = DB.operadoras.filter(x=>x.id!==id);
+    saveToStorage(); renderRegistros(); populateSelects();
+    toast('Operadora excluída.','error');
+  });
 }
 
 function salvarSenhaMestre(){
@@ -3410,10 +3457,13 @@ function salvarSenhaMestre(){
   if(!u || u.vendedorRef !== 'Thomaz'){ toast('Apenas Thomaz pode alterar a senha mestre','error'); return; }
   var nova = document.getElementById('cfg-nova-senha-mestre').value.trim();
   if(!nova){ toast('Digite uma nova senha','error'); return; }
-  DB.config.senhaMestre = nova;
-  saveToStorage();
-  document.getElementById('cfg-nova-senha-mestre').value='';
-  toast('Senha mestre atualizada!');
+  // Hash antes de salvar — nunca armazenar plaintext
+  hashSenha(nova).then(function(h){
+    DB.config.senhaMestre = h;
+    saveToStorage();
+    document.getElementById('cfg-nova-senha-mestre').value='';
+    toast('Senha mestre atualizada!');
+  });
 }
 
 function salvarCorteComissoes(){
@@ -4264,7 +4314,7 @@ function resetSystem(){
 }
 function confirmarSenhaMestreAcao(){
   const digitada = document.getElementById('input-senha-mestre').value;
-  const correta  = DB.config.senhaMestre || 'DesenrolaBate';
+  const correta  = DB.config.senhaMestre || '9bada10fd1e9ffbca9b397fc91dc843e37265c5a4c81f59e457d296be8100cb4';
   if(digitada !== correta){
     document.getElementById('erro-senha-mestre').style.display='block';
     return;
@@ -4324,7 +4374,7 @@ function init(){
       servicos: ['Ingressos','Hotel','Voo','Pacote','Guiamento Virtual','Outros'],
       categorias: ['Tráfego Pago','Comissão interna','MKT','Imposto','Cursos','Brindes','Eventos','Recebimento Operadora','Outros'],
       dataCorteComissoes: '2026-06',
-      senhaMestre: 'DesenrolaBate',
+      senhaMestre: '9bada10fd1e9ffbca9b397fc91dc843e37265c5a4c81f59e457d296be8100cb4',
       formas: ['Pix','Crédito','Débito','Boleto'],
       anos: [2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050]
     };
@@ -4360,9 +4410,12 @@ function init(){
           if(!NON_SERIALIZABLE.has(k)) DB[k] = remoteData[k];
         });
       } else {
-        // localStorage mais recente — carrega local e atualiza Firebase
+        // localStorage mais recente que Firebase — carrega local
+        // NÃO sobrescreve Firebase automaticamente (evita rollback silencioso)
         loadFromStorage();
-        saveToFirebase(JSON.parse(localRaw||'{}'));
+        // Marca para sync manual: usuário pode resolver via botão "Sincronizar"
+        _pendingSync = true;
+        console.warn('localStorage mais recente que Firebase — sync pendente');
       }
     } else {
       // Firebase vazio ou offline — usa localStorage
@@ -4561,8 +4614,14 @@ function _saveUsuario(){
   } else {
     if(!senha){ toast('Informe a senha','error'); return; }
     if(DB.usuarios.find(u=>u.login===login)){ toast('Login já existe','error'); return; }
-    var novoUser={id:DB.nextUserId++,login,nome,senha:'',perfil,vendedorRef}; DB.usuarios.push(novoUser); hashSenha(senha).then(function(h){ novoUser.senha=h; saveToStorage(); });
-    toast('Usuário criado!');
+    // Hash primeiro, depois push e save — evita janela com senha vazia
+    hashSenha(senha).then(function(h){
+      DB.usuarios.push({id:DB.nextUserId++,login,nome,senha:h,perfil,vendedorRef});
+      editingUserId=null;
+      saveToStorage(); closeModal('modal-usuario'); renderUsuarios();
+      toast('Usuário criado!');
+    });
+    return; // Impede execução do saveToStorage() do branch comum abaixo
   }
   editingUserId=null;
   saveToStorage(); closeModal('modal-usuario'); renderUsuarios();
@@ -4581,9 +4640,10 @@ function editUsuario(id){
 }
 function deleteUsuario(id){
   if(!isAdm()) return;
-  // confirm replaced
-  DB.usuarios=DB.usuarios.filter(u=>u.id!==id);
-  saveToStorage(); renderUsuarios(); toast('Usuário excluído.','error');
+  openConfirm('Excluir este usuário? Esta ação não pode ser desfeita.',function(){
+    DB.usuarios=DB.usuarios.filter(u=>u.id!==id);
+    saveToStorage(); renderUsuarios(); toast('Usuário excluído.','error');
+  });
 }
 let resetSenhaUserId=null;
 function openResetSenha(id){
@@ -5086,11 +5146,11 @@ function deleteEvento(id){
 function bootAuth(){
   if(!DB.usuarios||!DB.usuarios.length){
     DB.usuarios=[
-      {id:1,login:'Thbignotto',senha:'11Cb7d##',nome:'Thomaz',perfil:'adm',vendedorRef:'Thomaz'},
-      {id:2,login:'CaPascholati',senha:'Desenrola123##',nome:'Camila',perfil:'adm',vendedorRef:'Camila'},
-      {id:3,login:'MKT',senha:'Disney123##',nome:'Equipe MKT',perfil:'mkt',vendedorRef:null},
-      {id:4,login:'Marcelo',senha:'Disney123##',nome:'Marcelo',perfil:'vendedor',vendedorRef:'Marcelo'},
-      {id:5,login:'Paula',senha:'Disney123##',nome:'Paula',perfil:'vendedor',vendedorRef:'Paula'}
+      {id:1,login:'Thbignotto',senha:'81225b48d34c22b58b434250285101c19c7ca435dd821442c91c5d0a39e80169',nome:'Thomaz',perfil:'adm',vendedorRef:'Thomaz'},
+      {id:2,login:'CaPascholati',senha:'b57750c924b9867db34ce54b276a361e15b421e02863c8091b9cdc867f6e23b1',nome:'Camila',perfil:'adm',vendedorRef:'Camila'},
+      {id:3,login:'MKT',senha:'18057dd6d24656531794f97d0dccbbe166e49eabdc669845e29e64ae23c9fcf3',nome:'Equipe MKT',perfil:'mkt',vendedorRef:null},
+      {id:4,login:'Marcelo',senha:'18057dd6d24656531794f97d0dccbbe166e49eabdc669845e29e64ae23c9fcf3',nome:'Marcelo',perfil:'vendedor',vendedorRef:'Marcelo'},
+      {id:5,login:'Paula',senha:'18057dd6d24656531794f97d0dccbbe166e49eabdc669845e29e64ae23c9fcf3',nome:'Paula',perfil:'vendedor',vendedorRef:'Paula'}
     ];
   }
   if(!DB.crm) DB.crm=[];
@@ -5137,8 +5197,9 @@ function bootAuth(){
     else if(texto.includes('paula'))   { tipo='vendedor'; beneficiario='Paula'; }
     DB.commPagamentos.push({id:DB.nextCommId++, data:cx.data, beneficiario, tipo, valor:cx.valor, caixaId:cx.id, obs:'Sincronizado'});
   });
-  calYear=new Date().getFullYear();
-  calMonth=new Date().getMonth();
+  // Preservar posição do calendário entre recargas
+  if(!calYear) calYear=new Date().getFullYear();
+  if(calMonth===undefined||calMonth===null) calMonth=new Date().getMonth();
   if(typeof rebuildCategoriaSelect==='function') rebuildCategoriaSelect();
   const logoImg=document.getElementById('login-logo-img');
   const sidebarImg=document.querySelector('.logo-mark img');
