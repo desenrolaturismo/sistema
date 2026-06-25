@@ -5512,20 +5512,48 @@ function ggRemoveData(idx){
   if(row) row.remove();
 }
 
-function _carregarGuiasSelect(){
-  var sel = document.getElementById('gg-guia');
+function _carregarGuiasSelect(selectId){
+  // selectId permite reusar em outros modais; default = 'gg-guia'
+  var sel = document.getElementById(selectId || 'gg-guia');
   if(!sel) return;
-  if(!_fbDb){ sel.innerHTML = '<option value="">Firebase não conectado</option>'; return; }
-  sel.innerHTML = '<option value="">Carregando...</option>';
+  sel.innerHTML = '<option value="">Carregando guias...</option>';
+
+  if(!_fbDb){
+    sel.innerHTML = '<option value="">Thomaz</option><option value="Camila">Camila</option>';
+    return;
+  }
+
   _fbDb.ref('desenrola_guiamento_v1/guias').once('value').then(function(snap){
-    var guias = snap.val() || {};
-    var opts = '<option value="">Selecione um guia *</option>';
-    Object.values(guias).forEach(function(g){
-      var nome = g.nome || g.name || (typeof g === 'string' ? g : JSON.stringify(g));
-      opts += '<option value="'+escapeHtml(nome)+'">'+escapeHtml(nome)+'</option>';
-    });
-    sel.innerHTML = opts;
-  }).catch(function(){ sel.innerHTML = '<option value="">Erro ao carregar guias</option>'; });
+    var guias = [];
+
+    if(snap.exists()){
+      snap.forEach(function(child){
+        var g = child.val();
+        // Aceita guias ativos OU sem campo status (retrocompatibilidade)
+        var ativo = !g.status || g.status === 'ativo';
+        if(!ativo) return;
+        // Normaliza diferentes formatos de nome no Firebase
+        var nome = (typeof g === 'string') ? g
+                  : (g.nome || g.name || g.nomeGuia || '');
+        if(nome) guias.push(nome);
+      });
+    }
+
+    // Fallback: ADMs se nenhum guia ativo cadastrado ainda
+    if(!guias.length) guias.push('Thomaz', 'Camila');
+
+    sel.innerHTML = '<option value="">Selecione o guia *</option>' +
+      guias.map(function(n){
+        return '<option value="'+escapeHtml(n)+'">'+escapeHtml(n)+'</option>';
+      }).join('');
+
+  }).catch(function(e){
+    console.warn('Erro ao carregar guias:', e);
+    // Fallback garantido mesmo com erro no Firebase
+    sel.innerHTML = '<option value="">Selecione o guia *</option>'+
+      '<option value="Thomaz">Thomaz</option>'+
+      '<option value="Camila">Camila</option>';
+  });
 }
 
 function confirmarGrupoGuiamento(){
