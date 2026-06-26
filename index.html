@@ -1881,6 +1881,22 @@ function updateSyncIndicator(msg){
 
 // BroadcastChannel para mesma máquina, múltiplas abas
 let _syncChannel = null, _guiChannel = null;
+// S-02: atualiza guiamentoStatus na venda pelo origemId
+function _atualizarGuiamentoStatus(origemId, novoStatus){
+  if(!origemId) return;
+  var idx = (DB.vendas||[]).findIndex(function(v){
+    return ('venda_' + v.id) === origemId ||
+           v.origemId === origemId ||
+           String(v.id) === String(origemId);
+  });
+  if(idx < 0) return;
+  DB.vendas[idx].guiamentoStatus = novoStatus;
+  saveToStorage();
+  // Atualizar badge visual se renderVendas estiver ativa
+  var ap = document.querySelector('.page.active');
+  if(ap && ap.id === 'page-vendas') renderVendas();
+}
+
 function initBroadcastChannel(){
   try {
     _syncChannel = new BroadcastChannel('desenrola-sync');
@@ -1908,20 +1924,30 @@ function initBroadcastChannel(){
     };
     // Canal dedicado para integração com Sistema de Guiamento Virtual
     _guiChannel = new BroadcastChannel('desenrola_integracao');
+    // S-03A: anunciar sessionId para o Guiamento registrar como nonce válido
+    try{ _guiChannel.postMessage({type:'ANNOUNCE_SESSION', _sessionId: _sessionId}); }catch(e){}
     _guiChannel.onmessage = function(ev){
       if(!ev.data) return;
       // MOD-06: handlers de resposta do Guiamento Virtual
       if(ev.data.type === 'GRUPO_CRIADO'){
         var nome = ev.data.nomeGrupo || ev.data.origemId || 'novo grupo';
+        _atualizarGuiamentoStatus(ev.data.origemId, 'criado'); // S-02
         toast('🗺️ Grupo "'+escapeHtml(nome)+'" criado no Guiamento!','success');
         var ap = document.querySelector('.page.active');
         if(ap && ap.id === 'page-agenda-guias') renderAgendaGuias();
       }
       if(ev.data.type === 'GRUPO_JA_EXISTE'){
+        _atualizarGuiamentoStatus(ev.data.origemId, 'criado'); // S-02: já existe = criado
         toast('ℹ️ Grupo já existia no Guiamento (deduplicação automática).','info');
       }
       if(ev.data.type === 'GRUPO_ERRO'){
-        toast('⚠️ Erro ao criar grupo: '+(ev.data.mensagem||'desconhecido'),'error');
+        // S-02: reprocessavel:false = erro permanente, true = pode tentar de novo
+        var guiStatus = (ev.data.reprocessavel === false) ? 'falhou' : 'falhou_temp';
+        _atualizarGuiamentoStatus(ev.data.origemId, guiStatus);
+        var errMsg = ev.data.reprocessavel === false
+          ? '❌ Erro permanente no Guiamento: ' + (ev.data.mensagem||'dados inválidos')
+          : '⚠️ Erro temporário no Guiamento (retry automático): ' + (ev.data.mensagem||'');
+        toast(errMsg, 'error');
       }
       if(ev.data.type === 'PONG'){
         console.log('Guiamento Virtual online (PONG recebido)');
@@ -2408,7 +2434,11 @@ function _saveVenda(){ invalidateCommCache();
     sitPgto: document.getElementById('v-sit-pgto').value,
     sitCom: document.getElementById('v-sit-com').value,
     obs: document.getElementById('v-obs').value,
-    divVendedor: divV, divMkt: divM, divThomaz: divT, divCamila: divC, divEmpresa: divE
+    divVendedor: divV, divMkt: divM, divThomaz: divT, divCamila: divC, divEmpresa: divE,
+    // S-01: rastreio de criação de grupo no Guiamento Virtual
+    guiamentoStatus: (servicos||[]).some(function(s){
+      return (typeof s==='string'?s:(s.nome||'')).toLowerCase().includes('guiamento');
+    }) ? 'pendente' : null
   };
   if(DB.editingVenda){
     const idx = DB.vendas.findIndex(v=>v.id===DB.editingVenda.id);
@@ -2457,6 +2487,20 @@ function deleteVenda(id){
     updateDashboard();
     toast('Venda removida.','error');
   });
+}
+
+// S-04: badge visual de status do guiamento na venda
+function _badgeGuiamento(v){
+  var s = v.guiamentoStatus;
+  if(!s || s === 'criado') return '';
+  var map = {
+    'pendente':    {txt:'🗺️ Guiamento pendente', cor:'#EF9F27'},
+    'falhou_temp': {txt:'⚠️ Guiamento falhou (retry)', cor:'#E24B4A'},
+    'falhou':      {txt:'❌ Guiamento falhou',    cor:'#A32D2D'}
+  };
+  var info = map[s];
+  if(!info) return '';
+  return '<br><span title="'+escapeHtml(s)+'" style="font-size:10px;padding:2px 6px;border-radius:4px;background:'+info.cor+';color:#fff;font-weight:500;margin-top:2px;display:inline-block">'+info.txt+'</span>';
 }
 
 function renderVendas(){
@@ -5445,7 +5489,10 @@ function confirmMoveLead(){
       obs:'Gerado via CRM — Lead #'+lead.id+' · Orçamento #'+orcIdF,
       divVendedor:DB.divisaoPadrao.vendedor,divMkt:DB.divisaoPadrao.mkt,
       divThomaz:DB.divisaoPadrao.thomaz,divCamila:DB.divisaoPadrao.camila,
-      divEmpresa:DB.divisaoPadrao.empresa
+      divEmpresa:DB.divisaoPadrao.empresa,
+      guiamentoStatus:(orc&&(orc.itens||[]).some(function(i){
+        return (i.tipo||'').toLowerCase().includes('guiamento');
+      }))?'pendente':null
     };
     DB.vendas.push(novaVenda);
     lead.vendaGeradaId=novaVenda.id;
@@ -6754,7 +6801,7 @@ function confirmarGrupoGuiamento(){
       closeModal('modal-grupo-guiamento');
       toast('✅ Grupo criado! Sistema de Guiamento notificado.');
       // Notificar Guiamento via canal dedicado 'desenrola_integracao'
-      if(_guiChannel){ try{ _guiChannel.postMessage({type:'CRIAR_GRUPO_GUIAMENTO', payload: pendingObj.payload, origemId: origemId}); }catch(e){} }
+      if(_guiChannel){ try{ _guiChannel.postMessage({type:'CRIAR_GRUPO_GUIAMENTO', payload: pendingObj.payload, origemId: origemId, _sessionNonce: _sessionId}); }catch(e){} }
       // Abrir modal de contrato automaticamente
       setTimeout(function(){ abrirModalContrato(_pendingContratoDados); }, 400);
     })
