@@ -1429,13 +1429,32 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <div class="form-group"><label class="form-label">Senha *</label><input type="password" class="form-input" id="us-senha"/></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Perfil *</label>
-        <select class="form-select" id="us-perfil">
-          <option value="adm">Administrador</option>
-          <option value="mkt">Marketing (visualização)</option>
-          <option value="vendedor">Vendedor</option>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Perfis *</label>
+        <div style="display:flex;flex-wrap:wrap;gap:10px 18px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+            <input type="checkbox" id="up-adm" style="width:15px;height:15px"> Administrador
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+            <input type="checkbox" id="up-vendedor" style="width:15px;height:15px"> Vendedor
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+            <input type="checkbox" id="up-mkt" style="width:15px;height:15px"> Marketing
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+            <input type="checkbox" id="up-guia" style="width:15px;height:15px"> Guia Virtual
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="us-status">
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
         </select>
       </div>
+    </div>
+    <div class="form-row">
       <div class="form-group"><label class="form-label">Vendedor Ref.</label>
         <select class="form-select" id="us-vendedor-ref"><option value="">Nenhum</option></select>
       </div>
@@ -1719,7 +1738,11 @@ function initFirebase(){
 function saveToFirebase(payload){
   if(!_fbDb || !_fbOnline) return;
   try {
-    _fbDb.ref('desenrola_v3').set(payload).catch(function(e){
+    // 'usuarios' é gerenciado individualmente via syncUsuarioFirebase()
+    // para manter estrutura {u_id: {...}} compatível com o Guiamento Virtual
+    var fbPayload = Object.assign({}, payload);
+    delete fbPayload.usuarios;
+    _fbDb.ref('desenrola_v3').set(fbPayload).catch(function(e){
       console.warn('Firebase save error:', e);
     });
   } catch(e){ console.warn('Firebase save error:', e); }
@@ -1908,7 +1931,7 @@ function showPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   // MKT: bloquear acesso às abas Caixa e Recebimentos
-  if((page==='caixa' || page==='recebimentos') && isMkt()){ toast('Acesso restrito ao perfil Marketing','error'); return; }
+  if((page==='caixa'||page==='recebimentos') && !isAdm() && isMkt()&&!isVendedor()){ toast('Acesso restrito ao perfil Marketing','error'); return; }
   const _pageEl = document.getElementById('page-'+page);
   if(!_pageEl){ console.warn('showPage: página desconhecida:', page); return; }
   _pageEl.classList.add('active');
@@ -4574,61 +4597,66 @@ document.addEventListener('click', function(e){
 // ══════════════════════════════════════════════
 // AUTH SYSTEM
 // ══════════════════════════════════════════════
-const PERFIL_LABELS = {adm:'Administrador',mkt:'Marketing',vendedor:'Vendedor'};
+const PERFIL_LABELS = {adm:'Administrador',mkt:'Marketing',vendedor:'Vendedor',guia:'Guia Virtual'};
 
+  // ── Ações pós-autenticação ───────────────────────────────────────
+  function _applyLogin(user, senhaRaw){
+    var perfis = getPerfis(user);
+    // Guia puro: sem acesso ao Desenrola Sistema
+    if(perfis.length && !perfis.includes('adm') && !perfis.includes('mkt') && !perfis.includes('vendedor')){
+      errEl.style.display='block';
+      errEl.innerHTML='Seu perfil é de Guia Virtual.<br>Acesse em: <a href="https://www.desenrolaturismo.com.br/guid" target="_blank" style="color:var(--primary)">Guiamento Virtual ↗</a>';
+      return;
+    }
+    DB.currentUser = user;
+    var pPrimary = getPrimaryPerfil(user);
+    document.body.setAttribute('data-perfil', pPrimary);
+    var mktB=document.getElementById('mkt-readonly-banner');
+    if(mktB) mktB.style.display = (isMkt() ? 'block' : 'none');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('main-sidebar').style.display='flex';
+    document.getElementById('main-content').style.display='block';
+    document.getElementById('user-badge').style.display='flex';
+    document.getElementById('user-avatar').textContent = user.nome.charAt(0).toUpperCase();
+    document.getElementById('user-label').textContent = user.nome;
+    document.getElementById('user-perfil-badge').textContent = PERFIL_LABELS[pPrimary]||pPrimary;
+    document.getElementById('btn-usuarios-menu').style.display = isAdm() ? '' : 'none';
+    populateSelects();
+    applySidebarPermissions();
+    // Vendedor ou guia+vendedor → CRM; outros → Dashboard
+    showPage(hasPerfil(user,'vendedor') && !isAdm() ? 'crm' : 'dashboard');
+    // Migrar senha plaintext para hash se necessário
+    if(senhaRaw && user.senha && user.senha.length !== 64){
+      hashSenha(senhaRaw).then(function(h){ user.senha=h; saveToStorage(); syncUsuarioFirebase(user); });
+    }
+  }
 function doLogin(){
-  const login = document.getElementById('login-user').value.trim();
-  const senhaInput = document.getElementById('login-pass').value;
-  const errEl = document.getElementById('login-error');
-  const user = DB.usuarios.find(function(u){ return u.login===login; });
+  var login = document.getElementById('login-user').value.trim();
+  var senhaInput = document.getElementById('login-pass').value;
+  var errEl = document.getElementById('login-error');
+  errEl.style.display='none';
+
+  var user = DB.usuarios.find(function(u){ return u.login===login && u.status!=='inativo'; });
   if(!user){
     errEl.style.display='block';
     errEl.textContent='Login ou senha incorretos. Tente novamente.';
     return;
   }
-  verificarSenha(senhaInput, user.senha).then(async function(ok){
+  verificarSenha(senhaInput, user.senha).then(function(ok){
     if(!ok){
       errEl.style.display='block';
       errEl.textContent='Login ou senha incorretos. Tente novamente.';
       return;
     }
-    if(user.senha && user.senha.length !== 64){
-      user.senha = await hashSenha(senhaInput);
-      saveToStorage();
-    }
-    DB.currentUser = user;
-    document.body.setAttribute('data-perfil', user.perfil);
-    var mktB=document.getElementById('mkt-readonly-banner'); if(mktB) mktB.style.display=user.perfil==='mkt'?'block':'none';
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('main-sidebar').style.display='flex';
-    document.getElementById('main-content').style.display='block';
-    document.getElementById('user-badge').style.display='flex';
-    document.getElementById('user-avatar').textContent = user.nome.charAt(0).toUpperCase();
-    document.getElementById('user-label').textContent = user.nome;
-    document.getElementById('user-perfil-badge').textContent = PERFIL_LABELS[user.perfil]||user.perfil;
-    document.getElementById('btn-usuarios-menu').style.display = user.perfil==='adm' ? '' : 'none';
-    populateSelects();
-    applySidebarPermissions();
-    showPage(user.perfil==='vendedor' ? 'crm' : 'dashboard');
+    _applyLogin(user, senhaInput);
   }).catch(function(err){
-    console.warn('Login error:', err);
-    // Fallback: se crypto.subtle falhar (ambiente HTTP/sandbox), compara plaintext
-    var ok = (senhaInput === user.senha);
-    if(!ok){ errEl.style.display='block'; errEl.textContent='Login inválido. (crypto unavailable)'; return; }
-    DB.currentUser = user;
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('main-sidebar').style.display='flex';
-    document.getElementById('main-content').style.display='block';
-    document.getElementById('user-badge').style.display='flex';
-    document.getElementById('user-avatar').textContent = user.nome.charAt(0).toUpperCase();
-    document.getElementById('user-label').textContent = user.nome;
-    document.getElementById('user-perfil-badge').textContent = PERFIL_LABELS[user.perfil]||user.perfil;
-    document.getElementById('btn-usuarios-menu').style.display = user.perfil==='adm' ? '' : 'none';
-    var mktB=document.getElementById('mkt-readonly-banner'); if(mktB) mktB.style.display=user.perfil==='mkt'?'block':'none';
-    document.body.setAttribute('data-perfil', user.perfil);
-    populateSelects();
-    applySidebarPermissions();
-    showPage(user.perfil==='vendedor' ? 'crm' : 'dashboard');
+    console.warn('Login crypto error — usando fallback plaintext:', err);
+    if(senhaInput !== user.senha){
+      errEl.style.display='block';
+      errEl.textContent='Login inválido.';
+      return;
+    }
+    _applyLogin(user, senhaInput);
   });
 }
 
@@ -4663,15 +4691,18 @@ function applySidebarPermissions(){
   allNavItems.forEach(item=>{
     const onclick = item.getAttribute('onclick')||'';
     const page = (onclick.match(/'([^']+)'/) || [])[1] || '';
-    if(u.perfil==='vendedor'){
-      // Vendedor: CRM, calendario, ranking, vendas (own only)
-      const allowed = ['crm','calendario','ranking','vendas','agenda-guias'];
+    var _perfis = getPerfis(u);
+    if(_perfis.includes('adm')){
+      item.style.display = ''; // ADM vê tudo
+    } else if(_perfis.includes('mkt') && !_perfis.includes('vendedor')){
+      // MKT puro: bloqueia caixa e recebimentos
+      item.style.display = (page==='caixa'||page==='recebimentos') ? 'none' : '';
+    } else if(_perfis.includes('vendedor') || _perfis.includes('guia')){
+      // Vendedor ou guia+vendedor
+      var allowed = ['crm','calendario','ranking','vendas','agenda-guias'];
       item.style.display = (allowed.includes(page)||page==='') ? '' : 'none';
-    } else if(u.perfil==='mkt'){
-      // MKT: bloqueia abas Caixa e Recebimentos no menu
-      item.style.display = (page === 'caixa' || page === 'recebimentos') ? 'none' : '';
     } else {
-      item.style.display = ''; // ADM sees all
+      item.style.display = 'none'; // perfil desconhecido
     }
   });
 }
@@ -4681,85 +4712,180 @@ function canEdit(){
   const u = DB.currentUser;
   return u && (u.perfil==='adm');
 }
-function isAdm(){ return DB.currentUser && DB.currentUser.perfil==='adm'; }
-function isMkt(){ return DB.currentUser && DB.currentUser.perfil==='mkt'; }
-function isVendedor(){ return DB.currentUser && DB.currentUser.perfil==='vendedor'; }
+// ── Helpers de perfil (suportam string legada e array novo) ──────
+function getPerfis(u){
+  if(!u) return [];
+  if(Array.isArray(u.perfis) && u.perfis.length) return u.perfis;
+  if(u.perfil) return [u.perfil]; // backward compat com string
+  return [];
+}
+function hasPerfil(u, p){ return getPerfis(u).includes(p); }
+function getPrimaryPerfil(u){
+  var p = getPerfis(u);
+  if(p.includes('adm'))      return 'adm';
+  if(p.includes('mkt'))      return 'mkt';
+  if(p.includes('vendedor')) return 'vendedor';
+  if(p.includes('guia'))     return 'guia';
+  return p[0] || '';
+}
+function isAdm(){      return !!DB.currentUser && hasPerfil(DB.currentUser,'adm'); }
+function isMkt(){      return !!DB.currentUser && !isAdm() && hasPerfil(DB.currentUser,'mkt'); }
+function isVendedor(){ return !!DB.currentUser && hasPerfil(DB.currentUser,'vendedor'); }
+function isGuia(){     return !!DB.currentUser && hasPerfil(DB.currentUser,'guia'); }
+
+// ── Sincronização individual de usuário para Firebase ─────────────────────
+function syncUsuarioFirebase(u){
+  if(!_fbDb || !_fbOnline) return;
+  var key = 'u_' + u.id;
+  var payload = {
+    id: key,
+    nome: u.nome,
+    login: u.login,
+    senha: u.senha,
+    perfis: getPerfis(u),
+    status: u.status || 'ativo',
+    vendedorRef: u.vendedorRef || null
+  };
+  _fbDb.ref('desenrola_v3/usuarios/' + key).set(payload).catch(function(e){
+    console.warn('syncUsuarioFirebase error:', e);
+  });
+}
+
+function syncAllUsuariosFirebase(){
+  if(!DB.usuarios) return;
+  DB.usuarios.forEach(function(u){ syncUsuarioFirebase(u); });
+}
 
 // ── User management ──────────────────────────────────────────────
 function renderUsuarios(){
   if(!isAdm()) return;
-  const tb = document.getElementById('usuarios-body');
+  var tb = document.getElementById('usuarios-body');
   if(!tb) return;
-  tb.innerHTML='';
-  DB.usuarios.forEach(u=>{
-    tb.innerHTML+=`<tr>
-      <td><b>${escapeHtml(u.login)}</b></td>
-      <td>${escapeHtml(u.nome)}</td>
-      <td><span class="badge ${u.perfil==='adm'?'badge-info':u.perfil==='mkt'?'badge-purple':'badge-success'}">${PERFIL_LABELS[u.perfil]||u.perfil}</span></td>
-      <td>${u.vendedorRef||'—'}</td>
-      <td><span class="badge badge-success">Ativo</span></td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-ghost btn-sm" onclick="editUsuario(${u.id})">✏️</button>
-        <button class="btn btn-ghost btn-sm" onclick="openResetSenha(${u.id})">🔐</button>
-        ${u.perfil!=='adm'||DB.usuarios.filter(x=>x.perfil==='adm').length>1?`<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="deleteUsuario(${u.id})">🗑</button>`:''}
-      </td>
-    </tr>`;
+  var rows = [];
+  DB.usuarios.forEach(function(u){
+    var perfis    = getPerfis(u);
+    var isAtivo   = u.status !== 'inativo';
+    var nAdms     = DB.usuarios.filter(function(x){ return getPerfis(x).includes('adm'); }).length;
+    var canDelete = !perfis.includes('adm') || nAdms > 1;
+    var badgeColors = {adm:'badge-info',mkt:'badge-purple',vendedor:'badge-success',guia:'badge-accent'};
+    var perfisHtml = perfis.map(function(p){
+      return '<span class="badge '+(badgeColors[p]||'badge-info')+'" style="font-size:10px;margin-right:2px">'+escapeHtml(PERFIL_LABELS[p]||p)+'</span>';
+    }).join('');
+    rows.push('<tr style="opacity:'+(isAtivo?'1':'0.55')+'">'+
+      '<td><b>'+escapeHtml(u.login)+'</b></td>'+
+      '<td>'+escapeHtml(u.nome)+'</td>'+
+      '<td>'+perfisHtml+'</td>'+
+      '<td>'+escapeHtml(u.vendedorRef||'—')+'</td>'+
+      '<td><span class="badge '+(isAtivo?'badge-success':'badge-warning')+'">'+(isAtivo?'Ativo':'Inativo')+'</span></td>'+
+      '<td style="white-space:nowrap">'+
+        '<button class="btn btn-ghost btn-sm" onclick="editUsuario('+u.id+')">✏️</button>'+
+        '<button class="btn btn-ghost btn-sm" onclick="openResetSenha('+u.id+')">🔐</button>'+
+        '<button class="btn btn-ghost btn-sm" onclick="toggleStatusUsuario('+u.id+')" title="'+(isAtivo?'Desativar':'Reativar')+'" style="color:'+(isAtivo?'var(--warning)':'var(--success)')+'">'+
+          (isAtivo?'🔒':'🔓')+
+        '</button>'+
+        (canDelete?'<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="deleteUsuario('+u.id+')">🗑</button>':'')+
+      '</td>'+
+    '</tr>');
   });
+  tb.innerHTML = rows.join('');
   // Populate vendor ref select
-  const vRefEl = document.getElementById('us-vendedor-ref');
+  var vRefEl = document.getElementById('us-vendedor-ref');
   if(vRefEl){
-    const cur=vRefEl.value;
-    vRefEl.innerHTML='<option value="">Nenhum</option>';
-    DB.vendedores.filter(v=>v.status==='ativo').forEach(v=>{ const o=document.createElement('option'); o.value=v.nome; o.textContent=v.nome; vRefEl.appendChild(o); });
+    var cur = vRefEl.value;
+    vRefEl.innerHTML = '<option value="">Nenhum</option>';
+    DB.vendedores.filter(function(v){ return v.status==='ativo'; }).forEach(function(v){
+      var o=document.createElement('option'); o.value=v.nome; o.textContent=v.nome; vRefEl.appendChild(o);
+    });
     if(cur) vRefEl.value=cur;
   }
+}
+
+function toggleStatusUsuario(id){
+  var u = DB.usuarios.find(function(x){ return x.id===id; }); if(!u) return;
+  var acao = u.status==='inativo' ? 'reativar' : 'desativar';
+  openConfirm(acao.charAt(0).toUpperCase()+acao.slice(1)+' o usuário '+u.nome+'?', function(){
+    u.status = u.status==='inativo' ? 'ativo' : 'inativo';
+    saveToStorage(); syncUsuarioFirebase(u); renderUsuarios();
+    toast('Usuário '+(u.status==='ativo'?'reativado':'desativado')+'.');
+  }, acao.charAt(0).toUpperCase()+acao.slice(1));
 }
 
 let editingUserId = null;
 function saveUsuario(){ withSaveLock('usuario', _saveUsuario); }
 function _saveUsuario(){
   if(!isAdm()){ toast('Sem permissão','error'); return; }
-  const login=document.getElementById('us-login').value.trim();
-  const nome=document.getElementById('us-nome').value.trim();
-  const senha=document.getElementById('us-senha').value;
-  const perfil=document.getElementById('us-perfil').value;
-  const vendedorRef=document.getElementById('us-vendedor-ref').value||null;
+  var login = document.getElementById('us-login').value.trim();
+  var nome  = document.getElementById('us-nome').value.trim();
+  var senha = document.getElementById('us-senha').value;
+  var status= (document.getElementById('us-status')||{value:'ativo'}).value || 'ativo';
+  var vendedorRef = document.getElementById('us-vendedor-ref').value || null;
+
+  // Lê checkboxes de perfis
+  var perfis = [];
+  if(document.getElementById('up-adm')?.checked)      perfis.push('adm');
+  if(document.getElementById('up-vendedor')?.checked)  perfis.push('vendedor');
+  if(document.getElementById('up-mkt')?.checked)       perfis.push('mkt');
+  if(document.getElementById('up-guia')?.checked)      perfis.push('guia');
+
   if(!login||!nome){ toast('Login e nome são obrigatórios','error'); return; }
+  if(!perfis.length){ toast('Selecione ao menos um perfil','error'); return; }
+
   if(editingUserId){
-    const u=DB.usuarios.find(x=>x.id===editingUserId);
-    if(u){ u.login=login; u.nome=nome; u.perfil=perfil; u.vendedorRef=vendedorRef; if(senha) u.senha=senha; }
+    var u = DB.usuarios.find(function(x){ return x.id===editingUserId; });
+    if(u){
+      u.login=login; u.nome=nome; u.perfis=perfis;
+      u.perfil=perfis[0]; // backward compat
+      u.vendedorRef=vendedorRef; u.status=status;
+      if(senha){
+        hashSenha(senha).then(function(h){
+          u.senha=h; saveToStorage(); syncUsuarioFirebase(u);
+          closeModal('modal-usuario'); renderUsuarios(); toast('Usuário atualizado!');
+        }); return;
+      }
+    }
+    saveToStorage(); syncUsuarioFirebase(u);
+    editingUserId=null; closeModal('modal-usuario'); renderUsuarios();
     toast('Usuário atualizado!');
   } else {
     if(!senha){ toast('Informe a senha','error'); return; }
-    if(DB.usuarios.find(u=>u.login===login)){ toast('Login já existe','error'); return; }
-    // Hash primeiro, depois push e save — evita janela com senha vazia
+    if(DB.usuarios.find(function(u){ return u.login===login; })){ toast('Login já existe','error'); return; }
     hashSenha(senha).then(function(h){
-      DB.usuarios.push({id:DB.nextUserId++,login,nome,senha:h,perfil,vendedorRef});
+      var novoUser = {id:DB.nextUserId++, login, nome, senha:h,
+                      perfis, perfil:perfis[0], vendedorRef, status};
+      DB.usuarios.push(novoUser);
       editingUserId=null;
-      saveToStorage(); closeModal('modal-usuario'); renderUsuarios();
+      saveToStorage(); syncUsuarioFirebase(novoUser);
+      closeModal('modal-usuario'); renderUsuarios();
       toast('Usuário criado!');
     });
-    return; // Impede execução do saveToStorage() do branch comum abaixo
   }
-  editingUserId=null;
-  saveToStorage(); closeModal('modal-usuario'); renderUsuarios();
 }
 function editUsuario(id){
   if(!isAdm()) return;
-  const u=DB.usuarios.find(x=>x.id===id); if(!u) return;
-  editingUserId=id;
-  document.getElementById('modal-usuario-title').textContent='Editar Usuário';
-  document.getElementById('us-login').value=u.login;
-  document.getElementById('us-nome').value=u.nome;
-  document.getElementById('us-senha').value='';
-  document.getElementById('us-perfil').value=u.perfil;
-  setTimeout(()=>{ document.getElementById('us-vendedor-ref').value=u.vendedorRef||''; },50);
+  var u = DB.usuarios.find(function(x){ return x.id===id; }); if(!u) return;
+  editingUserId = id;
+  renderUsuarios(); // refresca vendedor-ref select
+  document.getElementById('modal-usuario-title').textContent = 'Editar Usuário';
+  document.getElementById('us-login').value = u.login;
+  document.getElementById('us-nome').value  = u.nome;
+  document.getElementById('us-senha').value = '';
+  var perfis = getPerfis(u);
+  ['adm','vendedor','mkt','guia'].forEach(function(p){
+    var el = document.getElementById('up-'+p);
+    if(el) el.checked = perfis.includes(p);
+  });
+  var stEl = document.getElementById('us-status');
+  if(stEl) stEl.value = u.status || 'ativo';
+  setTimeout(function(){ document.getElementById('us-vendedor-ref').value = u.vendedorRef||''; },50);
   openModal('modal-usuario');
 }
 function deleteUsuario(id){
   if(!isAdm()) return;
-  openConfirm('Excluir este usuário? Esta ação não pode ser desfeita.',function(){
-    DB.usuarios=DB.usuarios.filter(u=>u.id!==id);
+  var u = DB.usuarios.find(function(x){ return x.id===id; });
+  var nome = u ? u.nome : 'este usuário';
+  openConfirm('Excluir '+escapeHtml(nome)+'? Esta ação não pode ser desfeita.',function(){
+    DB.usuarios = DB.usuarios.filter(function(x){ return x.id!==id; });
+    if(_fbDb) _fbDb.ref('desenrola_v3/usuarios/u_'+id).remove();
     saveToStorage(); renderUsuarios(); toast('Usuário excluído.','error');
   });
 }
@@ -5322,6 +5448,19 @@ function bootAuth(){
   const logoImg=document.getElementById('login-logo-img');
   const sidebarImg=document.querySelector('.logo-mark img');
   if(logoImg&&sidebarImg) logoImg.src=sidebarImg.src;
+  // Migrar usuários: adicionar perfis[] e status se ausentes
+  var _needsMigration = false;
+  (DB.usuarios||[]).forEach(function(u){
+    if(!Array.isArray(u.perfis) || !u.perfis.length){
+      // Map de perfil string → array
+      var p = u.perfil || 'adm';
+      u.perfis = p === 'adm' ? ['adm'] : p === 'mkt' ? ['mkt'] : p === 'vendedor' ? ['vendedor'] : [p];
+      _needsMigration = true;
+    }
+    if(!u.status){ u.status = 'ativo'; _needsMigration = true; }
+  });
+  if(_needsMigration) syncAllUsuariosFirebase();
+
   // Garantir que dados sincronizados (recebimentos→caixa, commPagamentos) sejam persistidos
   if(!DB._bootSaved){ DB._bootSaved=true; saveToStorage(); }
 }
