@@ -1753,6 +1753,7 @@ function matchesFilter(dateStr, year, month){
 
 const STORAGE_KEY = 'desenrola_turismo_v3';
 // ═══════════════════════ FIREBASE ═══════════════════════
+const _FB_TOKEN = 'DTurismo2026!Secure#v3';  // token de escrita Firebase (MOD-01)
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
   databaseURL: "https://desenrola-sistema-a7a56-default-rtdb.firebaseio.com",
@@ -1776,7 +1777,7 @@ function initFirebase(){
       if(wasOffline && _fbOnline && DB._lastSaved){
         var payload = {};
         Object.keys(DB).forEach(function(k){ if(!NON_SERIALIZABLE.has(k)) payload[k]=DB[k]; });
-        payload._lastSaved = Date.now();
+        payload._lastSaved = (_fbDb && _fbOnline) ? firebase.database.ServerValue.TIMESTAMP : Date.now();
     payload._savedBy = _sessionId; // identifica a sessão que salvou
         payload._savedBy = _sessionId;
         saveToFirebase(payload);
@@ -1800,6 +1801,7 @@ function saveToFirebase(payload){
     delete fbPayload.usuarios;
     delete fbPayload.clientes;
     delete fbPayload.orcamentos;
+    fbPayload._token = _FB_TOKEN; // MOD-01: token valida escrita nas Firebase Rules
     _fbDb.ref('desenrola_v3').set(fbPayload).catch(function(e){
       console.warn('Firebase save error:', e);
     });
@@ -1907,11 +1909,22 @@ function initBroadcastChannel(){
     // Canal dedicado para integração com Sistema de Guiamento Virtual
     _guiChannel = new BroadcastChannel('desenrola_integracao');
     _guiChannel.onmessage = function(ev){
-      if(ev.data && ev.data.type === 'GRUPO_CRIADO'){
-        toast('✅ Grupo de guiamento criado: '+(ev.data.nomeGrupo||''),'success');
-        // Atualizar agenda se estiver ativa
+      if(!ev.data) return;
+      // MOD-06: handlers de resposta do Guiamento Virtual
+      if(ev.data.type === 'GRUPO_CRIADO'){
+        var nome = ev.data.nomeGrupo || ev.data.origemId || 'novo grupo';
+        toast('🗺️ Grupo "'+escapeHtml(nome)+'" criado no Guiamento!','success');
         var ap = document.querySelector('.page.active');
         if(ap && ap.id === 'page-agenda-guias') renderAgendaGuias();
+      }
+      if(ev.data.type === 'GRUPO_JA_EXISTE'){
+        toast('ℹ️ Grupo já existia no Guiamento (deduplicação automática).','info');
+      }
+      if(ev.data.type === 'GRUPO_ERRO'){
+        toast('⚠️ Erro ao criar grupo: '+(ev.data.mensagem||'desconhecido'),'error');
+      }
+      if(ev.data.type === 'PONG'){
+        console.log('Guiamento Virtual online (PONG recebido)');
       }
     };
   } catch(e){ console.warn('BroadcastChannel not supported'); }
@@ -2333,6 +2346,34 @@ function prepareVendaModal(){
 }
 
 function saveVenda(){ withSaveLock('venda', _saveVenda); }
+// ── MOD-04: IDs atômicos via Firebase .transaction() ─────────────────────
+// Garante unicidade mesmo com múltiplos usuários simultâneos
+// Fallback offline: ID local com sufixo de sessão
+function getNextId(counterKey, callback){
+  if(!_fbDb || !_fbOnline){
+    // Offline: usar contador local (risco de colisão mínimo com 4-5 usuários)
+    var localId = DB[counterKey]++;
+    saveToStorage();
+    callback(localId, false);
+    return;
+  }
+  var ref = _fbDb.ref('desenrola_v3/' + counterKey);
+  ref.transaction(
+    function(current){ return (current || DB[counterKey] || 1) + 1; },
+    function(error, committed, snap){
+      if(error || !committed){
+        // Fallback em caso de conflito de transação
+        var localId = DB[counterKey]++;
+        callback(localId, false);
+      } else {
+        var newId = snap.val();
+        if(newId > DB[counterKey]) DB[counterKey] = newId + 1;
+        callback(newId, true);
+      }
+    }
+  );
+}
+
 function _saveVenda(){ invalidateCommCache();
   const data = document.getElementById('v-data').value;
   const passageiro = document.getElementById('v-passageiro').value.trim();
@@ -2761,8 +2802,14 @@ function quickRecebimento(op, saldo){
 function switchCommTab(tab, btn){
   document.querySelectorAll('#page-comissionamento .tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('#page-comissionamento .tab-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('comm-tab-'+tab).classList.add('active');
+  if(btn) btn.classList.add('active');
+  const panel = document.getElementById('comm-tab-'+tab);
+  if(panel) panel.classList.add('active');
+  // MOD-02: renderizar apenas a aba recém-activada
+  if(tab==='mensal')  renderCommMensal();
+  else if(tab==='total') renderCommTotal();
+  else if(tab==='setor') renderCommSetor();
+  else if(tab==='vendas') renderCommVendas();
 }
 
 // ── Pagar Comissão: abre modal pré-preenchido de saída de caixa ──────
@@ -2801,29 +2848,49 @@ function getCommResultCache(key){ return _commResultKey===key ? _commResultCache
 function setCommResultCache(key, val){ _commResultCache=val; _commResultKey=key; }
 
 function renderComissionamento(){
+  // MOD-02: calcula apenas a aba visível (lazy evaluation)
   // MKT: redirecionar para aba "Por Setor" (única com conteúdo visível)
   if(isMkt()){
-    const activeTabs = document.querySelectorAll('#page-comissionamento .tab-btn:not(.mkt-hidden)');
+    const activeTabs  = document.querySelectorAll('#page-comissionamento .tab-btn:not(.mkt-hidden)');
     const activePanel = document.querySelector('#page-comissionamento .tab-panel.active');
     if(activePanel && activePanel.id !== 'comm-tab-setor'){
       document.querySelectorAll('#page-comissionamento .tab-btn').forEach(b=>b.classList.remove('active'));
       document.querySelectorAll('#page-comissionamento .tab-panel').forEach(p=>p.classList.remove('active'));
-      const sBtn = document.querySelector('.tab-btn[onclick*="setor"]');
-      if(sBtn) sBtn.classList.add('active');
+      if(activeTabs[0]) activeTabs[0].classList.add('active');
       const sPanel = document.getElementById('comm-tab-setor');
       if(sPanel) sPanel.classList.add('active');
     }
+    renderCommSetor(); return;
   }
-  renderDivisionCards();
-  const year = document.getElementById('com-year').value;
-  const month = document.getElementById('com-month').value;
-  const filtradas = DB.vendas.filter(v=>matchesFilter(v.data, year, month) && v.sitCom!=='cancelado');
-  const totalCom = filtradas.reduce((s,v)=>s+v.comissao,0);
+  // Calcular qual aba está ativa e renderizar apenas ela
+  const activeTab = document.querySelector('#page-comissionamento .tab-panel.active');
+  const tabId = activeTab ? activeTab.id : 'comm-tab-mensal';
+  if(tabId === 'comm-tab-mensal')  renderCommMensal();
+  else if(tabId === 'comm-tab-total') renderCommTotal();
+  else if(tabId === 'comm-tab-setor') renderCommSetor();
+  else if(tabId === 'comm-tab-vendas') renderCommVendas();
+  else renderCommMensal(); // default
+}
 
-  // Tab Mensal — por vendedor
-  const setores = ['MKT','Thomaz','Camila','Empresa'];
+// Helpers partilhados de filtro/dados
+function _commFiltros(){
+  const year  = parseInt(document.getElementById('comm-filter-year')?.value)  || new Date().getFullYear();
+  const month = parseInt(document.getElementById('comm-filter-month')?.value);
+  const filtradas = DB.vendas.filter(v=>{
+    const [vy,,vm] = (v.data||'').split('-').map(Number);
+    if(year && vy !== year) return false;
+    if(!isNaN(month) && vm-1 !== month) return false;
+    return true;
+  });
+  const totalCom = filtradas.reduce((s,v)=>s+v.comissao,0);
+  return {year, month, filtradas, totalCom};
+}
+
+    const setores = ['MKT','Thomaz','Camila','Empresa'];
   const allVendedores = DB.vendedores.filter(v=>v.status==='ativo').map(v=>v.nome);
 
+
+function renderCommMensal(){
   const tbody = document.getElementById('comm-mensal-body');
   if(tbody){
     tbody.innerHTML = '';
@@ -2954,7 +3021,12 @@ function renderComissionamento(){
     }
   }
 
-  // Tab Total
+
+
+}
+
+function renderCommTotal(){
+  const {year, month, filtradas, totalCom} = _commFiltros();
   const tBody2 = document.getElementById('comm-total-body');
   if(tBody2){
     tBody2.innerHTML = '';
@@ -2999,7 +3071,12 @@ function renderComissionamento(){
     </tr>`;
   }
 
-  // Tab Setor
+
+
+}
+
+function renderCommSetor(){
+  const {year, month, filtradas, totalCom} = _commFiltros();
   const setorEl = document.getElementById('comm-setor-cards');
   if(setorEl){
     const allF = DB.vendas.filter(v=>v.sitCom!=='cancelado');
@@ -3030,7 +3107,12 @@ function renderComissionamento(){
       </div>`).join('');
   }
 
-  // Tab Vendas
+
+
+}
+
+function renderCommVendas(){
+  const {year, month, filtradas} = _commFiltros();
   const cvBody = document.getElementById('comm-vendas-body');
   if(cvBody){
     cvBody.innerHTML = '';
@@ -4899,7 +4981,8 @@ function syncUsuarioFirebase(u){
     senha: u.senha,
     perfis: getPerfis(u),
     status: u.status || 'ativo',
-    vendedorRef: u.vendedorRef || null
+    vendedorRef: u.vendedorRef || null,
+    _token: _FB_TOKEN  // MOD-01
   };
   _fbDb.ref('desenrola_v3/usuarios/' + key).set(payload).catch(function(e){
     console.warn('syncUsuarioFirebase error:', e);
@@ -4913,14 +4996,16 @@ function syncAllUsuariosFirebase(){
 
 function syncClienteFirebase(cli){
   if(!_fbDb||!_fbOnline||!cli) return;
-  _fbDb.ref('desenrola_v3/clientes/c_'+cli.id).set(cli).catch(function(e){
+  var payload=Object.assign({},cli,{_token:_FB_TOKEN});
+  _fbDb.ref('desenrola_v3/clientes/c_'+cli.id).set(payload).catch(function(e){
     console.warn('syncClienteFirebase error:',e);
   });
 }
 
 function syncOrcamentoFirebase(orc){
   if(!_fbDb||!_fbOnline||!orc) return;
-  _fbDb.ref('desenrola_v3/orcamentos/o_'+orc.id).set(orc).catch(function(e){
+  var payload=Object.assign({},orc,{_token:_FB_TOKEN});
+  _fbDb.ref('desenrola_v3/orcamentos/o_'+orc.id).set(payload).catch(function(e){
     console.warn('syncOrcamentoFirebase error:',e);
   });
 }
@@ -5834,7 +5919,7 @@ function _saveCliente(){
     if(cli) Object.assign(cli,obj); toast('Cliente atualizado!');
   } else {
     if(!DB.clientes) DB.clientes=[];
-    obj.id=DB.nextClienteId++; obj.criadoEm=Date.now();
+    obj.id=DB.nextClienteId++; obj.criadoEm=(_fbDb&&_fbOnline)?firebase.database.ServerValue.TIMESTAMP:Date.now();
     DB.clientes.push(obj); toast('Cliente cadastrado!');
   }
   saveToStorage(); closeModal('modal-cliente'); renderClientes(); _atualizarSelectsClientes();
@@ -6034,7 +6119,7 @@ function _saveOrcamento(){
     if(orc) Object.assign(orc,obj); toast('Orçamento atualizado!');
   } else {
     if(!DB.orcamentos) DB.orcamentos=[];
-    obj.id=DB.nextOrcamentoId++; obj.criadoEm=Date.now();
+    obj.id=DB.nextOrcamentoId++; obj.criadoEm=(_fbDb&&_fbOnline)?firebase.database.ServerValue.TIMESTAMP:Date.now();
     DB.orcamentos.push(obj); toast('Orçamento #'+obj.id+' criado!');
   }
   saveToStorage(); closeModal('modal-orcamento'); renderOrcamentos();
@@ -6241,7 +6326,7 @@ function _numeroParaExtenso(valor){
   return partes.join(' e ')||'zero reais';
 }
 
-function _buildContratoHTML(d){
+function _buildContratoCSS(){
   return '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">'+
   '<title>Contrato Guiamento Virtual — Desenrola Turismo</title>'+
   '<style>'+
@@ -6255,8 +6340,11 @@ function _buildContratoHTML(d){
     '.assinatura{width:45%;text-align:center}'+
     '.linha{border-top:1px solid #000;padding-top:6px;margin-top:40px}'+
     '@media print{body{padding:0}button{display:none}}'+
-  '</style></head><body>'+
-  '<div class="cabecalho">'+
+  '</style></head><body>';
+}
+
+function _buildContratoPreambulo(d){
+  return '<div class="cabecalho">'+
     '<b>DESENROLA TURISMO</b><br>'+
     '56.044.414 CAMILA PASCHOLATI GUSMÃO RIGHETTI MEI — CNPJ nº 56.004.414/0001-43<br>'+
     'Rua Limoeiro, nº 955, Jardim Limoeiro, Arujá/SP'+
@@ -6266,9 +6354,11 @@ function _buildContratoHTML(d){
   'inscrita no CNPJ nº 56.004.414/0001-43, com sede à Rua Limoeiro, nº 955, Jardim Limoeiro, Arujá/SP, '+
   'doravante denominada <b>CONTRATADA</b>, e, de outro lado, <b>'+esc(d.nome)+'</b>, '+
   'inscrito(a) no CPF nº <b>'+esc(d.cpf)+'</b>, doravante denominado(a) <b>CONTRATANTE</b>, '+
-  'têm entre si justo e contratado o que segue, nos termos da legislação civil brasileira vigente.</p>'+
+  'têm entre si justo e contratado o que segue, nos termos da legislação civil brasileira vigente.</p>';
+}
 
-  '<h2>CLÁUSULA 1ª — DO OBJETO</h2>'+
+function _buildContratoClausulas(d){
+  return '<h2>CLÁUSULA 1ª — DO OBJETO</h2>'+
   '<p>1.1. O presente contrato tem por objeto a prestação de serviço de guiamento virtual, consistindo em '+
   'acompanhamento remoto, orientação estratégica e suporte em tempo real ao Contratante durante sua visita '+
   'aos parques temáticos, incluindo esclarecimento de dúvidas, organização logística, sugestões de atrações, '+
@@ -6279,32 +6369,27 @@ function _buildContratoHTML(d){
   'vigentes à época e sempre mediante autorização prévia do Contratante.</p>'+
   '<p>1.4. O Contratante declara ciência de que a Contratada não se responsabiliza por serviços de terceiros, '+
   'tais como transporte, hospedagem, ingressos, alimentação ou quaisquer outros itens não expressamente previstos neste contrato.</p>'+
-
   '<h2>CLÁUSULA 2ª — DAS OBRIGAÇÕES DA CONTRATADA</h2>'+
   '<p>2.1. São obrigações da Contratada: prestar o guiamento virtual nas datas contratadas; fornecer informações '+
   'atualizadas e compatíveis com as regras operacionais dos parques; prestar suporte remoto durante o período '+
   'contratado, por meio de aplicativo de mensagens instantâneas previamente definido entre as partes; atuar com '+
   'boa-fé, zelo profissional e dentro dos limites do serviço contratado.</p>'+
-
   '<h2>CLÁUSULA 3ª — DAS OBRIGAÇÕES DO CONTRATANTE</h2>'+
   '<p>3.1. São obrigações do Contratante: fornecer informações corretas sobre preferências, horários e limitações '+
   'do grupo; respeitar as orientações repassadas pela Contratada, ciente de que decisões finais cabem exclusivamente '+
   'ao Contratante; arcar integralmente com todos os custos da viagem; cumprir as normas e regulamentos dos parques '+
   'e autoridades locais.</p>'+
-
   '<h2>CLÁUSULA 4ª — DAS OPERAÇÕES DE COMPRA (SE APLICÁVEL)</h2>'+
   '<p>4.1. Caso o Contratante opte pela intermediação da Contratada para compras de serviços adicionais (como '+
   'Lightning Lane, Mobile Order ou reservas), tais operações dependerão de autorização expressa e prévia do Contratante, '+
   'inclusive por meios eletrônicos.</p>'+
   '<p>4.2. Eventuais taxas administrativas, cauções, prazos de reembolso e formas de pagamento seguirão as regras '+
   'previamente informadas e aceitas pelo Contratante, bem como a legislação brasileira aplicável.</p>'+
-
   '<h2>CLÁUSULA 5ª — DA REMUNERAÇÃO</h2>'+
   '<p>5.1. Pela prestação dos serviços descritos neste contrato, o Contratante pagará à Contratada o valor total '+
   'de <b>'+esc(d.valorNum)+'</b> (<b>'+esc(d.valorExt)+'</b>).</p>'+
   '<p>5.2. As partes reconhecem que o valor acima já foi integralmente quitado, de forma antecipada, por meio de '+
   '<b>'+esc(d.forma)+'</b>, nada mais havendo a reclamar a esse título.</p>'+
-
   '<h2>CLÁUSULA 6ª — DO CANCELAMENTO</h2>'+
   '<p>6.1. Em caso de cancelamento por iniciativa do Contratante:</p>'+
   '<p>— Até 60 (sessenta) dias antes da data do serviço: reembolso de 70% do valor pago;</p>'+
@@ -6312,41 +6397,41 @@ function _buildContratoHTML(d){
   '<p>— Com menos de 15 (quinze) dias de antecedência: não haverá reembolso, considerando o bloqueio da agenda da Contratada.</p>'+
   '<p>6.2. Caso o cancelamento ocorra por motivo de força maior devidamente comprovado, as partes poderão negociar '+
   'nova data ou condições, de comum acordo.</p>'+
-
   '<h2>CLÁUSULA 7ª — DO USO DE IMAGEM</h2>'+
   '<p>7.1. O Contratante autoriza, de forma gratuita, irrevogável e por prazo indeterminado, o uso de sua imagem, '+
   'voz e nome, captados por meio de fotos e vídeos de feedback sobre o serviço prestado, exclusivamente para fins '+
   'institucionais, promocionais e de divulgação dos serviços da Contratada.</p>'+
-  '<p>7.2. A presente autorização não abrange o uso da imagem do Contratante para fins comerciais diversos, nem para '+
-  'conteúdos que não estejam diretamente relacionados ao feedback do serviço de guiamento virtual.</p>'+
-  '<p>7.3. A Contratada compromete-se a utilizar o material de forma ética, respeitosa e em conformidade com a '+
-  'Lei Geral de Proteção de Dados (Lei nº 13.709/2018).</p>'+
-
+  '<p>7.2. A presente autorização não abrange o uso da imagem do Contratante para fins comerciais diversos.</p>'+
+  '<p>7.3. A Contratada compromete-se a utilizar o material em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).</p>'+
   '<h2>CLÁUSULA 8ª — DA VIGÊNCIA E RESCISÃO</h2>'+
   '<p>8.1. Este contrato entra em vigor na data de sua assinatura e permanecerá válido até a conclusão integral dos serviços.</p>'+
   '<p>8.2. A Contratada poderá rescindir o contrato de forma imediata em caso de descumprimento contratual, '+
   'má-fé ou fornecimento de informações falsas pelo Contratante.</p>'+
-
   '<h2>CLÁUSULA 9ª — DAS DISPOSIÇÕES GERAIS</h2>'+
   '<p>9.1. Este contrato constitui o acordo integral entre as partes.</p>'+
   '<p>9.2. Qualquer tolerância quanto ao descumprimento de cláusulas será considerada mera liberalidade, não implicando novação.</p>'+
   '<p>9.3. Este contrato é regido pelas leis da República Federativa do Brasil.</p>'+
-  '<p>9.4. Fica eleito o foro do domicílio da Contratada para dirimir eventuais controvérsias, com renúncia '+
-  'expressa a qualquer outro, por mais privilegiado que seja.</p>'+
+  '<p>9.4. Fica eleito o foro do domicílio da Contratada para dirimir eventuais controvérsias.</p>';
+}
 
-  '<p style="margin-top:30px;text-align:center">E, por estarem justas e contratadas, as partes assinam o presente instrumento em duas vias de igual teor.</p>'+
+function _buildContratoAssinatura(d){
+  return '<p style="margin-top:30px;text-align:center">E, por estarem justas e contratadas, as partes assinam o presente instrumento em duas vias de igual teor.</p>'+
   '<p style="text-align:center;margin-top:14px"><b>'+esc(d.dataAssinatura)+'</b></p>'+
-
   '<div class="assinaturas">'+
     '<div class="assinatura"><div class="linha">'+esc(d.nome)+'<br>CPF nº '+esc(d.cpf)+'<br><i>CONTRATANTE</i></div></div>'+
     '<div class="assinatura"><div class="linha">56.044.414 CAMILA PASCHOLATI GUSMÃO RIGHETTI MEI<br>CNPJ nº 56.004.414/0001-43<br><i>CONTRATADA</i></div></div>'+
   '</div>'+
-
   '<br><br><p style="text-align:center;font-size:9pt;color:#666">'+
     '<button onclick="window.print()" style="padding:8px 20px;background:#2C6AA3;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11pt">🖨️ Imprimir / Salvar PDF</button>'+
   '</p>'+
   '</body></html>';
 }
+
+function _buildContratoHTML(d){
+  // MOD-05a: orquestrador das 3 subfunções de template
+  return _buildContratoCSS() + _buildContratoPreambulo(d) + _buildContratoClausulas(d) + _buildContratoAssinatura(d);
+}
+
 
 // escHtml: aliased to esc() (= escapeHtml) — função removida em CORR-18
 
@@ -6645,7 +6730,8 @@ function confirmarGrupoGuiamento(){
   var origemId = _ggVendaId ? ('venda_' + _ggVendaId) : ('manual_' + Date.now() + '_' + Math.random().toString(36).slice(2,7));
   var pendingObj = {
     tipo: 'CRIAR_GRUPO',
-    criadoEm: Date.now(),
+    criadoEm: (_fbDb&&_fbOnline) ? firebase.database.ServerValue.TIMESTAMP : Date.now(),
+    _token: _FB_TOKEN,
     criadoPor: DB.currentUser ? DB.currentUser.nome : 'sistema',
     payload: {
       nome, responsavel, whatsapp, guia,
