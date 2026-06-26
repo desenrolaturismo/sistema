@@ -234,6 +234,10 @@ tbody tr:hover{background:var(--surface2)}
         <span class="nav-icon">🛫</span>
         <span>Vendas</span>
       </div>
+      <div class="nav-item" onclick="showPage('orcamentos')" title="Orcamentos">
+        <span class="nav-icon">📋</span>
+        <span>Orçamentos</span>
+      </div>
       <div class="nav-item" onclick="showPage('recebimentos')" title="Recebimentos">
         <span class="nav-icon">💵</span>
         <span>Recebimentos</span>
@@ -655,6 +659,7 @@ tbody tr:hover{background:var(--surface2)}
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchRegTab('vendedores',this)">👤 Vendedores</button>
     <button class="tab-btn" onclick="switchRegTab('operadoras',this)">🏢 Operadoras</button>
+    <button class="tab-btn" onclick="switchRegTab('ingressos',this)">🎟️ Ingressos</button>
     <button class="tab-btn" onclick="switchRegTab('config',this)">⚙️ Configurações</button>
   </div>
 
@@ -683,6 +688,14 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <div id="operadoras-empty" class="empty-state" style="display:none"><div class="empty-icon">🏢</div><p>Nenhuma operadora cadastrada.</p></div>
   </div>
+
+  <div id="reg-tab-ingressos" class="tab-panel" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="card"><div class="card-title">🎟️ Tipos de Ingresso</div><div id="tipos-ingresso-list" style="margin-bottom:10px"></div><div style="display:flex;gap:8px"><input type="text" class="form-input" id="new-tipo-ingresso" placeholder="Novo tipo..."/><button class="btn btn-primary btn-sm" onclick="addTipoIngresso()">+</button></div></div>
+      <div class="card"><div class="card-title">💳 Pagamento por Operadora</div><div id="formas-op-list" style="margin-bottom:10px"></div><div style="display:flex;flex-direction:column;gap:6px"><select class="form-select" id="new-forma-op-sel"><option value="">Operadora...</option></select><input type="text" class="form-input" id="new-forma-op-val" placeholder="Ex: 10x sem juros"/><button class="btn btn-primary btn-sm" onclick="addFormaPagOperadora()">+ Adicionar</button></div></div>
+    </div>
+  </div>
+
 
   <div id="reg-tab-config" class="tab-panel">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px">
@@ -760,8 +773,23 @@ tbody tr:hover{background:var(--surface2)}
       <input class="form-input" id="crm-search" placeholder="🔍 Buscar..." onkeyup="renderCRM()" style="width:180px"/>
     </div>
   </div>
-  <!-- Kanban board -->
-  <div id="crm-board" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:16px;min-height:600px"></div>
+  <div class="tab-bar" style="margin-bottom:14px">
+    <button class="tab-btn active" id="crm-tab-btn-pipeline" onclick="switchCrmTab('pipeline',this)">📊 Pipeline</button>
+    <button class="tab-btn" id="crm-tab-btn-clientes" onclick="switchCrmTab('clientes',this)">👥 Clientes</button>
+  </div>
+  <div id="crm-panel-pipeline">
+    <div id="crm-board" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:16px;min-height:500px"></div>
+  </div>
+  <div id="crm-panel-clientes" style="display:none">
+    <div class="header-actions" style="margin-bottom:14px">
+      <input type="text" class="form-input" id="cli-search" placeholder="Buscar cliente..." oninput="renderClientes()" style="width:240px"/>
+      <button class="btn btn-primary" onclick="abrirModalCliente()">+ Novo Cliente</button>
+    </div>
+    <div class="table-container"><table class="data-table">
+      <thead><tr><th>Nome</th><th>CPF</th><th>WhatsApp</th><th>Email</th><th>Pax</th><th>Ações</th></tr></thead>
+      <tbody id="clientes-body"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:40px">Nenhum cliente</td></tr></tbody>
+    </table></div>
+  </div>
 </div>
 
 <!-- ════════════ PAGE: CALENDÁRIO ════════════ -->
@@ -815,6 +843,26 @@ tbody tr:hover{background:var(--surface2)}
   </div>
 </div>
 
+
+<!-- PAGE: ORCAMENTOS -->
+<div id="page-orcamentos" class="page">
+  <div class="page-header">
+    <h1>📋 Orçamentos</h1>
+    <p>✦ Gestão de propostas comerciais</p>
+    <div class="header-actions">
+      <input type="text" class="form-input" id="orc-search" placeholder="Buscar..." oninput="renderOrcamentos()" style="width:200px"/>
+      <select class="form-select" id="orc-filter-status" onchange="renderOrcamentos()" style="width:130px">
+        <option value="all">Todos</option><option value="aberto">Em aberto</option>
+        <option value="aprovado">Aprovados</option><option value="cancelado">Cancelados</option>
+      </select>
+      <button class="btn btn-primary" onclick="abrirModalOrcamento()">+ Novo Orçamento</button>
+    </div>
+  </div>
+  <div class="table-container"><table class="data-table">
+    <thead><tr><th>#</th><th>Cliente</th><th>Operadora</th><th>Serviços</th><th>Total</th><th>Comissão</th><th>Status</th><th>Data</th><th>Ações</th></tr></thead>
+    <tbody id="orc-body"><tr><td colspan="9" style="text-align:center;color:var(--text3);padding:40px">Nenhum orçamento</td></tr></tbody>
+  </table></div>
+</div>
 
 <!-- ═══════════════════════════════════════ PAGE: AGENDA GUIAS ════════════════════════════ -->
 <div id="page-agenda-guias" class="page">
@@ -1622,6 +1670,8 @@ const DB = {
     dataCorteComissoes: '2026-06',
     senhaMestre: '9bada10fd1e9ffbca9b397fc91dc843e37265c5a4c81f59e457d296be8100cb4',
     formas: ['Pix','Crédito','Débito','Boleto'],
+    tiposIngresso: ['Disney 1 Parque por Dia','Disney Park Hopper','Disney Park Hopper Plus','Universal Base Ticket','Universal Park-to-Park','SeaWorld Single Day','United Parks Multiday','Busch Gardens','Aquatica','Discovery Cove','Discovery Cove Ultimate','Kennedy Space Center','NASA + Explore Tour'],
+    formasPagOperadora: {'HotelDo':['10x sem juros no crédito','3% de desconto no Pix'],'Qby':['6x sem juros no cartão','Até 12x com juros','Pix (sem desconto)'],'Azul Viagens':['10x sem juros no cartão (10% desc. Cartão Azul)','Pontos Azul','Pix (sem desconto)']},
     anos: [2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050]
   },
   usuarios: [
@@ -1632,6 +1682,10 @@ const DB = {
     {id:5,login:'Paula',senha:'18057dd6d24656531794f97d0dccbbe166e49eabdc669845e29e64ae23c9fcf3',nome:'Paula',perfil:'vendedor',vendedorRef:'Paula'}
   ],
   crm: [],
+  clientes: [],
+  nextClienteId: 1,
+  orcamentos: [],
+  nextOrcamentoId: 1,
   calendario: [],
   nextCrmId: 1,
   nextCalId: 1,
@@ -1704,7 +1758,7 @@ const FIREBASE_CONFIG = {
   databaseURL: "https://desenrola-sistema-a7a56-default-rtdb.firebaseio.com",
   projectId: "desenrola-sistema-a7a56"
 };
-let _fbApp=null, _fbDb=null, _fbOnline=false, _fbListener=null, _pendingSync=false;
+let _fbApp=null, _fbDb=null, _fbOnline=false, _fbListener=null, _pendingSync=false, _fbConnectedListener=null;
 const _sessionId = Math.random().toString(36).slice(2)+Date.now().toString(36);
 function initFirebase(){
   try {
@@ -1712,7 +1766,8 @@ function initFirebase(){
     _fbDb  = firebase.database();
     _fbOnline = true;
     // Detecta conexão com Firebase (usa _fbDb já instanciado — não cria 2ª conexão)
-    _fbDb.ref('.info/connected').on('value', function(snap){
+    if(_fbConnectedListener) _fbDb.ref('.info/connected').off('value', _fbConnectedListener);
+    _fbConnectedListener = _fbDb.ref('.info/connected').on('value', function(snap){
       var wasOffline = !_fbOnline;
       _fbOnline = !!snap.val();
       var ind = document.getElementById('sync-indicator');
@@ -1741,7 +1796,10 @@ function saveToFirebase(payload){
     // 'usuarios' é gerenciado individualmente via syncUsuarioFirebase()
     // para manter estrutura {u_id: {...}} compatível com o Guiamento Virtual
     var fbPayload = Object.assign({}, payload);
+    // Gerenciados individualmente via syncXxxFirebase() para evitar rollback
     delete fbPayload.usuarios;
+    delete fbPayload.clientes;
+    delete fbPayload.orcamentos;
     _fbDb.ref('desenrola_v3').set(fbPayload).catch(function(e){
       console.warn('Firebase save error:', e);
     });
@@ -1788,6 +1846,15 @@ function subscribeFirebaseUpdates(){
       Object.keys(remote).forEach(function(k){
         if(!NON_SERIALIZABLE.has(k)) DB[k] = remote[k];
       });
+      // CORR-04: verificar se conta atual foi desativada remotamente
+      if(DB.currentUser){
+        var _sUser=(DB.usuarios||[]).find(function(u){return u.id===DB.currentUser.id;});
+        if(_sUser && _sUser.status==='inativo'){
+          toast('Sua conta foi desativada. Você será desconectado.','error');
+          setTimeout(function(){ doLogout(); }, 2500);
+          return;
+        }
+      }
       // Não re-renderizar se há modal aberto (evita perda de dados em edição)
       const openModal = document.querySelector('.modal-overlay.open');
       if(openModal){
@@ -1857,7 +1924,10 @@ const NON_SERIALIZABLE = new Set([
   'editingVenda','editingVendedor','editingOperadora',
   'editingDivisaoId','editingMetaType','editingMetaKey',
   'editingCaixa','editingRecebimento',
-  'currentUser','_movingLeadId','_bootSaved','_savedBy'
+  'currentUser','_movingLeadId','_bootSaved','_savedBy',
+  '_cliEditId','_orcEditId','_pendingContratoDados',
+  '_ggVendaId','_ggDatasCount','_cliPaxCount','_orcItemCount',
+  '_agYear','_agMonth'
 ]);
 
 // ── Save lock: previne duplo clique ───────────────────────────────────
@@ -1943,11 +2013,27 @@ function showPage(page){
   if(page==='comissionamento') renderComissionamento();
   if(page==='caixa') renderCaixa();
   if(page==='ranking') renderRanking();
-  if(page==='registros') renderRegistros();
-  if(page==='crm') renderCRM();
+  if(page==='registros'){
+    renderRegistros();
+    // Inicializa a aba ativa (vendedores) ao abrir a página
+    var activeRegBtn = document.querySelector('#page-registros .tab-btn.active') ||
+                       document.querySelector('#page-registros .tab-btn');
+    if(activeRegBtn) switchRegTab(activeRegBtn.getAttribute('onclick').match(/'(\w+)'/)?.[1]||'vendedores', activeRegBtn);
+  }
+  if(page==='crm'){
+    renderCRM();
+    // Garante que a aba Pipeline esteja ativa ao abrir o CRM
+    switchCrmTab('pipeline', document.getElementById('crm-tab-btn-pipeline'));
+  }
   if(page==='calendario') renderCalendario();
   if(page==='usuarios'){ if(typeof isAdm==='function'&&isAdm()) renderUsuarios(); }
+  // CORR-13: Desativar listener Agenda ao sair dela
+  if(page!=='agenda-guias' && _agListener && _fbDb){
+    _fbDb.ref('desenrola_guiamento_v1/grupos').off('value', _agListener);
+    _agListener = null;
+  }
   if(page==='agenda-guias') renderAgendaGuias();
+  if(page==='orcamentos')   renderOrcamentos();
   if(page==='perfil'){}
   document.getElementById('user-menu')&&document.getElementById('user-menu').classList.remove('open');
 }
@@ -1984,6 +2070,20 @@ function closeModal(id){
     _ggDatasCount=0;
     var _dl=document.getElementById('gg-datas-list');
     if(_dl) _dl.innerHTML='';
+  }
+  if(id==='modal-cliente'){
+    if(typeof _cliEditId!=='undefined') _cliEditId=null;
+    if(typeof _cliPaxCount!=='undefined') _cliPaxCount=0;
+    var lp=document.getElementById('cli-passageiros-list'); if(lp) lp.innerHTML='';
+  }
+  if(id==='modal-orcamento'){
+    if(typeof _orcEditId!=='undefined') _orcEditId=null;
+    if(typeof _orcItemCount!=='undefined') _orcItemCount=0;
+    var il=document.getElementById('orc-itens-list'); if(il) il.innerHTML='';
+  }
+  if(id==='modal-contrato-guiamento'){
+    // Limpar campos
+    var cgV=document.getElementById('cg-valor'); if(cgV) cgV.value='';
   }
   // Se havia sync pendente enquanto modal estava aberto, renderizar agora
   if(_pendingSync && !document.querySelector('.modal-overlay.open')){
@@ -3360,11 +3460,15 @@ function renderRanking(){
 
 // ═══════════════════════ REGISTROS ═══════════════════════
 function switchRegTab(tab, btn){
-  document.querySelectorAll('#page-registros .tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('#page-registros .tab-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('reg-tab-'+tab).classList.add('active');
-  if(tab==='config') renderConfig();
+  document.querySelectorAll('#page-registros .tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('#page-registros .tab-panel').forEach(function(p){p.style.display='none';});
+  if(btn) btn.classList.add('active');
+  var panel=document.getElementById('reg-tab-'+tab);
+  if(panel) panel.style.display='block'; // 'block' sobrepõe .tab-panel{display:none} do CSS
+  if(tab==='vendedores') renderVendedores();
+  if(tab==='operadoras') renderOperadoras();
+  if(tab==='ingressos')  renderIngressosTab();
+  if(tab==='config')     renderConfig();
 }
 
 // ═══════════════════════ CONFIG ═══════════════════════
@@ -3400,9 +3504,45 @@ function renderAnosList(){
   rebuildYearSelects();
 }
 
+function openInputModal(title, placeholder, callback){
+  // Substitui prompt() nativo — compatível com iframe Wix
+  var el = document.createElement('div');
+  el.id = '_inputModal';
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center';
+  el.innerHTML = '<div style="background:var(--surface);border-radius:14px;padding:24px;width:360px;box-shadow:0 8px 32px rgba(0,0,0,0.3)">' +
+    '<div style="font-weight:700;font-size:15px;margin-bottom:14px;color:var(--text)">'+escapeHtml(title)+'</div>' +
+    '<input id="_inputModalVal" type="text" class="form-input" placeholder="'+escapeHtml(placeholder)+'" style="margin-bottom:14px"/>' +
+    '<div style="display:flex;gap:8px;justify-content:flex-end">' +
+      '<button class="btn btn-ghost" onclick="document.getElementById(\'_inputModal\').remove()">Cancelar</button>' +
+      '<button class="btn btn-primary" id="_inputModalOk">Confirmar</button>' +
+    '</div>' +
+  '</div>';
+  document.body.appendChild(el);
+  var inp = document.getElementById('_inputModalVal');
+  inp.focus();
+  var ok = function(){
+    var val = inp.value.trim();
+    el.remove();
+    if(val) callback(val);
+  };
+  document.getElementById('_inputModalOk').onclick = ok;
+  inp.onkeydown = function(e){ if(e.key==='Enter') ok(); if(e.key==='Escape') el.remove(); };
+}
+
 function addConfigItem(key, placeholder){
-  const val = prompt(`Adicionar novo item em "${placeholder.replace('Novo ','').replace('Nova ','')}":`)?.trim();
-  if(!val) return;
+  openInputModal('Adicionar novo item em "'+placeholder.replace('Novo ','').replace('Nova ','')+'"', placeholder, function(val){
+    if(!DB.config[key]) DB.config[key]=[];
+    DB.config[key].push(val);
+    saveToStorage();
+    renderConfig();
+    if(key==='destinos') rebuildDestinoSelect();
+    if(key==='servicos') rebuildServicosContainer();
+    if(key==='categorias') rebuildCategoriaSelect();
+    toast('"'+val+'" adicionado!');
+  });
+}
+// (corpo substituído pelo openInputModal acima — manter este comentário para não duplicar)
+function _addConfigItemLegacy_DISABLED(key, placeholder){
   if(DB.config[key].includes(val)){ toast('Item já existe!','error'); return; }
   DB.config[key].push(val);
   saveToStorage();
@@ -3416,8 +3556,19 @@ function addConfigItem(key, placeholder){
 }
 
 function addAno(){
-  const val = prompt('Adicionar ano (ex: 2051):')?.trim();
-  if(!val) return;
+  openInputModal('Adicionar ano ao calendário', 'Ex: 2051', function(val){
+    const n = parseInt(val);
+    if(!n||n<2020||n>2100){ toast('Ano inválido','error'); return; }
+    if(!DB.config.anos) DB.config.anos=[];
+    if(DB.config.anos.includes(n)){ toast('Ano já existe','error'); return; }
+    DB.config.anos.push(n);
+    DB.config.anos.sort();
+    saveToStorage();
+    renderAnosList();
+    toast('Ano '+n+' adicionado!');
+  });
+}
+function _addAnoLegacy_DISABLED(){
   const n = parseInt(val);
   if(isNaN(n)||n<2000||n>2200){ toast('Ano inválido','error'); return; }
   if(DB.config.anos.includes(n)){ toast('Ano já existe!','error'); return; }
@@ -3615,6 +3766,10 @@ function salvarCorteComissoes(){
   toast('Data de corte atualizada para ' + el.value + '!');
   if(document.getElementById('page-comissionamento') && document.getElementById('page-comissionamento').classList.contains('active')) renderComissionamento();
 }
+
+// Wrappers para switchRegTab — chamam renderRegistros() que renderiza ambas as abas
+function renderVendedores(){ renderRegistros(); }
+function renderOperadoras(){ renderRegistros(); }
 
 function renderRegistros(){
   var corteEl=document.getElementById('cfg-data-corte');
@@ -4636,7 +4791,7 @@ function doLogin(){
   var errEl = document.getElementById('login-error');
   errEl.style.display='none';
 
-  var user = DB.usuarios.find(function(u){ return u.login===login && u.status!=='inativo'; });
+  var user = DB.usuarios.find(function(u){ return u.login===login && (u.status==='ativo'||!u.status); });
   if(!user){
     errEl.style.display='block';
     errEl.textContent='Login ou senha incorretos. Tente novamente.';
@@ -4699,7 +4854,7 @@ function applySidebarPermissions(){
       item.style.display = (page==='caixa'||page==='recebimentos') ? 'none' : '';
     } else if(_perfis.includes('vendedor') || _perfis.includes('guia')){
       // Vendedor ou guia+vendedor
-      var allowed = ['crm','calendario','ranking','vendas','agenda-guias'];
+      var allowed = ['crm','calendario','ranking','vendas','orcamentos','agenda-guias'];
       item.style.display = (allowed.includes(page)||page==='') ? '' : 'none';
     } else {
       item.style.display = 'none'; // perfil desconhecido
@@ -4754,6 +4909,25 @@ function syncUsuarioFirebase(u){
 function syncAllUsuariosFirebase(){
   if(!DB.usuarios) return;
   DB.usuarios.forEach(function(u){ syncUsuarioFirebase(u); });
+}
+
+function syncClienteFirebase(cli){
+  if(!_fbDb||!_fbOnline||!cli) return;
+  _fbDb.ref('desenrola_v3/clientes/c_'+cli.id).set(cli).catch(function(e){
+    console.warn('syncClienteFirebase error:',e);
+  });
+}
+
+function syncOrcamentoFirebase(orc){
+  if(!_fbDb||!_fbOnline||!orc) return;
+  _fbDb.ref('desenrola_v3/orcamentos/o_'+orc.id).set(orc).catch(function(e){
+    console.warn('syncOrcamentoFirebase error:',e);
+  });
+}
+
+function syncAllClientesOrcamentosFirebase(){
+  (DB.clientes||[]).forEach(function(c){ syncClienteFirebase(c); });
+  (DB.orcamentos||[]).forEach(function(o){ syncOrcamentoFirebase(o); });
 }
 
 // ── User management ──────────────────────────────────────────────
@@ -5032,19 +5206,23 @@ function dropLead(e, targetStage){
   if(!dragLeadId) return;
   const lead = DB.crm.find(l=>l.id===dragLeadId);
   if(!lead) return;
-  // Check permission
   if(isVendedor() && lead.vendedor!==DB.currentUser.vendedorRef){ toast('Sem permissão','error'); return; }
-  moveLeadToStage(lead, targetStage);
+  // Abre modal de confirmação com estágio pré-selecionado (campos obrigatórios)
+  openMoveStage(dragLeadId, targetStage);
 }
 
-function openMoveStage(id){
+function openMoveStage(id, preselectedStage){
   const lead = DB.crm.find(l=>l.id===id); if(!lead) return;
   const curIdx = CRM_STAGES.findIndex(s=>s.id===lead.stage);
   document.getElementById('move-lead-title').textContent=`Mover: ${escapeHtml(lead.nome)||escapeHtml(lead.telefone)}`;
-  const nextStages = CRM_STAGES.filter((_,i)=>i!==curIdx);
+  // Apenas estágios à frente (sem retroagir) + 'perdido' sempre disponível
+  const nextStages = CRM_STAGES.filter((_,i)=>{
+    if(CRM_STAGES[i].id==='perdido') return lead.stage!=='perdido'; // perdido sempre disponível
+    return i > curIdx; // apenas avanços
+  });
   let fields=`<div class="form-group"><label class="form-label">Mover para</label>
     <select class="form-select" id="move-target-stage">
-      ${nextStages.map(s=>`<option value="${s.id}">${s.emoji} ${s.label}</option>`).join('')}
+      ${nextStages.map(s=>`<option value="${s.id}" ${preselectedStage===s.id?'selected':''}>${s.emoji} ${s.label}</option>`).join('')}
     </select></div>
     <div id="move-extra-fields"></div>`;
   document.getElementById('move-lead-fields').innerHTML=fields;
@@ -5055,96 +5233,167 @@ function openMoveStage(id){
 }
 
 function updateMoveExtraFields(id){
-  const lead=DB.crm.find(l=>l.id===id);
-  const target=document.getElementById('move-target-stage').value;
-  let extra='';
+  var lead=DB.crm.find(function(l){return l.id===id;});
+  var target=document.getElementById('move-target-stage').value;
+  var e2=escapeHtml;
+  var extra='';
+
   if(target==='qualificado'){
-    extra=`<div class="form-group"><label class="form-label">Nome do cliente *</label><input class="form-input" id="mf-nome" value="${escapeHtml(lead.nome||"")}"/></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Destino</label><select class="form-select" id="mf-destino">${(DB.config?.destinos||[]).map(d=>`<option ${lead.destino===d?'selected':''}>${d}</option>`).join('')}</select></div>
-      <div class="form-group"><label class="form-label">Nº Pessoas</label><input type="number" class="form-input" id="mf-pax" value="${lead.pax||1}" min="1"/></div>
-    </div>`;
+    var destOpts=(DB.config&&DB.config.destinos||[]).map(function(d){
+      return '<option '+(lead.destino===d?'selected':'')+'>'+e2(d)+'</option>';
+    }).join('');
+    var srvOpts=(DB.config&&DB.config.servicos||[]).map(function(s){
+      return '<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">'+
+        '<input type="checkbox" value="'+e2(s)+'" '+((lead.servicos||[]).includes(s)?'checked':'')+'>'+e2(s)+'</label>';
+    }).join('');
+    extra='<div class="form-row">'+
+      '<div class="form-group"><label class="form-label">Nº Passageiros *</label>'+
+        '<input type="number" class="form-input" id="mf-pax" value="'+(lead.pax||1)+'" min="1"/></div>'+
+      '<div class="form-group"><label class="form-label">Destino</label>'+
+        '<select class="form-select" id="mf-destino">'+destOpts+'</select></div></div>'+
+      '<div class="form-group"><label class="form-label">Serviços de interesse</label>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:8px 16px;padding:8px 0">'+srvOpts+'</div>'+
+        '<input type="text" class="form-input" id="mf-outros-srv" placeholder="Outros (especificar)..." style="margin-top:6px" value="'+e2(lead.outrosSrv||'')+'"/></div>';
+
   } else if(target==='proposta'){
-    extra=`<div class="form-group"><label class="form-label">Valor da Proposta (R$) *</label><input type="number" class="form-input" id="mf-valor" step="0.01" value="${lead.valorProposta||''}"/></div>
-    <div class="form-group"><label class="form-label">Operadora</label><select class="form-select" id="mf-op">${DB.operadoras.filter(o=>o.status==='ativo').map(o=>`<option ${lead.operadora===o.nome?'selected':''}>${o.nome}</option>`).join('')}</select></div>
-    <div class="form-group"><label class="form-label">Serviços / Itens da proposta</label><textarea class="form-textarea" id="mf-itens" rows="3" placeholder="Ex: Ingressos Disney 5 dias, Hotel All Star 7 noites...">${lead.itensProposta||''}</textarea></div>`;
+    var orcOpts=(DB.orcamentos||[]).map(function(o){
+      return '<option value="'+o.id+'" '+(lead.orcamentoId===o.id?'selected':'')+'>'+
+        '#'+o.id+' — '+e2(getClienteNome(o.clienteId))+' · '+e2(o.operadora||'')+' · '+fmtR(o.total||0)+'</option>';
+    }).join('');
+    extra='<div class="form-group"><label class="form-label">Orçamento vinculado *</label>'+
+      '<select class="form-select" class="mf-orc-id-sel"><option value="">Selecione um orçamento...</option>'+orcOpts+'</select></div>'+
+      '<div style="margin-top:8px"><button class="btn btn-ghost btn-sm" '+
+        'onclick="abrirModalOrcamento();closeModal(\'modal-move-lead\')">+ Criar novo orçamento</button></div>';
+
   } else if(target==='negociacao'){
-    extra=`<div class="form-group"><label class="form-label">Novo valor (se alterado)</label><input type="number" class="form-input" id="mf-valor" step="0.01" value="${lead.valorProposta||''}"/></div>
-    <div class="form-group"><label class="form-label">Operadora (se alterada)</label><select class="form-select" id="mf-op">${DB.operadoras.filter(o=>o.status==='ativo').map(o=>`<option ${lead.operadora===o.nome?'selected':''}>${o.nome}</option>`).join('')}</select></div>`;
+    var orcOpts2=(DB.orcamentos||[]).map(function(o){
+      return '<option value="'+o.id+'" '+(lead.orcamentoId===o.id?'selected':'')+'>'+
+        '#'+o.id+' · '+fmtR(o.total||0)+'</option>';
+    }).join('');
+    extra='<div class="form-group"><label class="form-label">Orçamento</label>'+
+      '<select class="form-select" class="mf-orc-id-sel"><option value="">Manter atual</option>'+orcOpts2+'</select></div>'+
+      '<button class="btn btn-ghost btn-sm" style="margin-top:6px" '+
+        'onclick="abrirModalOrcamento();closeModal(\'modal-move-lead\')">+ Criar novo orçamento</button>';
+
   } else if(target==='fechado'){
-    extra=`<div class="alert alert-success">✅ Ao confirmar, uma nova <b>Venda</b> será criada automaticamente com os dados deste lead!</div>
-    <div class="form-group"><label class="form-label">Valor Final de Venda (R$) *</label><input type="number" class="form-input" id="mf-valor" step="0.01" value="${lead.valorProposta||''}"/></div>
-    <div class="form-group"><label class="form-label">Comissão (R$) *</label><input type="number" class="form-input" id="mf-comissao" step="0.01" value="${lead.comissao||''}"/></div>
-    <div class="form-group"><label class="form-label">Operadora</label><select class="form-select" id="mf-op">${DB.operadoras.filter(o=>o.status==='ativo').map(o=>`<option ${lead.operadora===o.nome?'selected':''}>${o.nome}</option>`).join('')}</select></div>
-    <div class="form-group"><label class="form-label">Forma de Pagamento</label><select class="form-select" id="mf-forma">${(DB.config?.formas||['Pix','Crédito','Débito','Boleto']).map(f=>`<option>${f}</option>`).join('')}</select></div>`;
-  } else if(target==='perdido'){
-    extra=`<div class="form-group"><label class="form-label">Motivo da perda *</label><textarea class="form-textarea" id="mf-motivo" rows="3" placeholder="Ex: Cliente optou por outra agência, preço fora do orçamento..."></textarea></div>`;
+    var cliOpts=(DB.clientes||[]).map(function(cli){
+      return '<option value="'+cli.id+'" '+(lead.clienteId===cli.id?'selected':'')+'>'+
+        e2(cli.nome+' '+cli.sobrenome)+'</option>';
+    }).join('');
+    var orcOpts3=(DB.orcamentos||[]).map(function(o){
+      return '<option value="'+o.id+'" '+(lead.orcamentoId===o.id?'selected':'')+'>'+
+        '#'+o.id+' — '+fmtR(o.total||0)+' · '+e2(o.operadora||'')+'</option>';
+    }).join('');
+    extra='<p style="font-size:12px;color:var(--text3);margin-bottom:10px">✅ Ao confirmar, uma venda será criada automaticamente com os dados do cliente e orçamento.</p>'+
+      '<div class="form-group"><label class="form-label">Cliente *</label>'+
+        '<select class="form-select" id="mf-cliente-id"><option value="">Selecione...</option>'+cliOpts+'</select></div>'+
+      '<div class="form-group"><label class="form-label">Orçamento *</label>'+
+        '<select class="form-select" class="mf-orc-id-sel"><option value="">Selecione...</option>'+orcOpts3+'</select></div>';
+
   } else if(target==='pos_venda'){
-    extra=`<div class="alert alert-info">🔔 Um lembrete de pesquisa será agendado automaticamente para 15 dias após hoje.</div>`;
+    extra='<div class="form-group"><label class="form-label">Pós-Venda</label>'+
+      '<p style="font-size:12px;color:var(--text3)">Um lembrete de pós-venda será criado na agenda para daqui a 15 dias com checklist de contato.</p></div>';
+
+  } else if(target==='perdido'){
+    var motivos=['Preço','Comprou com concorrente','Sem retorno','Cliente desistiu','Orçamento acima do esperado','Outro'];
+    extra='<div class="form-group"><label class="form-label">Motivo da perda *</label>'+
+      '<select class="form-select" id="mf-motivo"><option value="">Selecione...</option>'+
+        motivos.map(function(m){return '<option value="'+m+'" '+(lead.motivoPerda===m?'selected':'')+'>'+m+'</option>';}).join('')+
+      '</select></div>'+
+      '<div class="form-group"><label class="form-label">Detalhes</label>'+
+        '<textarea class="form-input" id="mf-motivo-detalhe" rows="2">'+e2(lead.motivoDetalhe||'')+'</textarea></div>';
   }
   document.getElementById('move-extra-fields').innerHTML=extra;
 }
 
 function confirmMoveLead(){
-  const id=DB._movingLeadId;
-  const lead=DB.crm.find(l=>l.id===id); if(!lead) return;
-  const target=document.getElementById('move-target-stage').value;
-  const g=n=>{ const el=document.getElementById(n); return el?el.value:''; };
+  var id=DB._movingLeadId;
+  var lead=DB.crm.find(function(l){return l.id===id;}); if(!lead) return;
+  var target=document.getElementById('move-target-stage').value;
+  var gv=function(n){var el=document.getElementById(n);return el?el.value:'';};
+  var gi=function(n){var el=document.getElementById(n);return el?parseInt(el.value)||0:0;};
 
   if(target==='qualificado'){
-    const nome=g('mf-nome');
-    if(!nome){ toast('Informe o nome do cliente','error'); return; }
-    lead.nome=nome; lead.destino=g('mf-destino'); lead.pax=parseInt(g('mf-pax'))||1;
+    var pax=gi('mf-pax');
+    if(!pax){toast('Informe o número de passageiros','error');return;}
+    lead.pax=pax; lead.destino=gv('mf-destino');
+    var checked=document.querySelectorAll('#move-extra-fields input[type=checkbox]:checked');
+    lead.servicos=Array.from(checked).map(function(cb){return cb.value;});
+    lead.outrosSrv=gv('mf-outros-srv');
     lead.qualificadoEm=new Date().toISOString();
+
   } else if(target==='proposta'){
-    if(!g('mf-valor')){ toast('Informe o valor da proposta','error'); return; }
-    lead.valorProposta=parseFloat(g('mf-valor'))||0;
-    lead.operadora=g('mf-op');
-    lead.itensProposta=g('mf-itens');
+    var orcId=parseInt(document.querySelector('.mf-orc-id-sel')?.value)||0;
+    if(!orcId){toast('Vincule um orçamento antes de avançar para Proposta','error');return;}
+    lead.orcamentoId=orcId;
+    var orc0=(DB.orcamentos||[]).find(function(o){return o.id===orcId;});
+    if(orc0){lead.valorProposta=orc0.total;lead.operadora=orc0.operadora;}
+
   } else if(target==='negociacao'){
-    if(g('mf-valor')) lead.valorProposta=parseFloat(g('mf-valor'))||lead.valorProposta;
-    if(g('mf-op')) lead.operadora=g('mf-op');
+    var orcIdN=parseInt(document.querySelector('.mf-orc-id-sel')?.value)||0;
+    if(orcIdN) lead.orcamentoId=orcIdN;
+
   } else if(target==='fechado'){
-    const valor=parseFloat(g('mf-valor'))||lead.valorProposta||0;
-    const comissao=parseFloat(g('mf-comissao'))||0;
-    if(!valor){ toast('Informe o valor de venda','error'); return; }
-    // Auto-create venda
-    const hoje=new Date().toISOString().split('T')[0];
-    const novaVenda={
+    var cliId=gi('mf-cliente-id');
+    var orcIdF=parseInt(document.querySelector('.mf-orc-id-sel')?.value)||0;
+    if(!cliId){toast('Selecione o cliente','error');return;}
+    if(!orcIdF){toast('Selecione o orçamento','error');return;}
+    lead.clienteId=cliId; lead.orcamentoId=orcIdF;
+    var orc=(DB.orcamentos||[]).find(function(o){return o.id===orcIdF;});
+    var cli=(DB.clientes||[]).find(function(x){return x.id===cliId;});
+    if(!orc){ toast('Orçamento #'+orcIdF+' não encontrado. Pode ter sido excluído.','error'); return; }
+    if(!cli){ toast('Cliente não encontrado. Verifique o cadastro.','error'); return; }
+    var hoje=new Date().toISOString().split('T')[0];
+    var novaVenda={
       id:DB.nextVendaId++, data:hoje,
-      passageiro:lead.nome||lead.telefone,
-      destino:lead.destino||'Outro',
-      servicos:lead.itensProposta?lead.itensProposta.split(',').map(s=>s.trim()):['Pacote'],
-      pax:lead.pax||1,
-      operadora:g('mf-op')||lead.operadora||'Outros',
+      passageiro:cli?(cli.nome+' '+cli.sobrenome):(lead.nome||lead.telefone),
+      destino:lead.destino||'Orlando Disney',
+      servicos:orc?[...new Set((orc.itens||[]).map(function(i){return i.tipo;}))]:['Pacote'],
+      pax:getClientePax(cliId),
+      operadora:orc?(orc.operadora||'Outros'):(lead.operadora||'Outros'),
       vendedor:lead.vendedor||'',
-      valor,comissao,
-      pctComissao:valor&&comissao?parseFloat((comissao/valor*100).toFixed(2)):0,
-      forma:g('mf-forma')||'Pix',
+      valor:orc?orc.total:(lead.valorProposta||0),
+      comissao:orc?orc.comissaoValor:0,
+      pctComissao:orc?orc.comissaoPct:0,
+      forma:orc?(orc.formaPagamento||'Pix'):'Pix',
       sitPgto:'em aberto',sitCom:'em aberto',
-      obs:`Gerado via CRM — Lead #${lead.id}`,
+      obs:'Gerado via CRM — Lead #'+lead.id+' · Orçamento #'+orcIdF,
       divVendedor:DB.divisaoPadrao.vendedor,divMkt:DB.divisaoPadrao.mkt,
       divThomaz:DB.divisaoPadrao.thomaz,divCamila:DB.divisaoPadrao.camila,
       divEmpresa:DB.divisaoPadrao.empresa
     };
     DB.vendas.push(novaVenda);
     lead.vendaGeradaId=novaVenda.id;
-    toast(`🏆 Venda #${novaVenda.id} criada automaticamente!`,'success');
+    if(orc) orc.status='aprovado';
+    invalidateCommCache();
+    toast('🏆 Venda #'+novaVenda.id+' criada automaticamente!','success');
+
   } else if(target==='pos_venda'){
-    // Auto-schedule 15-day follow-up reminder
-    const d=new Date(); d.setDate(d.getDate()+15);
+    var d=new Date(); d.setDate(d.getDate()+15);
+    if(!DB.calendario) DB.calendario=[];
+    // Verificar se já existe lembrete de pós-venda para este lead
+    var existente=DB.calendario.find(function(e){ return e.leadId===lead.id && e.tipo==='pesquisa'; });
+    if(existente){
+      // Atualizar data do existente em vez de criar duplicata
+      existente.data=d.toISOString().split('T')[0];
+      toast('📅 Lembrete de pós-venda atualizado para 15 dias!');
+    } else {
     DB.calendario.push({
       id:DB.nextCalId++,
       data:d.toISOString().split('T')[0],
       hora:'10:00',
-      titulo:`⭐ Pesquisa Pós-Venda — ${escapeHtml(lead.nome)||escapeHtml(lead.telefone)}`,
-      tipo:'pesquisa',
-      leadId:lead.id,
-      desc:'Lembrete automático: realizar pesquisa de satisfação 15 dias após o fechamento.'
+      titulo:'⭐ Pós-Venda — '+escapeHtml(lead.nome||lead.telefone),
+      tipo:'pesquisa', leadId:lead.id,
+      desc:'□ Tentativa de upsell\n□ Tirou dúvidas do cliente\n□ Confirmou recebimento dos vouchers\n□ Enviou os brindes',
+      vendedor:lead.vendedor||''
     });
-    toast('📅 Lembrete de pesquisa agendado para 15 dias!');
+    toast('📅 Lembrete de pós-venda agendado para 15 dias!');
+    } // end else (existente)
+
   } else if(target==='perdido'){
-    lead.motivoPerda=g('mf-motivo');
+    var motivo=gv('mf-motivo');
+    if(!motivo){toast('Informe o motivo da perda','error');return;}
+    lead.motivoPerda=motivo; lead.motivoDetalhe=gv('mf-motivo-detalhe');
   }
 
   moveLeadToStage(lead, target);
@@ -5452,12 +5701,12 @@ function bootAuth(){
   var _needsMigration = false;
   (DB.usuarios||[]).forEach(function(u){
     if(!Array.isArray(u.perfis) || !u.perfis.length){
-      // Map de perfil string → array
       var p = u.perfil || 'adm';
       u.perfis = p === 'adm' ? ['adm'] : p === 'mkt' ? ['mkt'] : p === 'vendedor' ? ['vendedor'] : [p];
       _needsMigration = true;
     }
-    if(!u.status){ u.status = 'ativo'; _needsMigration = true; }
+    // CORR-03: garantir status explícito para todos (legados têm undefined)
+    if(!u.status || u.status === undefined){ u.status = 'ativo'; _needsMigration = true; }
   });
   if(_needsMigration) syncAllUsuariosFirebase();
 
@@ -5465,6 +5714,641 @@ function bootAuth(){
   if(!DB._bootSaved){ DB._bootSaved=true; saveToStorage(); }
 }
 
+
+// ═══════════════════════ CLIENTES ═══════════════════════
+let _cliEditId=null,_cliPaxCount=0;
+
+function switchCrmTab(tab,btn){
+  document.querySelectorAll('#page-crm .tab-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  var pp = document.getElementById('crm-panel-pipeline');
+  var pc = document.getElementById('crm-panel-clientes');
+  if(pp) pp.style.display = tab==='pipeline' ? 'block' : 'none';
+  if(pc) pc.style.display = tab==='clientes'  ? 'block' : 'none';
+  if(tab==='clientes') renderClientes();
+  if(tab==='pipeline') renderCRM();
+}
+
+function renderClientes(){
+  var tb=document.getElementById('clientes-body'); if(!tb) return;
+  var q=(document.getElementById('cli-search')||{value:''}).value.toLowerCase();
+  var lista=(DB.clientes||[]).filter(function(cli){
+    return !q||(cli.nome+' '+cli.sobrenome+(cli.cpf||'')+(cli.email||'')).toLowerCase().includes(q);
+  });
+  if(!lista.length){
+    tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:40px">Nenhum cliente encontrado</td></tr>';
+    return;
+  }
+  tb.innerHTML=lista.map(function(cli){
+    var nPax=1+(cli.passageiros||[]).length;
+    return '<tr>'+
+      '<td><b>'+escapeHtml(cli.nome+' '+cli.sobrenome)+'</b></td>'+
+      '<td>'+escapeHtml(cli.cpf||'—')+'</td>'+
+      '<td>'+escapeHtml(cli.telefone||'—')+'</td>'+
+      '<td>'+escapeHtml(cli.email||'—')+'</td>'+
+      '<td style="text-align:center">'+nPax+'</td>'+
+      '<td style="white-space:nowrap">'+
+        '<button class="btn btn-ghost btn-sm" onclick="abrirModalCliente('+cli.id+')">✏️</button>'+
+        '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="deleteCliente('+cli.id+')">🗑</button>'+
+      '</td></tr>';
+  }).join('');
+}
+
+function abrirModalCliente(id){
+  _cliEditId=id||null; _cliPaxCount=0;
+  var lp=document.getElementById('cli-passageiros-list'); if(lp) lp.innerHTML='';
+  ['cli-nome','cli-sobrenome','cli-cpf','cli-nascimento','cli-telefone','cli-email','cli-endereco'].forEach(function(fid){
+    var el=document.getElementById(fid); if(el) el.value='';
+  });
+  document.getElementById('modal-cliente-title').textContent=id?'Editar Cliente':'Novo Cliente';
+  if(id){
+    var cli=(DB.clientes||[]).find(function(x){return x.id===id;});
+    if(cli){
+      document.getElementById('cli-nome').value=cli.nome||'';
+      document.getElementById('cli-sobrenome').value=cli.sobrenome||'';
+      document.getElementById('cli-cpf').value=cli.cpf||'';
+      document.getElementById('cli-nascimento').value=cli.nascimento||'';
+      document.getElementById('cli-telefone').value=cli.telefone||'';
+      document.getElementById('cli-email').value=cli.email||'';
+      document.getElementById('cli-endereco').value=cli.endereco||'';
+      (cli.passageiros||[]).forEach(function(p){cliAddPassageiro(p);});
+    }
+  }
+  openModal('modal-cliente');
+}
+
+function cliAddPassageiro(dados){
+  _cliPaxCount++;
+  var i=_cliPaxCount;
+  var lp=document.getElementById('cli-passageiros-list'); if(!lp) return;
+  var row=document.createElement('div');
+  row.id='pax-row-'+i;
+  row.style.cssText='background:var(--surface2);border-radius:8px;padding:10px;position:relative;margin-bottom:4px';
+  var nomeDef=escapeHtml((dados&&dados.nome)||'');
+  var sobDef=escapeHtml((dados&&dados.sobrenome)||'');
+  var cpfDef=escapeHtml((dados&&dados.cpf)||'');
+  var nascDef=(dados&&dados.nascimento)||'';
+  row.innerHTML='<button onclick="document.getElementById(\'pax-row-'+i+'\').remove()" style="position:absolute;top:6px;right:8px;background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px">✕</button>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
+    '<div class="form-group" style="margin:0"><label class="form-label">Nome</label><input type="text" class="form-input" id="pax-nome-'+i+'" value="'+nomeDef+'"/></div>'+
+    '<div class="form-group" style="margin:0"><label class="form-label">Sobrenome</label><input type="text" class="form-input" id="pax-sob-'+i+'" value="'+sobDef+'"/></div>'+
+    '<div class="form-group" style="margin:0"><label class="form-label">CPF</label><input type="text" class="form-input" id="pax-cpf-'+i+'" value="'+cpfDef+'" maxlength="14"/></div>'+
+    '<div class="form-group" style="margin:0"><label class="form-label">Nascimento</label><input type="date" class="form-input" id="pax-nasc-'+i+'" value="'+nascDef+'" onchange="cliUpdateIdade('+i+')"/></div>'+
+    '</div><div id="pax-idade-'+i+'" style="font-size:11px;color:var(--text3);margin-top:4px"></div>';
+  lp.appendChild(row);
+  if(nascDef) cliUpdateIdade(i);
+}
+
+function cliUpdateIdade(i){
+  var nascEl=document.getElementById('pax-nasc-'+i);
+  var idEl=document.getElementById('pax-idade-'+i);
+  if(!nascEl||!idEl) return;
+  var nasc=new Date(nascEl.value); if(isNaN(nasc)) return;
+  var hoje=new Date();
+  var anos=hoje.getFullYear()-nasc.getFullYear()-(hoje<new Date(hoje.getFullYear(),nasc.getMonth(),nasc.getDate())?1:0);
+  idEl.textContent=anos<18?'⚠️ Criança — '+anos+' anos':anos+' anos';
+  idEl.style.color=anos<18?'var(--warning)':'var(--text3)';
+}
+
+function _saveCliente(){
+  var nome=document.getElementById('cli-nome').value.trim();
+  var sob=document.getElementById('cli-sobrenome').value.trim();
+  var tel=document.getElementById('cli-telefone').value.trim();
+  if(!nome||!tel){toast('Nome e telefone são obrigatórios','error');return;}
+  var passageiros=[];
+  document.querySelectorAll('[id^="pax-row-"]').forEach(function(row){
+    var i=row.id.replace('pax-row-','');
+    var pnome=(document.getElementById('pax-nome-'+i)||{value:''}).value.trim();
+    if(pnome) passageiros.push({
+      nome:pnome,sobrenome:(document.getElementById('pax-sob-'+i)||{value:''}).value.trim(),
+      cpf:(document.getElementById('pax-cpf-'+i)||{value:''}).value.trim(),
+      nascimento:(document.getElementById('pax-nasc-'+i)||{value:''}).value
+    });
+  });
+  var obj={nome:nome,sobrenome:sob,cpf:document.getElementById('cli-cpf').value.trim(),
+    nascimento:document.getElementById('cli-nascimento').value,telefone:tel,
+    email:document.getElementById('cli-email').value.trim(),
+    endereco:document.getElementById('cli-endereco').value.trim(),passageiros:passageiros};
+  if(_cliEditId){
+    var cli=(DB.clientes||[]).find(function(x){return x.id===_cliEditId;});
+    if(cli) Object.assign(cli,obj); toast('Cliente atualizado!');
+  } else {
+    if(!DB.clientes) DB.clientes=[];
+    obj.id=DB.nextClienteId++; obj.criadoEm=Date.now();
+    DB.clientes.push(obj); toast('Cliente cadastrado!');
+  }
+  saveToStorage(); closeModal('modal-cliente'); renderClientes(); _atualizarSelectsClientes();
+  // Sync granular Firebase (excluído do .set() raiz)
+  var _synced = _cliEditId ? (DB.clientes||[]).find(function(x){return x.id===_cliEditId;}) : (DB.clientes||[])[DB.clientes.length-1];
+  if(_synced) syncClienteFirebase(_synced);
+}
+
+function deleteCliente(id){
+  openConfirm('Excluir este cliente?',function(){
+    DB.clientes=(DB.clientes||[]).filter(function(x){return x.id!==id;});
+    _paxCache={}; // invalida cache pax
+    saveToStorage(); renderClientes(); toast('Cliente excluído.','error');
+  });
+}
+
+function _atualizarSelectsClientes(){
+  document.querySelectorAll('#orc-cliente').forEach(function(sel){
+    var cur=sel.value;
+    sel.innerHTML='<option value="">Selecione o cliente...</option>'+
+      (DB.clientes||[]).map(function(cli){
+        return '<option value="'+cli.id+'">'+escapeHtml(cli.nome+' '+cli.sobrenome)+'</option>';
+      }).join('');
+    if(cur) sel.value=cur;
+  });
+}
+
+function getClienteNome(id){
+  var cli=(DB.clientes||[]).find(function(x){return x.id==id;});
+  return cli?cli.nome+' '+cli.sobrenome:'—';
+}
+var _paxCache={}, _paxCacheKey=0;
+function getClientePax(id){
+  // Cache leve: invalidado quando clientes mudam (nextClienteId como proxy)
+  var cacheKey=DB.nextClienteId+':'+(DB.clientes||[]).length;
+  if(_paxCacheKey!==cacheKey){ _paxCache={}; _paxCacheKey=cacheKey; }
+  if(_paxCache.hasOwnProperty(id)) return _paxCache[id];
+  var cli=(DB.clientes||[]).find(function(x){return x.id==id;});
+  var pax=cli?1+(cli.passageiros||[]).length:1;
+  _paxCache[id]=pax;
+  return pax;
+}
+
+// ═══════════════════════ ORÇAMENTOS ═══════════════════════
+let _orcEditId=null,_orcItemCount=0;
+const ORC_SERVICO_TIPOS=['Ingressos','Hotel','Guiamento Virtual','Pacote','Voo','Transfer','Outros'];
+const ORC_SERVICO_COM_DIAS=['Ingressos','Hotel','Guiamento Virtual'];
+
+function renderOrcamentos(){
+  var tb=document.getElementById('orc-body'); if(!tb) return;
+  var q=(document.getElementById('orc-search')||{value:''}).value.toLowerCase();
+  var st=(document.getElementById('orc-filter-status')||{value:'all'}).value;
+  var lista=(DB.orcamentos||[]).filter(function(o){
+    var cn=getClienteNome(o.clienteId).toLowerCase();
+    return(!q||cn.includes(q)||(o.operadora||'').toLowerCase().includes(q))&&(st==='all'||o.status===st);
+  }).sort(function(a,b){return(b.criadoEm||0)-(a.criadoEm||0);});
+  if(!lista.length){tb.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:40px">Nenhum orçamento</td></tr>';return;}
+  var sc={aberto:'badge-info',aprovado:'badge-success',cancelado:'badge-warning'};
+  tb.innerHTML=lista.map(function(o){
+    var srvs=[...new Set((o.itens||[]).map(function(i){return i.tipo;}))].join(', ');
+    return '<tr>'+
+      '<td style="font-weight:700;color:var(--primary)">#'+o.id+'</td>'+
+      '<td>'+escapeHtml(getClienteNome(o.clienteId))+'</td>'+
+      '<td>'+escapeHtml(o.operadora||'—')+'</td>'+
+      '<td style="font-size:11px">'+escapeHtml(srvs||'—')+'</td>'+
+      '<td style="font-weight:700">'+fmtR(o.total||0)+'</td>'+
+      '<td>'+fmtR(o.comissaoValor||0)+' <span style="color:var(--text3)">('+((o.comissaoPct||0).toFixed(1))+'%)</span></td>'+
+      '<td><span class="badge '+(sc[o.status]||'badge-info')+'">'+escapeHtml(o.status||'aberto')+'</span></td>'+
+      '<td style="font-size:11px;color:var(--text3)">'+new Date(o.criadoEm||Date.now()).toLocaleDateString('pt-BR')+'</td>'+
+      '<td style="white-space:nowrap">'+
+        '<button class="btn btn-ghost btn-sm" onclick="abrirModalOrcamento({id:'+o.id+'})">✏️</button>'+
+        '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="deleteOrcamento('+o.id+')">🗑</button>'+
+      '</td></tr>';
+  }).join('');
+}
+
+function abrirModalOrcamento(opts){
+  _orcEditId=(opts&&opts.id)||null; _orcItemCount=0;
+  var il=document.getElementById('orc-itens-list'); if(il) il.innerHTML='';
+  ['orc-total','orc-total-pax','orc-com-pct','orc-com-valor','orc-obs'].forEach(function(fid){var el=document.getElementById(fid);if(el) el.value='';});
+  document.getElementById('modal-orc-title').textContent=_orcEditId?'Editar Orçamento':'Novo Orçamento';
+  var opSel=document.getElementById('orc-operadora');
+  if(opSel) opSel.innerHTML='<option value="">Selecione a operadora...</option>'+DB.operadoras.filter(function(o){return o.status==='ativo';}).map(function(o){return '<option value="'+escapeHtml(o.nome)+'">'+escapeHtml(o.nome)+'</option>';}).join('');
+  _atualizarSelectsClientes();
+  if(_orcEditId){
+    var orc=(DB.orcamentos||[]).find(function(o){return o.id===_orcEditId;});
+    if(orc){
+      document.getElementById('orc-operadora').value=orc.operadora||''; orcOnOperadoraChange();
+      document.getElementById('orc-cliente').value=orc.clienteId||'';
+      document.getElementById('orc-total').value=orc.total||'';
+      document.getElementById('orc-com-pct').value=orc.comissaoPct||'';
+      document.getElementById('orc-obs').value=orc.obs||'';
+      (orc.itens||[]).forEach(function(item){orcAddItem(item);});
+      setTimeout(function(){document.getElementById('orc-forma-pag').value=orc.formaPagamento||'';},80);
+      orcRecalcular();
+    }
+  } else {
+    if(opts&&opts.clienteId) setTimeout(function(){document.getElementById('orc-cliente').value=opts.clienteId;orcOnClienteChange();},50);
+    orcAddItem();
+  }
+  openModal('modal-orcamento');
+}
+
+function orcOnOperadoraChange(){
+  var op=document.getElementById('orc-operadora').value;
+  var sel=document.getElementById('orc-forma-pag');
+  var cg=document.getElementById('orc-forma-custom-group');
+  var formas=(DB.config.formasPagOperadora||{})[op];
+  if(formas&&formas.length){
+    sel.innerHTML=formas.map(function(f){return '<option>'+escapeHtml(f)+'</option>';}).join('');
+    if(cg) cg.style.display='none';
+  } else if(op){
+    sel.innerHTML='<option value="">— Especificar abaixo —</option>';
+    if(cg) cg.style.display='';
+  } else {
+    sel.innerHTML='<option value="">Selecione a operadora primeiro</option>';
+    if(cg) cg.style.display='none';
+  }
+}
+
+function orcOnClienteChange(){orcRecalcular();}
+
+function orcAddItem(dados){
+  _orcItemCount++;
+  var i=_orcItemCount;
+  var il=document.getElementById('orc-itens-list'); if(!il) return;
+  var tipo=(dados&&dados.tipo)||'';
+  var temDias=ORC_SERVICO_COM_DIAS.includes(tipo);
+  var row=document.createElement('div');
+  row.id='orc-item-'+i;
+  row.style.cssText='background:var(--surface2);border-radius:8px;padding:10px;position:relative';
+  var tiposOpts=ORC_SERVICO_TIPOS.map(function(t){return '<option value="'+t+'"'+(t===tipo?' selected':'')+'>'+t+'</option>';}).join('');
+  var ingressoOpts=(DB.config.tiposIngresso||[]).map(function(t){return '<option value="'+escapeHtml(t)+'"'+(dados&&dados.tipoIngresso===t?' selected':'')+'>'+t+'</option>';}).join('');
+  row.innerHTML='<button onclick="document.getElementById(\'orc-item-'+i+'\').remove();orcRecalcular()" style="position:absolute;top:6px;right:8px;background:none;border:none;color:var(--danger);cursor:pointer">✕</button>'+
+    '<div style="display:grid;grid-template-columns:140px 1fr;gap:8px;margin-bottom:8px">'+
+    '<div class="form-group" style="margin:0"><label class="form-label">Tipo *</label><select class="form-select" id="orc-tipo-'+i+'" onchange="orcItemTipoChange('+i+')">'+tiposOpts+'</select></div>'+
+    '<div class="form-group" style="margin:0"><label class="form-label">Descrição</label><input type="text" class="form-input" id="orc-desc-'+i+'" value="'+escapeHtml((dados&&dados.descricao)||'')+'"/></div></div>'+
+    '<div id="orc-ingresso-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Ingressos'?'':'display:none')+'">'+
+    '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Ingresso</label><select class="form-select" id="orc-ingresso-'+i+'"><option value="">Selecione...</option>'+ingressoOpts+'</select></div></div>'+
+    '<div style="display:grid;grid-template-columns:'+(temDias?'80px ':'')+' 1fr 80px;gap:8px">'+
+    '<div id="orc-dias-col-'+i+'" class="form-group" style="margin:0;'+(temDias?'':'display:none')+'"><label class="form-label">Dias</label><input type="number" class="form-input" id="orc-dias-'+i+'" value="'+(dados&&dados.dias||1)+'" min="1"/></div>'+
+    '<div class="form-group" style="margin:0"><label class="form-label">Valor (R$) *</label><input type="number" class="form-input" id="orc-val-'+i+'" value="'+((dados&&dados.valor)||'')+'" step="0.01" oninput="orcRecalcular()"/></div>'+
+    '<div class="form-group" style="margin:0"><label class="form-label">Qtd</label><input type="number" class="form-input" id="orc-qtd-'+i+'" value="'+((dados&&dados.qtd)||1)+'" min="1" oninput="orcRecalcular()"/></div></div>';
+  il.appendChild(row);
+}
+
+function orcItemTipoChange(i){
+  var tipo=document.getElementById('orc-tipo-'+i).value;
+  var temDias=ORC_SERVICO_COM_DIAS.includes(tipo);
+  var dc=document.getElementById('orc-dias-col-'+i); if(dc) dc.style.display=temDias?'':'none';
+  var ir=document.getElementById('orc-ingresso-row-'+i); if(ir) ir.style.display=tipo==='Ingressos'?'':'none';
+}
+
+function orcRecalcular(){
+  var totalItens=0;
+  document.querySelectorAll('[id^="orc-item-"]').forEach(function(row){
+    var i=row.id.replace('orc-item-','');
+    totalItens+=(parseFloat((document.getElementById('orc-val-'+i)||{value:0}).value)||0)*
+                (parseInt((document.getElementById('orc-qtd-'+i)||{value:1}).value)||1);
+  });
+  var totalEl=document.getElementById('orc-total');
+  if(totalEl&&!totalEl.value&&totalItens>0) totalEl.value=totalItens.toFixed(2);
+  var total=parseFloat((totalEl||{value:0}).value)||totalItens;
+  var cliId=parseInt((document.getElementById('orc-cliente')||{value:0}).value)||0;
+  var nPax=cliId?getClientePax(cliId):1;
+  var tpEl=document.getElementById('orc-total-pax'); if(tpEl) tpEl.value=nPax>0?fmtR(total/nPax):'—';
+  var pct=parseFloat((document.getElementById('orc-com-pct')||{value:0}).value)||0;
+  var comEl=document.getElementById('orc-com-valor'); if(comEl) comEl.value=fmtR(total*pct/100);
+}
+
+function _saveOrcamento(){
+  var op=document.getElementById('orc-operadora').value;
+  var cliId=parseInt(document.getElementById('orc-cliente').value)||0;
+  if(!op){toast('Selecione a operadora','error');return;}
+  if(!cliId){toast('Selecione o cliente','error');return;}
+  var itens=[];
+  document.querySelectorAll('[id^="orc-item-"]').forEach(function(row){
+    var i=row.id.replace('orc-item-','');
+    var tipo=(document.getElementById('orc-tipo-'+i)||{value:''}).value; if(!tipo) return;
+    itens.push({tipo:tipo,descricao:(document.getElementById('orc-desc-'+i)||{value:''}).value.trim(),
+      tipoIngresso:(document.getElementById('orc-ingresso-'+i)||{value:''}).value,
+      dias:parseInt((document.getElementById('orc-dias-'+i)||{value:1}).value)||1,
+      valor:parseFloat((document.getElementById('orc-val-'+i)||{value:0}).value)||0,
+      qtd:parseInt((document.getElementById('orc-qtd-'+i)||{value:1}).value)||1});
+  });
+  if(!itens.length){toast('Adicione ao menos um serviço','error');return;}
+  var fpEl=document.getElementById('orc-forma-pag');
+  var fpCust=document.getElementById('orc-forma-custom');
+  var forma=(fpEl&&fpEl.value)||(fpCust&&fpCust.value)||'';
+  var total=parseFloat((document.getElementById('orc-total')||{value:0}).value)||0;
+  var pct=parseFloat((document.getElementById('orc-com-pct')||{value:0}).value)||0;
+  var obj={operadora:op,clienteId:cliId,itens:itens,formaPagamento:forma,
+    total:total,comissaoPct:pct,comissaoValor:total*pct/100,
+    obs:(document.getElementById('orc-obs')||{value:''}).value.trim(),status:'aberto'};
+  if(_orcEditId){
+    var orc=(DB.orcamentos||[]).find(function(o){return o.id===_orcEditId;});
+    if(orc) Object.assign(orc,obj); toast('Orçamento atualizado!');
+  } else {
+    if(!DB.orcamentos) DB.orcamentos=[];
+    obj.id=DB.nextOrcamentoId++; obj.criadoEm=Date.now();
+    DB.orcamentos.push(obj); toast('Orçamento #'+obj.id+' criado!');
+  }
+  saveToStorage(); closeModal('modal-orcamento'); renderOrcamentos();
+  // Sync granular Firebase
+  var _syncedOrc = _orcEditId ? (DB.orcamentos||[]).find(function(x){return x.id===_orcEditId;}) : (DB.orcamentos||[])[DB.orcamentos.length-1];
+  if(_syncedOrc) syncOrcamentoFirebase(_syncedOrc);
+}
+
+function deleteOrcamento(id){
+  openConfirm('Excluir este orçamento?',function(){
+    DB.orcamentos=(DB.orcamentos||[]).filter(function(o){return o.id!==id;});
+    saveToStorage(); renderOrcamentos(); toast('Orçamento excluído.','error');
+  });
+}
+
+// ═══════════════════════ INGRESSOS CONFIG ═══════════════════════
+function renderIngressosTab(){
+  var ti=document.getElementById('tipos-ingresso-list');
+  if(ti){
+    var tipos=DB.config.tiposIngresso||[];
+    ti.innerHTML=tipos.map(function(t,i){
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">'+
+        '<span style="font-size:13px">'+escapeHtml(t)+'</span>'+
+        '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="removeTipoIngresso('+i+')">✕</button></div>';
+    }).join('')||'<p style="color:var(--text3);font-size:13px">Nenhum tipo cadastrado</p>';
+  }
+  var fo=document.getElementById('formas-op-list');
+  if(fo){
+    var fps=DB.config.formasPagOperadora||{};
+    fo.innerHTML=Object.entries(fps).map(function(kv){
+      return '<div style="margin-bottom:8px"><b style="font-size:12px;color:var(--primary)">'+escapeHtml(kv[0])+'</b>'+
+        kv[1].map(function(f,i){
+          return '<div style="display:flex;justify-content:space-between;padding:2px 0 2px 10px">'+
+            '<span style="font-size:12px">'+escapeHtml(f)+'</span>'+
+            '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="removeFormaOp(\''+escapeHtml(kv[0])+'\','+i+')">✕</button></div>';
+        }).join('')+'</div>';
+    }).join('')||'<p style="color:var(--text3);font-size:13px">Nenhuma forma</p>';
+  }
+  var opSel=document.getElementById('new-forma-op-sel');
+  if(opSel) opSel.innerHTML='<option value="">Selecione operadora...</option>'+
+    DB.operadoras.filter(function(o){return o.status==='ativo';}).map(function(o){return '<option>'+escapeHtml(o.nome)+'</option>';}).join('');
+}
+function addTipoIngresso(){
+  var el=document.getElementById('new-tipo-ingresso');
+  var v=el.value.trim(); if(!v) return;
+  if(!DB.config.tiposIngresso) DB.config.tiposIngresso=[];
+  DB.config.tiposIngresso.push(v); el.value='';
+  saveToStorage(); renderIngressosTab();
+}
+function removeTipoIngresso(idx){
+  DB.config.tiposIngresso.splice(idx,1); saveToStorage(); renderIngressosTab();
+}
+function addFormaPagOperadora(){
+  var op=document.getElementById('new-forma-op-sel').value;
+  var val=document.getElementById('new-forma-op-val').value.trim();
+  if(!op||!val){toast('Selecione operadora e informe a forma','error');return;}
+  if(!DB.config.formasPagOperadora) DB.config.formasPagOperadora={};
+  if(!DB.config.formasPagOperadora[op]) DB.config.formasPagOperadora[op]=[];
+  DB.config.formasPagOperadora[op].push(val);
+  document.getElementById('new-forma-op-val').value='';
+  saveToStorage(); renderIngressosTab(); toast('Forma adicionada!');
+}
+function removeFormaOp(op,idx){
+  if(DB.config.formasPagOperadora&&DB.config.formasPagOperadora[op]){
+    DB.config.formasPagOperadora[op].splice(idx,1);
+    if(!DB.config.formasPagOperadora[op].length) delete DB.config.formasPagOperadora[op];
+    saveToStorage(); renderIngressosTab();
+  }
+}
+
+// ═══════════════════════ CONTRATO GUIAMENTO VIRTUAL ═══════════════════════
+let _pendingContratoDados = null;
+
+function abrirModalContrato(dados){
+  _pendingContratoDados = dados || {};
+
+  // Popular select de clientes
+  var cliSel = document.getElementById('cg-cliente-sel');
+  if(cliSel){
+    cliSel.innerHTML='<option value="">— Preencher manualmente —</option>'+
+      (DB.clientes||[]).map(function(cli){
+        return '<option value="'+cli.id+'">'+escapeHtml(cli.nome+' '+cli.sobrenome)+'</option>';
+      }).join('');
+  }
+
+  // Tentar pré-selecionar cliente pelo nome do responsável
+  var respNome = dados && (dados.responsavel || dados.nome || '');
+  var cli = (DB.clientes||[]).find(function(c){ return (c.nome+' '+c.sobrenome).toLowerCase() === respNome.toLowerCase(); });
+  if(cli && cliSel){ cliSel.value = cli.id; cgOnClienteChange(); }
+  else {
+    document.getElementById('cg-nome-manual').value = respNome;
+    document.getElementById('cg-cpf-manual').value = '';
+    document.getElementById('cg-manual-group').style.display = '';
+    _cgAtualizarPreview();
+  }
+
+  // Preview de parques
+  var parques = dados && dados.parques || [];
+  var parqStr = parques.map(function(p){ return _fmtDataContrato(p.data)+' — '+p.parque; }).join('; ');
+  var prevParq = document.getElementById('cg-preview-parques');
+  if(prevParq) prevParq.textContent = parqStr || '—';
+
+  openModal('modal-contrato-guiamento');
+}
+
+function cgOnClienteChange(){
+  var id = parseInt((document.getElementById('cg-cliente-sel')||{value:0}).value)||0;
+  var mg = document.getElementById('cg-manual-group');
+  if(id){
+    var cli = (DB.clientes||[]).find(function(c){ return c.id===id; });
+    if(cli){
+      document.getElementById('cg-nome-manual').value = cli.nome+' '+cli.sobrenome;
+      document.getElementById('cg-cpf-manual').value = cli.cpf||'';
+      if(mg) mg.style.display='none';
+    }
+  } else {
+    if(mg) mg.style.display='';
+    document.getElementById('cg-nome-manual').value = (_pendingContratoDados&&_pendingContratoDados.responsavel)||'';
+    document.getElementById('cg-cpf-manual').value = '';
+  }
+  _cgAtualizarPreview();
+}
+
+function _cgAtualizarPreview(){
+  var nome = document.getElementById('cg-nome-manual').value;
+  var cpf  = document.getElementById('cg-cpf-manual').value;
+  var pNome = document.getElementById('cg-preview-nome');
+  var pCpf  = document.getElementById('cg-preview-cpf');
+  if(pNome) pNome.textContent = nome||'—';
+  if(pCpf)  pCpf.textContent  = cpf||'—';
+}
+
+function gerarContratoGuiamento(){
+  var nome  = document.getElementById('cg-nome-manual').value.trim();
+  var cpf   = document.getElementById('cg-cpf-manual').value.trim();
+  var valor = parseFloat(document.getElementById('cg-valor').value)||0;
+  var forma = document.getElementById('cg-forma').value;
+
+  if(!nome){ toast('Informe o nome do contratante','error'); return; }
+  if(!valor){ toast('Informe o valor do guiamento','error'); return; }
+
+  var dados = _pendingContratoDados||{};
+  var parques = dados.parques||[];
+
+  // Formatar datas e parques para o contrato
+  var datasFormatadas = parques.map(function(p){ return _fmtDataContrato(p.data)+' — '+p.parque; });
+  var datasTexto = datasFormatadas.length
+    ? datasFormatadas[0] + (datasFormatadas.length>1 ? ';\n  - '+datasFormatadas.slice(1).join(';\n  - ') : '')
+    : '{{DATA E PARQUE A CONFIRMAR}}';
+
+  var valorNum  = 'R$ '+valor.toFixed(2).replace('.',',');
+  var valorExt  = _numeroParaExtenso(valor);
+  var dataHoje  = _fmtDataContrato(new Date().toISOString().split('T')[0]);
+
+  var html = _buildContratoHTML({
+    nome: nome, cpf: cpf||'___.___.___-__',
+    datasTexto: datasTexto,
+    valorNum: valorNum, valorExt: valorExt,
+    forma: forma, dataAssinatura: dataHoje
+  });
+
+  // Download como HTML
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'Contrato_Guiamento_'+nome.replace(/\s+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.html';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+
+  closeModal('modal-contrato-guiamento');
+  toast('📄 Contrato gerado e baixado! Abra o arquivo no navegador para imprimir.','success');
+}
+
+function _fmtDataContrato(dateStr){
+  if(!dateStr) return '—';
+  var d = new Date(dateStr+'T12:00:00');
+  var meses = ['janeiro','fevereiro','março','abril','maio','junho',
+               'julho','agosto','setembro','outubro','novembro','dezembro'];
+  return d.getDate()+' de '+meses[d.getMonth()]+' de '+d.getFullYear();
+}
+
+function _numeroParaExtenso(valor){
+  var inteiro   = Math.floor(valor);
+  var centavos  = Math.round((valor - inteiro)*100);
+  var uns = ['','um','dois','três','quatro','cinco','seis','sete','oito','nove',
+             'dez','onze','doze','treze','quatorze','quinze','dezesseis','dezessete','dezoito','dezenove'];
+  var dez = ['','','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
+  var cen = ['','cem','duzentos','trezentos','quatrocentos','quinhentos',
+             'seiscentos','setecentos','oitocentos','novecentos'];
+  function porExtenso(n){
+    if(n===0) return '';
+    if(n<20)  return uns[n];
+    if(n===100) return 'cem';
+    if(n<100)  return dez[Math.floor(n/10)]+(n%10?' e '+uns[n%10]:'');
+    if(n<1000) return cen[Math.floor(n/100)]+(n%100?' e '+porExtenso(n%100):'');
+    var m=Math.floor(n/1000),r=n%1000;
+    return (m===1?'mil':porExtenso(m)+' mil')+(r?' e '+porExtenso(r):'');
+  }
+  var partes=[];
+  if(inteiro>0)  partes.push(porExtenso(inteiro)+(inteiro===1?' real':' reais'));
+  if(centavos>0) partes.push(porExtenso(centavos)+(centavos===1?' centavo':' centavos'));
+  return partes.join(' e ')||'zero reais';
+}
+
+function _buildContratoHTML(d){
+  return '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">'+
+  '<title>Contrato Guiamento Virtual — Desenrola Turismo</title>'+
+  '<style>'+
+    '@page{margin:25mm 20mm}'+
+    'body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.6;color:#000;max-width:800px;margin:0 auto;padding:20px}'+
+    'h1{text-align:center;font-size:13pt;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:20px}'+
+    'h2{font-size:11pt;text-transform:uppercase;margin-top:20px;margin-bottom:4px}'+
+    'p{margin:6px 0;text-align:justify}'+
+    '.cabecalho{text-align:center;margin-bottom:20px;font-size:10pt;color:#333}'+
+    '.assinaturas{margin-top:50px;display:flex;justify-content:space-between}'+
+    '.assinatura{width:45%;text-align:center}'+
+    '.linha{border-top:1px solid #000;padding-top:6px;margin-top:40px}'+
+    '@media print{body{padding:0}button{display:none}}'+
+  '</style></head><body>'+
+  '<div class="cabecalho">'+
+    '<b>DESENROLA TURISMO</b><br>'+
+    '56.044.414 CAMILA PASCHOLATI GUSMÃO RIGHETTI MEI — CNPJ nº 56.004.414/0001-43<br>'+
+    'Rua Limoeiro, nº 955, Jardim Limoeiro, Arujá/SP'+
+  '</div>'+
+  '<h1>CONTRATO DE GUIAMENTO VIRTUAL</h1>'+
+  '<p>Pelo presente instrumento particular, de um lado <b>56.044.414 CAMILA PASCHOLATI GUSMÃO RIGHETTI MEI</b>, '+
+  'inscrita no CNPJ nº 56.004.414/0001-43, com sede à Rua Limoeiro, nº 955, Jardim Limoeiro, Arujá/SP, '+
+  'doravante denominada <b>CONTRATADA</b>, e, de outro lado, <b>'+esc(d.nome)+'</b>, '+
+  'inscrito(a) no CPF nº <b>'+esc(d.cpf)+'</b>, doravante denominado(a) <b>CONTRATANTE</b>, '+
+  'têm entre si justo e contratado o que segue, nos termos da legislação civil brasileira vigente.</p>'+
+
+  '<h2>CLÁUSULA 1ª — DO OBJETO</h2>'+
+  '<p>1.1. O presente contrato tem por objeto a prestação de serviço de guiamento virtual, consistindo em '+
+  'acompanhamento remoto, orientação estratégica e suporte em tempo real ao Contratante durante sua visita '+
+  'aos parques temáticos, incluindo esclarecimento de dúvidas, organização logística, sugestões de atrações, '+
+  'shows, alimentação e auxílio na tomada de decisões durante o dia de parque.</p>'+
+  '<p>1.2. O serviço será prestado exclusivamente nas seguintes datas: '+esc(d.datasTexto)+'.</p>'+
+  '<p>1.3. Para parques Disney, a Contratada poderá auxiliar no planejamento estratégico e agendamento de '+
+  'atrações por meio dos sistemas oficiais disponíveis (como Lightning Lane Multi Pass), conforme regras '+
+  'vigentes à época e sempre mediante autorização prévia do Contratante.</p>'+
+  '<p>1.4. O Contratante declara ciência de que a Contratada não se responsabiliza por serviços de terceiros, '+
+  'tais como transporte, hospedagem, ingressos, alimentação ou quaisquer outros itens não expressamente previstos neste contrato.</p>'+
+
+  '<h2>CLÁUSULA 2ª — DAS OBRIGAÇÕES DA CONTRATADA</h2>'+
+  '<p>2.1. São obrigações da Contratada: prestar o guiamento virtual nas datas contratadas; fornecer informações '+
+  'atualizadas e compatíveis com as regras operacionais dos parques; prestar suporte remoto durante o período '+
+  'contratado, por meio de aplicativo de mensagens instantâneas previamente definido entre as partes; atuar com '+
+  'boa-fé, zelo profissional e dentro dos limites do serviço contratado.</p>'+
+
+  '<h2>CLÁUSULA 3ª — DAS OBRIGAÇÕES DO CONTRATANTE</h2>'+
+  '<p>3.1. São obrigações do Contratante: fornecer informações corretas sobre preferências, horários e limitações '+
+  'do grupo; respeitar as orientações repassadas pela Contratada, ciente de que decisões finais cabem exclusivamente '+
+  'ao Contratante; arcar integralmente com todos os custos da viagem; cumprir as normas e regulamentos dos parques '+
+  'e autoridades locais.</p>'+
+
+  '<h2>CLÁUSULA 4ª — DAS OPERAÇÕES DE COMPRA (SE APLICÁVEL)</h2>'+
+  '<p>4.1. Caso o Contratante opte pela intermediação da Contratada para compras de serviços adicionais (como '+
+  'Lightning Lane, Mobile Order ou reservas), tais operações dependerão de autorização expressa e prévia do Contratante, '+
+  'inclusive por meios eletrônicos.</p>'+
+  '<p>4.2. Eventuais taxas administrativas, cauções, prazos de reembolso e formas de pagamento seguirão as regras '+
+  'previamente informadas e aceitas pelo Contratante, bem como a legislação brasileira aplicável.</p>'+
+
+  '<h2>CLÁUSULA 5ª — DA REMUNERAÇÃO</h2>'+
+  '<p>5.1. Pela prestação dos serviços descritos neste contrato, o Contratante pagará à Contratada o valor total '+
+  'de <b>'+esc(d.valorNum)+'</b> (<b>'+esc(d.valorExt)+'</b>).</p>'+
+  '<p>5.2. As partes reconhecem que o valor acima já foi integralmente quitado, de forma antecipada, por meio de '+
+  '<b>'+esc(d.forma)+'</b>, nada mais havendo a reclamar a esse título.</p>'+
+
+  '<h2>CLÁUSULA 6ª — DO CANCELAMENTO</h2>'+
+  '<p>6.1. Em caso de cancelamento por iniciativa do Contratante:</p>'+
+  '<p>— Até 60 (sessenta) dias antes da data do serviço: reembolso de 70% do valor pago;</p>'+
+  '<p>— Entre 60 (sessenta) e 15 (quinze) dias antes da data do serviço: reembolso de 50% do valor pago;</p>'+
+  '<p>— Com menos de 15 (quinze) dias de antecedência: não haverá reembolso, considerando o bloqueio da agenda da Contratada.</p>'+
+  '<p>6.2. Caso o cancelamento ocorra por motivo de força maior devidamente comprovado, as partes poderão negociar '+
+  'nova data ou condições, de comum acordo.</p>'+
+
+  '<h2>CLÁUSULA 7ª — DO USO DE IMAGEM</h2>'+
+  '<p>7.1. O Contratante autoriza, de forma gratuita, irrevogável e por prazo indeterminado, o uso de sua imagem, '+
+  'voz e nome, captados por meio de fotos e vídeos de feedback sobre o serviço prestado, exclusivamente para fins '+
+  'institucionais, promocionais e de divulgação dos serviços da Contratada.</p>'+
+  '<p>7.2. A presente autorização não abrange o uso da imagem do Contratante para fins comerciais diversos, nem para '+
+  'conteúdos que não estejam diretamente relacionados ao feedback do serviço de guiamento virtual.</p>'+
+  '<p>7.3. A Contratada compromete-se a utilizar o material de forma ética, respeitosa e em conformidade com a '+
+  'Lei Geral de Proteção de Dados (Lei nº 13.709/2018).</p>'+
+
+  '<h2>CLÁUSULA 8ª — DA VIGÊNCIA E RESCISÃO</h2>'+
+  '<p>8.1. Este contrato entra em vigor na data de sua assinatura e permanecerá válido até a conclusão integral dos serviços.</p>'+
+  '<p>8.2. A Contratada poderá rescindir o contrato de forma imediata em caso de descumprimento contratual, '+
+  'má-fé ou fornecimento de informações falsas pelo Contratante.</p>'+
+
+  '<h2>CLÁUSULA 9ª — DAS DISPOSIÇÕES GERAIS</h2>'+
+  '<p>9.1. Este contrato constitui o acordo integral entre as partes.</p>'+
+  '<p>9.2. Qualquer tolerância quanto ao descumprimento de cláusulas será considerada mera liberalidade, não implicando novação.</p>'+
+  '<p>9.3. Este contrato é regido pelas leis da República Federativa do Brasil.</p>'+
+  '<p>9.4. Fica eleito o foro do domicílio da Contratada para dirimir eventuais controvérsias, com renúncia '+
+  'expressa a qualquer outro, por mais privilegiado que seja.</p>'+
+
+  '<p style="margin-top:30px;text-align:center">E, por estarem justas e contratadas, as partes assinam o presente instrumento em duas vias de igual teor.</p>'+
+  '<p style="text-align:center;margin-top:14px"><b>'+esc(d.dataAssinatura)+'</b></p>'+
+
+  '<div class="assinaturas">'+
+    '<div class="assinatura"><div class="linha">'+esc(d.nome)+'<br>CPF nº '+esc(d.cpf)+'<br><i>CONTRATANTE</i></div></div>'+
+    '<div class="assinatura"><div class="linha">56.044.414 CAMILA PASCHOLATI GUSMÃO RIGHETTI MEI<br>CNPJ nº 56.004.414/0001-43<br><i>CONTRATADA</i></div></div>'+
+  '</div>'+
+
+  '<br><br><p style="text-align:center;font-size:9pt;color:#666">'+
+    '<button onclick="window.print()" style="padding:8px 20px;background:#2C6AA3;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11pt">🖨️ Imprimir / Salvar PDF</button>'+
+  '</p>'+
+  '</body></html>';
+}
+
+// escHtml: aliased to esc() (= escapeHtml) — função removida em CORR-18
 
 // ═══════════════════════ INTEGRAÇÃO GUIAMENTO VIRTUAL ═══════════════════════
 let _ggVendaId = null; // ID da venda que originou o modal de grupo
@@ -5542,7 +6426,7 @@ function _buildAgendaCalendar(body, legenda, grupos){
   }).join('');
 
   // Construir mapa data → eventos
-  const eventos = {};
+  const eventos = {}; window._agEventosDay = eventos;
   Object.values(grupos).forEach(function(g){
     const guia    = g.guia || g.nomeGuia || 'Sem guia';
     const nome    = g.nome || g.nomeGrupo || g.responsavel || '—';
@@ -5577,7 +6461,17 @@ function _buildAgendaCalendar(body, legenda, grupos){
         (ev.parque ? '<br>'+escapeHtml(ev.parque) : '')+
       '</div>';
     }).join('');
-    cells.push('<td class="ag-cell'+(isToday?' today':'')+'"><div class="ag-day-num"'+(isToday?' style="color:var(--primary)"':'')+'>'+d+'</div>'+evHtml+'</td>');
+    var maxEv=3;
+    var evVisible=evs.slice(0,maxEv);
+    var evExtra=evs.length-maxEv;
+    var evHtmlLimited=evVisible.map(function(ev){
+      return '<div class="ag-event guia-cor-'+ev.cor+'" title="'+escapeHtml(ev.guia)+'">'+
+        getParqueEmoji(ev.parque)+' <b>'+escapeHtml(ev.nome)+'</b>'+
+        (ev.parque ? '<br>'+escapeHtml(ev.parque) : '')+
+      '</div>';
+    }).join('');
+    if(evExtra>0) evHtmlLimited+='<div class="ag-more" data-day="'+ds+'" style="font-size:10px;color:var(--text3);margin-top:2px;cursor:pointer" onclick="agShowDayDetail(this.dataset.day)" title="Ver todos">+'+evExtra+' mais</div>';
+    cells.push('<td class="ag-cell'+(isToday?' today':'')+'"><div class="ag-day-num"'+(isToday?' style="color:var(--primary)"':'')+'>'+d+'</div>'+evHtmlLimited+'</td>');
   }
 
   // Trailing empty cells
@@ -5592,6 +6486,23 @@ function _buildAgendaCalendar(body, legenda, grupos){
     rows += '<tr>'+cells.slice(i,i+7).join('')+'</tr>';
   }
   body.innerHTML = rows || '<tr><td colspan="7" class="ag-loading">Nenhum guiamento neste mês.</td></tr>';
+}
+
+function agShowDayDetail(dateStr){
+  var evs=(window._agEventosDay||{})[dateStr]||[];
+  if(!evs.length){ toast('Nenhum evento neste dia.'); return; }
+  var txt=evs.map(function(ev){
+    return getParqueEmoji(ev.parque)+' '+ev.nome+' \u2014 '+ev.guia+(ev.parque?' | '+ev.parque:'');
+  }).join('\n');
+  openInputModal('Eventos em '+_fmtDataContrato(dateStr), '', function(){});
+  setTimeout(function(){
+    var el=document.getElementById('_inputModal');
+    if(!el) return;
+    var inp=el.querySelector('#_inputModalVal');
+    if(inp) inp.parentElement.innerHTML='<div style="font-size:12px;white-space:pre-wrap;max-height:200px;overflow-y:auto;color:var(--text);line-height:1.6">'+escapeHtml(txt)+'</div>';
+    var okBtn=el.querySelector('#_inputModalOk');
+    if(okBtn) okBtn.style.display='none';
+  }, 50);
 }
 
 function agMesAnterior(){ if(_agMonth===0){ _agMonth=11; _agYear--; } else _agMonth--; renderAgendaGuias(); }
@@ -5627,6 +6538,17 @@ function abrirModalGrupoGuiamento(venda){
   _carregarGuiasSelect();
 
   openModal('modal-grupo-guiamento');
+}
+
+function _ggGetParques(){
+  var parques=[];
+  document.querySelectorAll('#gg-datas-list > div[id^="gg-data-row-"]').forEach(function(row){
+    var idx=row.id.replace('gg-data-row-','');
+    var data=(document.getElementById('gg-data-'+idx)||{value:''}).value;
+    var parque=(document.getElementById('gg-parque-'+idx)||{value:''}).value;
+    if(data&&parque) parques.push({data:data,parque:parque});
+  });
+  return parques;
 }
 
 function ggAddData(defaultDate){
@@ -5720,7 +6642,7 @@ function confirmarGrupoGuiamento(){
     toast('Adicione pelo menos uma data e parque','error'); return;
   }
 
-  var origemId = _ggVendaId ? ('venda_' + _ggVendaId) : ('manual_' + Date.now());
+  var origemId = _ggVendaId ? ('venda_' + _ggVendaId) : ('manual_' + Date.now() + '_' + Math.random().toString(36).slice(2,7));
   var pendingObj = {
     tipo: 'CRIAR_GRUPO',
     criadoEm: Date.now(),
@@ -5741,10 +6663,14 @@ function confirmarGrupoGuiamento(){
 
   _fbDb.ref('desenrola_v3/integrations/guiamento_pending').push(pendingObj)
     .then(function(){
+      // Guardar dados para contrato antes de fechar o modal
+      _pendingContratoDados = Object.assign({}, pendingObj.payload, {origemId: origemId});
       closeModal('modal-grupo-guiamento');
       toast('✅ Grupo criado! Sistema de Guiamento notificado.');
       // Notificar Guiamento via canal dedicado 'desenrola_integracao'
       if(_guiChannel){ try{ _guiChannel.postMessage({type:'CRIAR_GRUPO_GUIAMENTO', payload: pendingObj.payload, origemId: origemId}); }catch(e){} }
+      // Abrir modal de contrato automaticamente
+      setTimeout(function(){ abrirModalContrato(_pendingContratoDados); }, 400);
     })
     .catch(function(e){
       console.error('Erro ao criar grupo:', e);
@@ -5838,7 +6764,115 @@ window.addEventListener('load', init);
     </div>
     <div class="modal-footer" style="margin-top:16px">
       <button class="btn btn-ghost" onclick="closeModal('modal-grupo-guiamento')">Pular</button>
+      <button class="btn btn-ghost" onclick="abrirModalContrato({parques:_ggGetParques(),responsavel:document.getElementById('gg-responsavel').value,nome:document.getElementById('gg-nome').value})">📄 Só Contrato</button>
       <button class="btn btn-primary" onclick="confirmarGrupoGuiamento()">🗺️ Criar Grupo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CLIENTE -->
+<div id="modal-cliente" class="modal-overlay">
+  <div class="modal" style="max-width:680px;max-height:90vh;overflow-y:auto">
+    <div class="modal-header"><div class="modal-title" id="modal-cliente-title">Novo Cliente</div><button class="modal-close" onclick="closeModal('modal-cliente')">✕</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Nome *</label><input type="text" class="form-input" id="cli-nome"/></div>
+      <div class="form-group"><label class="form-label">Sobrenome *</label><input type="text" class="form-input" id="cli-sobrenome"/></div>
+      <div class="form-group"><label class="form-label">CPF</label><input type="text" class="form-input" id="cli-cpf" placeholder="000.000.000-00" maxlength="14"/></div>
+      <div class="form-group"><label class="form-label">Nascimento</label><input type="date" class="form-input" id="cli-nascimento"/></div>
+      <div class="form-group"><label class="form-label">WhatsApp *</label><input type="tel" class="form-input" id="cli-telefone"/></div>
+      <div class="form-group"><label class="form-label">E-mail</label><input type="email" class="form-input" id="cli-email"/></div>
+    </div>
+    <div class="form-group" style="margin-top:4px"><label class="form-label">Endereço Completo</label><input type="text" class="form-input" id="cli-endereco" placeholder="Logradouro, Nº, Bairro, Cidade - Estado, CEP"/></div>
+    <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><label class="form-label" style="margin:0;font-weight:700">Passageiros adicionais</label><button class="btn btn-ghost btn-sm" onclick="cliAddPassageiro()">+ Adicionar</button></div>
+      <div id="cli-passageiros-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <div class="modal-footer" style="margin-top:16px"><button class="btn btn-ghost" onclick="closeModal('modal-cliente')">Cancelar</button><button class="btn btn-primary" onclick="_saveCliente()">Salvar Cliente</button></div>
+  </div>
+</div>
+<!-- MODAL: ORCAMENTO -->
+<div id="modal-orcamento" class="modal-overlay">
+  <div class="modal" style="max-width:720px;max-height:92vh;overflow-y:auto">
+    <div class="modal-header"><div class="modal-title" id="modal-orc-title">Novo Orçamento</div><button class="modal-close" onclick="closeModal('modal-orcamento')">✕</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div class="form-group"><label class="form-label">Operadora *</label><select class="form-select" id="orc-operadora" onchange="orcOnOperadoraChange()"><option value="">Selecione...</option></select></div>
+      <div class="form-group"><label class="form-label">Cliente *</label><select class="form-select" id="orc-cliente" onchange="orcOnClienteChange()"><option value="">Selecione...</option></select></div>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><span style="font-weight:700;font-size:13px">Serviços</span><button class="btn btn-ghost btn-sm" onclick="orcAddItem()">+ Serviço</button></div>
+      <div id="orc-itens-list" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label class="form-label">Forma de Pagamento</label><select class="form-select" id="orc-forma-pag"><option value="">Selecione operadora primeiro</option></select></div>
+        <div class="form-group" id="orc-forma-custom-group" style="display:none"><label class="form-label">Especificar</label><input type="text" class="form-input" id="orc-forma-custom"/></div>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div class="form-group"><label class="form-label">Total (R$)</label><input type="number" class="form-input" id="orc-total" step="0.01" oninput="orcRecalcular()"/></div>
+        <div class="form-group"><label class="form-label">Total/Passageiro</label><input type="text" class="form-input" id="orc-total-pax" readonly style="background:var(--surface2)"/></div>
+        <div class="form-group"><label class="form-label">Comissão %</label><input type="number" class="form-input" id="orc-com-pct" step="0.01" oninput="orcRecalcular()"/></div>
+        <div class="form-group"><label class="form-label">Comissão R$</label><input type="text" class="form-input" id="orc-com-valor" readonly style="background:var(--surface2)"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Observações</label><textarea class="form-input" id="orc-obs" rows="2"></textarea></div>
+    </div>
+    <div class="modal-footer" style="margin-top:12px"><button class="btn btn-ghost" onclick="closeModal('modal-orcamento')">Cancelar</button><button class="btn btn-primary" onclick="_saveOrcamento()">Salvar Orçamento</button></div>
+  </div>
+</div>
+
+<!-- MODAL: CONTRATO GUIAMENTO VIRTUAL -->
+<div id="modal-contrato-guiamento" class="modal-overlay">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <div class="modal-title">📄 Emitir Contrato — Guiamento Virtual</div>
+      <button class="modal-close" onclick="closeModal('modal-contrato-guiamento')">✕</button>
+    </div>
+
+    <!-- Preview das partes -->
+    <div style="background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px">
+      <div style="margin-bottom:6px"><b>Contratante:</b> <span id="cg-preview-nome" style="color:var(--primary)">—</span></div>
+      <div style="margin-bottom:6px"><b>CPF:</b> <span id="cg-preview-cpf" style="color:var(--primary)">—</span></div>
+      <div><b>Datas/Parques:</b> <span id="cg-preview-parques" style="color:var(--primary)">—</span></div>
+    </div>
+
+    <!-- Cliente: select ou manual -->
+    <div class="form-group">
+      <label class="form-label">Cliente (base de clientes)</label>
+      <select class="form-select" id="cg-cliente-sel" onchange="cgOnClienteChange()">
+        <option value="">— Preencher manualmente —</option>
+      </select>
+    </div>
+    <div id="cg-manual-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-group">
+        <label class="form-label">Nome completo *</label>
+        <input type="text" class="form-input" id="cg-nome-manual" placeholder="Nome do contratante"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">CPF *</label>
+        <input type="text" class="form-input" id="cg-cpf-manual" placeholder="000.000.000-00" maxlength="14"/>
+      </div>
+    </div>
+
+    <!-- Valor e pagamento -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
+      <div class="form-group">
+        <label class="form-label">Valor do Guiamento (R$) *</label>
+        <input type="number" class="form-input" id="cg-valor" step="0.01" placeholder="0,00"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Forma de Pagamento *</label>
+        <select class="form-select" id="cg-forma">
+          <option value="cartão de crédito">Cartão de crédito</option>
+          <option value="Pix">Pix</option>
+          <option value="link de operadora">Link de operadora</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-footer" style="margin-top:14px">
+      <button class="btn btn-ghost" onclick="closeModal('modal-contrato-guiamento')">Cancelar</button>
+      <button class="btn btn-primary" onclick="gerarContratoGuiamento()">📄 Gerar e Baixar Contrato</button>
     </div>
   </div>
 </div>
