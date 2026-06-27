@@ -691,7 +691,7 @@ tbody tr:hover{background:var(--surface2)}
 
   <div id="reg-tab-ingressos" class="tab-panel" style="display:none">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-      <div class="card"><div class="card-title">🎟️ Tipos de Ingresso</div><div id="tipos-ingresso-list" style="margin-bottom:10px"></div><div style="display:flex;gap:8px"><input type="text" class="form-input" id="new-tipo-ingresso" placeholder="Novo tipo..."/><button class="btn btn-primary btn-sm" onclick="addTipoIngresso()">+</button></div></div>
+      <div class="card"><div class="card-title">🎟️ Tipos de Ingresso</div><div id="tipos-ingresso-list" style="margin-bottom:10px"></div><div style="display:flex;gap:8px"><div style="display:flex;flex-direction:column;gap:4px;flex:1"><input type="text" class="form-input" id="new-tipo-ingresso" placeholder="Nome do tipo (ex: Disney Park Hopper)"/><input type="text" class="form-input" id="new-tipo-ingresso-desc" placeholder="Descrição (ex: Acesso a todos os parques Disney...)" style="font-size:12px"/></div><button class="btn btn-primary btn-sm" onclick="addTipoIngresso()">+</button></div></div>
       <div class="card"><div class="card-title">💳 Pagamento por Operadora</div><div id="formas-op-list" style="margin-bottom:10px"></div><div style="display:flex;flex-direction:column;gap:6px"><select class="form-select" id="new-forma-op-sel"><option value="">Operadora...</option></select><input type="text" class="form-input" id="new-forma-op-val" placeholder="Ex: 10x sem juros"/><button class="btn btn-primary btn-sm" onclick="addFormaPagOperadora()">+ Adicionar</button></div></div>
     </div>
   </div>
@@ -2423,6 +2423,42 @@ function vendaPuxarCliente(){
   toast('✅ Cliente importado!','success');
 }
 
+function _abrirVendaDoCRM(cli, orc, lead) {
+  // Abrir modal de venda pré-preenchido com dados do CRM/orçamento
+  openModal('modal-venda');
+  setTimeout(function() {
+    var hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('v-data').value = hoje;
+    document.getElementById('v-passageiro').value = cli ? (cli.nome+' '+(cli.sobrenome||'')).trim() : '';
+    document.getElementById('v-pax').value = getClientePax(cli ? cli.id : 0) || 1;
+    if(orc) {
+      // Operadora
+      var opSel = document.getElementById('v-operadora');
+      if(opSel) setTimeout(function(){ opSel.value = orc.operadora||''; }, 50);
+      // Serviços
+      var srvs = orc.itens ? [...new Set(orc.itens.map(function(i){ return i.tipo; }))] : [];
+      document.querySelectorAll('#v-servicos-container input[type=checkbox]').forEach(function(cb){ cb.checked=false; });
+      srvs.forEach(function(s){ var cb=document.getElementById('srv-'+s); if(cb){ cb.checked=true; toggleServico(cb); } });
+      // Valores
+      document.getElementById('v-valor').value = orc.total || '';
+      document.getElementById('v-comissao').value = orc.comissaoValor || '';
+      calcPctAuto();
+      // Vendedor
+      if(lead && lead.vendedor) {
+        var vSel = document.getElementById('v-vendedor');
+        if(vSel) setTimeout(function(){ vSel.value = lead.vendedor; }, 50);
+      }
+      // OBS
+      document.getElementById('v-obs').value = 'Via CRM — Lead #'+lead.id+' · Orçamento #'+orc.id;
+      // Selecionar destino
+      var dSel = document.getElementById('v-destino');
+      if(dSel && lead.destino) dSel.value = lead.destino;
+    }
+    document.getElementById('modal-venda-title').textContent = '🏆 Nova Venda — CRM Lead #'+lead.id;
+    toast('Preencha e salve a venda para concluir o fechamento!','success');
+  }, 100);
+}
+
 function prepareVendaModal(){
   // Popular select de orçamentos disponíveis
   var orcSel = document.getElementById('v-orc-ref');
@@ -2582,6 +2618,16 @@ function _saveVenda(){ invalidateCommCache();
       setTimeout(function(){ abrirModalGrupoGuiamento(venda); }, 100);
       return;
     }
+  }
+  // Se veio do CRM, vincular venda ao lead
+  if(_crmLeadId){
+    var crmLead=(DB.crm||[]).find(function(l){return l.id===_crmLeadId;});
+    if(crmLead){ crmLead.vendaGeradaId=venda.id; }
+    _crmLeadId=null;
+    var vendaOrc=(DB.orcamentos||[]).find(function(o){return o.id===crmLead?.orcamentoId;});
+    if(vendaOrc) vendaOrc.status='aprovado';
+    invalidateCommCache();
+    toast('🏆 Venda #'+venda.id+' criada via CRM!','success');
   }
   saveToStorage();
   closeModal('modal-venda');
@@ -5048,8 +5094,21 @@ const PERFIL_LABELS = {adm:'Administrador',mkt:'Marketing',vendedor:'Vendedor',g
       hashSenha(senhaRaw).then(function(h){ user.senha=h; saveToStorage(); syncUsuarioFirebase(user); });
     } else {
       // Sync do usuário logado ao Firebase — garante que Guiamento encontre o hash correto
-      // Não usa syncAllUsuariosFirebase (evita sobrescrever hashes válidos de outros usuários)
       setTimeout(function(){ if(_fbDb&&_fbOnline) syncUsuarioFirebase(user); }, 1500);
+      // Soft-sync: enviar ao Firebase usuários que ainda NÃO têm entrada lá
+      // (apenas se não existirem — evita sobrescrever hashes corretos de outros usuários)
+      setTimeout(function(){
+        if(!_fbDb||!_fbOnline) return;
+        _fbDb.ref('desenrola_v3/usuarios').once('value').then(function(snap){
+          var existingKeys = snap.exists() ? Object.keys(snap.val()) : [];
+          (DB.usuarios||[]).forEach(function(u){
+            var key = 'u_'+u.id;
+            if(!existingKeys.includes(key)){
+              syncUsuarioFirebase(u); // Só envia se não existir ainda
+            }
+          });
+        }).catch(function(){});
+      }, 4000);
     }
   }
 function doLogin(){
@@ -5616,33 +5675,13 @@ function confirmMoveLead(){
     var cli=(DB.clientes||[]).find(function(x){return x.id===cliId;});
     if(!orc){ toast('Orçamento #'+orcIdF+' não encontrado. Pode ter sido excluído.','error'); return; }
     if(!cli){ toast('Cliente não encontrado. Verifique o cadastro.','error'); return; }
-    var hoje=new Date().toISOString().split('T')[0];
-    var novaVenda={
-      id:DB.nextVendaId++, data:hoje,
-      passageiro:cli?(cli.nome+' '+cli.sobrenome):(lead.nome||lead.telefone),
-      destino:lead.destino||'Orlando Disney',
-      servicos:orc?[...new Set((orc.itens||[]).map(function(i){return i.tipo;}))]:['Pacote'],
-      pax:getClientePax(cliId),
-      operadora:orc?(orc.operadora||'Outros'):(lead.operadora||'Outros'),
-      vendedor:lead.vendedor||'',
-      valor:orc?orc.total:(lead.valorProposta||0),
-      comissao:orc?orc.comissaoValor:0,
-      pctComissao:orc?orc.comissaoPct:0,
-      forma:orc?(orc.formaPagamento||'Pix'):'Pix',
-      sitPgto:'em aberto',sitCom:'em aberto',
-      obs:'Gerado via CRM — Lead #'+lead.id+' · Orçamento #'+orcIdF,
-      divVendedor:DB.divisaoPadrao.vendedor,divMkt:DB.divisaoPadrao.mkt,
-      divThomaz:DB.divisaoPadrao.thomaz,divCamila:DB.divisaoPadrao.camila,
-      divEmpresa:DB.divisaoPadrao.empresa,
-      guiamentoStatus:(orc&&(orc.itens||[]).some(function(i){
-        return (i.tipo||'').toLowerCase().includes('guiamento');
-      }))?'pendente':null
-    };
-    DB.vendas.push(novaVenda);
-    lead.vendaGeradaId=novaVenda.id;
-    if(orc) orc.status='aprovado';
-    invalidateCommCache();
-    toast('🏆 Venda #'+novaVenda.id+' criada automaticamente!','success');
+    // Avançar lead para fechado e abrir formulário de venda pré-preenchido
+    lead.etapa='fechado'; lead.fechadoEm=new Date().toISOString();
+    saveToStorage(); closeModal('modal-move-lead'); renderCRM();
+    _crmLeadId = id; // guardar contexto
+    _abrirVendaDoCRM(cli, orc, lead);
+    return;
+    // Venda aberta via modal (ver _abrirVendaDoCRM)
 
   } else if(target==='pos_venda'){
     var d=new Date(); d.setDate(d.getDate()+15);
@@ -6249,18 +6288,42 @@ function orcAddItem(dados){
   row.id='orc-item-'+i;
   row.style.cssText='background:var(--surface2);border-radius:8px;padding:10px;position:relative';
   var tiposOpts=ORC_SERVICO_TIPOS.map(function(t){return '<option value="'+t+'"'+(t===tipo?' selected':'')+'>'+t+'</option>';}).join('');
-  var ingressoOpts=(DB.config.tiposIngresso||[]).map(function(t){return '<option value="'+escapeHtml(t)+'"'+(dados&&dados.tipoIngresso===t?' selected':'')+'>'+t+'</option>';}).join('');
+  var ingressoOpts=(DB.config.tiposIngresso||[]).map(function(t){ var nm=t.nome||t; return '<option value="'+escapeHtml(nm)+'"'+(dados&&dados.tipoIngresso===nm?' selected':'')+'>'+escapeHtml(nm)+'</option>'; }).join('');
   row.innerHTML='<button onclick="document.getElementById(\'orc-item-'+i+'\').remove();orcRecalcular()" style="position:absolute;top:6px;right:8px;background:none;border:none;color:var(--danger);cursor:pointer">✕</button>'+
     '<div style="display:grid;grid-template-columns:140px 1fr;gap:8px;margin-bottom:8px">'+
     '<div class="form-group" style="margin:0"><label class="form-label">Tipo *</label><select class="form-select" id="orc-tipo-'+i+'" onchange="orcItemTipoChange('+i+')">'+tiposOpts+'</select></div>'+
-    '<div class="form-group" style="margin:0"><label class="form-label">Descrição</label><input type="text" class="form-input" id="orc-desc-'+i+'" value="'+escapeHtml((dados&&dados.descricao)||'')+'"/></div></div>'+
+    '<div class="form-group" style="margin:0" id="orc-desc-group-'+i+'"><label class="form-label">Descrição</label><input type="text" class="form-input" id="orc-desc-'+i+'" value="'+escapeHtml((dados&&dados.descricao)||'')+'"/></div></div>'+
     '<div id="orc-ingresso-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Ingressos'?'':'display:none')+'">'+
-    '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Ingresso</label><select class="form-select" id="orc-ingresso-'+i+'"><option value="">Selecione...</option>'+ingressoOpts+'</select></div></div>'+
+    '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Ingresso</label><select class="form-select" id="orc-ingresso-'+i+'" onchange="orcIngressoChange('+i+')"><option value="">Selecione...</option>'+ingressoOpts+'</select></div></div>'+
+    '<div id="orc-voo-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Voo'?'':'display:none')+'">'+
+    '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Voo</label>'+
+    '<select class="form-select" id="orc-voo-sub-'+i+'" onchange="orcVooTipoChange('+i+')">'+
+    '<option value="">Selecione...</option>'+
+    '<option value="so-ida"'+(dados&&dados.subTipoVoo==='so-ida'?' selected':'')+'>Só Ida (1 trecho)</option>'+
+    '<option value="ida-volta"'+(dados&&dados.subTipoVoo==='ida-volta'?' selected':'')+'>Ida e Volta (2 trechos)</option>'+
+    '<option value="multiplo"'+(dados&&dados.subTipoVoo==='multiplo'?' selected':'')+'>Múltiplo (até 5 trechos)</option>'+
+    '</select></div>'+
+    '<div id="orc-voo-trechos-'+i+'" style="margin-top:6px"></div></div>'+
     '<div style="display:grid;grid-template-columns:'+(temDias?'80px ':'')+' 1fr 80px;gap:8px">'+
     '<div id="orc-dias-col-'+i+'" class="form-group" style="margin:0;'+(temDias?'':'display:none')+'"><label class="form-label">Dias</label><input type="number" class="form-input" id="orc-dias-'+i+'" value="'+(dados&&dados.dias||1)+'" min="1"/></div>'+
     '<div class="form-group" style="margin:0"><label class="form-label">Valor (R$) *</label><input type="number" class="form-input" id="orc-val-'+i+'" value="'+((dados&&dados.valor)||'')+'" step="0.01" oninput="orcRecalcular()"/></div>'+
     '<div class="form-group" style="margin:0"><label class="form-label">Qtd</label><input type="number" class="form-input" id="orc-qtd-'+i+'" value="'+((dados&&dados.qtd)||1)+'" min="1" oninput="orcRecalcular()"/></div></div>';
   il.appendChild(row);
+  // Se for Voo com trechos existentes, restaurar
+  if(tipo==='Voo' && dados && dados.subTipoVoo){
+    setTimeout(function(){
+      var subEl=document.getElementById('orc-voo-sub-'+i); if(subEl) subEl.value=dados.subTipoVoo;
+      var nTr=dados.subTipoVoo==='multiplo'?5:dados.subTipoVoo==='ida-volta'?2:1;
+      orcVooRenderTrechos(i,nTr);
+      if(dados.trechos) dados.trechos.forEach(function(tr,ti){
+        var t=ti+1;
+        ['orig','dest','data','hora'].forEach(function(f){
+          var el=document.getElementById('orc-voo-'+f+'-'+i+'-'+t);
+          if(el) el.value=tr[f==='orig'?'origem':f==='dest'?'destino':f]||'';
+        });
+      });
+    },30);
+  }
 }
 
 function orcItemTipoChange(i){
@@ -6268,6 +6331,47 @@ function orcItemTipoChange(i){
   var temDias=ORC_SERVICO_COM_DIAS.includes(tipo);
   var dc=document.getElementById('orc-dias-col-'+i); if(dc) dc.style.display=temDias?'':'none';
   var ir=document.getElementById('orc-ingresso-row-'+i); if(ir) ir.style.display=tipo==='Ingressos'?'':'none';
+  var vr=document.getElementById('orc-voo-row-'+i); if(vr) vr.style.display=tipo==='Voo'?'':'none';
+  // Esconder campo de descrição padrão se for Voo (trechos têm suas próprias descrições)
+  var dr=document.getElementById('orc-desc-group-'+i); if(dr) dr.style.display=tipo==='Voo'?'none':'';
+}
+
+function orcIngressoChange(i){
+  var tipoNome=(document.getElementById('orc-ingresso-'+i)||{value:''}).value;
+  var tipos=DB.config.tiposIngresso||[];
+  var tipoObj=tipos.find(function(t){ return (t.nome||t)===tipoNome; });
+  var desc=tipoObj&&tipoObj.desc?tipoObj.desc:'';
+  var descEl=document.getElementById('orc-desc-'+i);
+  if(descEl&&!descEl.value&&desc) descEl.value=desc;
+}
+
+function orcVooTipoChange(i){
+  var sub=document.getElementById('orc-voo-sub-'+i)?.value||'';
+  var n = sub==='multiplo'?5 : sub==='ida-volta'?2 : 1;
+  orcVooRenderTrechos(i, n);
+}
+
+function orcVooRenderTrechos(i, n){
+  var cont=document.getElementById('orc-voo-trechos-'+i); if(!cont) return;
+  cont.innerHTML='';
+  for(var t=1;t<=n;t++){
+    var row=document.createElement('div');
+    row.style.cssText='background:#f0f9ff;border-radius:6px;padding:8px;margin-top:6px;border:1px solid #bae6fd';
+    row.innerHTML='<div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:6px">✈️ Trecho '+t+(n>1?' de '+n:'')+' </div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Origem</label>'+
+          '<input type="text" class="form-input" id="orc-voo-orig-'+i+'-'+t+'" placeholder="GRU" list="aer-list" style="text-transform:uppercase"/></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Destino</label>'+
+          '<input type="text" class="form-input" id="orc-voo-dest-'+i+'-'+t+'" placeholder="MCO" list="aer-list" style="text-transform:uppercase"/></div>'+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Data</label>'+
+          '<input type="date" class="form-input" id="orc-voo-data-'+i+'-'+t+'"/></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Horário</label>'+
+          '<input type="time" class="form-input" id="orc-voo-hora-'+i+'-'+t+'"/></div>'+
+      '</div>';
+    cont.appendChild(row);
+  }
 }
 
 function orcRecalcular(){
@@ -6307,11 +6411,27 @@ function _saveOrcamento(){
   document.querySelectorAll('[id^="orc-item-"]').forEach(function(row){
     var i=row.id.replace('orc-item-','');
     var tipo=(document.getElementById('orc-tipo-'+i)||{value:''}).value; if(!tipo) return;
-    itens.push({tipo:tipo,descricao:(document.getElementById('orc-desc-'+i)||{value:''}).value.trim(),
+    var itemObj={tipo:tipo,descricao:(document.getElementById('orc-desc-'+i)||{value:''}).value.trim(),
       tipoIngresso:(document.getElementById('orc-ingresso-'+i)||{value:''}).value,
       dias:parseInt((document.getElementById('orc-dias-'+i)||{value:1}).value)||1,
       valor:parseFloat((document.getElementById('orc-val-'+i)||{value:0}).value)||0,
-      qtd:parseInt((document.getElementById('orc-qtd-'+i)||{value:1}).value)||1});
+      qtd:parseInt((document.getElementById('orc-qtd-'+i)||{value:1}).value)||1};
+    // Trechos de voo
+    if(tipo==='Voo'){
+      var subVoo=(document.getElementById('orc-voo-sub-'+i)||{value:''}).value;
+      var nTrechos=subVoo==='multiplo'?5:subVoo==='ida-volta'?2:1;
+      itemObj.subTipoVoo=subVoo; itemObj.trechos=[];
+      for(var t=1;t<=nTrechos;t++){
+        var orig=(document.getElementById('orc-voo-orig-'+i+'-'+t)||{value:''}).value.trim().toUpperCase();
+        var dest=(document.getElementById('orc-voo-dest-'+i+'-'+t)||{value:''}).value.trim().toUpperCase();
+        if(orig||dest){
+          itemObj.trechos.push({origem:orig,destino:dest,
+            data:(document.getElementById('orc-voo-data-'+i+'-'+t)||{value:''}).value,
+            hora:(document.getElementById('orc-voo-hora-'+i+'-'+t)||{value:''}).value});
+        }
+      }
+    }
+    itens.push(itemObj);
   });
   if(!itens.length){toast('Adicione ao menos um serviço','error');return;}
   var fpEl=document.getElementById('orc-forma-pag');
@@ -6379,10 +6499,23 @@ function exportarOrcamentoPDF(){
     var vlTotal = fmtR((item.valor||0)*(item.qtd||1));
     var paxN = getClientePax(orc.clienteId)||1;
     var vlPax = fmtR((item.valor||0)*(item.qtd||1)/paxN);
+    var ingressoTag = (item.tipo==='Ingressos' && item.tipoIngresso) ? ' <span style="background:#dbeafe;color:#1d4ed8;padding:1px 6px;border-radius:4px;font-size:9pt">'+escapeHtml(item.tipoIngresso)+'</span>' : '';
     var desc = item.descricao ? ' — '+escapeHtml(item.descricao) : '';
     var dias = item.dias>1 ? ' ('+item.dias+' dias)' : '';
+    // Trechos de voo
+    var vooInfo = '';
+    if(item.tipo==='Voo' && item.trechos && item.trechos.length > 0) {
+      vooInfo = '<div style="font-size:8pt;color:#555;margin-top:4px">';
+      item.trechos.forEach(function(t, ti) {
+        var aerOrig = t.origem ? t.origem : '?';
+        var aerDest = t.destino ? t.destino : '?';
+        var dtHr = [t.data ? new Date(t.data+'T12:00:00').toLocaleDateString('pt-BR') : '', t.hora||''].filter(Boolean).join(' ');
+        vooInfo += (ti+1)+'. '+escapeHtml(aerOrig)+' → '+escapeHtml(aerDest)+(dtHr?' · '+escapeHtml(dtHr):'')+((ti<item.trechos.length-1)?'<br>':'');
+      });
+      vooInfo += '</div>';
+    }
     return '<tr>'+
-      '<td style="padding:10px 8px;border-bottom:1px solid #f0f0f0">'+escapeHtml(item.tipo||'—')+dias+desc+'</td>'+
+      '<td style="padding:10px 8px;border-bottom:1px solid #f0f0f0">'+escapeHtml(item.tipo||'—')+ingressoTag+dias+desc+vooInfo+'</td>'+
       '<td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;text-align:right">'+escapeHtml(vlUnit)+'</td>'+
       '<td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;text-align:center">'+escapeHtml(String(item.qtd||1))+'</td>'+
       '<td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;text-align:right">'+escapeHtml(vlPax)+'</td>'+
@@ -6474,8 +6607,11 @@ function renderIngressosTab(){
   if(ti){
     var tipos=DB.config.tiposIngresso||[];
     ti.innerHTML=tipos.map(function(t,i){
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">'+
-        '<span style="font-size:13px">'+escapeHtml(t)+'</span>'+
+      var nm=t.nome||t; var dsc=t.desc||'';
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">'+
+        '<div><div style="font-size:13px;font-weight:600">'+escapeHtml(nm)+'</div>'+
+        (dsc?'<div style="font-size:11px;color:var(--text3)">'+escapeHtml(dsc)+'</div>':'')+
+        '</div>'+
         '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="removeTipoIngresso('+i+')">✕</button></div>';
     }).join('')||'<p style="color:var(--text3);font-size:13px">Nenhum tipo cadastrado</p>';
   }
@@ -6497,9 +6633,13 @@ function renderIngressosTab(){
 }
 function addTipoIngresso(){
   var el=document.getElementById('new-tipo-ingresso');
+  var elDesc=document.getElementById('new-tipo-ingresso-desc');
   var v=el.value.trim(); if(!v) return;
+  var desc=(elDesc&&elDesc.value.trim())||'';
   if(!DB.config.tiposIngresso) DB.config.tiposIngresso=[];
-  DB.config.tiposIngresso.push(v); el.value='';
+  // Salvar como objeto {nome,desc} ou string (retrocompatibilidade)
+  DB.config.tiposIngresso.push(desc ? {nome:v,desc:desc} : v);
+  el.value=''; if(elDesc) elDesc.value='';
   saveToStorage(); renderIngressosTab();
 }
 function removeTipoIngresso(idx){
@@ -6770,6 +6910,7 @@ function _buildContratoHTML(d){
 
 // ═══════════════════════ INTEGRAÇÃO GUIAMENTO VIRTUAL ═══════════════════════
 let _ggVendaId = null; // ID da venda que originou o modal de grupo
+let _crmLeadId = null; // Se modal-venda foi aberto via CRM, guarda o leadId
 let _agListener = null; // listener Firebase da Agenda Guias
 
 // ── Estado da Agenda Guias ────────────────────────────────────────────────
@@ -6932,11 +7073,16 @@ let _ggDatasCount = 0;
 
 function abrirModalGrupoGuiamento(venda){
   _ggVendaId = venda ? (venda.id||null) : null; // para origemId de deduplicação
-  // Pré-preencher com dados da venda
+  // Pré-preencher com dados da venda e do cliente cadastrado
+  var cliente = venda ? (DB.clientes||[]).find(function(x){
+    // Buscar cliente pelo nome do passageiro ou pelo clienteId do orçamento
+    var nomeVenda = (venda.passageiro||'').toLowerCase();
+    return (x.nome+' '+(x.sobrenome||'')).trim().toLowerCase() === nomeVenda;
+  }) : null;
   var el = document.getElementById('gg-responsavel');
   if(el) el.value = venda ? (venda.passageiro||'') : '';
   var wh = document.getElementById('gg-whatsapp');
-  if(wh) wh.value = '';
+  if(wh) wh.value = cliente ? (cliente.whatsapp||cliente.telefone||'') : '';
   var nm = document.getElementById('gg-nome');
   if(nm) nm.value = venda ? (venda.passageiro||'') : '';
   var ad = document.getElementById('gg-adultos');
@@ -7255,6 +7401,168 @@ window.addEventListener('load', init);
     </div>
   </div>
 </div>
+
+<!-- Datalist de aeroportos para campo de voo -->
+<datalist id="aer-list">
+  <!-- 🇧🇷 Brasil -->
+  <option value="GRU">GRU — Guarulhos/São Paulo</option>
+  <option value="CGH">CGH — Congonhas/São Paulo</option>
+  <option value="VCP">VCP — Campinas/Viracopos</option>
+  <option value="GIG">GIG — Galeão/Rio de Janeiro</option>
+  <option value="SDU">SDU — Santos Dumont/Rio de Janeiro</option>
+  <option value="BSB">BSB — Brasília</option>
+  <option value="CNF">CNF — Confins/Belo Horizonte</option>
+  <option value="FOR">FOR — Pinto Martins/Fortaleza</option>
+  <option value="REC">REC — Guararapes/Recife</option>
+  <option value="SSA">SSA — Luis Eduardo Magalhães/Salvador</option>
+  <option value="POA">POA — Salgado Filho/Porto Alegre</option>
+  <option value="CWB">CWB — Afonso Pena/Curitiba</option>
+  <option value="FLN">FLN — Florianópolis</option>
+  <option value="NAT">NAT — Augusto Severo/Natal</option>
+  <option value="BEL">BEL — Val-de-Cans/Belém</option>
+  <option value="MAO">MAO — Eduardo Gomes/Manaus</option>
+  <option value="GYN">GYN — Santa Genoveva/Goiânia</option>
+  <option value="MCZ">MCZ — Zumbi dos Palmares/Maceió</option>
+  <option value="CGR">CGR — Campo Grande</option>
+  <option value="CGB">CGB — Marechal Rondon/Cuiabá</option>
+  <!-- 🇺🇸 EUA -->
+  <option value="MCO">MCO — Orlando International</option>
+  <option value="MIA">MIA — Miami International</option>
+  <option value="JFK">JFK — John F. Kennedy/Nova York</option>
+  <option value="EWR">EWR — Newark/Nova York</option>
+  <option value="LGA">LGA — LaGuardia/Nova York</option>
+  <option value="LAX">LAX — Los Angeles International</option>
+  <option value="ORD">ORD — O'Hare/Chicago</option>
+  <option value="MDW">MDW — Midway/Chicago</option>
+  <option value="ATL">ATL — Hartsfield-Jackson/Atlanta</option>
+  <option value="DFW">DFW — Dallas/Fort Worth</option>
+  <option value="DEN">DEN — Denver International</option>
+  <option value="SFO">SFO — San Francisco International</option>
+  <option value="SEA">SEA — Seattle-Tacoma International</option>
+  <option value="BOS">BOS — Logan/Boston</option>
+  <option value="IAD">IAD — Dulles/Washington DC</option>
+  <option value="DCA">DCA — Reagan National/Washington DC</option>
+  <option value="IAH">IAH — George Bush/Houston</option>
+  <option value="HOU">HOU — Hobby/Houston</option>
+  <option value="LAS">LAS — Harry Reid/Las Vegas</option>
+  <option value="PHX">PHX — Sky Harbor/Phoenix</option>
+  <option value="FLL">FLL — Fort Lauderdale-Hollywood</option>
+  <option value="PHL">PHL — Philadelphia International</option>
+  <option value="CLT">CLT — Charlotte Douglas</option>
+  <option value="MSP">MSP — Minneapolis-Saint Paul</option>
+  <option value="DTW">DTW — Detroit Metropolitan</option>
+  <option value="SAN">SAN — San Diego International</option>
+  <option value="TPA">TPA — Tampa International</option>
+  <option value="PDX">PDX — Portland International</option>
+  <option value="SLC">SLC — Salt Lake City International</option>
+  <option value="BWI">BWI — Baltimore/Washington</option>
+  <option value="MSY">MSY — Louis Armstrong/Nova Orleans</option>
+  <option value="RDU">RDU — Raleigh-Durham</option>
+  <option value="SJC">SJC — Norman Y. Mineta/San Jose</option>
+  <option value="OAK">OAK — Oakland International</option>
+  <option value="STL">STL — Lambert/Saint Louis</option>
+  <option value="HNL">HNL — Daniel K. Inouye/Honolulu</option>
+  <!-- 🇦🇷 Argentina -->
+  <option value="EZE">EZE — Ezeiza/Buenos Aires</option>
+  <option value="AEP">AEP — Aeroparque/Buenos Aires</option>
+  <option value="COR">COR — Córdoba</option>
+  <option value="MDZ">MDZ — El Plumerillo/Mendoza</option>
+  <option value="BRC">BRC — Bariloche</option>
+  <!-- 🇨🇱 Chile -->
+  <option value="SCL">SCL — Arturo Merino Benítez/Santiago</option>
+  <option value="PMC">PMC — El Tepual/Puerto Montt</option>
+  <!-- 🇺🇾 Uruguai -->
+  <option value="MVD">MVD — Carrasco/Montevideo</option>
+  <!-- 🇵🇾 Paraguai -->
+  <option value="ASU">ASU — Silvio Pettirossi/Assunção</option>
+  <!-- 🇧🇴 Bolívia -->
+  <option value="VVI">VVI — Viru Viru/Santa Cruz</option>
+  <option value="LPB">LPB — El Alto/La Paz</option>
+  <!-- 🇵🇪 Peru -->
+  <option value="LIM">LIM — Jorge Chávez/Lima</option>
+  <option value="CUZ">CUZ — Alejandro Velasco Astete/Cusco</option>
+  <!-- 🇨🇴 Colômbia -->
+  <option value="BOG">BOG — El Dorado/Bogotá</option>
+  <option value="MDE">MDE — José María Córdova/Medellín</option>
+  <option value="CLO">CLO — Alfonso Bonilla/Cali</option>
+  <option value="CTG">CTG — Rafael Núñez/Cartagena</option>
+  <!-- 🇻🇪 Venezuela -->
+  <option value="CCS">CCS — Simón Bolívar/Caracas</option>
+  <!-- 🇪🇨 Equador -->
+  <option value="UIO">UIO — Mariscal Sucre/Quito</option>
+  <option value="GYE">GYE — José Joaquín de Olmedo/Guayaquil</option>
+  <!-- 🇬🇧 Reino Unido -->
+  <option value="LHR">LHR — Heathrow/Londres</option>
+  <option value="LGW">LGW — Gatwick/Londres</option>
+  <option value="STN">STN — Stansted/Londres</option>
+  <option value="MAN">MAN — Manchester</option>
+  <option value="EDI">EDI — Edimburgo</option>
+  <!-- 🇫🇷 França -->
+  <option value="CDG">CDG — Charles de Gaulle/Paris</option>
+  <option value="ORY">ORY — Orly/Paris</option>
+  <option value="NCE">NCE — Nice Côte d'Azur</option>
+  <option value="LYS">LYS — Saint-Exupéry/Lyon</option>
+  <!-- 🇩🇪 Alemanha -->
+  <option value="FRA">FRA — Frankfurt am Main</option>
+  <option value="MUC">MUC — Munich International</option>
+  <option value="BER">BER — Brandenburg/Berlim</option>
+  <option value="HAM">HAM — Helmut Schmidt/Hamburgo</option>
+  <!-- 🇮🇹 Itália -->
+  <option value="FCO">FCO — Fiumicino/Roma</option>
+  <option value="MXP">MXP — Malpensa/Milão</option>
+  <option value="VCE">VCE — Marco Polo/Veneza</option>
+  <option value="NAP">NAP — Capodichino/Nápoles</option>
+  <!-- 🇪🇸 Espanha -->
+  <option value="MAD">MAD — Adolfo Suárez-Barajas/Madri</option>
+  <option value="BCN">BCN — El Prat/Barcelona</option>
+  <option value="AGP">AGP — Costa del Sol/Málaga</option>
+  <option value="PMI">PMI — Palma de Mallorca</option>
+  <!-- 🇵🇹 Portugal -->
+  <option value="LIS">LIS — Humberto Delgado/Lisboa</option>
+  <option value="OPO">OPO — Francisco Sá Carneiro/Porto</option>
+  <option value="FAO">FAO — Faro</option>
+  <!-- 🇳🇱 Holanda -->
+  <option value="AMS">AMS — Schiphol/Amsterdã</option>
+  <!-- 🇨🇭 Suíça -->
+  <option value="ZRH">ZRH — Zurique</option>
+  <option value="GVA">GVA — Genebra</option>
+  <!-- 🇦🇹 Áustria -->
+  <option value="VIE">VIE — Schwechat/Viena</option>
+  <!-- 🇧🇪 Bélgica -->
+  <option value="BRU">BRU — Brussels Airport</option>
+  <!-- 🇩🇰 Dinamarca -->
+  <option value="CPH">CPH — Kastrup/Copenhague</option>
+  <!-- 🇸🇪 Suécia -->
+  <option value="ARN">ARN — Arlanda/Estocolmo</option>
+  <!-- 🇳🇴 Noruega -->
+  <option value="OSL">OSL — Gardermoen/Oslo</option>
+  <!-- 🇫🇮 Finlândia -->
+  <option value="HEL">HEL — Vantaa/Helsinque</option>
+  <!-- 🇬🇷 Grécia -->
+  <option value="ATH">ATH — Eleftherios Venizelos/Atenas</option>
+  <option value="HER">HER — Nikos Kazantzakis/Heraklion</option>
+  <!-- 🇵🇱 Polônia -->
+  <option value="WAW">WAW — Chopin/Varsóvia</option>
+  <!-- 🇨🇿 República Tcheca -->
+  <option value="PRG">PRG — Václav Havel/Praga</option>
+  <!-- 🇭🇺 Hungria -->
+  <option value="BUD">BUD — Liszt Ferenc/Budapeste</option>
+  <!-- 🇹🇷 Turquia -->
+  <option value="IST">IST — Istanbul Airport</option>
+  <option value="SAW">SAW — Sabiha Gökçen/Istanbul</option>
+  <!-- 🇷🇺 Rússia -->
+  <option value="SVO">SVO — Sheremetyevo/Moscou</option>
+  <!-- 🇮🇪 Irlanda -->
+  <option value="DUB">DUB — Dublin</option>
+  <!-- 🇲🇽 México -->
+  <option value="MEX">MEX — Benito Juárez/Cidade do México</option>
+  <option value="CUN">CUN — Cancún</option>
+  <!-- 🇨🇦 Canadá -->
+  <option value="YYZ">YYZ — Pearson/Toronto</option>
+  <option value="YUL">YUL — Pierre Elliott Trudeau/Montreal</option>
+  <option value="YVR">YVR — Vancouver International</option>
+</datalist>
+
 
 <!-- MODAL: CONTRATO GUIAMENTO VIRTUAL -->
 <div id="modal-contrato-guiamento" class="modal-overlay">
