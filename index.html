@@ -4950,10 +4950,7 @@ function init(){
     document.getElementById('cx-data').value = today;
     bootAuth();
     subscribeFirebaseUpdates();
-    // Cross-system login fix: garantir que usuarios estejam no Firebase para o Guiamento
-    if(_fbDb && _fbOnline && DB.usuarios && DB.usuarios.length > 0){
-      setTimeout(syncAllUsuariosFirebase, 3000);
-    }
+    // Cross-system login: usuários são sincronizados após cada login (ver doLogin)
   }
 
   // Tentar Firebase primeiro; fallback para localStorage
@@ -5049,6 +5046,10 @@ const PERFIL_LABELS = {adm:'Administrador',mkt:'Marketing',vendedor:'Vendedor',g
     // Migrar senha plaintext para hash se necessário
     if(senhaRaw && user.senha && user.senha.length !== 64){
       hashSenha(senhaRaw).then(function(h){ user.senha=h; saveToStorage(); syncUsuarioFirebase(user); });
+    } else {
+      // Sync do usuário logado ao Firebase — garante que Guiamento encontre o hash correto
+      // Não usa syncAllUsuariosFirebase (evita sobrescrever hashes válidos de outros usuários)
+      setTimeout(function(){ if(_fbDb&&_fbOnline) syncUsuarioFirebase(user); }, 1500);
     }
   }
 function doLogin(){
