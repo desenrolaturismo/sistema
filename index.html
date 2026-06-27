@@ -907,6 +907,22 @@ tbody tr:hover{background:var(--surface2)}
       <div class="modal-title" id="modal-venda-title">Nova Venda</div>
       <button class="modal-close" onclick="closeModal('modal-venda')">✕</button>
     </div>
+    <!-- Puxar dados de orçamento existente -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px">🔗 Puxar dados de orçamento existente (opcional)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group" style="margin:0"><label class="form-label">Selecionar Orçamento</label>
+          <select class="form-select" id="v-orc-ref" onchange="vendaPuxarOrcamento()">
+            <option value="">— Preencher manualmente —</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0"><label class="form-label">Ou Puxar Cliente</label>
+          <select class="form-select" id="v-cli-ref" onchange="vendaPuxarCliente()">
+            <option value="">— Selecionar cliente —</option>
+          </select>
+        </div>
+      </div>
+    </div>
     <div class="form-row three">
       <div class="form-group"><label class="form-label">Data *</label><input type="date" class="form-input" id="v-data" required/></div>
       <div class="form-group"><label class="form-label">Passageiro *</label><input type="text" class="form-input" id="v-passageiro" placeholder="Nome completo" required/></div>
@@ -2367,7 +2383,63 @@ function checkEditDivTotal(){
 }
 
 // ═══════════════════════ VENDAS ═══════════════════════
+function vendaPuxarOrcamento(){
+  var orcId = parseInt(document.getElementById('v-orc-ref').value)||0;
+  if(!orcId) return;
+  var orc = (DB.orcamentos||[]).find(function(o){ return o.id===orcId; });
+  if(!orc) return;
+  var cli = (DB.clientes||[]).find(function(x){ return x.id===orc.clienteId; });
+  if(cli){ document.getElementById('v-passageiro').value = (cli.nome+' '+(cli.sobrenome||'')).trim(); }
+  // Preencher operadora
+  var opSel = document.getElementById('v-operadora');
+  if(opSel) opSel.value = orc.operadora||'';
+  // Preencher valor e comissão
+  document.getElementById('v-valor').value = orc.total||'';
+  document.getElementById('v-comissao').value = orc.comissaoValor||'';
+  calcPctAuto();
+  // Preencher forma de pagamento
+  var fSel = document.getElementById('v-forma');
+  if(fSel && orc.formaPagamento){
+    for(var i=0;i<fSel.options.length;i++){ if(fSel.options[i].value===orc.formaPagamento){ fSel.selectedIndex=i; break; } }
+  }
+  // Preencher pax
+  if(cli) document.getElementById('v-pax').value = getClientePax(orc.clienteId)||1;
+  // Marcar serviços
+  var srvs = orc.itens ? [...new Set(orc.itens.map(function(i){ return i.tipo; }))] : [];
+  document.querySelectorAll('#v-servicos-container input[type=checkbox]').forEach(function(cb){ cb.checked = false; });
+  srvs.forEach(function(s){ var cb=document.getElementById('srv-'+s); if(cb){ cb.checked=true; toggleServico(cb); } });
+  // Obs
+  if(orc.obs){ document.getElementById('v-obs').value = 'Orçamento #'+orc.id+' — '+orc.obs; }
+  toast('✅ Dados do Orçamento #'+orc.id+' importados!','success');
+}
+
+function vendaPuxarCliente(){
+  var cliId = parseInt(document.getElementById('v-cli-ref').value)||0;
+  if(!cliId) return;
+  var cli = (DB.clientes||[]).find(function(x){ return x.id===cliId; });
+  if(!cli) return;
+  document.getElementById('v-passageiro').value = (cli.nome+' '+(cli.sobrenome||'')).trim();
+  document.getElementById('v-pax').value = getClientePax(cliId)||1;
+  toast('✅ Cliente importado!','success');
+}
+
 function prepareVendaModal(){
+  // Popular select de orçamentos disponíveis
+  var orcSel = document.getElementById('v-orc-ref');
+  if(orcSel){
+    var orcAbertos = (DB.orcamentos||[]).filter(function(o){ return o.status!=='cancelado'; });
+    orcSel.innerHTML = '<option value="">— Preencher manualmente —</option>' +
+      orcAbertos.map(function(o){
+        return '<option value="'+o.id+'">#'+o.id+' · '+escapeHtml(getClienteNome(o.clienteId))+' · '+fmtR(o.total||0)+'</option>';
+      }).join('');
+  }
+  var cliSel = document.getElementById('v-cli-ref');
+  if(cliSel){
+    cliSel.innerHTML = '<option value="">— Selecionar cliente —</option>' +
+      (DB.clientes||[]).map(function(cli){
+        return '<option value="'+cli.id+'">'+escapeHtml((cli.nome+' '+(cli.sobrenome||'')).trim())+'</option>';
+      }).join('');
+  }
   populateSelects();
   if(!DB.editingVenda){
     document.getElementById('v-data').value = new Date().toISOString().split('T')[0];
@@ -4878,6 +4950,10 @@ function init(){
     document.getElementById('cx-data').value = today;
     bootAuth();
     subscribeFirebaseUpdates();
+    // Cross-system login fix: garantir que usuarios estejam no Firebase para o Guiamento
+    if(_fbDb && _fbOnline && DB.usuarios && DB.usuarios.length > 0){
+      setTimeout(syncAllUsuariosFirebase, 3000);
+    }
   }
 
   // Tentar Firebase primeiro; fallback para localStorage
@@ -5457,7 +5533,7 @@ function updateMoveExtraFields(id){
         '#'+o.id+' — '+e2(getClienteNome(o.clienteId))+' · '+e2(o.operadora||'')+' · '+fmtR(o.total||0)+'</option>';
     }).join('');
     extra='<div class="form-group"><label class="form-label">Orçamento vinculado *</label>'+
-      '<select class="form-select" class="mf-orc-id-sel"><option value="">Selecione um orçamento...</option>'+orcOpts+'</select></div>'+
+      '<select class="form-select mf-orc-id-sel"><option value="">Selecione um orçamento...</option>'+orcOpts+'</select></div>'+
       '<div style="margin-top:8px"><button class="btn btn-ghost btn-sm" '+
         'onclick="abrirModalOrcamento();closeModal(\'modal-move-lead\')">+ Criar novo orçamento</button></div>';
 
@@ -5467,7 +5543,7 @@ function updateMoveExtraFields(id){
         '#'+o.id+' · '+fmtR(o.total||0)+'</option>';
     }).join('');
     extra='<div class="form-group"><label class="form-label">Orçamento</label>'+
-      '<select class="form-select" class="mf-orc-id-sel"><option value="">Manter atual</option>'+orcOpts2+'</select></div>'+
+      '<select class="form-select mf-orc-id-sel"><option value="">Manter atual</option>'+orcOpts2+'</select></div>'+
       '<button class="btn btn-ghost btn-sm" style="margin-top:6px" '+
         'onclick="abrirModalOrcamento();closeModal(\'modal-move-lead\')">+ Criar novo orçamento</button>';
 
@@ -5484,7 +5560,7 @@ function updateMoveExtraFields(id){
       '<div class="form-group"><label class="form-label">Cliente *</label>'+
         '<select class="form-select" id="mf-cliente-id"><option value="">Selecione...</option>'+cliOpts+'</select></div>'+
       '<div class="form-group"><label class="form-label">Orçamento *</label>'+
-        '<select class="form-select" class="mf-orc-id-sel"><option value="">Selecione...</option>'+orcOpts3+'</select></div>';
+        '<select class="form-select mf-orc-id-sel"><option value="">Selecione...</option>'+orcOpts3+'</select></div>';
 
   } else if(target==='pos_venda'){
     extra='<div class="form-group"><label class="form-label">Pós-Venda</label>'+
@@ -6113,7 +6189,8 @@ function renderOrcamentos(){
 function abrirModalOrcamento(opts){
   _orcEditId=(opts&&opts.id)||null; _orcItemCount=0;
   var il=document.getElementById('orc-itens-list'); if(il) il.innerHTML='';
-  ['orc-total','orc-total-pax','orc-com-pct','orc-com-valor','orc-obs'].forEach(function(fid){var el=document.getElementById(fid);if(el) el.value='';});
+  ['orc-total','orc-total-pax','orc-com-pct','orc-com-valor','orc-data-ida','orc-data-volta','orc-num-adultos','orc-num-criancas','orc-idades-criancas','orc-dias-viagem','orc-obs'].forEach(function(fid){var el=document.getElementById(fid);if(el) el.value='';});
+  var numEl=document.getElementById('orc-num-adultos'); if(numEl) numEl.value='1';
   document.getElementById('modal-orc-title').textContent=_orcEditId?'Editar Orçamento':'Novo Orçamento';
   var opSel=document.getElementById('orc-operadora');
   if(opSel) opSel.innerHTML='<option value="">Selecione a operadora...</option>'+DB.operadoras.filter(function(o){return o.status==='ativo';}).map(function(o){return '<option value="'+escapeHtml(o.nome)+'">'+escapeHtml(o.nome)+'</option>';}).join('');
@@ -6124,7 +6201,12 @@ function abrirModalOrcamento(opts){
       document.getElementById('orc-operadora').value=orc.operadora||''; orcOnOperadoraChange();
       document.getElementById('orc-cliente').value=orc.clienteId||'';
       document.getElementById('orc-total').value=orc.total||'';
-      document.getElementById('orc-com-pct').value=orc.comissaoPct||'';
+      document.getElementById('orc-com-valor').value=orc.comissaoValor||'';
+      document.getElementById('orc-data-ida').value=orc.dataIda||'';
+      document.getElementById('orc-data-volta').value=orc.dataVolta||'';
+      document.getElementById('orc-num-adultos').value=orc.numAdultos||1;
+      document.getElementById('orc-num-criancas').value=orc.numCriancas||0;
+      document.getElementById('orc-idades-criancas').value=orc.idadesCriancas||'';
       document.getElementById('orc-obs').value=orc.obs||'';
       (orc.itens||[]).forEach(function(item){orcAddItem(item);});
       setTimeout(function(){document.getElementById('orc-forma-pag').value=orc.formaPagamento||'';},80);
@@ -6132,7 +6214,7 @@ function abrirModalOrcamento(opts){
     }
   } else {
     if(opts&&opts.clienteId) setTimeout(function(){document.getElementById('orc-cliente').value=opts.clienteId;orcOnClienteChange();},50);
-    orcAddItem();
+    // Inicia sem itens — usuário adiciona manualmente com o botão + Serviço
   }
   openModal('modal-orcamento');
 }
@@ -6195,13 +6277,24 @@ function orcRecalcular(){
                 (parseInt((document.getElementById('orc-qtd-'+i)||{value:1}).value)||1);
   });
   var totalEl=document.getElementById('orc-total');
-  if(totalEl&&!totalEl.value&&totalItens>0) totalEl.value=totalItens.toFixed(2);
-  var total=parseFloat((totalEl||{value:0}).value)||totalItens;
+  // Sempre atualiza total com a soma dos itens
+  if(totalEl) totalEl.value=totalItens.toFixed(2);
+  var total=totalItens;
   var cliId=parseInt((document.getElementById('orc-cliente')||{value:0}).value)||0;
   var nPax=cliId?getClientePax(cliId):1;
+  // Calcular dias de viagem
+  var dataIda=(document.getElementById('orc-data-ida')||{value:''}).value;
+  var dataVolta=(document.getElementById('orc-data-volta')||{value:''}).value;
+  if(dataIda && dataVolta){
+    var d1=new Date(dataIda+'T00:00:00'), d2=new Date(dataVolta+'T00:00:00');
+    var dias=Math.max(1, Math.round((d2-d1)/(86400000))+1);
+    var dvEl=document.getElementById('orc-dias-viagem'); if(dvEl) dvEl.value=dias+' dia'+(dias>1?'s':'');
+  }
   var tpEl=document.getElementById('orc-total-pax'); if(tpEl) tpEl.value=nPax>0?fmtR(total/nPax):'—';
-  var pct=parseFloat((document.getElementById('orc-com-pct')||{value:0}).value)||0;
-  var comEl=document.getElementById('orc-com-valor'); if(comEl) comEl.value=fmtR(total*pct/100);
+  // Comissão: valor digitável → % calculado automaticamente
+  var comValor=parseFloat((document.getElementById('orc-com-valor')||{value:0}).value)||0;
+  var pct=total>0?(comValor/total*100):0;
+  var comPctEl=document.getElementById('orc-com-pct'); if(comPctEl) comPctEl.value=pct>0?pct.toFixed(2):'';
 }
 
 function _saveOrcamento(){
@@ -6224,9 +6317,17 @@ function _saveOrcamento(){
   var fpCust=document.getElementById('orc-forma-custom');
   var forma=(fpEl&&fpEl.value)||(fpCust&&fpCust.value)||'';
   var total=parseFloat((document.getElementById('orc-total')||{value:0}).value)||0;
-  var pct=parseFloat((document.getElementById('orc-com-pct')||{value:0}).value)||0;
+  var comValor=parseFloat((document.getElementById('orc-com-valor')||{value:0}).value)||0;
+  var pct=total>0?Math.round(comValor/total*10000)/100:0;
+  var dataIda=(document.getElementById('orc-data-ida')||{value:''}).value;
+  var dataVolta=(document.getElementById('orc-data-volta')||{value:''}).value;
+  var numAdultos=parseInt((document.getElementById('orc-num-adultos')||{value:0}).value)||0;
+  var numCriancas=parseInt((document.getElementById('orc-num-criancas')||{value:0}).value)||0;
+  var idadesCriancas=(document.getElementById('orc-idades-criancas')||{value:''}).value;
   var obj={operadora:op,clienteId:cliId,itens:itens,formaPagamento:forma,
-    total:total,comissaoPct:pct,comissaoValor:total*pct/100,
+    dataIda:dataIda,dataVolta:dataVolta,numAdultos:numAdultos,numCriancas:numCriancas,
+    idadesCriancas:idadesCriancas,
+    total:total,comissaoPct:pct,comissaoValor:comValor,
     obs:(document.getElementById('orc-obs')||{value:''}).value.trim(),status:'aberto'};
   if(_orcEditId){
     var orc=(DB.orcamentos||[]).find(function(o){return o.id===_orcEditId;});
@@ -6240,6 +6341,123 @@ function _saveOrcamento(){
   // Sync granular Firebase
   var _syncedOrc = _orcEditId ? (DB.orcamentos||[]).find(function(x){return x.id===_orcEditId;}) : (DB.orcamentos||[])[DB.orcamentos.length-1];
   if(_syncedOrc) syncOrcamentoFirebase(_syncedOrc);
+}
+
+function exportarOrcamentoPDF(){
+  var orcId = _orcEditId;
+  var orc = null;
+  if(!orcId){
+    // Tentar salvar primeiro para ter ID
+    toast('Salve o orçamento antes de exportar','warn'); return;
+  }
+  orc = (DB.orcamentos||[]).find(function(o){ return o.id===orcId; });
+  if(!orc){ toast('Orçamento não encontrado','error'); return; }
+  var cli = (DB.clientes||[]).find(function(x){ return x.id===orc.clienteId; });
+  var nomeCliente = cli ? (cli.nome+' '+(cli.sobrenome||'')).trim() : 'Cliente';
+  var hoje = new Date().toLocaleDateString('pt-BR');
+  var validade = new Date(Date.now()+86400000).toLocaleDateString('pt-BR');
+  // Calcular dias
+  var diasViagem = '';
+  if(orc.dataIda && orc.dataVolta){
+    var d1=new Date(orc.dataIda+'T00:00:00'), d2=new Date(orc.dataVolta+'T00:00:00');
+    var nd=Math.max(1,Math.round((d2-d1)/86400000)+1);
+    diasViagem = nd+' dia'+(nd>1?'s':'');
+  }
+  var fmtDataBr = function(s){ if(!s) return '—'; var d=new Date(s+'T12:00:00'); return d.toLocaleDateString('pt-BR'); };
+  // Passageiros
+  var paxStr = '';
+  if(orc.numAdultos>0) paxStr += orc.numAdultos+' adulto'+(orc.numAdultos>1?'s':'');
+  if(orc.numCriancas>0){
+    paxStr += (paxStr?' + ':'')+orc.numCriancas+' criança'+(orc.numCriancas>1?'s':'');
+    if(orc.idadesCriancas) paxStr += ' ('+orc.idadesCriancas+')';
+  }
+  if(!paxStr) paxStr = getClientePax(orc.clienteId)+' passageiro(s)';
+  // Itens
+  var itensHTML = (orc.itens||[]).map(function(item){
+    var vlUnit = fmtR(item.valor||0);
+    var vlTotal = fmtR((item.valor||0)*(item.qtd||1));
+    var paxN = getClientePax(orc.clienteId)||1;
+    var vlPax = fmtR((item.valor||0)*(item.qtd||1)/paxN);
+    var desc = item.descricao ? ' — '+escapeHtml(item.descricao) : '';
+    var dias = item.dias>1 ? ' ('+item.dias+' dias)' : '';
+    return '<tr>'+
+      '<td style="padding:10px 8px;border-bottom:1px solid #f0f0f0">'+escapeHtml(item.tipo||'—')+dias+desc+'</td>'+
+      '<td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;text-align:right">'+escapeHtml(vlUnit)+'</td>'+
+      '<td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;text-align:center">'+escapeHtml(String(item.qtd||1))+'</td>'+
+      '<td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;text-align:right">'+escapeHtml(vlPax)+'</td>'+
+      '<td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700">'+escapeHtml(vlTotal)+'</td>'+
+    '</tr>';
+  }).join('');
+
+  var html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">'+
+  '<title>Orçamento #'+orc.id+' — Desenrola Turismo</title>'+
+  '<style>'+
+    '@page{margin:20mm 18mm}'+
+    'body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;color:#1a1a2e;max-width:800px;margin:0 auto;padding:20px}'+
+    '.header{text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:3px solid #2C6AA3}'+
+    '.logo-area{font-size:22pt;font-weight:900;color:#2C6AA3;letter-spacing:-0.5px}'+
+    '.logo-sub{font-size:9pt;color:#666;margin-top:2px}'+
+    '.orc-num{display:inline-block;background:#2C6AA3;color:#fff;padding:4px 14px;border-radius:20px;font-size:9pt;font-weight:700;margin-top:8px}'+
+    '.info-box{background:#f8f9ff;border:1px solid #e0e7ff;border-radius:8px;padding:16px;margin-bottom:20px}'+
+    '.info-row{display:flex;gap:20px;flex-wrap:wrap}'+
+    '.info-item{flex:1;min-width:180px}'+
+    '.info-label{font-size:8pt;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}'+
+    '.info-val{font-size:10pt;font-weight:700;color:#1a1a2e}'+
+    'table{width:100%;border-collapse:collapse;margin-bottom:20px}'+
+    'th{background:#2C6AA3;color:#fff;padding:10px 8px;text-align:left;font-size:9pt;font-weight:700}'+
+    'th.r{text-align:right} th.c{text-align:center}'+
+    '.total-box{text-align:right;margin-bottom:20px}'+
+    '.total-line{font-size:13pt;font-weight:900;color:#2C6AA3;margin-top:8px}'+
+    '.pgto-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin-bottom:20px}'+
+    '.footer{text-align:center;font-size:8pt;color:#999;margin-top:30px;padding-top:14px;border-top:1px solid #eee}'+
+    '.validade{background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:8px 14px;font-size:9pt;color:#856404;margin-bottom:20px;display:inline-block}'+
+    '@media print{button{display:none!important}}'+
+  '</style></head><body>'+
+  '<div class="header">'+
+    '<div class="logo-area">✦ Desenrola Turismo</div>'+
+    '<div class="logo-sub">56.044.414 CAMILA PASCHOLATI GUSMÃO RIGHETTI MEI — CNPJ nº 56.004.414/0001-43</div>'+
+    '<div class="logo-sub">Rua Limoeiro, nº 955, Jardim Limoeiro, Arujá/SP</div>'+
+    '<div class="orc-num">ORÇAMENTO #'+orc.id+'</div>'+
+  '</div>'+
+  '<div class="info-box">'+
+    '<div class="info-row">'+
+      '<div class="info-item"><div class="info-label">Cliente</div><div class="info-val">'+escapeHtml(nomeCliente)+'</div></div>'+
+      '<div class="info-item"><div class="info-label">Data de Ida</div><div class="info-val">'+escapeHtml(fmtDataBr(orc.dataIda))+'</div></div>'+
+      '<div class="info-item"><div class="info-label">Data de Volta</div><div class="info-val">'+escapeHtml(fmtDataBr(orc.dataVolta))+'</div></div>'+
+      (diasViagem?'<div class="info-item"><div class="info-label">Duração</div><div class="info-val">'+escapeHtml(diasViagem)+'</div></div>':'')+
+      '<div class="info-item"><div class="info-label">Passageiros</div><div class="info-val">'+escapeHtml(paxStr)+'</div></div>'+
+      '<div class="info-item"><div class="info-label">Data do Orçamento</div><div class="info-val">'+escapeHtml(hoje)+'</div></div>'+
+    '</div>'+
+  '</div>'+
+  '<table>'+
+    '<thead><tr><th>Serviço / Descrição</th><th class="r">Valor Unit.</th><th class="c">Qtd</th><th class="r">Por Pax</th><th class="r">Total</th></tr></thead>'+
+    '<tbody>'+itensHTML+'</tbody>'+
+  '</table>'+
+  '<div class="total-box">'+
+    '<div>Subtotal: '+escapeHtml(fmtR(orc.total||0))+'</div>'+
+    '<div class="total-line">TOTAL: '+escapeHtml(fmtR(orc.total||0))+'</div>'+
+  '</div>'+
+  '<div class="pgto-box">'+
+    '💳 <strong>Forma de Pagamento:</strong> '+escapeHtml(orc.formaPagamento||'A definir')+
+  '</div>'+
+  (orc.obs?'<p style="font-size:9pt;color:#555;font-style:italic;margin-bottom:16px">📝 '+escapeHtml(orc.obs)+'</p>':'')+
+  '<div><span class="validade">⏰ Este orçamento é válido por 24 horas a partir do envio.</span></div>'+
+  '<div class="footer">'+
+    'Desenrola Turismo — desenrolaturismo.com.br<br>'+
+    'Documento gerado em '+hoje+' | Orçamento #'+orc.id+
+    '<br><br><button onclick="window.print()" style="padding:8px 20px;background:#2C6AA3;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:10pt">🖨️ Imprimir / Salvar como PDF</button>'+
+  '</div>'+
+  '</body></html>';
+
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'Orcamento_'+nomeCliente.replace(/\s+/g,'_')+'_#'+orc.id+'_'+new Date().toISOString().slice(0,10)+'.html';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+  toast('📄 PDF do orçamento gerado! Abra o arquivo e imprima para PDF.','success');
 }
 
 function deleteOrcamento(id){
@@ -7007,16 +7225,33 @@ window.addEventListener('load', init);
         <div class="form-group" id="orc-forma-custom-group" style="display:none"><label class="form-label">Especificar</label><input type="text" class="form-input" id="orc-forma-custom"/></div>
       </div>
     </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
+      <div style="font-weight:700;font-size:12px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">📅 Dados da Viagem</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:12px;margin-bottom:10px">
+        <div class="form-group"><label class="form-label">Data de Ida</label><input type="date" class="form-input" id="orc-data-ida" oninput="orcRecalcular()"/></div>
+        <div class="form-group"><label class="form-label">Data de Volta</label><input type="date" class="form-input" id="orc-data-volta" oninput="orcRecalcular()"/></div>
+        <div class="form-group"><label class="form-label">Dias</label><input type="text" class="form-input" id="orc-dias-viagem" readonly placeholder="Auto" style="background:var(--surface2)"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 2fr;gap:12px">
+        <div class="form-group"><label class="form-label">Adultos</label><input type="number" class="form-input" id="orc-num-adultos" value="1" min="0" oninput="orcRecalcular()"/></div>
+        <div class="form-group"><label class="form-label">Crianças</label><input type="number" class="form-input" id="orc-num-criancas" value="0" min="0" oninput="orcRecalcular()"/></div>
+        <div class="form-group"><label class="form-label">Idades das crianças (ex: 5, 8, 10)</label><input type="text" class="form-input" id="orc-idades-criancas" placeholder="Separadas por vírgula"/></div>
+      </div>
+    </div>
     <div style="border-top:1px solid var(--border);padding-top:14px">
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-        <div class="form-group"><label class="form-label">Total (R$)</label><input type="number" class="form-input" id="orc-total" step="0.01" oninput="orcRecalcular()"/></div>
+        <div class="form-group"><label class="form-label">Total (R$) <span style="font-size:10px;color:var(--text3)">(auto)</span></label><input type="number" class="form-input" id="orc-total" step="0.01" readonly style="background:var(--surface2)"/></div>
         <div class="form-group"><label class="form-label">Total/Passageiro</label><input type="text" class="form-input" id="orc-total-pax" readonly style="background:var(--surface2)"/></div>
-        <div class="form-group"><label class="form-label">Comissão %</label><input type="number" class="form-input" id="orc-com-pct" step="0.01" oninput="orcRecalcular()"/></div>
-        <div class="form-group"><label class="form-label">Comissão R$</label><input type="text" class="form-input" id="orc-com-valor" readonly style="background:var(--surface2)"/></div>
+        <div class="form-group"><label class="form-label">Comissão R$ <span style="font-size:10px;color:var(--text3)">(digitável)</span></label><input type="number" class="form-input" id="orc-com-valor" step="0.01" placeholder="0,00" oninput="orcRecalcular()"/></div>
+        <div class="form-group"><label class="form-label">Comissão % <span style="font-size:10px;color:var(--text3)">(auto)</span></label><input type="text" class="form-input" id="orc-com-pct" readonly placeholder="Auto" style="background:var(--surface2)"/></div>
       </div>
       <div class="form-group"><label class="form-label">Observações</label><textarea class="form-input" id="orc-obs" rows="2"></textarea></div>
     </div>
-    <div class="modal-footer" style="margin-top:12px"><button class="btn btn-ghost" onclick="closeModal('modal-orcamento')">Cancelar</button><button class="btn btn-primary" onclick="_saveOrcamento()">Salvar Orçamento</button></div>
+    <div class="modal-footer" style="margin-top:12px">
+      <button class="btn btn-ghost" onclick="closeModal('modal-orcamento')">Cancelar</button>
+      <button class="btn btn-ghost" onclick="exportarOrcamentoPDF()" style="color:var(--primary)">📄 Exportar PDF</button>
+      <button class="btn btn-primary" onclick="_saveOrcamento()">Salvar Orçamento</button>
+    </div>
   </div>
 </div>
 
