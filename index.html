@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v3.0</title>
+<title>Desenrola Turismo — Sistema de Gestão v3.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet"/>
@@ -293,7 +293,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v3.0
+    ✦ Desenrola Turismo · v3.2
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -335,12 +335,13 @@ tbody tr:hover{background:var(--surface2)}
   </div>
 
   <div class="metrics-grid" id="dash-metrics">
-    <div class="metric-card blue"><div class="m-label">Receita Bruta</div><div class="m-value" id="d-receita">R$ 0</div><div class="m-sub">Total vendas</div><div class="m-icon">💼</div></div>
+    <div class="metric-card blue"><div class="m-label">Receita Bruta</div><div class="m-value" id="d-receita">R$ 0</div><div class="m-sub" id="d-receita-sub">Total vendas</div><div class="m-icon">💼</div></div>
     <div class="metric-card gold"><div class="m-label">Comissões Totais</div><div class="m-value" id="d-comissao">R$ 0</div><div class="m-sub">Do período filtrado</div><div class="m-icon">🤝</div></div>
-    <div class="metric-card green mkt-hidden"><div class="m-label">Comissões Recebidas</div><div class="m-value" id="d-recebido">R$ 0</div><div class="m-sub" id="d-recebido-pct">0% recebido</div><div class="m-icon">✅</div></div>
-    <div class="metric-card orange mkt-hidden"><div class="m-label">A Receber</div><div class="m-value" id="d-areceber">R$ 0</div><div class="m-sub">Comissões pendentes</div><div class="m-icon">⏳</div></div>
+    <div class="metric-card blue" style="--before-bg:var(--primary-light)"><div class="m-label">Ticket Médio</div><div class="m-value" id="d-ticket-medio">R$ 0</div><div class="m-sub">Receita ÷ nº vendas</div><div class="m-icon">🎫</div></div>
+    <div class="metric-card green mkt-hidden"><div class="m-label">Comissões Recebidas</div><div class="m-value" id="d-recebido">R$ 0</div><div class="m-sub" id="d-recebido-pct">0% do total geral</div><div class="m-icon">✅</div></div>
+    <div class="metric-card orange mkt-hidden"><div class="m-label">A Receber</div><div class="m-value" id="d-areceber">R$ 0</div><div class="m-sub">Saldo total pendente</div><div class="m-icon">⏳</div></div>
     <div class="metric-card red mkt-hidden"><div class="m-label">Saídas do Período</div><div class="m-value" id="d-saidas">R$ 0</div><div class="m-sub">Despesas registradas</div><div class="m-icon">📤</div></div>
-    <div class="metric-card teal mkt-hidden"><div class="m-label">Saldo Caixa</div><div class="m-value" id="d-caixa">R$ 0</div><div class="m-sub">Recebido − Saídas</div><div class="m-icon">🏦</div></div>
+    <div class="metric-card teal mkt-hidden"><div class="m-label">Saldo Caixa</div><div class="m-value" id="d-caixa">R$ 0</div><div class="m-sub">Acumulado geral</div><div class="m-icon">🏦</div></div>
     <div class="metric-card purple"><div class="m-label">% Média de Comissão</div><div class="m-value" id="d-pct-comissao" style="font-size:28px">0%</div><div class="m-sub">Comissão ÷ Receita do período</div><div class="m-icon">📊</div></div>
   </div>
 
@@ -1223,6 +1224,7 @@ tbody tr:hover{background:var(--surface2)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <!-- MODAL: IMPORTAR VENDAS -->
 <div id="modal-import-vendas" class="modal-overlay">
@@ -1772,26 +1774,38 @@ function _sha256Pure(msgBytes) {
   return H.map(function(v){ return ('00000000'+((v>>>0).toString(16))).slice(-8); }).join('');
 }
 
-async function hashSenha(senha){
+// M-01 SEC: hashSenha com salt — formato: SHA256(login.toLowerCase() + ':DT26:' + senha)
+// login='' para hash sem salt (legado/migração); login='mestre' para senha mestre
+async function hashSenha(senha, login){
+  var salted = login ? (login.toLowerCase() + ':DT26:' + senha) : senha;
   var bytes;
-  try { bytes = Array.from(new TextEncoder().encode(senha)); }
-  catch(e) { bytes = unescape(encodeURIComponent(senha)).split('').map(function(c){ return c.charCodeAt(0); }); }
-  // Tentar crypto.subtle (mais rápido quando disponível)
+  try { bytes = Array.from(new TextEncoder().encode(salted)); }
+  catch(e) { bytes = unescape(encodeURIComponent(salted)).split('').map(function(c){ return c.charCodeAt(0); }); }
   try {
     if(crypto && crypto.subtle){
       const buf = await crypto.subtle.digest('SHA-256', new Uint8Array(bytes));
       return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
     }
   } catch(e) {}
-  // Fallback puro JS — sempre funciona, incluso em Wix iframe
   return _sha256Pure(bytes);
 }
-async function verificarSenha(input, stored){
-  if(!stored) return false;
-  // Hash de 64 chars = já foi hasheado
-  if(stored.length === 64) return (await hashSenha(input)) === stored;
-  // Texto plano legado — aceita e migra
-  return input === stored;
+// M-01 SEC: verificação com migração transparente para hash com salt
+// Retorna {ok:bool, needsMigration:bool}
+async function verificarSenha(input, stored, login){
+  if(!stored) return {ok:false, needsMigration:false};
+  if(stored.length !== 64){
+    // Texto plano legado
+    return {ok: input===stored, needsMigration: input===stored};
+  }
+  // Tenta hash com salt (formato novo)
+  if(login){
+    const saltedHash = await hashSenha(input, login);
+    if(saltedHash === stored) return {ok:true, needsMigration:false};
+  }
+  // Tenta hash sem salt (formato anterior — migra automaticamente)
+  const unsaltedHash = await hashSenha(input, '');
+  if(unsaltedHash === stored) return {ok:true, needsMigration:true};
+  return {ok:false, needsMigration:false};
 }
 
 // ── Sanitização XSS ───────────────────────────────────────────────────
@@ -1800,6 +1814,56 @@ function escapeHtml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 const esc = escapeHtml; // alias curto para uso em template literals
+
+// ══════════════════════ SEGURANÇA: LOCKOUT + SESSION TIMEOUT ══════════════════════
+// M-03 SEC: Anti-força-bruta — lockout após 5 tentativas por 15 minutos
+const _LOCK_PREFIX = 'dt_lk_';
+const _LOCK_MAX    = 5;
+const _LOCK_MS     = 15 * 60 * 1000;
+function _checkLockout(login){
+  try{
+    const raw = localStorage.getItem(_LOCK_PREFIX + login);
+    if(!raw) return null;
+    const d = JSON.parse(raw);
+    if(d.n < _LOCK_MAX) return null;
+    const elapsed = Date.now() - d.t;
+    if(elapsed >= _LOCK_MS){
+      localStorage.removeItem(_LOCK_PREFIX + login);
+      return null;
+    }
+    const mins = Math.ceil((_LOCK_MS - elapsed) / 60000);
+    return `Muitas tentativas. Aguarde ${mins} min para tentar novamente.`;
+  } catch(e){ return null; }
+}
+function _recordFailedAttempt(login){
+  try{
+    const k = _LOCK_PREFIX + login;
+    const d = JSON.parse(localStorage.getItem(k)||'{"n":0,"t":0}');
+    d.n = (d.n||0) + 1;
+    d.t = Date.now();
+    localStorage.setItem(k, JSON.stringify(d));
+  } catch(e){}
+}
+function _clearAttempts(login){
+  try{ localStorage.removeItem(_LOCK_PREFIX + login); } catch(e){}
+}
+
+// M-04 SEC: Session timeout — auto-logout após 8h de inatividade
+let _lastActivityTs = Date.now();
+const _SESSION_TIMEOUT_MS = 8 * 60 * 60 * 1000; // 8 horas
+function _resetActivity(){ _lastActivityTs = Date.now(); }
+['click','keydown','mousemove','touchstart'].forEach(function(ev){
+  document.addEventListener(ev, _resetActivity, {passive:true, capture:false});
+});
+setInterval(function(){
+  if(!DB || !DB.currentUser) return;
+  const idle = Date.now() - _lastActivityTs;
+  if(idle > _SESSION_TIMEOUT_MS){
+    toast('⏰ Sessão encerrada por inatividade (8h). Faça login novamente.', 'error');
+    setTimeout(function(){ if(typeof doLogout==='function') doLogout(); }, 2000);
+  }
+}, 60 * 1000); // verifica a cada minuto
+// ══════════════════════════════════════════════════════════════════════════════════
 
 
 const meses = ['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -1820,7 +1884,8 @@ function matchesFilter(dateStr, year, month){
 
 const STORAGE_KEY = 'desenrola_turismo_v3';
 // ═══════════════════════ FIREBASE ═══════════════════════
-const _FB_TOKEN = 'DTurismo2026!Secure#v3';  // token de escrita Firebase (MOD-01)
+// C-01 SEC: _FB_TOKEN removido — autenticação via Firebase Anonymous Auth
+// Firebase Rules: { ".read":"auth!=null", ".write":"auth!=null" }
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
   databaseURL: "https://desenrola-sistema-a7a56-default-rtdb.firebaseio.com",
@@ -1832,20 +1897,23 @@ function initFirebase(){
   try {
     _fbApp = firebase.initializeApp(FIREBASE_CONFIG);
     _fbDb  = firebase.database();
+    // C-01 SEC: Autenticação anônima substitui _FB_TOKEN hardcoded nas Rules
+    // Firebase Rules recomendadas: { ".read":"auth!=null", ".write":"auth!=null" }
+    firebase.auth().signInAnonymously().then(function(){
+      console.log('[Firebase] Sessão anônima ativa');
+    }).catch(function(e){ console.warn('[Firebase] Auth error:', e.message); });
+
     _fbOnline = true;
-    // Detecta conexão com Firebase (usa _fbDb já instanciado — não cria 2ª conexão)
     if(_fbConnectedListener) _fbDb.ref('.info/connected').off('value', _fbConnectedListener);
     _fbConnectedListener = _fbDb.ref('.info/connected').on('value', function(snap){
       var wasOffline = !_fbOnline;
       _fbOnline = !!snap.val();
       var ind = document.getElementById('sync-indicator');
       if(ind) ind.style.background = _fbOnline ? 'var(--success)' : 'var(--warning)';
-      // Reconectou offline→online: sincronizar dados acumulados offline
       if(wasOffline && _fbOnline && DB._lastSaved){
         var payload = {};
         Object.keys(DB).forEach(function(k){ if(!NON_SERIALIZABLE.has(k)) payload[k]=DB[k]; });
-        payload._lastSaved = (_fbDb && _fbOnline) ? firebase.database.ServerValue.TIMESTAMP : Date.now();
-    payload._savedBy = _sessionId; // identifica a sessão que salvou
+        payload._lastSaved = firebase.database.ServerValue.TIMESTAMP;
         payload._savedBy = _sessionId;
         saveToFirebase(payload);
         updateSyncIndicator('🔄 Reconectado — dados sincronizados');
@@ -1868,7 +1936,6 @@ function saveToFirebase(payload){
     delete fbPayload.usuarios;
     delete fbPayload.clientes;
     delete fbPayload.orcamentos;
-    fbPayload._token = _FB_TOKEN; // MOD-01: token valida escrita nas Firebase Rules
     _fbDb.ref('desenrola_v3').set(fbPayload).catch(function(e){
       console.warn('Firebase save error:', e);
     });
@@ -2707,27 +2774,34 @@ function renderVendas(){
   const comColors = {recebida:'badge-success','em aberto':'badge-warning',cancelado:'badge-danger',contestado:'badge-purple'};
   const canDel = !isVendedor() && !isMkt();
   const canDiv = !isVendedor() && !isMkt();
+  const _hoje  = new Date().toISOString().split('T')[0];
 
   const _rows=[];
   list.forEach(v=>{
+    // MELHORIA — destacar comissões em aberto há > 30 dias
+    const _dias = v.sitCom==='em aberto' ? Math.floor((new Date(_hoje)-new Date(v.data+'T00:00:00'))/86400000) : 0;
+    const _rowBg = _dias>30 ? 'background:rgba(192,57,43,0.05);' : '';
+    const _comBadge = _dias>30
+      ? `<span class="badge badge-danger" title="${_dias} dias em aberto">⚠️ ${_dias}d</span>`
+      : `<span class="badge ${comColors[v.sitCom]||'badge-gray'}">${v.sitCom}</span>`;
     // Vendedor can only edit their own sales
     const canEditThis = isVendedor() ? (v.vendedor === myName) : !isMkt();
     const srvBadges = (v.servicos||[]).map(s=>`<span class="badge badge-gray" style="font-size:10px;margin:1px">${SERVICOS_ICONS[s]||''} ${s}</span>`).join('');
-    _rows.push(`<tr>
+    _rows.push(`<tr style="${_rowBg}">
       <td><b>#${v.id}</b></td>
       <td>${formatDate(v.data)}</td>
       <td>${escapeHtml(v.passageiro)}</td>
-      <td><span class="badge badge-info">${v.destino}</span></td>
+      <td><span class="badge badge-info">${esc(v.destino)}</span></td>
       <td style="min-width:120px">${srvBadges||'<span style="color:var(--text3)">—</span>'}</td>
       <td>${v.pax}</td>
-      <td>${v.operadora}</td>
-      <td>${v.vendedor}</td>
+      <td>${esc(v.operadora)}</td>
+      <td>${esc(v.vendedor)}</td>
       <td style="font-weight:600">${fmtR(v.valor)}</td>
       <td style="color:var(--success);font-weight:600">${fmtR(v.comissao)}</td>
       <td>${fmtPct(v.pctComissao)}</td>
-      <td>${v.forma}</td>
+      <td>${esc(v.forma)}</td>
       <td><span class="badge ${sitColors[v.sitPgto]||'badge-gray'}">${v.sitPgto}</span></td>
-      <td><span class="badge ${comColors[v.sitCom]||'badge-gray'}">${v.sitCom}</span></td>
+      <td>${_comBadge}</td>
       <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(v.obs||'')}">${escapeHtml(v.obs)||'—'}</td>
       <td style="white-space:nowrap">
         ${canEditThis?`<button class="btn btn-ghost btn-sm" onclick="editVenda(${v.id})">✏️</button>`:''}
@@ -2926,12 +3000,27 @@ function _saveRecebimento(){ invalidateCommCache();
 }
 
 function deleteRecebimento(id){
-  openConfirm('Remover este recebimento?',function(){
+  openConfirm('⚠️ Remover este recebimento? A entrada de caixa gerada automaticamente também será removida e as vendas associadas voltarão para "Em Aberto".',function(){
+    const rec = DB.recebimentos.find(r=>r.id===id);
+    if(!rec) return;
+    // BUG-02 FIX: reverter sitCom das vendas vinculadas
+    if(rec.vendas){
+      const vendIds = rec.vendas.match(/#?(\d+)/g)||[];
+      vendIds.forEach(ref=>{
+        const n = parseInt(ref.replace('#',''));
+        const v = DB.vendas.find(x=>x.id===n);
+        if(v && v.sitCom==='recebida') v.sitCom='em aberto';
+      });
+    }
+    // BUG-02 FIX: remover entrada de Caixa gerada automaticamente
+    DB.caixa = DB.caixa.filter(c=>c.recebimentoId!==id);
     DB.recebimentos = DB.recebimentos.filter(r=>r.id!==id);
+    invalidateCommCache();
     saveToStorage();
     renderRecebimentos();
+    renderCaixa();
     updateDashboard();
-    toast('Recebimento removido.','error');
+    toast('Recebimento, lançamento de caixa e situação das vendas atualizados.','error');
   });
 }
 
@@ -2959,12 +3048,12 @@ function renderRecebimentos(){
       const saldo = Math.max(0, tCom-tRec);
       const badge = saldo<0.01 ? '<span class="badge badge-success">Quitado</span>' : `<span class="badge badge-warning">Em aberto</span>`;
       tbody.innerHTML += `<tr>
-        <td><b>${o.nome}</b></td>
+        <td><b>${esc(o.nome)}</b></td>
         <td>${fmtR(tCom)}</td>
         <td>${fmtR(tRec)}</td>
         <td style="font-weight:600;color:${saldo>0?'var(--warning)':'var(--success)'}">${fmtR(saldo)}</td>
         <td>${badge}</td>
-        <td>${saldo>0.01?`<button class="btn btn-primary btn-sm" onclick="quickRecebimento('${o.nome}',${saldo})">💵 Receber</button>`:'—'}</td>
+        <td>${saldo>0.01?`<button class="btn btn-primary btn-sm" onclick="quickRecebimento(this.dataset.op,${saldo.toFixed(2)})" data-op="${esc(o.nome)}">💵 Receber</button>`:'—'}</td>
       </tr>`;
     });
   }
@@ -3044,7 +3133,11 @@ function pagarComissao(beneficiario, valor, year, month){
     document.getElementById('cx-valor').value = parseFloat(valor).toFixed(2);
     document.getElementById('cx-forma').value = 'Pix';
     document.getElementById('cx-status').value = 'pago';
-    document.getElementById('cx-obs').value = year!=='all'&&month!=='all'?`Ref. ${mesesFull[parseInt(month)]||''} ${year}`.trim():'';
+    // MELHORIA-01: fallback para mês/ano atual quando filtro está em "Todos"
+    const _refMes = (year&&year!=='all'&&month&&month!=='all')
+      ? `Ref. ${mesesFull[parseInt(month)]||''} ${year}`.trim()
+      : `Ref. ${mesesFull[new Date().getMonth()+1]} ${new Date().getFullYear()}`;
+    document.getElementById('cx-obs').value = _refMes;
   }, 80);
 }
 
@@ -3057,6 +3150,31 @@ function getCommPeriodSplit(filtradas){
   };
 }
 function invalidateCommCache(){ _commCache=null; _commCacheKey=''; }
+
+// ── Badge de comissões pendentes na sidebar (melhoria de mercado) ─────
+function _updateCommBadge(){
+  try{
+    const corte = DB.config.dataCorteComissoes||'2026-06';
+    const vendasPos = DB.vendas.filter(v=>v.data>=corte && v.sitCom!=='cancelado');
+    const totalPos  = vendasPos.reduce((s,v)=>s+v.comissao,0);
+    const pago      = (DB.commPagamentos||[]).filter(p=>p.data>=corte).reduce((s,p)=>s+p.valor,0);
+    const pendente  = Math.max(0, totalPos - pago);
+    var el = document.getElementById('comm-nav-badge');
+    if(!el){
+      var navComm = document.querySelector('.nav-item[onclick*="comissionamento"]');
+      if(navComm){
+        el = document.createElement('span');
+        el.id='comm-nav-badge';
+        el.style.cssText='margin-left:auto;background:var(--danger);color:#fff;border-radius:10px;padding:1px 6px;font-size:9px;font-weight:700;display:none';
+        navComm.appendChild(el);
+      }
+    }
+    if(el){
+      if(pendente>0.01){ el.textContent='●'; el.style.display=''; }
+      else el.style.display='none';
+    }
+  }catch(e){}
+}
 // Cache de resultado por vendedor/período (evita recalcular O(n*m))
 let _commResultCache = null, _commResultKey = '';
 function getCommResultCache(key){ return _commResultKey===key ? _commResultCache : null; }
@@ -3248,6 +3366,7 @@ function renderCommMensal(){
 }
 
 function renderCommTotal(){
+  const allVend = DB.vendedores.filter(function(v){ return v.status==='ativo'; }).map(function(v){ return v.nome; }); // FIX BUG-01: allVend era local em renderCommMensal
   const {year, month, filtradas, totalCom} = _commFiltros();
   const tBody2 = document.getElementById('comm-total-body');
   if(tBody2){
@@ -3421,6 +3540,25 @@ function _saveCaixa(){ invalidateCommCache();
   if(DB.editingCaixa){
     const idx = DB.caixa.findIndex(c=>c.id===DB.editingCaixa.id);
     if(idx>=0) DB.caixa[idx]=item;
+    // BUG-04 FIX: sincronizar commPagamentos se era Comissão Interna
+    const pIdx = (DB.commPagamentos||[]).findIndex(p=>p.caixaId===item.id);
+    if(pIdx>=0){
+      const subcat2 = (item.subcategoria||'').toLowerCase();
+      const desc2   = (item.descricao||'').toLowerCase();
+      const texto2  = subcat2+' '+desc2;
+      let bNew = DB.commPagamentos[pIdx].beneficiario; // preserva por padrão
+      if(texto2.includes('mkt')||texto2.includes('marketing'))     bNew='Marketing (MKT)';
+      else if(texto2.includes('thomaz')&&texto2.includes('sócio')) bNew='Thomaz (Sócio)';
+      else if(texto2.includes('camila')&&(texto2.includes('sóci')||texto2.includes('socia'))) bNew='Camila (Sócia)';
+      else if(texto2.includes('thomaz'))  bNew='Thomaz';
+      else if(texto2.includes('camila'))  bNew='Camila';
+      else if(texto2.includes('marcelo')) bNew='Marcelo';
+      else if(texto2.includes('paula'))   bNew='Paula';
+      DB.commPagamentos[pIdx].valor = item.valor;
+      DB.commPagamentos[pIdx].data  = item.data;
+      DB.commPagamentos[pIdx].beneficiario = bNew;
+      DB.commPagamentos[pIdx].obs   = item.obs||'';
+    }
     toast('Lançamento atualizado!');
   } else {
     DB.caixa.push(item);
@@ -3486,10 +3624,14 @@ function editCaixa(id){
 
 function deleteCaixa(id){
   openConfirm('Remover este lançamento de caixa?',function(){
+  // BUG-03 FIX: remover commPagamentos vinculado se era Comissão Interna
+  DB.commPagamentos = (DB.commPagamentos||[]).filter(p=>p.caixaId!==id);
   DB.caixa = DB.caixa.filter(c=>c.id!==id);
+  invalidateCommCache();
   saveToStorage();
   renderCaixa();
   updateDashboard();
+  if(document.getElementById('page-comissionamento')?.classList.contains('active')) renderComissionamento();
   toast('Lançamento removido.','error');
   });
 }
@@ -3516,9 +3658,19 @@ function saveEditRecebimento(){
   r.valor = valor;
   r.vendas = document.getElementById('edit-rec-vendas').value;
   r.obs = document.getElementById('edit-rec-obs').value;
+  // BUG-05 FIX: sincronizar a entrada de Caixa gerada automaticamente
+  const cx = DB.caixa.find(c=>c.recebimentoId===id);
+  if(cx){
+    const {m} = getDateParts(data);
+    cx.valor = valor;
+    cx.data  = data;
+    cx.mes   = mesesFull[m]||String(m);
+    cx.descricao = `Comissão recebida — ${r.operadora}${r.vendas?' ('+r.vendas+')':''}`;
+  }
   saveToStorage();
   closeModal('modal-edit-recebimento');
   renderRecebimentos();
+  renderCaixa();
   updateDashboard();
   toast('Recebimento atualizado!');
 }
@@ -3745,7 +3897,7 @@ function renderRanking(){
       const rankClass = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other';
       oBody.innerHTML+=`<tr>
         <td><span class="rank-num ${rankClass}">${i+1}</span></td>
-        <td><b>${o.nome}</b></td>
+        <td><b>${esc(o.nome)}</b></td>
         <td>${o.count}</td>
         <td style="font-weight:600">${fmtR(o.receita)}</td>
         <td>${fmtR(o.comissao)}</td>
@@ -3755,7 +3907,7 @@ function renderRanking(){
           <div class="progress-bar" style="margin-bottom:3px"><div class="progress-fill ${pct>=100?'green':'gold'}" style="width:${pct}%;background:${pct>=100?'var(--success)':'var(--accent)'}"></div></div>
           <span style="font-size:11px;color:var(--text2)">${pct.toFixed(0)}%</span>
         </td>
-        <td><button class="btn btn-ghost btn-sm" onclick="openMetaModal('operadora','${o.nome}')">🎯 Meta</button></td>
+        <td><button class="btn btn-ghost btn-sm" onclick="openMetaModal('operadora',this.dataset.op)" data-op="${esc(o.nome)}">🎯 Meta</button></td>
       </tr>`;
     });
     if(opList.length===0) oBody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:24px">Nenhum dado disponível</td></tr>';
@@ -4039,8 +4191,8 @@ function editOperadora(id){
 function deleteOperadora(id){
   const o = DB.operadoras.find(x=>x.id===id); if(!o) return;
   const temAberto = DB.vendas.some(v=>v.operadora===o.nome && v.sitCom==='em aberto');
-  if(temAberto){ toast(`Não é possível excluir ${o.nome}: há comissões em aberto.`,'error'); return; }
-  openConfirm('Excluir a operadora '+o.nome+'? Esta ação não pode ser desfeita.',function(){
+  if(temAberto){ toast(`Não é possível excluir ${esc(o.nome)}: há comissões em aberto.`,'error'); return; }
+  openConfirm('Excluir a operadora '+esc(o.nome)+'? Esta ação não pode ser desfeita.',function(){
     DB.operadoras = DB.operadoras.filter(x=>x.id!==id);
     saveToStorage(); renderRegistros(); populateSelects();
     toast('Operadora excluída.','error');
@@ -4052,8 +4204,8 @@ function salvarSenhaMestre(){
   if(!u || u.vendedorRef !== 'Thomaz'){ toast('Apenas Thomaz pode alterar a senha mestre','error'); return; }
   var nova = document.getElementById('cfg-nova-senha-mestre').value.trim();
   if(!nova){ toast('Digite uma nova senha','error'); return; }
-  // Hash antes de salvar — nunca armazenar plaintext
-  hashSenha(nova).then(function(h){
+  // M-01 SEC: hash com salt fixo 'mestre' para senha mestre
+  hashSenha(nova, 'mestre').then(function(h){
     DB.config.senhaMestre = h;
     saveToStorage();
     document.getElementById('cfg-nova-senha-mestre').value='';
@@ -4117,7 +4269,7 @@ function renderRegistros(){
       oEmpty.style.display='none';
       list.forEach(o=>{
         oBody.innerHTML+=`<tr>
-          <td><b>${o.nome}</b></td>
+          <td><b>${esc(o.nome)}</b></td>
           <td>${o.exec||'—'}</td>
           <td>${o.contato||'—'}</td>
           <td>${o.email||'—'}</td>
@@ -4141,34 +4293,50 @@ function updateDashboard(){
   const month = document.getElementById('dash-month').value;
   const filtradas = DB.vendas.filter(v=>matchesFilter(v.data, year, month));
 
-  const receita = filtradas.reduce((s,v)=>s+v.valor,0);
-  const comissoes = filtradas.filter(v=>v.sitCom!=='cancelado').reduce((s,v)=>s+v.comissao,0);
-  const recebido = DB.recebimentos.filter(r=>{
-    const v = DB.vendas.find(x=>x.operadora===r.operadora);
-    return matchesFilter(r.data, year, month);
-  }).reduce((s,r)=>s+r.valor,0);
-  const totalRecebido = DB.recebimentos.reduce((s,r)=>s+r.valor,0);
+  const receita        = filtradas.reduce((s,v)=>s+v.valor,0);
+  const comissoes      = filtradas.filter(v=>v.sitCom!=='cancelado').reduce((s,v)=>s+v.comissao,0);
+  const ticketMedio    = filtradas.length>0 ? receita/filtradas.length : 0;
+
+  // BUG-06 FIX: posição financeira global (não filtrada por período — é saldo acumulado)
+  const totalRecebido  = DB.recebimentos.reduce((s,r)=>s+r.valor,0);
   const totalComissoes = DB.vendas.filter(v=>v.sitCom!=='cancelado').reduce((s,v)=>s+v.comissao,0);
-  const aReceber = Math.max(0, totalComissoes - totalRecebido);
-  // Saldo = entradas do DB.caixa (bootAuth já criou entradas de Recebimento Operadora) - saídas
-  const totalEntradas = DB.caixa.filter(c=>(c.tipo||'saida')==='entrada').reduce((s,c)=>s+c.valor,0);
-  const totalSaidas   = DB.caixa.filter(c=>(c.tipo||'saida')==='saida').reduce((s,c)=>s+c.valor,0);
-  const saldoCaixa    = totalEntradas - totalSaidas;
-  // Saídas do período filtrado (para exibição no card)
-  const saidas = DB.caixa.filter(c=>matchesFilter(c.data,year,month)&&(c.tipo||'saida')==='saida').reduce((s,c)=>s+c.valor,0);
-  // Lucro = saldo real do caixa (o que sobrou após todas as distribuições)
-  const lucro = saldoCaixa;
+  const aReceber       = Math.max(0, totalComissoes - totalRecebido);
+  const totalEntradas  = DB.caixa.filter(c=>(c.tipo||'saida')==='entrada').reduce((s,c)=>s+c.valor,0);
+  const totalSaidas    = DB.caixa.filter(c=>(c.tipo||'saida')==='saida').reduce((s,c)=>s+c.valor,0);
+  const saldoCaixa     = totalEntradas - totalSaidas;
+  const saidas         = DB.caixa.filter(c=>matchesFilter(c.data,year,month)&&(c.tipo||'saida')==='saida').reduce((s,c)=>s+c.valor,0);
   const pct = totalComissoes>0?(totalRecebido/totalComissoes*100).toFixed(1):0;
 
+  // MELHORIA — tendência vs mês anterior
+  let tendHTML = '';
+  if(year!=='all' && month!=='all'){
+    const prevD = new Date(parseInt(year), parseInt(month)-2, 1);
+    const prevY = String(prevD.getFullYear()), prevM = String(prevD.getMonth()+1);
+    const prevRec = DB.vendas.filter(v=>matchesFilter(v.data,prevY,prevM)).reduce((s,v)=>s+v.valor,0);
+    if(prevRec>0){
+      const delta = ((receita-prevRec)/prevRec*100);
+      const arrow = delta>=0?'↑':'↓';
+      const color = delta>=0?'var(--success)':'var(--danger)';
+      tendHTML = ` <span style="font-size:10px;color:${color};font-weight:700">${arrow} ${Math.abs(delta).toFixed(1)}% vs mês ant.</span>`;
+    }
+  }
+
   document.getElementById('d-receita').textContent = fmtR(receita);
+  const _rSub = document.querySelector('[id="d-receita"]')?.closest('.metric-card')?.querySelector('.m-sub');
+  if(_rSub) _rSub.innerHTML = `${filtradas.length} venda${filtradas.length!==1?'s':''}${tendHTML}`;
   document.getElementById('d-comissao').textContent = fmtR(comissoes);
   const pctComMedia = receita>0 ? (comissoes/receita*100).toFixed(2) : '0.00';
   const pctEl = document.getElementById('d-pct-comissao'); if(pctEl) pctEl.textContent = pctComMedia+'%';
+  // BUG-06: labels explícitas para valores globais
   document.getElementById('d-recebido').textContent = fmtR(totalRecebido);
-  document.getElementById('d-recebido-pct').textContent = pct+'% do total';
+  document.getElementById('d-recebido-pct').textContent = pct+'% do total geral';
   document.getElementById('d-areceber').textContent = fmtR(aReceber);
   document.getElementById('d-saidas').textContent = fmtR(saidas);
   document.getElementById('d-caixa').textContent = fmtR(saldoCaixa);
+  // MELHORIA — Ticket médio
+  const tmEl = document.getElementById('d-ticket-medio'); if(tmEl) tmEl.textContent = fmtR(ticketMedio);
+  // MELHORIA — Badge pendentes na sidebar
+  _updateCommBadge();
 
   // Top Vendedores
   const vendMap = {};
@@ -4199,7 +4367,7 @@ function updateDashboard(){
     doBody.innerHTML='';
     topOp.forEach((o,i)=>{
       const rk = i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);
-      doBody.innerHTML+=`<tr><td>${rk}</td><td>${o.nome}</td><td>${o.count}</td><td>${fmtR(o.comissao)}</td></tr>`;
+      doBody.innerHTML+=`<tr><td>${rk}</td><td>${esc(o.nome)}</td><td>${o.count}</td><td>${fmtR(o.comissao)}</td></tr>`;
     });
     if(topOp.length===0) doBody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:16px">Sem dados</td></tr>';
   }
@@ -4541,7 +4709,8 @@ function parseVendasImport(rows){
     // % final: se tem pctRaw, usa. Senão calcula de volta do valor e comissão
     const pctComissao = pctRaw || (valor && comissao ? comissao / valor * 100 : 0);
 
-    const destino = VALID_DESTINOS.includes(get('destino')) ? get('destino') : (get('destino')||'Outro');
+    // C-02 SEC XSS: destino inválido usa fallback limpo 'Outro', nunca valor bruto
+    const destino = VALID_DESTINOS.includes(get('destino')) ? get('destino') : 'Outro';
     const forma = VALID_FORMAS.includes(get('forma')) ? get('forma') : 'Pix';
     // Importação sempre entra como PAGO e RECEBIDA — padrão fixo
     const sitPgto = 'pago';
@@ -4913,12 +5082,28 @@ function resetSystem(){
 }
 function confirmarSenhaMestreAcao(){
   const digitada = document.getElementById('input-senha-mestre').value;
-  const correta  = DB.config.senhaMestre || '9bada10fd1e9ffbca9b397fc91dc843e37265c5a4c81f59e457d296be8100cb4';
-  hashSenha(digitada).then(function(hash){
-    if(hash !== correta){
+  // M-02 SEC: fallback hardcoded removido — senha mestre deve estar configurada explicitamente
+  const correta = DB.config.senhaMestre;
+  if(!correta){
+    document.getElementById('erro-senha-mestre').textContent='Senha mestre não configurada. Configure em Registros → Configurações.';
+    document.getElementById('erro-senha-mestre').style.display='block';
+    return;
+  }
+  // M-01 SEC: verificar com salt 'mestre' primeiro (novo formato), depois sem salt (legado)
+  verificarSenha(digitada, correta, 'mestre').then(function(result){
+    if(!result.ok){
       document.getElementById('erro-senha-mestre').style.display='block';
       return;
     }
+    // M-01 SEC: migrar hash da senha mestre para formato com salt se necessário
+    if(result.needsMigration){
+      hashSenha(digitada, 'mestre').then(function(h){
+        DB.config.senhaMestre = h;
+        saveToStorage();
+        console.log('[Auth] Senha mestre migrada para formato com salt');
+      });
+    }
+    document.getElementById('erro-senha-mestre').style.display='none';
     closeModal('modal-senha-mestre');
     openConfirm('Confirmação final: todos os lançamentos serão APAGADOS permanentemente. Esta ação é irreversível!',function(){
       _executarZerarSistema();
@@ -4996,7 +5181,20 @@ function init(){
     document.getElementById('cx-data').value = today;
     bootAuth();
     subscribeFirebaseUpdates();
-    // Cross-system login: usuários são sincronizados após cada login (ver doLogin)
+    // Cross-system login fix: popular Firebase com usuários se o caminho estiver VAZIO
+    // (não sobrescreve usuários existentes, preserva hashes já salvos)
+    if(_fbDb && _fbOnline && DB.usuarios && DB.usuarios.length > 0) {
+      setTimeout(function(){
+        _fbDb.ref('desenrola_v3/usuarios').once('value').then(function(snap){
+          if(!snap.exists() || Object.keys(snap.val()||{}).length === 0){
+            // Caminho vazio: populamento inicial
+            console.log('[Init] Populando usuarios no Firebase pela primeira vez...');
+            DB.usuarios.forEach(function(u){ syncUsuarioFirebase(u); });
+          }
+          // Se já tem usuários, não sobrescreve (preserva hashes corretos)
+        }).catch(function(){});
+      }, 2000);
+    }
   }
 
   // Tentar Firebase primeiro; fallback para localStorage
@@ -5064,7 +5262,7 @@ document.addEventListener('click', function(e){
 const PERFIL_LABELS = {adm:'Administrador',mkt:'Marketing',vendedor:'Vendedor',guia:'Guia Virtual'};
 
   // ── Ações pós-autenticação ───────────────────────────────────────
-  function _applyLogin(user, senhaRaw){
+  function _applyLogin(user, senhaRaw, needsMigration){
     var perfis = getPerfis(user);
     // Guia puro: sem acesso ao Desenrola Sistema
     if(perfis.length && !perfis.includes('adm') && !perfis.includes('mkt') && !perfis.includes('vendedor')){
@@ -5089,19 +5287,17 @@ const PERFIL_LABELS = {adm:'Administrador',mkt:'Marketing',vendedor:'Vendedor',g
     applySidebarPermissions();
     // Vendedor ou guia+vendedor → CRM; outros → Dashboard
     showPage(hasPerfil(user,'vendedor') && !isAdm() ? 'crm' : 'dashboard');
-    // Migrar senha plaintext para hash se necessário
-    if(senhaRaw && user.senha && user.senha.length !== 64){
-      hashSenha(senhaRaw).then(function(h){ user.senha=h; saveToStorage(); syncUsuarioFirebase(user); });
+    // M-01 SEC: migrar hash sem salt → com salt ao fazer login
+    if(senhaRaw && (needsMigration || !user.senha || user.senha.length !== 64)){
+      hashSenha(senhaRaw, user.login).then(function(h){
+        user.senha = h;
+        saveToStorage();
+        setTimeout(function(){ if(_fbDb&&_fbOnline) syncUsuarioFirebase(user); }, 500);
+        console.log('[Auth] Hash migrado para formato com salt: ', user.login);
+      });
     } else {
-      // BUGFIX CROSS-SYSTEM: sempre recalcular hash da senha em texto claro no login
-      // Isso garante que o Firebase tenha o hash correto, independente dos hashes hardcoded
       if(senhaRaw) {
-        hashSenha(senhaRaw).then(function(h){
-          user.senha = h; // atualizar o hash correto
-          saveToStorage();
-          setTimeout(function(){ if(_fbDb&&_fbOnline) syncUsuarioFirebase(user); }, 500);
-        });
-      } else {
+        // Garantir que Firebase tem hash mais recente (soft-sync)
         setTimeout(function(){ if(_fbDb&&_fbOnline) syncUsuarioFirebase(user); }, 1500);
       }
       // Soft-sync: enviar ao Firebase usuários que ainda NÃO têm entrada lá
@@ -5126,27 +5322,33 @@ function doLogin(){
   var errEl = document.getElementById('login-error');
   errEl.style.display='none';
 
+  // M-03 SEC: verificar lockout antes de qualquer coisa
+  var lockMsg = _checkLockout(login);
+  if(lockMsg){ errEl.style.display='block'; errEl.textContent=lockMsg; return; }
+
   var user = DB.usuarios.find(function(u){ return u.login===login && (u.status==='ativo'||!u.status); });
   if(!user){
+    _recordFailedAttempt(login);
     errEl.style.display='block';
     errEl.textContent='Login ou senha incorretos. Tente novamente.';
     return;
   }
-  verificarSenha(senhaInput, user.senha).then(function(ok){
-    if(!ok){
+  // M-01 SEC: verificarSenha com salt (login passado para derivação)
+  verificarSenha(senhaInput, user.senha, login).then(function(result){
+    if(!result.ok){
+      _recordFailedAttempt(login);
       errEl.style.display='block';
       errEl.textContent='Login ou senha incorretos. Tente novamente.';
       return;
     }
-    _applyLogin(user, senhaInput);
+    _clearAttempts(login);
+    // M-01 SEC: migrar hash sem salt → com salt automaticamente
+    _applyLogin(user, senhaInput, result.needsMigration);
   }).catch(function(err){
-    console.warn('Login crypto error — usando fallback plaintext:', err);
-    if(senhaInput !== user.senha){
-      errEl.style.display='block';
-      errEl.textContent='Login inválido.';
-      return;
-    }
-    _applyLogin(user, senhaInput);
+    console.warn('Login crypto error:', err);
+    _recordFailedAttempt(login);
+    errEl.style.display='block';
+    errEl.textContent='Erro ao verificar senha. Tente novamente.';
   });
 }
 
@@ -5238,7 +5440,6 @@ function syncUsuarioFirebase(u){
     perfis: getPerfis(u),
     status: u.status || 'ativo',
     vendedorRef: u.vendedorRef || null,
-    _token: _FB_TOKEN  // MOD-01
   };
   _fbDb.ref('desenrola_v3/usuarios/' + key).set(payload).catch(function(e){
     console.warn('syncUsuarioFirebase error:', e);
@@ -5252,7 +5453,7 @@ function syncAllUsuariosFirebase(){
 
 function syncClienteFirebase(cli){
   if(!_fbDb||!_fbOnline||!cli) return;
-  var payload=Object.assign({},cli,{_token:_FB_TOKEN});
+  var payload=Object.assign({},cli);
   _fbDb.ref('desenrola_v3/clientes/c_'+cli.id).set(payload).catch(function(e){
     console.warn('syncClienteFirebase error:',e);
   });
@@ -5260,7 +5461,7 @@ function syncClienteFirebase(cli){
 
 function syncOrcamentoFirebase(orc){
   if(!_fbDb||!_fbOnline||!orc) return;
-  var payload=Object.assign({},orc,{_token:_FB_TOKEN});
+  var payload=Object.assign({},orc);
   _fbDb.ref('desenrola_v3/orcamentos/o_'+orc.id).set(payload).catch(function(e){
     console.warn('syncOrcamentoFirebase error:',e);
   });
@@ -5475,8 +5676,13 @@ function renderCRM(){
   const badge = document.getElementById('crm-total-badge');
   if(badge){
     const perdidos = leads.filter(l=>l.stage==='perdido').length;
+    const fechados = leads.filter(l=>l.stage==='fechado'||l.stage==='pos_venda').length;
     const ativos = totalLeads - perdidos;
-    badge.textContent = `${ativos} ativo${ativos!==1?'s':''} · ${perdidos} perdido${perdidos!==1?'s':''}`;
+    const conv = (fechados+perdidos)>0 ? ((fechados/(fechados+perdidos))*100).toFixed(0) : '—';
+    const pipelineVal = leads.filter(l=>l.stage!=='perdido'&&l.stage!=='fechado'&&l.stage!=='pos_venda').reduce((s,l)=>s+(parseFloat(l.valorProposta)||0),0);
+    badge.innerHTML = `${ativos} ativo${ativos!==1?'s':''} · ${perdidos} perdido${perdidos!==1?'s':''}`+
+      (fechados>0?` <span style="background:var(--success);border-radius:10px;padding:1px 8px;font-size:10px">✅ ${conv}% conv.</span>`:'') +
+      (pipelineVal>0?` <span style="background:var(--accent);color:#0f2d4e;border-radius:10px;padding:1px 8px;font-size:10px">💰 ${fmtR(pipelineVal)} pipeline</span>`:'');
     badge.style.display = totalLeads > 0 ? '' : 'none';
   }
   CRM_STAGES.forEach(stage=>{
@@ -7223,7 +7429,7 @@ function confirmarGrupoGuiamento(){
   var pendingObj = {
     tipo: 'CRIAR_GRUPO',
     criadoEm: (_fbDb&&_fbOnline) ? firebase.database.ServerValue.TIMESTAMP : Date.now(),
-    _token: _FB_TOKEN,
+    _token: null, // C-01 SEC: autenticação via Firebase Anonymous Auth (Rules: auth!=null)
     criadoPor: DB.currentUser ? DB.currentUser.nome : 'sistema',
     payload: {
       nome, responsavel, whatsapp, guia,
