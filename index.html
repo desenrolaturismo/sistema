@@ -5093,8 +5093,17 @@ const PERFIL_LABELS = {adm:'Administrador',mkt:'Marketing',vendedor:'Vendedor',g
     if(senhaRaw && user.senha && user.senha.length !== 64){
       hashSenha(senhaRaw).then(function(h){ user.senha=h; saveToStorage(); syncUsuarioFirebase(user); });
     } else {
-      // Sync do usuário logado ao Firebase — garante que Guiamento encontre o hash correto
-      setTimeout(function(){ if(_fbDb&&_fbOnline) syncUsuarioFirebase(user); }, 1500);
+      // BUGFIX CROSS-SYSTEM: sempre recalcular hash da senha em texto claro no login
+      // Isso garante que o Firebase tenha o hash correto, independente dos hashes hardcoded
+      if(senhaRaw) {
+        hashSenha(senhaRaw).then(function(h){
+          user.senha = h; // atualizar o hash correto
+          saveToStorage();
+          setTimeout(function(){ if(_fbDb&&_fbOnline) syncUsuarioFirebase(user); }, 500);
+        });
+      } else {
+        setTimeout(function(){ if(_fbDb&&_fbOnline) syncUsuarioFirebase(user); }, 1500);
+      }
       // Soft-sync: enviar ao Firebase usuários que ainda NÃO têm entrada lá
       // (apenas se não existirem — evita sobrescrever hashes corretos de outros usuários)
       setTimeout(function(){
@@ -5676,9 +5685,10 @@ function confirmMoveLead(){
     if(!orc){ toast('Orçamento #'+orcIdF+' não encontrado. Pode ter sido excluído.','error'); return; }
     if(!cli){ toast('Cliente não encontrado. Verifique o cadastro.','error'); return; }
     // Avançar lead para fechado e abrir formulário de venda pré-preenchido
-    lead.etapa='fechado'; lead.fechadoEm=new Date().toISOString();
+    // BUGFIX: usar lead.stage (campo que renderCRM usa), não lead.etapa
+    lead.stage='fechado'; lead.stageChangedAt=new Date().toISOString(); lead.fechadoEm=new Date().toISOString();
     saveToStorage(); closeModal('modal-move-lead'); renderCRM();
-    _crmLeadId = id; // guardar contexto
+    _crmLeadId = id; // guardar contexto para vincular venda ao lead
     _abrirVendaDoCRM(cli, orc, lead);
     return;
     // Venda aberta via modal (ver _abrirVendaDoCRM)
@@ -6317,7 +6327,7 @@ function orcAddItem(dados){
       orcVooRenderTrechos(i,nTr);
       if(dados.trechos) dados.trechos.forEach(function(tr,ti){
         var t=ti+1;
-        ['orig','dest','data','hora'].forEach(function(f){
+        ['orig','dest','data','hora','cia'].forEach(function(f){
           var el=document.getElementById('orc-voo-'+f+'-'+i+'-'+t);
           if(el) el.value=tr[f==='orig'?'origem':f==='dest'?'destino':f]||'';
         });
@@ -6369,7 +6379,9 @@ function orcVooRenderTrechos(i, n){
           '<input type="date" class="form-input" id="orc-voo-data-'+i+'-'+t+'"/></div>'+
         '<div class="form-group" style="margin:0"><label class="form-label">Horário</label>'+
           '<input type="time" class="form-input" id="orc-voo-hora-'+i+'-'+t+'"/></div>'+
-      '</div>';
+      '</div>'+
+      '<div class="form-group" style="margin:4px 0 0"><label class="form-label">Companhia Aérea</label>'+
+        '<input type="text" class="form-input" id="orc-voo-cia-'+i+'-'+t+'" placeholder="Ex: American Airlines (AA)" list="cia-list"/></div>';
     cont.appendChild(row);
   }
 }
@@ -6427,7 +6439,8 @@ function _saveOrcamento(){
         if(orig||dest){
           itemObj.trechos.push({origem:orig,destino:dest,
             data:(document.getElementById('orc-voo-data-'+i+'-'+t)||{value:''}).value,
-            hora:(document.getElementById('orc-voo-hora-'+i+'-'+t)||{value:''}).value});
+            hora:(document.getElementById('orc-voo-hora-'+i+'-'+t)||{value:''}).value,
+            cia:(document.getElementById('orc-voo-cia-'+i+'-'+t)||{value:''}).value.trim()});
         }
       }
     }
@@ -6510,7 +6523,8 @@ function exportarOrcamentoPDF(){
         var aerOrig = t.origem ? t.origem : '?';
         var aerDest = t.destino ? t.destino : '?';
         var dtHr = [t.data ? new Date(t.data+'T12:00:00').toLocaleDateString('pt-BR') : '', t.hora||''].filter(Boolean).join(' ');
-        vooInfo += (ti+1)+'. '+escapeHtml(aerOrig)+' → '+escapeHtml(aerDest)+(dtHr?' · '+escapeHtml(dtHr):'')+((ti<item.trechos.length-1)?'<br>':'');
+        var ciaLabel = t.cia ? ' | '+escapeHtml(t.cia) : '';
+        vooInfo += (ti+1)+'. '+escapeHtml(aerOrig)+' → '+escapeHtml(aerDest)+(dtHr?' · '+escapeHtml(dtHr):'')+escapeHtml(ciaLabel)+((ti<item.trechos.length-1)?'<br>':'');
       });
       vooInfo += '</div>';
     }
@@ -7562,6 +7576,60 @@ window.addEventListener('load', init);
   <option value="YUL">YUL — Pierre Elliott Trudeau/Montreal</option>
   <option value="YVR">YVR — Vancouver International</option>
 </datalist>
+
+<!-- Datalist de companhias aéreas -->
+<datalist id="cia-list">
+  <!-- 🇧🇷 Brasil -->
+  <option value="LATAM Brasil (JJ)">LATAM Brasil (JJ)</option>
+  <option value="GOL Linhas Aéreas (G3)">GOL Linhas Aéreas (G3)</option>
+  <option value="Azul Linhas Aéreas (AD)">Azul Linhas Aéreas (AD)</option>
+  <option value="VoePass (VP)">VoePass (VP)</option>
+  <!-- 🇺🇸 EUA -->
+  <option value="American Airlines (AA)">American Airlines (AA)</option>
+  <option value="Delta Air Lines (DL)">Delta Air Lines (DL)</option>
+  <option value="United Airlines (UA)">United Airlines (UA)</option>
+  <option value="JetBlue Airways (B6)">JetBlue Airways (B6)</option>
+  <option value="Southwest Airlines (WN)">Southwest Airlines (WN)</option>
+  <option value="Alaska Airlines (AS)">Alaska Airlines (AS)</option>
+  <option value="Spirit Airlines (NK)">Spirit Airlines (NK)</option>
+  <option value="Frontier Airlines (F9)">Frontier Airlines (F9)</option>
+  <option value="Breeze Airways (MX)">Breeze Airways (MX)</option>
+  <!-- 🌍 Europa -->
+  <option value="Air France (AF)">Air France (AF)</option>
+  <option value="Lufthansa (LH)">Lufthansa (LH)</option>
+  <option value="British Airways (BA)">British Airways (BA)</option>
+  <option value="TAP Air Portugal (TP)">TAP Air Portugal (TP)</option>
+  <option value="Iberia (IB)">Iberia (IB)</option>
+  <option value="KLM Royal Dutch Airlines (KL)">KLM Royal Dutch Airlines (KL)</option>
+  <option value="ITA Airways (AZ)">ITA Airways (AZ)</option>
+  <option value="Swiss International (LX)">Swiss International (LX)</option>
+  <option value="Austrian Airlines (OS)">Austrian Airlines (OS)</option>
+  <option value="SAS Scandinavian (SK)">SAS Scandinavian (SK)</option>
+  <option value="Finnair (AY)">Finnair (AY)</option>
+  <option value="Norwegian Air (DY)">Norwegian Air (DY)</option>
+  <option value="Ryanair (FR)">Ryanair (FR)</option>
+  <option value="easyJet (U2)">easyJet (U2)</option>
+  <option value="Wizz Air (W6)">Wizz Air (W6)</option>
+  <option value="Vueling (VY)">Vueling (VY)</option>
+  <option value="Air Europa (UX)">Air Europa (UX)</option>
+  <!-- 🌎 América do Sul -->
+  <option value="LATAM Airlines (LA)">LATAM Airlines (LA)</option>
+  <option value="Copa Airlines (CM)">Copa Airlines (CM)</option>
+  <option value="Avianca (AV)">Avianca (AV)</option>
+  <option value="Aerolíneas Argentinas (AR)">Aerolíneas Argentinas (AR)</option>
+  <option value="CONVIASA (V0)">CONVIASA (V0)</option>
+  <!-- 🌐 Oriente Médio / Ásia -->
+  <option value="Emirates (EK)">Emirates (EK)</option>
+  <option value="Qatar Airways (QR)">Qatar Airways (QR)</option>
+  <option value="Etihad Airways (EY)">Etihad Airways (EY)</option>
+  <option value="Turkish Airlines (TK)">Turkish Airlines (TK)</option>
+  <option value="Ethiopian Airlines (ET)">Ethiopian Airlines (ET)</option>
+  <!-- 🇨🇦 Canadá -->
+  <option value="Air Canada (AC)">Air Canada (AC)</option>
+  <option value="WestJet (WS)">WestJet (WS)</option>
+  <option value="Air Transat (TS)">Air Transat (TS)</option>
+</datalist>
+
 
 
 <!-- MODAL: CONTRATO GUIAMENTO VIRTUAL -->
