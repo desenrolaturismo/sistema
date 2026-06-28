@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v3.2</title>
+<title>Desenrola Turismo — Sistema de Gestão v3.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -72,7 +72,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 /* ══════════════ PAGE HEADER ══════════════ */
 .page-header{margin-bottom:24px}
-.page-header h1{font-family:'Anton',sans-serif;font-size:24px;letter-spacing:1px;color:var(--primary-darker);margin-bottom:3px;text-transform:uppercase}
+.page-header h1{font-family:'Montserrat','Anton',sans-serif;font-weight:800;font-size:24px;letter-spacing:1px;color:var(--primary-darker);margin-bottom:3px;text-transform:uppercase}
 .page-header p{font-size:13px;color:var(--text2);font-weight:400}
 .page-header .header-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
 
@@ -271,6 +271,14 @@ tbody tr:hover{background:var(--surface2)}
         <span class="nav-icon">📅</span>
         <span>Calendário</span>
       </div>
+      <div class="nav-item" onclick="showPage('templates')" title="Templates WhatsApp">
+        <span class="nav-icon">💬</span>
+        <span>Templates</span>
+      </div>
+      <div class="nav-item" onclick="showPage('temporada')" title="Calendário de Temporada">
+        <span class="nav-icon">🗓️</span>
+        <span>Temporada</span>
+      </div>
     </div>
     <div class="nav-section">
       <div class="nav-label">Guiamento</div>
@@ -293,7 +301,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v3.2
+    ✦ Desenrola Turismo · v3.3
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -863,6 +871,57 @@ tbody tr:hover{background:var(--surface2)}
     <thead><tr><th>#</th><th>Cliente</th><th>Operadora</th><th>Serviços</th><th>Total</th><th>Comissão</th><th>Status</th><th>Data</th><th>Ações</th></tr></thead>
     <tbody id="orc-body"><tr><td colspan="9" style="text-align:center;color:var(--text3);padding:40px">Nenhum orçamento</td></tr></tbody>
   </table></div>
+</div>
+
+
+<!-- ═══════════════════════════════════ PAGE: TEMPLATES WHATSAPP ═══════════════════════════ -->
+<div id="page-templates" class="page">
+  <div class="page-header">
+    <h1>💬 Templates WhatsApp</h1>
+    <p>✦ Mensagens prontas para cada etapa do funil de vendas — copie com um clique</p>
+    <div class="header-actions">
+      <input type="text" class="form-input" id="tpl-search" placeholder="Buscar template..." oninput="renderTemplates()" style="width:220px"/>
+      <select class="form-select" id="tpl-cat" onchange="renderTemplates()" style="width:180px">
+        <option value="all">Todas as etapas</option>
+        <option value="captacao">📥 Captação</option>
+        <option value="briefing">📝 Briefing</option>
+        <option value="orcamento">💰 Orçamento</option>
+        <option value="fechamento">✅ Fechamento</option>
+        <option value="prevenda">✈️ Pré-Viagem</option>
+        <option value="guiamento">🗺️ Guiamento</option>
+        <option value="posvenda">⭐ Pós-Venda</option>
+      </select>
+    </div>
+  </div>
+  <!-- Vars Strip -->
+  <div style="background:var(--surface2);border:1px solid var(--surface3);border-radius:10px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <span style="font-size:12px;font-weight:700;color:var(--text2)">📌 Variáveis:</span>
+    <label style="font-size:12px;color:var(--text2)">Nome do Cliente: <input id="tpl-var-cliente" class="form-input" placeholder="Ex: Maria" style="width:120px;padding:4px 8px;font-size:12px"/></label>
+    <label style="font-size:12px;color:var(--text2)">Destino: <input id="tpl-var-destino" class="form-input" placeholder="Ex: Walt Disney World" style="width:160px;padding:4px 8px;font-size:12px"/></label>
+    <label style="font-size:12px;color:var(--text2)">Data Viagem: <input id="tpl-var-data" class="form-input" placeholder="Ex: 10 de jan" style="width:110px;padding:4px 8px;font-size:12px"/></label>
+    <label style="font-size:12px;color:var(--text2)">Vendedor: <input id="tpl-var-vendedor" class="form-input" placeholder="Seu nome" style="width:110px;padding:4px 8px;font-size:12px"/></label>
+    <button class="btn btn-primary" style="font-size:12px;padding:5px 12px" onclick="renderTemplates()">🔄 Aplicar</button>
+  </div>
+  <div id="tpl-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px"></div>
+</div>
+
+<!-- ═══════════════════════════════════ PAGE: CALENDÁRIO TEMPORADA ════════════════════════ -->
+<div id="page-temporada" class="page">
+  <div class="page-header">
+    <h1>🗓️ Calendário de Temporada</h1>
+    <p>✦ Níveis de lotação, eventos e melhores períodos para visitar Orlando</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:24px" id="temporada-grid"></div>
+  <div style="background:var(--surface);border-radius:12px;padding:20px;border:1px solid var(--surface3)">
+    <h3 style="margin-bottom:12px;color:var(--primary)">📖 Legenda de Lotação</h3>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="width:18px;height:18px;background:#22c55e;border-radius:4px;display:inline-block"></span> 1-3 Baixa — Melhor época ✅</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="width:18px;height:18px;background:#eab308;border-radius:4px;display:inline-block"></span> 4-6 Média — Boa época 👍</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="width:18px;height:18px;background:#f97316;border-radius:4px;display:inline-block"></span> 7-8 Alta — Planeje bem ⚠️</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="width:18px;height:18px;background:#ef4444;border-radius:4px;display:inline-block"></span> 9-10 Pico — Evitar se possível 🔴</span>
+    </div>
+    <p style="margin-top:12px;font-size:12px;color:var(--text2)">Fontes: Undercover Tourist · Thrill-Data · experiência operacional da Desenrola Turismo. Níveis baseados em dados históricos de espera e ocupação hoteleira.</p>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════ PAGE: AGENDA GUIAS ════════════════════════════ -->
@@ -2187,6 +2246,8 @@ function showPage(page){
   if(page==='recebimentos') renderRecebimentos();
   if(page==='comissionamento') renderComissionamento();
   if(page==='caixa') renderCaixa();
+  if(page==='templates') renderTemplates();
+  if(page==='temporada') renderTemporada();
   if(page==='ranking') renderRanking();
   if(page==='registros'){
     renderRegistros();
@@ -3175,6 +3236,155 @@ function _updateCommBadge(){
     }
   }catch(e){}
 }
+
+
+// ══════════════════════ TEMPLATES WHATSAPP ═══════════════════════════════════════
+const TEMPLATES_WA = [
+  // ── CAPTAÇÃO ─────────────────────────────────────────────────────────────
+  {id:'t01', cat:'captacao', emoji:'📥', titulo:'Resposta inicial — Instagram/indicação',
+   texto:`Olá, {cliente}! 🌟 Tudo bem?\n\nSou {vendedor} da *Desenrola Turismo*, especialistas em Disney, Universal e destinos de entretenimento! ✨\n\nFicamos muito felizes com o seu interesse! Adoraríamos entender seus sonhos de viagem e ajudar a transformá-los em realidade. 🏰\n\nPoderia me contar um pouquinho sobre o que você está planejando? (ex: destino, período, quem vai junto, quantas pessoas)\n\nEstou aqui para te ajudar! 😊\n\n*Desenrola Turismo*\n✨ Sua viagem dos sonhos`},
+
+  {id:'t02', cat:'captacao', emoji:'📥', titulo:'Apresentação completa da agência',
+   texto:`Olá, {cliente}! ✨\n\nSeja muito bem-vindo(a) à *Desenrola Turismo* — especialistas em transformar sonhos em experiências inesquecíveis! 🌟\n\n🏰 *O que fazemos:*\n• Ingressos Disney, Universal, SeaWorld, Legoland e mais\n• Hotéis on-site Disney e Universal\n• Transfer, aluguel de carro e seguro viagem\n• *Guiamento Virtual* — nossa maior especialidade! Ficamos com você no WhatsApp o dia todo nos parques\n• Roteiro personalizado day-by-day\n\n💳 *Como trabalhamos:*\n• Pagamento em reais, parcelado em até 10x\n• Sem IOF na compra de ingressos\n• Atendimento dedicado do planejamento ao retorno\n\nVou te enviar o formulário de briefing para entender melhor o que você precisa. Combinado? 😊\n\n*Desenrola Turismo*\n✨ Sua viagem dos sonhos`},
+
+  // ── BRIEFING ──────────────────────────────────────────────────────────────
+  {id:'t03', cat:'briefing', emoji:'📝', titulo:'Solicitação de briefing',
+   texto:`Olá, {cliente}! 😊\n\nPara eu conseguir montar o orçamento mais completo e personalizado para vocês, preciso de algumas informações:\n\n*📋 Briefing de Viagem:*\n\n1️⃣ *Destino(s) desejado(s):*\n□ Walt Disney World (Orlando)\n□ Universal Orlando\n□ SeaWorld Orlando\n□ Disneyland (California)\n□ Outro: ___\n\n2️⃣ *Período:* Datas de ida e volta (ou flexível?)\n\n3️⃣ *Composição do grupo:*\n• Adultos (18+): ___\n• Crianças: ___ (e as idades de cada uma)\n\n4️⃣ *É a primeira viagem à Disney?* Sim / Não\n\n5️⃣ *Qual o orçamento estimado?* (orientativo, em R$)\n\n6️⃣ *O que é prioridade?*\n□ Mais Disney  □ Mais Universal  □ Equilíbrio entre parques  □ Compras/outlets também\n\n7️⃣ *Tem passaporte e visto americano?* Sim / Não / Em andamento\n\nQualquer dúvida me chame! 🌟\n\n*{vendedor} — Desenrola Turismo*`},
+
+  {id:'t04', cat:'briefing', emoji:'📝', titulo:'Follow-up briefing não respondido',
+   texto:`Olá, {cliente}! 😊\n\nPassei para verificar se você recebeu meu formulário de briefing que enviei anteriormente.\n\nEntendo que a rotina é corrida — se preferir, pode me responder aqui mesmo no WhatsApp com as informações básicas:\n\n• *Destino:* Disney / Universal / ambos\n• *Período:* quando pensam em viajar?\n• *Quem vai:* adultos e crianças (idades)\n\nCom isso já consigo iniciar o orçamento! 🚀\n\n*{vendedor} — Desenrola Turismo*\n✨ Sua viagem dos sonhos`},
+
+  // ── ORÇAMENTO ──────────────────────────────────────────────────────────────
+  {id:'t05', cat:'orcamento', emoji:'💰', titulo:'Envio do orçamento',
+   texto:`Olá, {cliente}! 🌟\n\nSeu orçamento para {destino} ficou pronto! 🎉\n\n✨ *Preparei uma proposta completa e personalizada* especialmente para vocês, com todas as informações que você me passou.\n\nO que está incluído:\n• Ingressos para os parques selecionados\n• Hospedagem recomendada\n• Transfer aeroporto\n• Seguro viagem\n• *Guiamento Virtual Desenrola* — somos com você no dia de parque!\n\nO orçamento tem validade de *7 dias úteis* (preços em dólar podem variar).\n\n📲 *Ficou com alguma dúvida?* Me chama que explico tudinho!\n\nEspero que goste! 😊🏰\n\n*{vendedor} — Desenrola Turismo*\n✨ Sua viagem dos sonhos`},
+
+  {id:'t06', cat:'orcamento', emoji:'💰', titulo:'Follow-up orçamento — D+2',
+   texto:`Olá, {cliente}! 😊\n\nPassei para saber se você teve oportunidade de ver o orçamento que enviei para {destino}!\n\nTenho certeza que vai amar os detalhes que preparamos 🌟\n\nSe tiver alguma dúvida ou quiser ajustar algum item (parques, datas, hospedagem), é só me falar — *o orçamento é totalmente flexível*.\n\nVocê tem alguma pergunta? 😊\n\n*{vendedor} — Desenrola Turismo*`},
+
+  {id:'t07', cat:'orcamento', emoji:'💰', titulo:'Follow-up orçamento — D+5 urgência',
+   texto:`Olá, {cliente}! 🌟\n\nQueria te avisar que o orçamento para {destino} vence em breve, e os preços de ingresso e hotel podem ser revisados a qualquer momento.\n\n⚡ *Boa notícia:* ainda tenho disponibilidade para o período que você escolheu! Mas para garantir os valores atuais, é importante fecharmos logo.\n\nPosso te ajudar com alguma dúvida ou ajuste de última hora?\n\n*{vendedor} — Desenrola Turismo*\n✨ Não deixe esse sonho para depois! 🏰`},
+
+  {id:'t08', cat:'orcamento', emoji:'💰', titulo:'Proposta alternativa — ajuste de budget',
+   texto:`Olá, {cliente}! 😊\n\nEntendi perfeitamente o que você me passou sobre o budget. Reorganizei a proposta e tenho uma opção que se encaixa melhor no que você procura!\n\n✏️ *O que ajustamos:*\n• [Descrever o que foi alterado]\n\nO mais importante é que *a experiência continua incrível* — a Disney e Universal são mágicas em qualquer configuração! 🌟\n\nQualquer dúvida me chame. Vamos tornar essa viagem possível! 😊\n\n*{vendedor} — Desenrola Turismo*`},
+
+  // ── FECHAMENTO ──────────────────────────────────────────────────────────────
+  {id:'t09', cat:'fechamento', emoji:'✅', titulo:'Confirmação de fechamento',
+   texto:`🎉 *Parabéns, {cliente}! A viagem dos sonhos está confirmada!* 🏰✨\n\nEstamos muito felizes em fazer parte dessa experiência incrível com você e sua família!\n\n*📋 Próximos passos:*\n1️⃣ Dados dos viajantes (nome completo, data nascimento, nº passaporte)\n2️⃣ Pagamento da entrada\n3️⃣ Confirmação das reservas\n4️⃣ Envio dos vouchers\n\nVou te enviar um checklist completo. Qualquer dúvida, estou à disposição! 😊\n\n*{vendedor} — Desenrola Turismo*\n✨ Sua viagem dos sonhos começa agora!`},
+
+  {id:'t10', cat:'fechamento', emoji:'✅', titulo:'Solicitação de dados dos viajantes',
+   texto:`Olá, {cliente}! 😊\n\nPara dar início às reservas, preciso dos dados de *todos os viajantes*:\n\n*Por favor, preencha para cada pessoa:*\n\n👤 *Nome completo* (como no passaporte):\n📅 *Data de nascimento:*\n🛂 *Nº do passaporte:*\n📱 *Telefone:*\n📧 *E-mail:*\n\n🚨 *IMPORTANTE:* Crianças: informe também a *altura em cm* para verificação de restrições nas atrações.\n\nAssim que receber, já começo as reservas! 🚀\n\n*{vendedor} — Desenrola Turismo*`},
+
+  {id:'t11', cat:'fechamento', emoji:'✅', titulo:'Confirmação de pagamento recebido',
+   texto:`Olá, {cliente}! ✅\n\n*Pagamento confirmado! Muito obrigado!* 🎉\n\nSua viagem para {destino} em {data} está *oficialmente reservada*! 🏰\n\nVou acompanhar de perto todas as etapas e te manterei atualizado(a) sobre:\n• Confirmação das reservas de hotel\n• Emissão dos ingressos\n• Vouchers finais\n\nSe precisar de qualquer coisa, estou aqui! 😊\n\n*{vendedor} — Desenrola Turismo*\n✨ Sua viagem dos sonhos`},
+
+  // ── PRÉ-VIAGEM ──────────────────────────────────────────────────────────────
+  {id:'t12', cat:'prevenda', emoji:'✈️', titulo:'D-30 — Preparação geral',
+   texto:`Olá, {cliente}! 🌟\n\nA viagem para {destino} está chegando! Faltam *30 dias*! 🎉\n\n*📱 Apps indispensáveis para instalar:*\n• *My Disney Experience* — reservas de Lightning Lane, filas, restaurantes (Disney)\n• *Universal Orlando* — virtual lines e tempo de espera\n• *SeaWorld App* — se for ao SeaWorld\n\n📝 *Checklist de 30 dias:*\n□ Passaporte válido (mínimo 6 meses de validade além da data de retorno)\n□ Visto americano válido / ESTA se cidadão de país elegível\n□ Seguro viagem contratado\n□ Chip internacional reservado (ou cartão com cobertura internacional)\n□ Notificação de viagem no seu banco\n\nEm caso de dúvida, me chama! 😊\n\n*{vendedor} — Desenrola Turismo*`},
+
+  {id:'t13', cat:'prevenda', emoji:'✈️', titulo:'D-14 — Apps e My Disney Experience',
+   texto:`Olá, {cliente}! 😊 Faltam *2 semanas*! 🏰\n\n*🎢 Como usar o My Disney Experience (MDE):*\n\n1️⃣ Baixe o app e crie sua conta\n2️⃣ *Link seus ingressos* (você receberá as instruções com os vouchers)\n3️⃣ Explore o mapa dos parques antes de ir\n\n*⚡ Lightning Lane Multi Pass (LLMP):*\n• Disponível para compra *a partir das 7h no dia do parque*\n• Reserve as atrações mais populares PRIMEIRO (Seven Dwarfs, TRON, Rise of the Resistance...)\n• Você pode reservar 1 LL de cada vez — após usar, libera para reservar outro\n\n*🍽️ Restaurantes Disney:*\n• Reservas abrem com 60 dias de antecedência\n• Me avise se quiser algum especial que eu te ajudo!\n\n*{vendedor} — Desenrola Turismo*`},
+
+  {id:'t14', cat:'prevenda', emoji:'✈️', titulo:'D-7 — Checklist completo',
+   texto:`Olá, {cliente}! 🌟 *1 semana para decolar!* ✈️\n\n*📋 Checklist final:*\n\n✅ *Documentos:*\n□ Passaporte (dentro da validade)\n□ Visto americano\n□ Seguro viagem (imprimir apólice)\n□ Vouchers dos ingressos e hotel (imprimir ou salvar offline)\n\n✅ *Financeiro:*\n□ Cartão de crédito internacional / dólares em espécie\n□ Limites do cartão verificados\n□ Banco notificado sobre viagem internacional\n\n✅ *Tecnologia:*\n□ My Disney Experience instalado e ingressos linkados\n□ Universal App instalado\n□ Chip internacional ativado / testado\n□ Power bank carregado\n\n*Lembre-se:* estaremos com vocês via WhatsApp durante todo o dia de parque! 🎢\n\n*{vendedor} — Desenrola Turismo*\n✨ Boa viagem!`},
+
+  {id:'t15', cat:'prevenda', emoji:'✈️', titulo:'D-1 — Véspera da viagem',
+   texto:`Olá, {cliente}! 🎉\n\n*Amanhã começa a aventura!* 🏰✈️\n\nÚltimas dicas:\n\n⏰ *No aeroporto:* chegue com antecedência (3h para voos internacionais)\n🛂 *Na imigração:* formulário do I-94 (pode preencher online antes em i94.cbp.dhs.gov)\n🚗 *Ao chegar:* seu transfer já está confirmado para {data}\n🏨 *Hotel:* check-in geralmente a partir das 15h (guarda bagagem antes se chegar antes)\n\n💬 *Estarei disponível via WhatsApp durante toda a viagem!*\n\nDivirtam-se muito e aproveitem cada momento! A magia começa amanhã! ✨🌟\n\n*{vendedor} — Desenrola Turismo*\n🏰 Sua viagem dos sonhos começa agora!`},
+
+  // ── GUIAMENTO ──────────────────────────────────────────────────────────────
+  {id:'t16', cat:'guiamento', emoji:'🗺️', titulo:'Bom dia — Início do dia de parque',
+   texto:`🌟 *Bom dia, {cliente}!*\n\nHoje é o grande dia! 🎢🏰\n\n*📋 Roteiro de hoje — {destino}:*\n\n⏰ *Chegada ideal:* 30 min antes da abertura oficial\n🎯 *Primeiras atrações:* as mais disputadas! (correndo!)\n⚡ *Lightning Lane:* abrem às 7h — abram o app agora se ainda não reservaram\n🍽️ *Almoço sugerido:* [nome do restaurante]\n\n📲 *Estou aqui com vocês hoje o dia todo!* Me mandem mensagem a qualquer momento com dúvidas sobre:\n• Tempo de fila de qualquer atração\n• Onde fazer reserva de LL\n• Sugestões de restaurante na hora\n• Qualquer imprevisto\n\nDivirtam-se muito! A magia começa agora! ✨\n\n*{vendedor} — Guiamento Desenrola*`},
+
+  {id:'t17', cat:'guiamento', emoji:'🗺️', titulo:'Update de manhã — primeiras atrações',
+   texto:`⏰ *Update de manhã — {cliente}!*\n\n✅ *Conseguiram fazer o Rope Drop?* As primeiras atrações da manhã têm filas bem menores!\n\n🎢 *Sugestão agora:*\n1. [Atração 1 — mais procurada]\n2. [Atração 2]\n3. Lightning Lane: já podem reservar a próxima!\n\n🌡️ *Clima hoje:* quente! Hidratem-se bastante. Chapéu e protetor solar são essenciais.\n\n📲 Me avisem quando sairem da primeira atração para eu indicar a próxima estratégia!\n\n*{vendedor} — Guiamento Desenrola*`},
+
+  {id:'t18', cat:'guiamento', emoji:'🗺️', titulo:'Hora do almoço — sugestão',
+   texto:`🍽️ *Hora de recarregar as energias, {cliente}!*\n\nJá são aprox. 12h — é o momento certo para o almoço enquanto as filas estão no pico!\n\n*Sugestões de restaurante próximos de onde estão:*\n• [Restaurante 1] — [característica]\n• [Restaurante 2] — [característica]\n\n💡 *Dica:* aproveitem para reservar o próximo Lightning Lane durante o almoço! O app permite reservar de qualquer lugar.\n\n*Próximas atrações da tarde:* vou te mandar uma estratégia em uns 30 minutos. 😊\n\n*{vendedor} — Guiamento Desenrola*`},
+
+  {id:'t19', cat:'guiamento', emoji:'🗺️', titulo:'Dica da tarde — Lightning Lane',
+   texto:`⚡ *Update da tarde — {cliente}!*\n\nAs filas do meio do dia estão cedendo um pouco. *Momento estratégico!*\n\n🎢 *Atrações sugeridas agora:*\n1. [Atração com fila mais baixa agora]\n2. [Atração que fecha mais cedo]\n\n⏰ *Dica:* se quiserem ver o *show/parada*, começa às [horário]. Cheguem 30 min antes para pegar lugar bom!\n\n🌅 *Últimos 2h do parque:* as filas caem bastante! Esse é o momento de tentar atrações sem LL que estavam com muito espera.\n\n*{vendedor} — Guiamento Desenrola*`},
+
+  {id:'t20', cat:'guiamento', emoji:'🗺️', titulo:'Encerramento do dia de parque',
+   texto:`🌙 *Encerrando o dia, {cliente}!*\n\nUm dia incrível hoje! 🎉✨\n\n*Amanhã:* se tiverem outro dia de parque, me avisem cedo que preparo a estratégia do dia!\n\n*🌟 Deixa seu feedback de hoje:*\nO que mais gostaram? Alguma atração que surpreendeu?\n\nCuidem-se e descansem bem para o próximo dia! 😴\n\n*{vendedor} — Guiamento Desenrola*\n✨ Cada dia melhor que o anterior!`},
+
+  // ── PÓS-VENDA ──────────────────────────────────────────────────────────────
+  {id:'t21', cat:'posvenda', emoji:'⭐', titulo:'Mensagem de retorno',
+   texto:`Olá, {cliente}! 😊\n\nEspero que tenham chegado bem em casa após essa viagem incrível para {destino}! 🏠\n\nFicamos muito felizes em ter feito parte dessa experiência tão especial com vocês! 🌟\n\nQueremos saber: *como foi a viagem?* Algum momento especial que ficou na memória? Alguma atração que surpreendeu?\n\nNosso trabalho continua mesmo depois que vocês chegam em casa! 😊\n\n*{vendedor} — Desenrola Turismo*\n✨ Até a próxima aventura!`},
+
+  {id:'t22', cat:'posvenda', emoji:'⭐', titulo:'Solicitação de avaliação Google',
+   texto:`Olá, {cliente}! 🌟\n\nEsperamos que a viagem para {destino} tenha sido absolutamente incrível! 🏰✨\n\nSua opinião é *muito importante* para nós e ajuda outras famílias que também sonham em viver essa experiência! 💛\n\nVocê poderia nos deixar uma avaliação no Google?\n👉 [LINK DO GOOGLE MAPS]\n\nLeva menos de 2 minutinhos e faz toda a diferença para nossa equipe! ⭐⭐⭐⭐⭐\n\nMuito obrigado! 🙏\n\n*{vendedor} — Desenrola Turismo*`},
+
+  {id:'t23', cat:'posvenda', emoji:'⭐', titulo:'Solicitação de indicação',
+   texto:`Olá, {cliente}! 😊\n\nEspero que ainda estejam com aquela energia boa da viagem para {destino}! ✨\n\nSabe aquele amigo ou familiar que SEMPRE fala em fazer uma viagem à Disney ou Universal? 🏰\n\n*Que tal presenteá-los com uma consultoria gratuita?* Apresente a Desenrola e eles vão agradecer muito! 😄\n\nBasta me mandar o contato deles pelo WhatsApp que cuido de tudo com o mesmo carinho que cuidei de vocês! 🌟\n\n*{vendedor} — Desenrola Turismo*\n✨ Obrigado por confiar na gente!`},
+
+  {id:'t24', cat:'posvenda', emoji:'⭐', titulo:'Re-engajamento — 3 meses depois',
+   texto:`Olá, {cliente}! 🌟\n\nFaz uns meses desde a viagem mágica para {destino} — como estão? 😊\n\nSabia que a Disney lança *novidades e eventos especiais o ano todo*? 🎉\n\nEm breve teremos:\n🎃 *Mickey's Not So Scary Halloween Party*\n🎄 *Mickey's Very Merry Christmas Party*\n🎆 *Festival EPCOT Food & Wine*\n🌸 *Festival Flower & Garden*\n\nSe já está pensando na *próxima aventura*, me chama! Tenho condições especiais para clientes que voltam e posso ajudar a planejar algo ainda mais especial! 🏰✨\n\n*{vendedor} — Desenrola Turismo*`},
+
+  {id:'t25', cat:'posvenda', emoji:'⭐', titulo:'Aniversário de viagem',
+   texto:`Olá, {cliente}! 🎂🌟\n\nFaz exatamente 1 ano hoje desde que vocês viveram a magia de {destino}! 🏰✨\n\nEsses momentos ficam para sempre na memória, não é? 💛\n\nEstou aqui para quando bater aquela saudade e quiserem *repetir a dose* — ou quem sabe explorar um novo destino mágico? 😊\n\n*Tenho uma condição especial exclusiva para clientes fidelizados!* Me chama para saber mais! 🌟\n\n*{vendedor} — Desenrola Turismo*\n✨ Sua viagem dos sonhos`}
+];
+
+function getVars(){
+  return {
+    cliente: (document.getElementById('tpl-var-cliente')||{}).value || '{cliente}',
+    destino: (document.getElementById('tpl-var-destino')||{}).value || '{destino}',
+    data:    (document.getElementById('tpl-var-data')||{}).value || '{data}',
+    vendedor:(document.getElementById('tpl-var-vendedor')||{}).value || (DB&&DB.currentUser?DB.currentUser.nome:'{vendedor}')
+  };
+}
+
+function applyVars(txt){
+  const v = getVars();
+  return txt.replace(/\{cliente\}/g,v.cliente).replace(/\{destino\}/g,v.destino)
+            .replace(/\{data\}/g,v.data).replace(/\{vendedor\}/g,v.vendedor);
+}
+
+function renderTemplates(){
+  const grid = document.getElementById('tpl-grid'); if(!grid) return;
+  const cat  = (document.getElementById('tpl-cat')||{}).value||'all';
+  const q    = ((document.getElementById('tpl-search')||{}).value||'').toLowerCase();
+  const list = TEMPLATES_WA.filter(t=>(cat==='all'||t.cat===cat)&&(!q||t.titulo.toLowerCase().includes(q)||t.texto.toLowerCase().includes(q)));
+  if(!list.length){ grid.innerHTML='<p style="color:var(--text2);padding:20px">Nenhum template encontrado.</p>'; return; }
+  const catColors={captacao:'#2563eb',briefing:'#7c3aed',orcamento:'#d97706',fechamento:'#16a34a',prevenda:'#0891b2',guiamento:'#9333ea',posvenda:'#dc2626'};
+  grid.innerHTML = list.map(t=>{
+    const txt = applyVars(t.texto);
+    const waLink = 'https://wa.me/?text='+encodeURIComponent(txt);
+    return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="background:${catColors[t.cat]||'#666'};color:#fff;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;text-transform:uppercase">${t.cat}</span>
+        <span style="font-size:14px;font-weight:700;color:var(--text1)">${t.emoji} ${esc(t.titulo)}</span>
+      </div>
+      <div id="tpl-preview-${t.id}" style="background:var(--bg);border-radius:8px;padding:10px;font-size:11.5px;line-height:1.6;color:var(--text1);white-space:pre-wrap;max-height:160px;overflow:hidden;position:relative;cursor:pointer" onclick="this.style.maxHeight=this.style.maxHeight==='none'?'160px':'none'">${esc(txt)}<div style="position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,var(--bg))"></div></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(applyVars(TEMPLATES_WA.find(x=>x.id==='${t.id}').texto));toast('Template copiado!','success')" style="font-size:12px">📋 Copiar</button>
+        <a href="${waLink}" target="_blank" rel="noopener" class="btn btn-accent btn-sm" style="font-size:12px;text-decoration:none">📲 Abrir no WhatsApp</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Temporada (crowd calendar) ─────────────────────────────────────────────────────────────
+const CROWD_DATA = {"2026-01":{"label":"Jan 2026","nivel":3,"desc":"Baixa temporada — ótimo custo-benefício após festas","eventos":["Martin Luther King Day (3ª semana, sobe para 6)","Marathon da Disney (semana 1)"]},"2026-02":{"label":"Fev 2026","nivel":3,"desc":"Uma das melhores épocas para visitar","eventos":["Presidents Day (3ª semana, sobe para 5)","EPCOT Festival of the Arts"]},"2026-03":{"label":"Mar 2026","nivel":8,"desc":"Spring Break americano e semana santa — muito movimentado","eventos":["Spring Break EUA (semanas 2-4)","Semana Santa brasileira (fim do mês)","EPCOT Flower & Garden Festival começa"]},"2026-04":{"label":"Abr 2026","nivel":7,"desc":"Spring Break continua + Páscoa","eventos":["Spring Break 1ª semana","EPCOT Flower & Garden Festival","Easter Sunday (Páscoa)"]},"2026-05":{"label":"Mai 2026","nivel":4,"desc":"Excelente! Bem após Páscoa, antes do verão americano","eventos":["Memorial Day (última semana, sobe para 7)","Star Wars Celebration (se confirmado)","EPCOT Flower & Garden Festival"]},"2026-06":{"label":"Jun 2026","nivel":7,"desc":"Verão americano — calor intenso e filas longas","eventos":["Escolas americanas fecham (metade do mês)","Gay Days (1ª semana)","Muito calor 35°C+"]},"2026-07":{"label":"Jul 2026","nivel":9,"desc":"4 de julho e pico máximo do verão — EVITAR se possível","eventos":["4th of July (semana mais movimentada do ano)","Férias escolares EUA e Brasil","Filas de 90-180 min comuns"]},"2026-08":{"label":"Ago 2026","nivel":7,"desc":"Ainda verão, calor extremo e chuvas frequentes à tarde","eventos":["Escolas americanas voltam (2ª quinzena — cai para 5)","Mickey's Not So Scary Halloween (começa 2ª quinzena)","Temporada de furacões"]},"2026-09":{"label":"Set 2026","nivel":3,"desc":"MELHOR MÊS DO ANO — baixíssimo movimento e ótimo clima","eventos":["Mickey's Not So Scary Halloween (sextas e sábados)","Labor Day (semana 1, sobe para 5)","EPCOT Food & Wine Festival começa (final do mês)"]},"2026-10":{"label":"Out 2026","nivel":5,"desc":"Bom mês, eventos de Halloween aumentam movimento nos fins de semana","eventos":["Mickey's Not So Scary Halloween (todo mês)","Halloween Horror Nights Universal","EPCOT Food & Wine Festival","Columbus Day (2ª semana, sobe para 6)"]},"2026-11":{"label":"Nov 2026","nivel":6,"desc":"Bom início, muito movimentado na semana de Thanksgiving","eventos":["EPCOT Food & Wine Festival (até início do mês)","Festival of the Holidays começa (final do mês)","Thanksgiving (última semana — nível 10!)","Mickey's Very Merry Christmas Party começa"]},"2026-12":{"label":"Dez 2026","nivel":8,"desc":"Natal mágico mas muito movimentado — planeje dias leves","eventos":["Mickey's Very Merry Christmas Party","EPCOT Festival of the Holidays","Christmas Week (25 dez - 1 jan = nível 10)","Horários estendidos em todos os parques"]},"2027-01":{"label":"Jan 2027","nivel":3,"desc":"Ótimo mês — pós festas com baixo movimento","eventos":["Martin Luther King Day (3ª semana)","Marathon Disney (1ª semana)"]},"2027-02":{"label":"Fev 2027","nivel":3,"desc":"Excelente época para visitar com família","eventos":["EPCOT Festival of the Arts","Presidents Day (3ª semana)"]},"2027-03":{"label":"Mar 2027","nivel":8,"desc":"Spring Break — alto movimento","eventos":["Spring Break EUA","Semana Santa","EPCOT Flower & Garden Festival"]},"2027-04":{"label":"Abr 2027","nivel":6,"desc":"Movimento médio-alto","eventos":["Spring Break","EPCOT Flower & Garden Festival"]},"2027-05":{"label":"Mai 2027","nivel":4,"desc":"Ótimo mês antes do verão","eventos":["EPCOT Flower & Garden Festival","Memorial Day (última semana)"]},"2027-06":{"label":"Jun 2027","nivel":7,"desc":"Verão começa — movimento alto","eventos":["Escolas americanas fecham","Gay Days"]},"2027-07":{"label":"Jul 2027","nivel":9,"desc":"Pico máximo do verão","eventos":["4th of July","Férias escolares EUA e Brasil"]},"2027-08":{"label":"Ago 2027","nivel":7,"desc":"Verão intenso","eventos":["Mickey's Not So Scary Halloween (2ª quinzena)"]},"2027-09":{"label":"Set 2027","nivel":3,"desc":"Melhor mês do ano","eventos":["NSSH","EPCOT Food & Wine começa"]},"2027-10":{"label":"Out 2027","nivel":5,"desc":"Bom mês com eventos de Halloween","eventos":["NSSH","Halloween Horror Nights","EPCOT Food & Wine"]},"2027-11":{"label":"Nov 2027","nivel":6,"desc":"Bom até Thanksgiving","eventos":["Festival of Holidays começa","Thanksgiving (última semana — pico)"]},"2027-12":{"label":"Dez 2027","nivel":8,"desc":"Natal mágico mas movimentado","eventos":["Mickey's Very Merry Christmas","Festival of Holidays EPCOT","Christmas Week"]}};
+
+function renderTemporada(){
+  const grid = document.getElementById('temporada-grid'); if(!grid) return;
+  const nivelColor = n => n<=3?'#22c55e':n<=6?'#eab308':n<=8?'#f97316':'#ef4444';
+  const nivelLabel = n => n<=3?'🟢 Baixa':n<=6?'🟡 Média':n<=8?'🟠 Alta':'🔴 Pico';
+  grid.innerHTML = Object.entries(CROWD_DATA).map(([key,m])=>`
+    <div style="background:var(--surface);border:1px solid var(--surface3);border-radius:12px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h3 style="font-size:15px;font-weight:700;color:var(--text1)">${esc(m.label)}</h3>
+        <span style="background:${nivelColor(m.nivel)};color:${m.nivel<=3?'#14532d':m.nivel<=6?'#713f12':m.nivel<=8?'#431407':'#7f1d1d'};border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700">${nivelLabel(m.nivel)} · ${m.nivel}/10</span>
+      </div>
+      <div style="background:var(--surface3);border-radius:6px;height:8px;margin-bottom:10px">
+        <div style="background:${nivelColor(m.nivel)};height:8px;border-radius:6px;width:${m.nivel*10}%;transition:width 0.3s"></div>
+      </div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:8px">${esc(m.desc)}</p>
+      <div style="display:flex;flex-direction:column;gap:3px">${(m.eventos||[]).map(e=>`<span style="font-size:11px;color:var(--text2)">• ${esc(e)}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+
 // Cache de resultado por vendedor/período (evita recalcular O(n*m))
 let _commResultCache = null, _commResultKey = '';
 function getCommResultCache(key){ return _commResultKey===key ? _commResultCache : null; }
