@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v3.3</title>
+<title>Desenrola Turismo — Sistema de Gestão v3.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -267,6 +267,10 @@ tbody tr:hover{background:var(--surface2)}
         <span class="nav-icon">🎯</span>
         <span>Pipeline CRM</span>
       </div>
+      <div class="nav-item" onclick="showPage('orcamentos')" title="Orçamentos">
+        <span class="nav-icon">📋</span>
+        <span>Orçamentos</span>
+      </div>
       <div class="nav-item" onclick="showPage('calendario')" title="Calendário">
         <span class="nav-icon">📅</span>
         <span>Calendário</span>
@@ -278,6 +282,14 @@ tbody tr:hover{background:var(--surface2)}
       <div class="nav-item" onclick="showPage('temporada')" title="Calendário de Temporada">
         <span class="nav-icon">🗓️</span>
         <span>Temporada</span>
+      </div>
+      <div class="nav-item" onclick="showPage('hoteis')" title="Hotéis">
+        <span class="nav-icon">🏨</span>
+        <span>Hotéis</span>
+      </div>
+      <div class="nav-item" onclick="showPage('festivais')" title="Festivais e Eventos">
+        <span class="nav-icon">🌸</span>
+        <span>Festivais</span>
       </div>
     </div>
     <div class="nav-section">
@@ -301,7 +313,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v3.3
+    ✦ Desenrola Turismo · v3.5
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -878,8 +890,9 @@ tbody tr:hover{background:var(--surface2)}
 <div id="page-templates" class="page">
   <div class="page-header">
     <h1>💬 Templates WhatsApp</h1>
-    <p>✦ Mensagens prontas para cada etapa do funil de vendas — copie com um clique</p>
+    <p>✦ Mensagens prontas para cada etapa do funil de vendas — copie, edite ou crie novos</p>
     <div class="header-actions">
+      <button class="btn btn-primary" onclick="openModalNovoTemplate()">+ Novo Template</button>
       <input type="text" class="form-input" id="tpl-search" placeholder="Buscar template..." oninput="renderTemplates()" style="width:220px"/>
       <select class="form-select" id="tpl-cat" onchange="renderTemplates()" style="width:180px">
         <option value="all">Todas as etapas</option>
@@ -922,6 +935,168 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <p style="margin-top:12px;font-size:12px;color:var(--text2)">Fontes: Undercover Tourist · Thrill-Data · experiência operacional da Desenrola Turismo. Níveis baseados em dados históricos de espera e ocupação hoteleira.</p>
   </div>
+</div>
+
+<!-- ═══════════════════════════════════════ PAGE: HOTÉIS ════════════════════════════════════ -->
+<div id="page-hoteis" class="page">
+  <div class="page-header">
+    <h1>🏨 Hotéis</h1>
+    <p>✦ Guia de hotéis Disney, Universal e parceiros por destino</p>
+    <div class="header-actions">
+      <select class="form-select" id="htl-dest-filter" onchange="renderHoteis()" style="width:160px">
+        <option value="">Todos os destinos</option>
+        <option value="Orlando">🏖️ Orlando</option>
+        <option value="California">🌴 California</option>
+        <option value="Paris">🗼 Paris</option>
+        <option value="Japao">🗾 Japão</option>
+        <option value="Cruzeiro">🚢 Cruzeiro</option>
+      </select>
+      <select class="form-select" id="htl-tipo-filter" onchange="renderHoteis()" style="width:150px">
+        <option value="">Todos os tipos</option>
+        <option value="disney_owned">🏰 On-site Disney</option>
+        <option value="disney_good_neighbor">🤝 Good Neighbor Disney</option>
+        <option value="universal_on_site">🎥 On-site Universal</option>
+        <option value="partner_hotel">🏨 Hotel Parceiro</option>
+      </select>
+      <input type="text" class="form-input" id="htl-search" placeholder="🔍 Buscar hotel..." oninput="renderHoteis()" style="width:200px"/>
+    </div>
+  </div>
+  <div id="htl-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px"></div>
+</div>
+
+<!-- ═══════════════════════════════════════ PAGE: FESTIVAIS ══════════════════════════════════ -->
+<div id="page-festivais" class="page">
+  <div class="page-header">
+    <h1>🌸 Festivais e Eventos</h1>
+    <p>✦ Calendário completo de festas sazonais Disney, Universal e United Parks</p>
+    <div class="header-actions">
+      <select class="form-select" id="fest-park-filter" onchange="renderFestivais()" style="width:200px">
+        <option value="">Todos os parques</option>
+        <option value="Disney">🏰 Disney</option>
+        <option value="Universal">🎥 Universal</option>
+        <option value="SeaWorld">🐬 SeaWorld / United Parks</option>
+      </select>
+      <input type="text" class="form-input" id="fest-search" placeholder="🔍 Buscar festival..." oninput="renderFestivais()" style="width:200px"/>
+    </div>
+  </div>
+  <div id="fest-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px"></div>
+</div>
+
+<!-- ═══════════════════════════════════════ PAGE: ORÇAMENTOS ═════════════════════════════════ -->
+<div id="page-orcamentos" class="page">
+  <div class="page-header">
+    <h1>📋 Orçamentos</h1>
+    <p>✦ Propostas personalizadas para cada cliente — monte, envie e acompanhe</p>
+    <div class="header-actions">
+      <select class="form-select" id="orc-status-filter" onchange="renderOrcamentos()" style="width:150px">
+        <option value="all">Todos os status</option>
+        <option value="rascunho">📝 Rascunho</option>
+        <option value="enviado">📤 Enviado</option>
+        <option value="aprovado">✅ Aprovado</option>
+        <option value="perdido">❌ Perdido</option>
+        <option value="expirado">⏰ Expirado</option>
+      </select>
+      <button class="btn btn-primary" onclick="openOrcamentoModal(null)">+ Novo Orçamento</button>
+    </div>
+  </div>
+
+  <!-- Métricas -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px" id="orc-metrics"></div>
+
+  <!-- Lista -->
+  <div id="orc-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════ MODAL: ORÇAMENTO ════════════════════════════════════ -->
+<div id="modal-orcamento" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeOrcamentoModal()">
+<div class="modal" style="max-width:820px;width:95vw;max-height:90vh;overflow-y:auto">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px 0;border-bottom:1px solid var(--surface3);padding-bottom:16px;margin-bottom:20px">
+    <h2 style="font-size:18px;font-weight:700" id="orc-modal-title">📋 Novo Orçamento</h2>
+    <button onclick="closeOrcamentoModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text2)">✕</button>
+  </div>
+  <div style="padding:0 24px 24px">
+
+    <!-- Seção 1: Cliente -->
+    <div style="background:var(--surface2);border-radius:10px;padding:16px;margin-bottom:16px">
+      <h3 style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--primary)">👤 Dados do Cliente</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label class="form-label">Nome do Cliente *</label><input class="form-input" id="orc-cliente-nome" placeholder="Nome completo"/></div>
+        <div class="form-group"><label class="form-label">WhatsApp</label><input class="form-input" id="orc-cliente-wa" placeholder="+55 11 99999-9999"/></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="orc-cliente-email" type="email" placeholder="cliente@email.com"/></div>
+        <div class="form-group"><label class="form-label">Vendedor</label>
+          <select class="form-select" id="orc-vendedor"></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção 2: Viagem -->
+    <div style="background:var(--surface2);border-radius:10px;padding:16px;margin-bottom:16px">
+      <h3 style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--primary)">✈️ Dados da Viagem</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div class="form-group"><label class="form-label">Destino</label>
+          <select class="form-select" id="orc-destino">
+            <option value="Orlando">🏖️ Orlando (Disney + Universal)</option>
+            <option value="California">🌴 California</option>
+            <option value="Paris">🗼 Paris</option>
+            <option value="Japao">🗾 Japão</option>
+            <option value="Outros">🌎 Outros</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Data de Chegada</label><input class="form-input" id="orc-chegada" type="date"/></div>
+        <div class="form-group"><label class="form-label">Data de Retorno</label><input class="form-input" id="orc-retorno" type="date"/></div>
+        <div class="form-group"><label class="form-label">Adultos</label><input class="form-input" id="orc-adultos" type="number" min="1" value="2"/></div>
+        <div class="form-group"><label class="form-label">Crianças</label><input class="form-input" id="orc-criancas" type="number" min="0" value="0" oninput="updateIdadesOrc()"/></div>
+        <div class="form-group"><label class="form-label">Idades (crianças)</label><input class="form-input" id="orc-idades-cri" placeholder="Ex: 8, 5, 3"/></div>
+      </div>
+    </div>
+
+    <!-- Seção 3: Itens do Orçamento -->
+    <div style="background:var(--surface2);border-radius:10px;padding:16px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="font-size:13px;font-weight:700;color:var(--primary)">🧾 Itens do Orçamento</h3>
+        <div style="display:flex;gap:8px;align-items:center">
+          <label style="font-size:12px;color:var(--text2)">Cotação USD: R$ <input type="number" id="orc-cotacao" value="6.00" min="1" step="0.01" style="width:65px;padding:3px 6px;border:1px solid var(--surface3);border-radius:4px;font-size:12px" oninput="recalcOrcItens()"/></label>
+          <button class="btn btn-primary btn-sm" onclick="addOrcItem()">+ Adicionar Item</button>
+        </div>
+      </div>
+      <div id="orc-itens-list"></div>
+      <!-- Totais -->
+      <div style="margin-top:12px;background:var(--surface);border-radius:8px;padding:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px">
+          <div><div style="color:var(--text2)">Total (USD)</div><div style="font-size:18px;font-weight:700;color:var(--primary)" id="orc-total-usd">US$ 0,00</div></div>
+          <div><div style="color:var(--text2)">Total (BRL)</div><div style="font-size:18px;font-weight:700;color:var(--primary)" id="orc-total-brl">R$ 0,00</div></div>
+          <div><div style="color:var(--text2)">Comissão estimada</div><div style="font-size:18px;font-weight:700;color:var(--success)" id="orc-total-comm">R$ 0,00</div></div>
+        </div>
+        <!-- Parcelamento -->
+        <div style="margin-top:10px;border-top:1px solid var(--surface3);padding-top:10px">
+          <div style="font-size:12px;color:var(--text2);margin-bottom:6px">💳 Simulação de parcelamento:</div>
+          <div id="orc-parcelamento" style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção 4: Configurações -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div class="form-group"><label class="form-label">Validade do preço</label><input class="form-input" id="orc-val-preco" type="date" title="Após esta data, os valores precisam ser recotados"/></div>
+      <div class="form-group"><label class="form-label">Expiração do link (7 dias)</label><input class="form-input" id="orc-val-link" type="date" readonly style="background:var(--surface2)"/></div>
+      <div class="form-group" style="grid-column:1/-1"><label class="form-label">Observações / Inclusões e Exclusões</label>
+        <textarea class="form-textarea" id="orc-obs" rows="3" placeholder="O que está incluído, o que não está incluído, condições especiais..."></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--surface3);padding-top:16px">
+      <button class="btn btn-ghost" onclick="closeOrcamentoModal()">Cancelar</button>
+      <button class="btn" style="background:var(--surface3);color:var(--text1)" onclick="salvarOrcamento('rascunho')">💾 Salvar Rascunho</button>
+      <button class="btn btn-primary" onclick="salvarOrcamento('enviado')">📤 Gerar Proposta</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════ MODAL: VISUALIZAR ORÇAMENTO ═════════════════════════ -->
+<div id="modal-view-orcamento" class="modal-overlay" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+<div class="modal" style="max-width:700px;width:95vw;max-height:90vh;overflow-y:auto" id="modal-view-orc-content">
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════ PAGE: AGENDA GUIAS ════════════════════════════ -->
@@ -1784,6 +1959,7 @@ const DB = {
   editingRecebimento: null,
   chartPctCom: null,
   chartComissaoDist: null,
+  templatesCustom: [],
   currentUser: null
 };
 
@@ -2248,6 +2424,9 @@ function showPage(page){
   if(page==='caixa') renderCaixa();
   if(page==='templates') renderTemplates();
   if(page==='temporada') renderTemporada();
+  if(page==='orcamentos') renderOrcamentos();
+  if(page==='hoteis') renderHoteis();
+  if(page==='festivais') renderFestivais();
   if(page==='ranking') renderRanking();
   if(page==='registros'){
     renderRegistros();
@@ -3338,50 +3517,775 @@ function applyVars(txt){
             .replace(/\{data\}/g,v.data).replace(/\{vendedor\}/g,v.vendedor);
 }
 
-function renderTemplates(){
-  const grid = document.getElementById('tpl-grid'); if(!grid) return;
-  const cat  = (document.getElementById('tpl-cat')||{}).value||'all';
-  const q    = ((document.getElementById('tpl-search')||{}).value||'').toLowerCase();
-  const list = TEMPLATES_WA.filter(t=>(cat==='all'||t.cat===cat)&&(!q||t.titulo.toLowerCase().includes(q)||t.texto.toLowerCase().includes(q)));
-  if(!list.length){ grid.innerHTML='<p style="color:var(--text2);padding:20px">Nenhum template encontrado.</p>'; return; }
-  const catColors={captacao:'#2563eb',briefing:'#7c3aed',orcamento:'#d97706',fechamento:'#16a34a',prevenda:'#0891b2',guiamento:'#9333ea',posvenda:'#dc2626'};
-  grid.innerHTML = list.map(t=>{
-    const txt = applyVars(t.texto);
-    const waLink = 'https://wa.me/?text='+encodeURIComponent(txt);
-    return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="background:${catColors[t.cat]||'#666'};color:#fff;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;text-transform:uppercase">${t.cat}</span>
-        <span style="font-size:14px;font-weight:700;color:var(--text1)">${t.emoji} ${esc(t.titulo)}</span>
-      </div>
-      <div id="tpl-preview-${t.id}" style="background:var(--bg);border-radius:8px;padding:10px;font-size:11.5px;line-height:1.6;color:var(--text1);white-space:pre-wrap;max-height:160px;overflow:hidden;position:relative;cursor:pointer" onclick="this.style.maxHeight=this.style.maxHeight==='none'?'160px':'none'">${esc(txt)}<div style="position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,var(--bg))"></div></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(applyVars(TEMPLATES_WA.find(x=>x.id==='${t.id}').texto));toast('Template copiado!','success')" style="font-size:12px">📋 Copiar</button>
-        <a href="${waLink}" target="_blank" rel="noopener" class="btn btn-accent btn-sm" style="font-size:12px;text-decoration:none">📲 Abrir no WhatsApp</a>
+// Templates editáveis: combina padrões fixos com customizados salvos no DB
+function renderHoteis(){
+  const grid = document.getElementById('htl-grid'); if(!grid) return;
+  const dest = (document.getElementById('htl-dest-filter')||{}).value||'';
+  const tipo = (document.getElementById('htl-tipo-filter')||{}).value||'';
+  const q    = ((document.getElementById('htl-search')||{}).value||'').toLowerCase();
+  const nc   = n=>n<=2?'#94a3b8':n<=3?'#f59e0b':n<=4?'#2563eb':'#9333ea';
+  const list = KB_HOTEIS_S
+    .filter(h=>!dest||h.dest===dest||h.dest.includes(dest))
+    .filter(h=>!tipo||h.tipo===tipo)
+    .filter(h=>!q||h.nome.toLowerCase().includes(q)||(h.desc||'').toLowerCase().includes(q))
+    .filter(h=>h.status!=='Closed');
+  if(!list.length){grid.innerHTML='<p style="color:var(--text2);padding:30px;text-align:center">Nenhum hotel encontrado.</p>';return;}
+  const stars = n=>'⭐'.repeat(Math.min(n||0,5));
+  grid.innerHTML = list.map(h=>{
+    const bens = (h.beneficios||[]).slice(0,4);
+    const destaques = (h.destaques||[]).slice(0,3);
+    return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:12px;overflow:hidden">
+      <div style="height:160px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;font-size:48px">🏨</div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <h3 style="font-size:13px;font-weight:700;color:var(--text1)">${esc(h.nome)}</h3>
+          <span style="color:#f59e0b;font-size:12px;flex-shrink:0;margin-left:4px">${stars(h.estrelas)}</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span style="background:var(--surface2);border-radius:4px;padding:1px 6px;font-size:10px">${esc(h.dest)}</span>
+          ${h.tema?`<span style="background:#f5f3ff;color:#7c3aed;border-radius:4px;padding:1px 6px;font-size:10px">🎨 ${esc(h.tema)}</span>`:''}
+          ${h.preco?`<span style="background:var(--surface2);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--text2)">${esc(h.preco)}</span>`:''}
+        </div>
+        ${h.desc?`<p style="font-size:11px;color:var(--text2);line-height:1.5;margin:0">${esc(h.desc.slice(0,200))}</p>`:''}
+        ${bens.length?`<div style="border-top:1px solid var(--surface3);padding-top:6px;display:flex;flex-direction:column;gap:2px">${bens.map(b=>`<div style="font-size:10px;color:var(--success)">✅ ${esc(typeof b==='string'?b.slice(0,80):'')}</div>`).join('')}</div>`:''}
+        ${destaques.length&&!bens.length?`<div style="border-top:1px solid var(--surface3);padding-top:6px">${destaques.map(d=>`<div style="font-size:10px;color:var(--text2)">🌟 ${esc(d.slice(0,80))}</div>`).join('')}</div>`:''}
+        ${h.url?`<a href="${esc(h.url)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--primary);text-decoration:none">🔗 Ver no site oficial</a>`:''}
       </div>
     </div>`;
   }).join('');
 }
 
+function renderFestivais(){
+  const grid = document.getElementById('fest-grid'); if(!grid) return;
+  const park = (document.getElementById('fest-park-filter')||{}).value||'';
+  const q    = ((document.getElementById('fest-search')||{}).value||'').toLowerCase();
+
+  // Full festivals data with Jollywood Nights + United Parks events
+  const FESTIVAIS_COMPLETOS = [
+    // ── Disney World ──────────────────────────────────────────────────────────
+    {id:'f01',nome:'EPCOT Festival of the Arts',park:'Disney',parque:'EPCOT',periodo:'Janeiro–Fevereiro',operadora:'Walt Disney World',tipo:'festival',
+     desc:'Festival que celebra artes visuais, culinárias e performáticas em todo o EPCOT. Inclui exposições de arte, apresentações musicais do Broadway + plug in do programa e pratos temáticos baseados em obras de arte em stands especiais. É o festival mais tranquilo do ano — ótimo para visitar EPCOT com menos filas.',
+     dicas:['Melhor época: January–February, menor movimento do ano','Pratos temáticos são imperdíveis nos stands do World Showcase','Espetáculos da Broadway no America Gardens Theatre — incluso no ingresso'],
+     img:'',url:'https://disneyworld.disney.go.com/events-tours/epcot/epcot-international-festival-of-the-arts/'},
+    {id:'f02',nome:'EPCOT Festival of the Arts — Template WhatsApp',park:'Disney',parque:'EPCOT',periodo:'',operadora:'',tipo:'template',
+     templateTexto:'Olá, {cliente}! 🎨\n\nUma dica especial para a viagem de vocês: em {destino}, o EPCOT está com o *Festival of the Arts* — um dos eventos mais especiais do parque!\n\n🎭 O que inclui:\n• Exposições de arte por todo o EPCOT\n• Pratos temáticos baseados em obras de arte\n• Shows da Broadway no America Gardens Theatre\n• Menor movimento do ano = mais tempo para curtir as atrações!\n\nPerfeito para quem quer uma experiência mais sofisticada e única na Disney! 🌟\n\nJá incluí isso no roteiro de vocês. Qualquer dúvida, me chama! 😊\n\n*{vendedor} — Desenrola Turismo*',
+     desc:'Template para comunicar o Festival of the Arts aos clientes',dicas:[],img:'',url:''},
+    {id:'f03',nome:'EPCOT Flower & Garden Festival',park:'Disney',parque:'EPCOT',periodo:'Março–Junho',operadora:'Walt Disney World',tipo:'festival',
+     desc:'Festival de jardins e gastronomia com mais de 70 topiary de personagens Disney espalhados pelo parque. Inclui o Garden Rocks Concert Series com bandas ao vivo, stands de comida garden-to-table e exposições horticulturais. Transformação visual incrível do EPCOT com flores e plantas temáticas.',
+     dicas:['70+ topiários de personagens — perfeito para fotos','Garden Rocks Concert Series — shows gratuitos incluídos no ingresso','Stands gastronômicos com menu de primavera diferenciados','Movimentação baixa a média — bom período para visitar'],
+     img:'',url:'https://disneyworld.disney.go.com/events-tours/epcot/epcot-international-flower-and-garden-festival/'},
+    {id:'f04',nome:'EPCOT Food & Wine Festival',park:'Disney',parque:'EPCOT',periodo:'Agosto–Novembro',operadora:'Walt Disney World',tipo:'festival',
+     desc:'O maior e mais popular festival do EPCOT, com mais de 30 marketplaces internacionais oferecendo pratos e bebidas de todo o mundo. Inclui o Eat to the Beat Concert Series com artistas famosos e o Emile's Fromage Montage para colecionadores. Festival que define o outono na Disney.',
+     dicas:['30+ marketplaces de gastronomia internacional','Eat to the Beat Concert Series — shows incluídos no ingresso','Movimentação alta em fins de semana — preferir dias de semana','Passport de degustação: carimbado em cada marketplace visitado'],
+     img:'',url:'https://disneyworld.disney.go.com/events-tours/epcot/epcot-international-food-and-wine-festival/'},
+    {id:'f05',nome:'EPCOT Festival of the Holidays',park:'Disney',parque:'EPCOT',periodo:'Novembro–Janeiro',operadora:'Walt Disney World',tipo:'festival',
+     desc:'Celebração natalina com culinária das festividades de dezembro de diferentes culturas do mundo. Inclui o Candlelight Processional (narração da história de Natal com coral e celebridade convidada) e o Cookies & Cocoa with Santa Claus. Uma das experiências mais mágicas da Disney.',
+     dicas:['Candlelight Processional: experiência icônica — pacote com jantar recomendado','Movimentação muito alta após Thanksgiving','Horários estendidos em dezembro','Cookies & Cocoa com Papai Noel: reservar com antecedência'],
+     img:'',url:'https://disneyworld.disney.go.com/events-tours/epcot/epcot-international-festival-of-the-holidays/'},
+    {id:'f06',nome:"Mickey's Not-So-Scary Halloween Party",park:'Disney',parque:'Magic Kingdom',periodo:'Agosto–Outubro (sextas e sábados)',operadora:'Walt Disney World',tipo:'festa_especial',
+     desc:'Evento especial com ingresso separado realizado às sextas e sábados de agosto a outubro no Magic Kingdom. Inclui trick-or-treating em todo o parque, personagens raros (Vilões Disney), desfile Boo-to-You, show de fogos HalloWishes, shows especiais de Oogie Boogie e muito mais. Fantasias liberadas! Ambiente completamente transformado.',
+     dicas:['Ingresso separado necessário — não incluso no parque regular','Personagens exclusivos: Vilões Disney, Headless Horseman','Trick-or-treating para todas as idades em múltiplos locais','Chegar cedo (4pm) para aproveitar a transição mágica do parque','Fantasias são permitidas para todas as idades — aproveitem!'],
+     img:'',url:'https://disneyworld.disney.go.com/events-tours/magic-kingdom/mickeys-not-so-scary-halloween-party/'},
+    {id:'f07',nome:"Mickey's Very Merry Christmas Party",park:'Disney',parque:'Magic Kingdom',periodo:'Novembro–Dezembro (selecionado)',operadora:'Walt Disney World',tipo:'festa_especial',
+     desc:'Festa especial com ingresso separado que transforma o Magic Kingdom em um paraíso natalino. Neve artificial na Main Street, chocolate quente e biscoitos de graça, shows exclusivos (Mickey's Once Upon a Christmastime Parade, Holiday Wishes Fireworks), personagens com fantasia natalina e decoração especial.',
+     dicas:['Ingresso separado — esgota com meses de antecedência','Neve artificial na Main Street é imperdível','Hot cocoa e cookies GRATUITOS em múltiplos locais','Holiday Wishes: um dos melhores espetáculos de fogos da Disney','Uma das noites mais lotadas do ano — chegue cedo'],
+     img:'',url:'https://disneyworld.disney.go.com/events-tours/magic-kingdom/mickeys-very-merry-christmas-party/'},
+    {id:'f08',nome:'Jollywood Nights',park:'Disney',parque:"Disney's Hollywood Studios",periodo:'Novembro–Dezembro (selecionado)',operadora:'Walt Disney World',tipo:'festa_especial',
+     desc:'Evento especial de Natal no Hollywood Studios com ingresso separado. Inclui parada de Natal no parque, shows de Natal no Hollywood Boulevard, encontro exclusivo com personagens vestidos de Natal, acesso privilegiado a atrações durante o evento e neve artificial no parque. Evento mais recente da Disney, lançado em 2023.',
+     dicas:['Ingresso separado — comprar com antecedência','Personagens com fantasias natalinas exclusivas','Shows de Natal únicos no Hollywood Boulevard','Menor concorrência que os eventos do Magic Kingdom','Ótima oportunidade para quem já foi ao MVMCP antes'],
+     img:'',url:'https://disneyworld.disney.go.com/events-tours/hollywood-studios/jollywood-nights/'},
+    // ── Universal Orlando ──────────────────────────────────────────────────────
+    {id:'f09',nome:'Halloween Horror Nights',park:'Universal',parque:'Universal Studios Florida',periodo:'Setembro–Novembro (selecionado)',operadora:'Universal Orlando',tipo:'festa_especial',
+     desc:'O maior e mais aterrorizante evento de Halloween do mundo. Casas de terror baseadas em IPs de filmes e séries de horror, ruas temáticas com scare zones, shows especiais e acesso às atrações regulares. Evento adulto — não recomendado para crianças. Uma experiência única que vai além do que qualquer parque temático oferece em termos de imersão no horror.',
+     dicas:['Ingresso separado — não incluso no ingresso regular','Não recomendado para crianças menores de 13 anos','Express Pass disponível e muito recomendado nas noites mais lotadas','Chegue cedo para as casas de terror mais procuradas','Sextas e sábados são as noites mais lotadas'],
+     img:'',url:'https://www.universalorlando.com/web/en/us/events/halloween-horror-nights/'},
+    {id:'f10',nome:'Mardi Gras Universal Orlando',park:'Universal',parque:'Universal Studios Florida',periodo:'Fevereiro–Abril',operadora:'Universal Orlando',tipo:'festival',
+     desc:'Celebração do Mardi Gras de New Orleans com parada de carros alegóricos, contas coloridas atiradas ao público, comida cajun e artistas internacionais ao vivo no palco principal. Incluído no ingresso regular. Uma festa única e muito diferente de tudo que Disney oferece.',
+     dicas:['Incluído no ingresso regular — sem custo adicional','Shows de artistas internacionais ao vivo','Parada de carros alegóricos com contas atiradas ao público','Comida cajun especial disponível nos stands do evento'],
+     img:'',url:'https://www.universalorlando.com/web/en/us/events/mardi-gras/'},
+    {id:'f11',nome:'Holidays at Universal Orlando',park:'Universal',parque:'Universal Orlando Resort',periodo:'Novembro–Janeiro',operadora:'Universal Orlando',tipo:'festival',
+     desc:'Celebração de Natal em todo o Universal Orlando Resort, incluindo o Festival of the Stars na Universal Studios, Grinchmas em Islands of Adventure (com shows ao vivo do Grinch) e decorações em todo o CityWalk e áreas do resort. Incluso no ingresso regular.',
+     dicas:['Grinchmas Who-bilation: show do Grinch imperdível (grátis no ingresso)','Decoração de Hogwarts em The Wizarding World','Festivais gratuitos incluídos no ingresso regular','Menos lotado que a Disney nas mesmas datas'],
+     img:'',url:'https://www.universalorlando.com/web/en/us/events/holidays/'},
+    // ── SeaWorld / United Parks ────────────────────────────────────────────────
+    {id:'f12',nome:"Howl-O-Scream",park:'SeaWorld',parque:'SeaWorld Orlando',periodo:'Setembro–Outubro (fins de semana)',operadora:'SeaWorld Orlando',tipo:'festa_especial',
+     desc:'Evento de Halloween da SeaWorld com casas de terror, scare zones aterrorizantes, espetáculos especiais e acesso às atrações regulares. Ingresso separado. Menos lotado que o HHN Universal mas com muito terror e qualidade surpreendente.',
+     dicas:['Ingresso separado','Menor fila que o HHN — boa alternativa','Casas de terror com nível de qualidade crescente a cada ano','Ótima combinação com o Busch Gardens Howl-O-Scream para quem curte Halloween'],
+     img:'',url:'https://seaworld.com/orlando/events/howl-o-scream/'},
+    {id:'f13',nome:'Howl-O-Scream Busch Gardens',park:'SeaWorld',parque:'Busch Gardens Tampa Bay',periodo:'Setembro–Outubro (fins de semana)',operadora:'Busch Gardens Tampa Bay',tipo:'festa_especial',
+     desc:'O Howl-O-Scream da Busch Gardens Tampa é frequentemente considerado um dos melhores eventos de Halloween da Flórida. Com 12+ casas de terror, scare zones temáticas e montanhas-russas no escuro, o ambiente adulto e a intensidade das experiências rivalizam com o Halloween Horror Nights.',
+     dicas:['12+ casas de terror — mais que muitos eventos similares','Montanhas-russas à noite com iluminação especial — experiência única','Menos conhecido = menores filas que o HHN','Compra combo Tampa + SeaWorld para ótimo custo-benefício'],
+     img:'',url:'https://buschgardens.com/tampa/events/howl-o-scream/'},
+    {id:'f14',nome:'Christmas Town Busch Gardens',park:'SeaWorld',parque:'Busch Gardens Tampa Bay',periodo:'Novembro–Dezembro',operadora:'Busch Gardens Tampa Bay',tipo:'festival',
+     desc:'Celebração de Natal na Busch Gardens Tampa com mais de 3 milhões de luzes, espetáculos especiais, personagens natalinos, neve artificial e comida temática. Incluído no ingresso regular. Um dos eventos de Natal mais bem avaliados da Flórida.',
+     dicas:['3 milhões de luzes — espetáculo visual único','Incluído no ingresso regular','Shows de Natal em múltiplos teatros','Ótimo para famílias com crianças'],
+     img:'',url:'https://buschgardens.com/tampa/events/christmas-town/'},
+    {id:'f15',nome:"SeaWorld's Christmas Celebration",park:'SeaWorld',parque:'SeaWorld Orlando',periodo:'Novembro–Janeiro',operadora:'SeaWorld Orlando',tipo:'festival',
+     desc:'Celebração natalina da SeaWorld com shows especiais de Natal, personagens temáticos, neve artificial, comida da época e acesso às atrações. Incluído no ingresso regular. O show O Christmas Tree Lighting é um espetáculo de 16 metros de altura com fogos e música.',
+     dicas:['Incluído no ingresso regular','O Christmas Tree Lighting com 16m de altura — imperdível','Personagens do Sesame Street com fantasias de Natal','Ótima alternativa para quem quer Natal mágico sem a multidão da Disney'],
+     img:'',url:'https://seaworld.com/orlando/events/christmas/'},
+    {id:'f16',nome:"Electric Ocean",park:'SeaWorld',parque:'SeaWorld Orlando',periodo:'Junho–Setembro',operadora:'SeaWorld Orlando',tipo:'festival',
+     desc:'Festival de verão noturno com iluminação bioluminescente em todo o parque, shows aquáticos e DJ sets. Transforma a SeaWorld em um espetáculo de luzes noturno diferente de qualquer coisa na região de Orlando. Incluído no ingresso regular.',
+     dicas:['Melhor visitar ao entardecer para ver a transição','Shows de luzes e drones sobre a água','Incluído no ingresso regular','Temperatura mais amena à noite — confortável no verão'],
+     img:'',url:'https://seaworld.com/orlando/events/electric-ocean/'},
+  ];
+
+  const list = FESTIVAIS_COMPLETOS
+    .filter(f=>f.tipo!=='template')
+    .filter(f=>!park||f.park===park)
+    .filter(f=>!q||f.nome.toLowerCase().includes(q)||(f.desc||'').toLowerCase().includes(q));
+
+  if(!list.length){grid.innerHTML='<p style="color:var(--text2);padding:30px;text-align:center">Nenhum festival encontrado.</p>';return;}
+  const parkColors={Disney:'#2563eb',Universal:'#7c3aed',SeaWorld:'#0891b2'};
+  const tipoLabel={festival:'🌸 Festival',festa_especial:'🎟️ Evento Especial',template:'💬 Template'};
+
+  grid.innerHTML = list.map(f=>`<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:12px;overflow:hidden">
+    <div style="height:80px;background:linear-gradient(135deg,${parkColors[f.park]||'#475569'},${parkColors[f.park]+'99'||'#94a3b8'});display:flex;align-items:center;justify-content:center;font-size:36px">${f.tipo==='festa_especial'?'🎟️':f.park==='Disney'?'✨':f.park==='Universal'?'🎬':'🐬'}</div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+        <h3 style="font-size:12px;font-weight:700;color:var(--text1)">${esc(f.nome)}</h3>
+        <span style="background:${parkColors[f.park]||'#475569'};color:#fff;border-radius:5px;padding:1px 6px;font-size:9px;font-weight:700;white-space:nowrap;flex-shrink:0">${f.park}</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${f.periodo?`<span style="background:var(--surface2);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--text2)">📅 ${esc(f.periodo)}</span>`:''}
+        <span style="background:var(--surface2);border-radius:4px;padding:1px 6px;font-size:10px">${tipoLabel[f.tipo]||f.tipo}</span>
+      </div>
+      ${f.desc?`<p style="font-size:11px;color:var(--text2);line-height:1.5;margin:0">${esc(f.desc.slice(0,220))}</p>`:''}
+      ${f.dicas&&f.dicas.length?`<div style="border-top:1px solid var(--surface3);padding-top:6px">${f.dicas.slice(0,3).map(d=>`<div style="font-size:10px;color:var(--text2);margin-bottom:2px">💡 ${esc(d.slice(0,100))}</div>`).join('')}</div>`:''}
+      <div style="display:flex;gap:6px">
+        ${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="font-size:10px;text-decoration:none">🔗 Site oficial</a>`:''}
+        <button class="btn btn-accent btn-sm" style="font-size:10px" onclick="navigator.clipboard.writeText(${JSON.stringify(
+          'Olá, {cliente}! 🌟\n\n'+f.desc.slice(0,150)+'...\n\n*{vendedor} — Desenrola Turismo*'
+        )});toast('Texto copiado!','success')">📋 Copiar dica</button>
+      </div>
+    </div>
+  </div>`).join('');
+}
+
+// ══════════════════════════════════════ ORÇAMENTOS ═══════════════════════════════════════════
+
+const ORC_TIPOS = {
+  ingresso:   {emoji:'🎢', label:'Ingresso / Ticket'},
+  hotel:      {emoji:'🏨', label:'Hotel / Acomodação'},
+  transfer:   {emoji:'🚐', label:'Transfer / Transporte'},
+  carro:      {emoji:'🚗', label:'Aluguel de Carro'},
+  seguro:     {emoji:'🛡️', label:'Seguro Viagem'},
+  guiamento:  {emoji:'🗺️', label:'Guiamento Virtual Desenrola'},
+  chip:       {emoji:'📱', label:'Chip Internacional'},
+  ingresso_extra:{emoji:'🎡', label:'Ingresso Extra / Atração Avulsa'},
+  show_event: {emoji:'🎭', label:'Show / Evento Especial'},
+  refeicao:   {emoji:'🍽️', label:'Refeição / Dining Plan'},
+  outros:     {emoji:'📦', label:'Outros'},
+};
+
+const ORC_INGRESSO_TIPOS = [
+  'Disney — 1 Parque por Dia (MagicBand+)',
+  'Disney — Park Hopper (2+ parques/dia)',
+  'Disney — Park Hopper Plus (parques aquáticos inclusos)',
+  'Disney — Annual Pass',
+  'Universal — 1 Parque Base Ticket',
+  'Universal — Park-to-Park',
+  'Universal — Express Pass',
+  'Universal — Annual Pass',
+  'SeaWorld — Single Day',
+  'United Parks — Multi Park Ticket',
+  'Busch Gardens Tampa — Single Day',
+  'Aquatica — Single Day',
+  'Discovery Cove — All-Inclusive Day Resort',
+  'LEGOLAND — Single Day',
+  'Kennedy Space Center',
+  'ICON Park',
+  'Gatorland',
+  'Fun Spot Orlando',
+  'NBA Experience',
+  'Disney — Lightning Lane Multi Pass (diário)',
+  'Disney — Lightning Lane Single Pass',
+  'Universal — VIP Experience',
+];
+
+function _orcId(){ return 'orc_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+
+function openOrcamentoModal(id){
+  const orc = id ? (DB.orcamentos||[]).find(o=>o.id===id) : null;
+  document.getElementById('orc-modal-title').textContent = orc ? '✏️ Editar Orçamento' : '📋 Novo Orçamento';
+
+  // Preenchimento do formulário
+  document.getElementById('orc-cliente-nome').value = orc?.cliente?.nome||'';
+  document.getElementById('orc-cliente-wa').value   = orc?.cliente?.wa||'';
+  document.getElementById('orc-cliente-email').value= orc?.cliente?.email||'';
+  document.getElementById('orc-destino').value      = orc?.destino||'Orlando';
+  document.getElementById('orc-chegada').value      = orc?.chegada||'';
+  document.getElementById('orc-retorno').value      = orc?.retorno||'';
+  document.getElementById('orc-adultos').value      = orc?.adultos||2;
+  document.getElementById('orc-criancas').value     = orc?.criancas||0;
+  document.getElementById('orc-idades-cri').value   = (orc?.idadesCri||[]).join(', ');
+  document.getElementById('orc-cotacao').value      = orc?.cotacaoUSD||6.00;
+  document.getElementById('orc-obs').value          = orc?.obs||'';
+
+  // Validade
+  const hoje = new Date();
+  const val24h = new Date(hoje); val24h.setDate(hoje.getDate()+1);
+  const val7d  = new Date(hoje); val7d.setDate(hoje.getDate()+7);
+  document.getElementById('orc-val-preco').value = orc?.validadePreco || val24h.toISOString().split('T')[0];
+  document.getElementById('orc-val-link').value  = orc?.validadeLink  || val7d.toISOString().split('T')[0];
+
+  // Vendedor select
+  const vSel = document.getElementById('orc-vendedor');
+  vSel.innerHTML = DB.vendedores.filter(v=>v.status==='ativo').map(v=>`<option value="${esc(v.nome)}" ${(orc?.vendedor||DB.currentUser?.nome)===v.nome?'selected':''}>${esc(v.nome)}</option>`).join('');
+
+  // Itens
+  window._orcItens = orc ? JSON.parse(JSON.stringify(orc.itens||[])) : [];
+  if(!window._orcItens.length) addOrcItem();
+  else renderOrcItens();
+
+  document.getElementById('modal-orcamento').style.display='flex';
+  document.getElementById('modal-orcamento').dataset.editId = id||'';
+}
+
+function closeOrcamentoModal(){
+  document.getElementById('modal-orcamento').style.display='none';
+  window._orcItens = [];
+}
+
+function addOrcItem(){
+  if(!window._orcItens) window._orcItens=[];
+  window._orcItens.push({id:'i_'+Date.now(), tipo:'ingresso', nome:'', qtd:1, valorUSD:0, valorBRL:0, comissaoPct:10, inclui:'', foto:''});
+  renderOrcItens();
+}
+
+function removeOrcItem(idx){
+  window._orcItens.splice(idx,1);
+  renderOrcItens();
+}
+
+function renderOrcItens(){
+  const container = document.getElementById('orc-itens-list'); if(!container) return;
+  const cotacao = parseFloat(document.getElementById('orc-cotacao').value)||6.0;
+  container.innerHTML = (window._orcItens||[]).map((item,idx)=>{
+    const tipoObj = ORC_TIPOS[item.tipo]||ORC_TIPOS.outros;
+    const brl = item.valorUSD * cotacao;
+    const comm = brl * (item.comissaoPct||10) / 100;
+    return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:8px;padding:12px;margin-bottom:8px">
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start">
+        <select style="padding:5px 8px;border:1px solid var(--surface3);border-radius:6px;font-size:12px;background:var(--surface2)" 
+                onchange="window._orcItens[${idx}].tipo=this.value;renderOrcItens()">
+          ${Object.entries(ORC_TIPOS).map(([k,v])=>`<option value="${k}" ${item.tipo===k?'selected':''}>${v.emoji} ${v.label}</option>`).join('')}
+        </select>
+        <div style="display:grid;grid-template-columns:1fr auto auto auto auto;gap:8px;align-items:center">
+          ${item.tipo==='ingresso'
+            ? `<select style="padding:5px 8px;border:1px solid var(--surface3);border-radius:6px;font-size:11px;background:var(--bg)" 
+                       onchange="window._orcItens[${idx}].nome=this.value;renderOrcItens()">
+                <option value="">Selecionar ingresso...</option>
+                ${ORC_INGRESSO_TIPOS.map(t=>`<option value="${esc(t)}" ${item.nome===t?'selected':''}>${esc(t)}</option>`).join('')}
+              </select>`
+            : `<input style="padding:5px 8px;border:1px solid var(--surface3);border-radius:6px;font-size:12px" 
+                      placeholder="Descrição do item" value="${esc(item.nome)}"
+                      oninput="window._orcItens[${idx}].nome=this.value"/>`}
+          <div style="display:flex;align-items:center;gap:4px;font-size:11px;white-space:nowrap">
+            <span style="color:var(--text2)">Qtd</span>
+            <input type="number" min="1" style="width:46px;padding:4px;border:1px solid var(--surface3);border-radius:4px;font-size:11px;text-align:center"
+                   value="${item.qtd}" oninput="window._orcItens[${idx}].qtd=+this.value||1;recalcOrcItens()"/>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:11px;white-space:nowrap">
+            <span style="color:var(--text2)">US$</span>
+            <input type="number" min="0" step="0.01" style="width:80px;padding:4px;border:1px solid var(--surface3);border-radius:4px;font-size:11px;text-align:right"
+                   value="${item.valorUSD}" oninput="window._orcItens[${idx}].valorUSD=+this.value||0;recalcOrcItens()"/>
+          </div>
+          <div style="font-size:11px;white-space:nowrap;min-width:90px;text-align:right">
+            <div style="color:var(--primary);font-weight:700">${fmtR(brl*item.qtd)}</div>
+            <div style="color:var(--success);font-size:10px">Comm: ${fmtR(comm*item.qtd)}</div>
+          </div>
+        </div>
+        <button onclick="removeOrcItem(${idx})" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px;padding:2px 4px" title="Remover item">🗑</button>
+      </div>
+      <div style="margin-top:6px">
+        <input style="width:100%;padding:4px 8px;border:1px solid var(--surface3);border-radius:4px;font-size:11px;color:var(--text2)" 
+               placeholder="O que inclui (opcional, aparece na proposta)" value="${esc(item.inclui||'')}"
+               oninput="window._orcItens[${idx}].inclui=this.value"/>
+      </div>
+    </div>`;
+  }).join('') + (window._orcItens.length?'':'<div style="text-align:center;color:var(--text2);padding:20px">Clique em "+ Adicionar Item" para começar</div>');
+  recalcOrcTotais();
+}
+
+function recalcOrcItens(){
+  const cotacao = parseFloat(document.getElementById('orc-cotacao')?.value)||6.0;
+  (window._orcItens||[]).forEach(item=>{
+    item.valorBRL = item.valorUSD * cotacao;
+  });
+  renderOrcItens();
+}
+
+function recalcOrcTotais(){
+  const cotacao = parseFloat(document.getElementById('orc-cotacao')?.value)||6.0;
+  const itens = window._orcItens||[];
+  const totalUSD = itens.reduce((s,i)=>s+(i.valorUSD||0)*(i.qtd||1),0);
+  const totalBRL = totalUSD * cotacao;
+  const totalComm = itens.reduce((s,i)=>s+((i.valorUSD||0)*(i.qtd||1)*cotacao*((i.comissaoPct||10)/100)),0);
+  const elU = document.getElementById('orc-total-usd'); if(elU) elU.textContent='US$ '+totalUSD.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const elB = document.getElementById('orc-total-brl'); if(elB) elB.textContent=fmtR(totalBRL);
+  const elC = document.getElementById('orc-total-comm'); if(elC) elC.textContent=fmtR(totalComm);
+  // Parcelamento
+  const parcEl = document.getElementById('orc-parcelamento');
+  if(parcEl) parcEl.innerHTML=[4,6,8,10,12].map(n=>`<span style="background:var(--surface3);border-radius:6px;padding:3px 10px">${n}x ${fmtR(totalBRL/n)}</span>`).join('');
+}
+
+function updateIdadesOrc(){
+  const n = parseInt(document.getElementById('orc-criancas')?.value)||0;
+  const el = document.getElementById('orc-idades-cri');
+  if(el&&!el.value) el.placeholder = n>0 ? Array.from({length:n},(_,i)=>'?').join(', ') : 'Ex: 8, 5, 3';
+}
+
+async function salvarOrcamento(statusNovo){
+  const nome = document.getElementById('orc-cliente-nome')?.value.trim();
+  if(!nome){ toast('Informe o nome do cliente.','error'); return; }
+  const itens = window._orcItens||[];
+  if(!itens.length){ toast('Adicione pelo menos um item ao orçamento.','error'); return; }
+  const cotacao = parseFloat(document.getElementById('orc-cotacao')?.value)||6.0;
+  const totalUSD = itens.reduce((s,i)=>s+(i.valorUSD||0)*(i.qtd||1),0);
+  const totalBRL = totalUSD * cotacao;
+  const editId = document.getElementById('modal-orcamento').dataset.editId;
+
+  const num = editId ? (DB.orcamentos||[]).find(o=>o.id===editId)?.numero
+             : 'DT-'+new Date().getFullYear()+'-'+(String(DB.nextOrcamentoId||1).padStart(3,'0'));
+
+  const orc = {
+    id: editId||_orcId(),
+    numero: num,
+    cliente: { nome, wa:document.getElementById('orc-cliente-wa')?.value, email:document.getElementById('orc-cliente-email')?.value },
+    vendedor: document.getElementById('orc-vendedor')?.value||'',
+    destino: document.getElementById('orc-destino')?.value||'Orlando',
+    chegada: document.getElementById('orc-chegada')?.value||'',
+    retorno: document.getElementById('orc-retorno')?.value||'',
+    adultos: parseInt(document.getElementById('orc-adultos')?.value)||2,
+    criancas: parseInt(document.getElementById('orc-criancas')?.value)||0,
+    idadesCri: (document.getElementById('orc-idades-cri')?.value||'').split(',').map(x=>x.trim()).filter(Boolean),
+    cotacaoUSD: cotacao,
+    itens,
+    totalUSD,
+    totalBRL,
+    validadePreco: document.getElementById('orc-val-preco')?.value,
+    validadeLink: document.getElementById('orc-val-link')?.value,
+    obs: document.getElementById('orc-obs')?.value||'',
+    status: statusNovo||'rascunho',
+    criadoEm: editId ? (DB.orcamentos.find(o=>o.id===editId)?.criadoEm||Date.now()) : Date.now(),
+    atualizadoEm: Date.now(),
+  };
+
+  if(!DB.orcamentos) DB.orcamentos=[];
+  if(editId){
+    DB.orcamentos = DB.orcamentos.map(o=>o.id===editId?orc:o);
+  } else {
+    DB.orcamentos.push(orc);
+    DB.nextOrcamentoId = (DB.nextOrcamentoId||1)+1;
+  }
+  saveToStorage();
+  closeOrcamentoModal();
+  renderOrcamentos();
+  toast(`Orçamento ${orc.numero} ${statusNovo==='enviado'?'gerado!':'salvo!'}`, 'success');
+  if(statusNovo==='enviado') viewOrcamento(orc.id);
+}
+
+function renderOrcamentos(){
+  const list = document.getElementById('orc-list'); if(!list) return;
+  const met  = document.getElementById('orc-metrics');
+  const filt = (document.getElementById('orc-status-filter')||{}).value||'all';
+  const orcList = (DB.orcamentos||[]).filter(o=>filt==='all'||o.status===filt);
+  const hoje = new Date().toISOString().split('T')[0];
+
+  // Metrics
+  const orcs = DB.orcamentos||[];
+  if(met){
+    const totAprov = orcs.filter(o=>o.status==='aprovado').reduce((s,o)=>s+(o.totalBRL||0),0);
+    const pipeline  = orcs.filter(o=>o.status==='enviado').reduce((s,o)=>s+(o.totalBRL||0),0);
+    met.innerHTML=[
+      {l:'📋 Total',v:orcs.length, sub:'orçamentos', bg:'var(--primary)'},
+      {l:'📤 Enviados',v:orcs.filter(o=>o.status==='enviado').length, sub:'aguardando resp.', bg:'#d97706'},
+      {l:'✅ Aprovados',v:orcs.filter(o=>o.status==='aprovado').length, sub:fmtR(totAprov), bg:'#16a34a'},
+      {l:'💰 Pipeline',v:fmtR(pipeline), sub:'a fechar', bg:var('--primary')},
+    ].map(m=>`<div style="background:${m.bg};color:#fff;border-radius:10px;padding:14px">
+      <div style="font-size:11px;opacity:0.85">${m.l}</div>
+      <div style="font-size:20px;font-weight:700;margin:2px 0">${m.v}</div>
+      <div style="font-size:10px;opacity:0.8">${m.sub}</div>
+    </div>`).join('');
+  }
+
+  if(!orcList.length){
+    list.innerHTML='<div style="text-align:center;color:var(--text2);padding:40px"><div style="font-size:48px">📋</div><p>Nenhum orçamento encontrado.</p><button class="btn btn-primary" onclick="openOrcamentoModal(null)">+ Criar primeiro orçamento</button></div>';
+    return;
+  }
+
+  const statusColors = {rascunho:'#94a3b8',enviado:'#d97706',aprovado:'#16a34a',perdido:'#ef4444',expirado:'#9ca3af'};
+  const statusLabels = {rascunho:'📝 Rascunho',enviado:'📤 Enviado',aprovado:'✅ Aprovado',perdido:'❌ Perdido',expirado:'⏰ Expirado'};
+  list.innerHTML=`<div style="background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--surface3)">
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:var(--surface2);font-size:12px;color:var(--text2)">
+        <th style="padding:10px 12px;text-align:left">Nº</th>
+        <th style="padding:10px 12px;text-align:left">Cliente</th>
+        <th style="padding:10px 12px;text-align:left">Destino</th>
+        <th style="padding:10px 12px;text-align:left">Viagem</th>
+        <th style="padding:10px 12px;text-align:right">Valor</th>
+        <th style="padding:10px 12px;text-align:center">Status</th>
+        <th style="padding:10px 12px;text-align:left">Vendedor</th>
+        <th style="padding:10px 12px;text-align:center">Ações</th>
+      </tr></thead>
+      <tbody>
+        ${orcList.sort((a,b)=>b.atualizadoEm-a.atualizadoEm).map(o=>{
+          const expirado = o.validadePreco && o.validadePreco < hoje;
+          const st = expirado && o.status==='enviado' ? 'expirado' : o.status;
+          const noites = o.chegada&&o.retorno ? Math.ceil((new Date(o.retorno)-new Date(o.chegada))/86400000) : 0;
+          return `<tr style="border-top:1px solid var(--surface2);font-size:12px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+            <td style="padding:10px 12px;font-weight:700;color:var(--primary)">${esc(o.numero||'—')}</td>
+            <td style="padding:10px 12px">
+              <div style="font-weight:600">${esc(o.cliente?.nome||'—')}</div>
+              ${o.cliente?.wa?`<div style="font-size:10px;color:var(--text2)">${esc(o.cliente.wa)}</div>`:''}
+            </td>
+            <td style="padding:10px 12px">${esc(o.destino||'—')}</td>
+            <td style="padding:10px 12px;font-size:11px;color:var(--text2)">
+              ${o.chegada?`${formatDate(o.chegada)}${o.retorno?' → '+formatDate(o.retorno):''}`:'-'}
+              <div>${o.adultos||0}A${o.criancas?'+'+o.criancas+'C':''}${noites?' · '+noites+'n':''}</div>
+            </td>
+            <td style="padding:10px 12px;text-align:right;font-weight:700;color:var(--primary)">${fmtR(o.totalBRL||0)}</td>
+            <td style="padding:10px 12px;text-align:center">
+              <span style="background:${statusColors[st]||'#666'};color:#fff;border-radius:12px;padding:2px 8px;font-size:10px;font-weight:700">${statusLabels[st]||st}</span>
+            </td>
+            <td style="padding:10px 12px;font-size:11px">${esc(o.vendedor||'—')}</td>
+            <td style="padding:10px 12px;text-align:center;white-space:nowrap">
+              <button class="btn btn-ghost btn-sm" onclick="viewOrcamento('${o.id}')" style="font-size:11px" title="Ver proposta">👁️</button>
+              <button class="btn btn-ghost btn-sm" onclick="openOrcamentoModal('${o.id}')" style="font-size:11px" title="Editar">✏️</button>
+              <button class="btn btn-ghost btn-sm" onclick="printOrcamento('${o.id}')" style="font-size:11px" title="PDF">📄</button>
+              <button class="btn btn-ghost btn-sm" onclick="mudarStatusOrc('${o.id}')" style="font-size:11px" title="Mudar status">🔄</button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--danger);font-size:11px" onclick="deleteOrcamento('${o.id}')" title="Excluir">🗑</button>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function viewOrcamento(id){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
+  const modal = document.getElementById('modal-view-orcamento');
+  const content = document.getElementById('modal-view-orc-content');
+  if(!modal||!content) return;
+  const noites = o.chegada&&o.retorno ? Math.ceil((new Date(o.retorno)-new Date(o.chegada))/86400000) : 0;
+  content.innerHTML=`
+    <div id="proposta-print" style="padding:24px;font-family:'Montserrat',sans-serif">
+      <!-- Cabeçalho -->
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #2C6AA3;padding-bottom:16px;margin-bottom:20px">
+        <div>
+          <div style="font-size:22px;font-weight:800;color:#2C6AA3;letter-spacing:-0.5px">Desenrola Turismo</div>
+          <div style="font-size:12px;color:#64748b">✨ Sua viagem dos sonhos</div>
+        </div>
+        <div style="text-align:right;font-size:11px;color:#64748b">
+          <div style="font-size:16px;font-weight:700;color:#2C6AA3">${esc(o.numero)}</div>
+          <div>Emitido em ${new Date(o.atualizadoEm).toLocaleDateString('pt-BR')}</div>
+          <div>Validade: ${o.validadePreco ? new Date(o.validadePreco+'T12:00:00').toLocaleDateString('pt-BR') : '—'}</div>
+        </div>
+      </div>
+
+      <!-- Cliente + Viagem -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+        <div style="background:#f0f5fa;border-radius:10px;padding:14px">
+          <div style="font-size:11px;font-weight:700;color:#2C6AA3;margin-bottom:8px;text-transform:uppercase">👤 Cliente</div>
+          <div style="font-size:15px;font-weight:700">${esc(o.cliente?.nome||'—')}</div>
+          ${o.cliente?.wa?`<div style="font-size:12px;color:#64748b;margin-top:2px">📱 ${esc(o.cliente.wa)}</div>`:''}
+          ${o.cliente?.email?`<div style="font-size:12px;color:#64748b">📧 ${esc(o.cliente.email)}</div>`:''}
+          <div style="font-size:11px;color:#64748b;margin-top:4px">Consultor: ${esc(o.vendedor||'—')}</div>
+        </div>
+        <div style="background:#f0f5fa;border-radius:10px;padding:14px">
+          <div style="font-size:11px;font-weight:700;color:#2C6AA3;margin-bottom:8px;text-transform:uppercase">✈️ Viagem</div>
+          <div style="font-size:14px;font-weight:700">${esc(o.destino)}</div>
+          ${o.chegada?`<div style="font-size:12px;color:#64748b;margin-top:2px">📅 ${formatDate(o.chegada)} → ${o.retorno?formatDate(o.retorno):'?'}${noites?' ('+noites+' noites)':''}</div>`:''}
+          <div style="font-size:12px;color:#64748b;margin-top:2px">👥 ${o.adultos||0} adulto${(o.adultos||0)!==1?'s':''}${o.criancas?` + ${o.criancas} criança${o.criancas!==1?'s':''}`:''}</div>
+          ${o.idadesCri?.length?`<div style="font-size:11px;color:#64748b">Idades: ${esc(o.idadesCri.join(', '))} anos</div>`:''}
+        </div>
+      </div>
+
+      <!-- Itens -->
+      <div style="margin-bottom:20px">
+        <div style="font-size:11px;font-weight:700;color:#2C6AA3;margin-bottom:10px;text-transform:uppercase">🧾 O que está incluído</div>
+        ${(o.itens||[]).map(item=>{
+          const t = ORC_TIPOS[item.tipo]||ORC_TIPOS.outros;
+          const tot = (item.valorUSD||0)*(item.qtd||1)*o.cotacaoUSD;
+          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #e8f0f8">
+            <div>
+              <div style="font-size:13px;font-weight:600">${t.emoji} ${esc(item.nome||t.label)}</div>
+              ${item.inclui?`<div style="font-size:11px;color:#64748b">${esc(item.inclui)}</div>`:''}
+              <div style="font-size:11px;color:#94a3b8">Qtd: ${item.qtd||1} · US$ ${(item.valorUSD||0).toFixed(2)}/un.</div>
+            </div>
+            <div style="font-size:14px;font-weight:700;color:#2C6AA3">${fmtR(tot)}</div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Total -->
+      <div style="background:linear-gradient(135deg,#2C6AA3,#79ACD9);color:#fff;border-radius:12px;padding:16px;text-align:center;margin-bottom:16px">
+        <div style="font-size:12px;opacity:0.85">INVESTIMENTO TOTAL</div>
+        <div style="font-size:28px;font-weight:800;letter-spacing:-1px">${fmtR(o.totalBRL||0)}</div>
+        <div style="font-size:11px;opacity:0.8">US$ ${(o.totalUSD||0).toFixed(2)} · Cotação R$ ${o.cotacaoUSD}/US$</div>
+      </div>
+
+      <!-- Parcelamento -->
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
+        ${[4,6,8,10,12].map(n=>`<div style="background:#f0f5fa;border-radius:8px;padding:8px 14px;text-align:center">
+          <div style="font-size:10px;color:#64748b">${n}x</div>
+          <div style="font-size:13px;font-weight:700;color:#2C6AA3">${fmtR((o.totalBRL||0)/n)}</div>
+        </div>`).join('')}
+      </div>
+
+      ${o.obs?`<div style="background:#fefce8;border:1px solid #fef08a;border-radius:8px;padding:12px;font-size:12px;color:#713f12;margin-bottom:14px"><b>📌 Observações:</b><br/>${esc(o.obs)}</div>`:''}
+
+      <!-- Rodapé -->
+      <div style="text-align:center;color:#94a3b8;font-size:11px;border-top:1px solid #e8f0f8;padding-top:12px">
+        <div style="font-weight:600;color:#2C6AA3">Desenrola Turismo — ✨ Sua viagem dos sonhos</div>
+        <div>Proposta válida até ${o.validadePreco?new Date(o.validadePreco+'T12:00:00').toLocaleDateString('pt-BR'):'consultar'}. Valores sujeitos a alteração após esta data.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;padding:16px;border-top:1px solid var(--surface3);justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-view-orcamento').style.display='none'">Fechar</button>
+      <button class="btn btn-ghost" onclick="compartilharWA('${id}')" style="color:var(--success)">📲 WhatsApp</button>
+      <button class="btn btn-primary" onclick="printOrcamento('${id}')">📄 Imprimir / PDF</button>
+    </div>`;
+  modal.style.display='flex';
+}
+
+function printOrcamento(id){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) { viewOrcamento(id); return; }
+  const printWin = window.open('','_blank');
+  const propHtml = document.getElementById('proposta-print')?.innerHTML||'';
+  if(!propHtml){ viewOrcamento(id); setTimeout(()=>printOrcamento(id),500); return; }
+  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Proposta ${esc(o.numero)} — ${esc(o.cliente?.nome)}</title>
+    <style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',Arial,sans-serif}
+    @page{size:A4;margin:20mm}body{padding:20px}@media print{.no-print{display:none!important}}</style>
+    </head><body>${propHtml}</body></html>`);
+  printWin.document.close();
+  setTimeout(()=>printWin.print(),500);
+}
+
+function compartilharWA(id){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
+  const txt = `Olá, ${o.cliente?.nome||''}! 🌟\n\nSua proposta de viagem está pronta!\n\n✈️ *Destino:* ${o.destino}\n📅 *Período:* ${o.chegada?formatDate(o.chegada):'?'} → ${o.retorno?formatDate(o.retorno):'?'}\n💰 *Investimento:* ${fmtR(o.totalBRL||0)}\n\n_Validade: ${o.validadePreco?new Date(o.validadePreco+'T12:00:00').toLocaleDateString('pt-BR'):'consultar'}_\n\n*Desenrola Turismo* — ✨ Sua viagem dos sonhos`;
+  const wa = o.cliente?.wa?.replace(/\D/g,'');
+  window.open('https://wa.me/'+(wa||'')+((wa?'?':'')+'text='+encodeURIComponent(txt)),'_blank');
+}
+
+function mudarStatusOrc(id){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
+  const statuses = ['rascunho','enviado','aprovado','perdido'];
+  const cur = statuses.indexOf(o.status);
+  const opts = statuses.filter((_,i)=>i!==cur).map(st=>`<button class="btn btn-sm" onclick="setOrcStatus('${id}','${st}');closeModal('modal-status-orc')" style="margin:4px">${st==='aprovado'?'✅':st==='enviado'?'📤':st==='perdido'?'❌':'📝'} ${st.charAt(0).toUpperCase()+st.slice(1)}</button>`).join('');
+  openAlert(`<div style="text-align:center"><p style="margin-bottom:12px">Status atual: <b>${o.status}</b></p>${opts}</div>`, 'Mudar Status — '+o.numero);
+}
+
+function setOrcStatus(id, status){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
+  o.status = status;
+  o.atualizadoEm = Date.now();
+  saveToStorage();
+  renderOrcamentos();
+  toast('Status atualizado: '+status,'success');
+}
+
+function deleteOrcamento(id){
+  openConfirm('Excluir este orçamento? Esta ação não pode ser desfeita.',function(){
+    DB.orcamentos = (DB.orcamentos||[]).filter(o=>o.id!==id);
+    saveToStorage();
+    renderOrcamentos();
+    toast('Orçamento excluído.','error');
+  });
+}
+
+function _varR(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function var_(name){ return _varR(name); }
+
+function openAlert(html, title){
+  const ex = document.getElementById('modal-status-orc'); if(ex) ex.remove();
+  const m = document.createElement('div');
+  m.id='modal-status-orc';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML=`<div style="background:var(--surface);border-radius:14px;padding:24px;min-width:280px;max-width:400px">
+    <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;color:var(--text1)">${esc(title||'')}</h3>
+    ${html}
+    <div style="margin-top:16px;text-align:right"><button class="btn btn-ghost btn-sm" onclick="this.closest('[id]').remove()">Fechar</button></div>
+  </div>`;
+  document.body.appendChild(m);
+}
+
+function closeModal(id){ const m=document.getElementById(id); if(m) m.style.display='none'; }
+
+function _getTemplatesAtivos(){
+  const custom = DB.templatesCustom||[];
+  const padrao = TEMPLATES_WA.map(t=>({...t,_tipo:'padrao'}));
+  const cust   = custom.map(t=>({...t,_tipo:'custom'}));
+  return [...padrao, ...cust];
+}
+
+function renderTemplates(){
+  const grid = document.getElementById('tpl-grid'); if(!grid) return;
+  const cat  = (document.getElementById('tpl-cat')||{}).value||'all';
+  const q    = ((document.getElementById('tpl-search')||{}).value||'').toLowerCase();
+  const todos = _getTemplatesAtivos();
+  const list  = todos.filter(t=>(cat==='all'||t.cat===cat)&&(!q||t.titulo.toLowerCase().includes(q)||t.texto.toLowerCase().includes(q)));
+  if(!list.length){ grid.innerHTML='<div style="color:var(--text2);padding:30px;text-align:center"><div style="font-size:36px">💬</div><p>Nenhum template encontrado.</p><button class="btn btn-primary" onclick="openModalNovoTemplate()">+ Novo Template</button></div>'; return; }
+  const catColors={captacao:'#2563eb',briefing:'#7c3aed',orcamento:'#d97706',fechamento:'#16a34a',prevenda:'#0891b2',guiamento:'#9333ea',posvenda:'#dc2626',custom:'#475569'};
+  grid.innerHTML = list.map(t=>{
+    const txt = applyVars(t.texto);
+    const waLink = 'https://wa.me/?text='+encodeURIComponent(txt);
+    const isCustom = t._tipo==='custom';
+    return `<div style="background:var(--surface);border:1px solid ${isCustom?'var(--accent)':'var(--surface3)'};border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;position:relative">
+      ${isCustom?'<div style="position:absolute;top:8px;right:8px;background:var(--accent);border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700;color:#0f2d4e">✨ Seu template</div>':''}
+      <div style="display:flex;align-items:center;gap:8px;padding-right:${isCustom?'80px':'0'}">
+        <span style="background:${catColors[t.cat]||'#666'};color:#fff;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;text-transform:uppercase">${t.cat}</span>
+        <span style="font-size:13px;font-weight:700;color:var(--text1)">${t.emoji||'💬'} ${esc(t.titulo)}</span>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:10px;font-size:11.5px;line-height:1.6;color:var(--text1);white-space:pre-wrap;max-height:160px;overflow:hidden;position:relative;cursor:pointer" onclick="this.style.maxHeight=this.style.maxHeight==='none'?'160px':'none'">${esc(txt)}<div style="position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,var(--bg))"></div></div>
+      <div style="display:flex;gap:6px;justify-content:space-between;align-items:center">
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(applyVars(_getTemplatesAtivos().find(x=>x.id===${JSON.stringify(t.id)}).texto));toast('Copiado!','success')" style="font-size:11px">📋 Copiar</button>
+          <a href="${waLink}" target="_blank" rel="noopener" class="btn btn-accent btn-sm" style="font-size:11px;text-decoration:none">📲 WhatsApp</a>
+        </div>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-ghost btn-sm" onclick="editarTemplate(${JSON.stringify(t.id)})" style="font-size:11px" title="Editar template">✏️</button>
+          ${isCustom?`<button class="btn btn-ghost btn-sm" onclick="excluirTemplateCustom(${JSON.stringify(t.id)})" style="font-size:11px;color:var(--danger)" title="Excluir">🗑</button>`:''}
+          <button class="btn btn-ghost btn-sm" onclick="duplicarTemplate(${JSON.stringify(t.id)})" style="font-size:11px" title="Duplicar como novo template">📋+</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openModalNovoTemplate(){ editarTemplate(null); }
+
+function editarTemplate(id){
+  const todos = _getTemplatesAtivos();
+  const t = id ? todos.find(x=>x.id===id) : null;
+  const cats = ['captacao','briefing','orcamento','fechamento','prevenda','guiamento','posvenda'];
+  const catLabels = {captacao:'📥 Captação',briefing:'📝 Briefing',orcamento:'💰 Orçamento',fechamento:'✅ Fechamento',prevenda:'✈️ Pré-Viagem',guiamento:'🗺️ Guiamento',posvenda:'⭐ Pós-Venda'};
+  const isNew = !id;
+  // Modal inline para editar/criar template
+  const existing = document.getElementById('modal-template-editor');
+  if(existing) existing.remove();
+  const m = document.createElement('div');
+  m.id='modal-template-editor';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML=`<div style="background:var(--surface);border-radius:16px;padding:24px;width:min(600px,100%);max-height:85vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="font-size:16px;font-weight:700">${isNew?'➕ Novo Template':'✏️ Editar Template'}</h3>
+      <button onclick="document.getElementById('modal-template-editor').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text2)">✕</button>
+    </div>
+    <label style="font-size:12px;font-weight:600;color:var(--text2)">Título *
+      <input id="tpl-edit-titulo" class="form-input" value="${esc(t?.titulo||'')}" placeholder="Ex: Envio de orçamento" style="margin-top:4px"/>
+    </label>
+    <div style="display:flex;gap:12px">
+      <label style="font-size:12px;font-weight:600;color:var(--text2);flex:1">Etapa *
+        <select id="tpl-edit-cat" class="form-select" style="margin-top:4px">
+          ${cats.map(c=>`<option value="${c}" ${(t?.cat||'captacao')===c?'selected':''}>${catLabels[c]||c}</option>`).join('')}
+        </select>
+      </label>
+      <label style="font-size:12px;font-weight:600;color:var(--text2)" style="flex:0">Emoji
+        <input id="tpl-edit-emoji" class="form-input" value="${esc(t?.emoji||'💬')}" placeholder="💬" style="margin-top:4px;width:70px"/>
+      </label>
+    </div>
+    <label style="font-size:12px;font-weight:600;color:var(--text2)">Mensagem *
+      <div style="font-size:10px;color:var(--text3);margin:2px 0 4px">Use {cliente}, {destino}, {data}, {vendedor} para variáveis</div>
+      <textarea id="tpl-edit-texto" class="form-textarea" rows="12" placeholder="Escreva o template aqui..." style="margin-top:4px;font-family:inherit;white-space:pre-wrap;line-height:1.6">${esc(t?.texto||'')}</textarea>
+    </label>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-template-editor').remove()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarTemplateCustom(${JSON.stringify(id)})">💾 Salvar Template</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+  setTimeout(()=>{ const el=document.getElementById('tpl-edit-titulo'); if(el) el.focus(); },100);
+}
+
+function salvarTemplateCustom(idOriginal){
+  const titulo = (document.getElementById('tpl-edit-titulo')?.value||'').trim();
+  const cat    = document.getElementById('tpl-edit-cat')?.value||'captacao';
+  const emoji  = document.getElementById('tpl-edit-emoji')?.value||'💬';
+  const texto  = document.getElementById('tpl-edit-texto')?.value||'';
+  if(!titulo||!texto){ toast('Preencha título e mensagem.','error'); return; }
+  if(!DB.templatesCustom) DB.templatesCustom=[];
+  const isEdit = idOriginal && DB.templatesCustom.find(t=>t.id===idOriginal);
+  if(isEdit){
+    const idx = DB.templatesCustom.findIndex(t=>t.id===idOriginal);
+    DB.templatesCustom[idx] = {...DB.templatesCustom[idx], titulo, cat, emoji, texto, updatedAt:Date.now()};
+    toast('Template atualizado!','success');
+  } else {
+    const newId = 'tc_'+Date.now();
+    DB.templatesCustom.push({id:newId, cat, emoji, titulo, texto, createdAt:Date.now(), updatedAt:Date.now()});
+    toast('Novo template salvo!','success');
+  }
+  saveToStorage();
+  document.getElementById('modal-template-editor')?.remove();
+  renderTemplates();
+}
+
+function excluirTemplateCustom(id){
+  openConfirm('Excluir este template personalizado?', function(){
+    DB.templatesCustom = (DB.templatesCustom||[]).filter(t=>t.id!==id);
+    saveToStorage();
+    renderTemplates();
+    toast('Template excluído.','error');
+  });
+}
+
+function duplicarTemplate(id){
+  const todos = _getTemplatesAtivos();
+  const t = todos.find(x=>x.id===id);
+  if(!t) return;
+  if(!DB.templatesCustom) DB.templatesCustom=[];
+  const newT = {id:'tc_'+Date.now(), cat:t.cat, emoji:t.emoji, titulo:'Cópia — '+t.titulo, texto:t.texto, createdAt:Date.now()};
+  DB.templatesCustom.push(newT);
+  saveToStorage();
+  renderTemplates();
+  toast('Template duplicado! Edite-o para personalizar.','success');
+}
+
 // ── Temporada (crowd calendar) ─────────────────────────────────────────────────────────────
 const CROWD_DATA = {"2026-01":{"label":"Jan 2026","nivel":3,"desc":"Baixa temporada — ótimo custo-benefício após festas","eventos":["Martin Luther King Day (3ª semana, sobe para 6)","Marathon da Disney (semana 1)"]},"2026-02":{"label":"Fev 2026","nivel":3,"desc":"Uma das melhores épocas para visitar","eventos":["Presidents Day (3ª semana, sobe para 5)","EPCOT Festival of the Arts"]},"2026-03":{"label":"Mar 2026","nivel":8,"desc":"Spring Break americano e semana santa — muito movimentado","eventos":["Spring Break EUA (semanas 2-4)","Semana Santa brasileira (fim do mês)","EPCOT Flower & Garden Festival começa"]},"2026-04":{"label":"Abr 2026","nivel":7,"desc":"Spring Break continua + Páscoa","eventos":["Spring Break 1ª semana","EPCOT Flower & Garden Festival","Easter Sunday (Páscoa)"]},"2026-05":{"label":"Mai 2026","nivel":4,"desc":"Excelente! Bem após Páscoa, antes do verão americano","eventos":["Memorial Day (última semana, sobe para 7)","Star Wars Celebration (se confirmado)","EPCOT Flower & Garden Festival"]},"2026-06":{"label":"Jun 2026","nivel":7,"desc":"Verão americano — calor intenso e filas longas","eventos":["Escolas americanas fecham (metade do mês)","Gay Days (1ª semana)","Muito calor 35°C+"]},"2026-07":{"label":"Jul 2026","nivel":9,"desc":"4 de julho e pico máximo do verão — EVITAR se possível","eventos":["4th of July (semana mais movimentada do ano)","Férias escolares EUA e Brasil","Filas de 90-180 min comuns"]},"2026-08":{"label":"Ago 2026","nivel":7,"desc":"Ainda verão, calor extremo e chuvas frequentes à tarde","eventos":["Escolas americanas voltam (2ª quinzena — cai para 5)","Mickey's Not So Scary Halloween (começa 2ª quinzena)","Temporada de furacões"]},"2026-09":{"label":"Set 2026","nivel":3,"desc":"MELHOR MÊS DO ANO — baixíssimo movimento e ótimo clima","eventos":["Mickey's Not So Scary Halloween (sextas e sábados)","Labor Day (semana 1, sobe para 5)","EPCOT Food & Wine Festival começa (final do mês)"]},"2026-10":{"label":"Out 2026","nivel":5,"desc":"Bom mês, eventos de Halloween aumentam movimento nos fins de semana","eventos":["Mickey's Not So Scary Halloween (todo mês)","Halloween Horror Nights Universal","EPCOT Food & Wine Festival","Columbus Day (2ª semana, sobe para 6)"]},"2026-11":{"label":"Nov 2026","nivel":6,"desc":"Bom início, muito movimentado na semana de Thanksgiving","eventos":["EPCOT Food & Wine Festival (até início do mês)","Festival of the Holidays começa (final do mês)","Thanksgiving (última semana — nível 10!)","Mickey's Very Merry Christmas Party começa"]},"2026-12":{"label":"Dez 2026","nivel":8,"desc":"Natal mágico mas muito movimentado — planeje dias leves","eventos":["Mickey's Very Merry Christmas Party","EPCOT Festival of the Holidays","Christmas Week (25 dez - 1 jan = nível 10)","Horários estendidos em todos os parques"]},"2027-01":{"label":"Jan 2027","nivel":3,"desc":"Ótimo mês — pós festas com baixo movimento","eventos":["Martin Luther King Day (3ª semana)","Marathon Disney (1ª semana)"]},"2027-02":{"label":"Fev 2027","nivel":3,"desc":"Excelente época para visitar com família","eventos":["EPCOT Festival of the Arts","Presidents Day (3ª semana)"]},"2027-03":{"label":"Mar 2027","nivel":8,"desc":"Spring Break — alto movimento","eventos":["Spring Break EUA","Semana Santa","EPCOT Flower & Garden Festival"]},"2027-04":{"label":"Abr 2027","nivel":6,"desc":"Movimento médio-alto","eventos":["Spring Break","EPCOT Flower & Garden Festival"]},"2027-05":{"label":"Mai 2027","nivel":4,"desc":"Ótimo mês antes do verão","eventos":["EPCOT Flower & Garden Festival","Memorial Day (última semana)"]},"2027-06":{"label":"Jun 2027","nivel":7,"desc":"Verão começa — movimento alto","eventos":["Escolas americanas fecham","Gay Days"]},"2027-07":{"label":"Jul 2027","nivel":9,"desc":"Pico máximo do verão","eventos":["4th of July","Férias escolares EUA e Brasil"]},"2027-08":{"label":"Ago 2027","nivel":7,"desc":"Verão intenso","eventos":["Mickey's Not So Scary Halloween (2ª quinzena)"]},"2027-09":{"label":"Set 2027","nivel":3,"desc":"Melhor mês do ano","eventos":["NSSH","EPCOT Food & Wine começa"]},"2027-10":{"label":"Out 2027","nivel":5,"desc":"Bom mês com eventos de Halloween","eventos":["NSSH","Halloween Horror Nights","EPCOT Food & Wine"]},"2027-11":{"label":"Nov 2027","nivel":6,"desc":"Bom até Thanksgiving","eventos":["Festival of Holidays começa","Thanksgiving (última semana — pico)"]},"2027-12":{"label":"Dez 2027","nivel":8,"desc":"Natal mágico mas movimentado","eventos":["Mickey's Very Merry Christmas","Festival of Holidays EPCOT","Christmas Week"]}};
 
+// ── Hotéis e Festivais Orlando (Sistema) ─────────────────────────────────────
+const KB_HOTEIS_S    = [{"id":"universal-helios-grand-hotel","nome":"Universal Helios Grand Hotel","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"deluxe_hotel","estrelas":5,"quartos":500,"preco":"US$500–US$2000/noite","tema":"Space Age / Celestial / Epic Universe","beneficios":[],"destaques":[],"desc":"NOVO 2025! O hotel mais novo e luxuoso da Universal. 5 min a pé do Epic Universe. Temática celestial. O flagship do Epic Universe.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/helios-grand-hotel","status":"Active"},{"id":"universal-cabana-bay-beach-resort","nome":"Universal's Cabana Bay Beach Resort","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"value_hotel","estrelas":3,"quartos":1800,"preco":"US$130–US$450/noite","tema":"1950s-60s retro beach resort","beneficios":[],"destaques":[],"desc":"Retro anos 50-60 e mais divertido! Value adjacente ao Volcano Bay. Bowling onsite. 2 piscinas resort. Sem Express Pass mas melhor Value da Universal.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/cabana-bay-beach-resort","status":"Active"},{"id":"loews-royal-pacific-resort","nome":"Loews Royal Pacific Resort","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando / Loews","tipo":"deluxe_hotel","estrelas":4,"quartos":1000,"preco":"US$320–US$1200/noite","tema":"South Pacific / Polynesian Resort","beneficios":[],"destaques":[],"desc":"Paraíso do Pacífico Sul! Express Unlimited incluído. Luau às sextas. Jardim de orquídeas. Water taxi. O maior dos hotéis Signature com 1000 quartos.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/royal-pacific-resort","status":"Active"},{"id":"loews-sapphire-falls-resort","nome":"Loews Sapphire Falls Resort","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando / Loews","tipo":"deluxe_hotel","estrelas":4,"quartos":1000,"preco":"US$220–US$900/noite","tema":"Caribbean waterfall resort","beneficios":[],"destaques":[],"desc":"Signature mais acessível! Express Unlimited incluído. Cascatas caribenhas. Water taxi. O melhor custo-benefício do nível Signature com Express Pass.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/sapphire-falls-resort","status":"Active"},{"id":"universal-terra-luna-resort","nome":"Universal Terra Luna Resort","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"prime_value_hotel","estrelas":3,"quartos":750,"preco":"US$134–US$450/noite","tema":"Planetary / Earth and Moon","beneficios":[],"destaques":[],"desc":"NOVO mar 2025! Irmão do Stella Nova. Temática Terra e Lua. Prime Value sem Express Pass. Próximo ao Epic Universe. Novo e moderno.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/terra-luna-resort","status":"Active"},{"id":"hard-rock-hotel-universal-orlando","nome":"Hard Rock Hotel Universal Orlando","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando / Loews","tipo":"deluxe_hotel","estrelas":4,"quartos":650,"preco":"US$380–US$1500/noite","tema":"Music / Rock n Roll","beneficios":[],"destaques":[],"desc":"Hard Rock com PISCINA 24H! Express Unlimited incluído. Guitarra de 1,5 tonelada no lobby. A 10 min a pé dos parques. O mais popular da Universal.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/hard-rock-hotel","status":"Active"},{"id":"universal-endless-summer-dockside","nome":"Universal Endless Summer Dockside","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"value_hotel","estrelas":2,"quartos":2050,"preco":"US$95–US$310/noite","tema":"Nautical / Dock","beneficios":[],"destaques":[],"desc":"O maior hotel da Universal (2050 quartos) e o mais barato! Temática náutica. Sem Express Pass. A partir de USD 95/noite.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/endless-summer-resort-dockside-inn-and-suites","status":"Active"},{"id":"loews-portofino-bay-hotel","nome":"Loews Portofino Bay Hotel","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando Resort","tipo":"deluxe_hotel","estrelas":4,"quartos":750,"preco":"US$350–US$1200/noite","tema":"Portofino, Italy","beneficios":[],"destaques":[],"desc":"Hotel Premier Universal mais luxuoso! Express Unlimited ILIMITADO em todos os parques incluído. Economiza até USD 130/pessoa/dia. Tema italiano elegante.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/loews-portofino-bay-hotel","status":"Active"},{"id":"universal-endless-summer-surfside","nome":"Universal Endless Summer Surfside","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"value_hotel","estrelas":2,"quartos":750,"preco":"US$100–US$320/noite","tema":"Surf / Beach","beneficios":[],"destaques":[],"desc":"O mais barato da Universal! A partir de USD 100/noite. Praia e verão. Sem Express Pass. Value máximo — bom para quem passa o dia inteiro nos parques.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/endless-summer-resort-surfside-inn-and-suites","status":"Active"},{"id":"universal-stella-nova-resort","nome":"Universal Stella Nova Resort","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"prime_value_hotel","estrelas":3,"quartos":750,"preco":"US$134–US$450/noite","tema":"Space / Stars / Nova","beneficios":[],"destaques":[],"desc":"NOVO jan 2025! Prime Value galáctica próxima ao Epic Universe. 750 quartos modernos. Sem Express Pass. A mais nova opção acessível da Universal.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/stella-nova-resort","status":"Active"},{"id":"universal-aventura-hotel","nome":"Universal's Aventura Hotel","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"prime_value_hotel","estrelas":3,"quartos":600,"preco":"US$140–US$500/noite","tema":"Modern tech / minimalist","beneficios":[],"destaques":[],"desc":"Design moderno com iPad no quarto! Bar no rooftop com vista dos parques Universal. Prime Value sem Express Pass. Para adultos que preferem design a temática.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/aventura-hotel","status":"Active"},{"id":"animal-kingdom-villas-jambo-house","nome":"Disney's Animal Kingdom Villas — Jambo House","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":4,"quartos":438,"preco":"US$350–US$1800/noite","tema":"African savanna lodge","beneficios":["Early Theme Park Entry","Extended Evening Hours","Savana view com animais reais"],"destaques":[],"desc":"DVC com savana de girafas e zebras! Villas espaçosas com vista dos animais. Acesso aos restaurantes de Lodge: Jiko, Boma e Sanaa.","img":"","url":"https://disneyworld.disney.go.com/resorts/animal-kingdom-villas-jambo/","status":"Active"},{"id":"disneys-caribbean-beach-resort","nome":"Disney's Caribbean Beach Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"moderate_hotel","estrelas":3,"quartos":2108,"preco":"US$200–US$600/noite","tema":"Caribbean islands","beneficios":["Early Theme Park Entry","Disney Skyliner direto ao EPCOT e Hollywood Studios"],"destaques":[],"desc":"Único Moderate com Skyliner! Acesso direto ao EPCOT e HS. Temática caribenha colorida. Sebastian's Bistro excelente. O melhor custo-benefício para quem usa EPCOT.","img":"","url":"https://disneyworld.disney.go.com/resorts/caribbean-beach-resort/","status":"Active"},{"id":"disneys-all-star-music-resort","nome":"Disney's All-Star Music Resort","dest":"Orlando","resort":"","operadora":"","tipo":"value_hotel","estrelas":2,"quartos":1604,"preco":"US$120–US$340/noite","tema":"Music genres from Rock to Jazz","beneficios":["Early Theme Park Entry","Complimentary Bus Transportation"],"destaques":[],"desc":"Hotel Value com instrumentos musicais gigantes! Country, Jazz, Rock, Broadway. Suítes familiares disponíveis. Apenas ônibus. Econômico.","img":"","url":"https://disneyworld.disney.go.com/resorts/all-star-music-resort/","status":"Active"},{"id":"bay-lake-tower-contemporary","nome":"Bay Lake Tower at Disney's Contemporary Resort","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":4,"quartos":295,"preco":"US$450–US$2000/noite","tema":"Contemporary / Bay Lake","beneficios":["Early Theme Park Entry","Extended Evening Hours","Monorail","A pé ao Magic Kingdom","Top of the World Lounge (Members only — vista dos fogos)"],"destaques":[],"desc":"DVC do Contemporary com Top of the World Lounge! A MELHOR vista dos fogos do MK de qualquer lugar — exclusiva DVC. Monorail e a pé ao MK.","img":"","url":"https://disneyworld.disney.go.com/resorts/bay-lake-tower/","status":"Active"},{"id":"disneys-polynesian-village-resort","nome":"Disney's Polynesian Village Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"Walt Disney World","tipo":"deluxe_hotel","estrelas":4,"quartos":853,"preco":"US$500–US$2200/noite","tema":"South Pacific / Polynesian","beneficios":["Early Theme Park Entry","Extended Evening Hours","Monorail access direto ao MK e EPCOT","Boat to Magic Kingdom"],"destaques":[],"desc":"Hotel inaugural do WDW de 1971! Tema Polinésio, monorail MK e EPCOT. Vista dos fogos do MK de graça na praia. Ambiente tropical único.","img":"","url":"https://disneyworld.disney.go.com/resorts/polynesian-village-resort/","status":"Active"},{"id":"disneys-yacht-club-resort","nome":"Disney's Yacht Club Resort","dest":"Orlando","resort":"","operadora":"","tipo":"deluxe_hotel","estrelas":4,"quartos":621,"preco":"US$380–US$1500/noite","tema":"New England yacht club 1880s","beneficios":["Early Theme Park Entry","Extended Evening Hours","Stormalong Bay (piscina compartilhada com Beach Club)","Skyliner ao EPCOT e HS","A pé ao EPCOT (5 min)"],"destaques":[],"desc":"Iate clube elegante de Nova Inglaterra! Compartilha Stormalong Bay com o Beach Club. A pé ao EPCOT. Yachtsman Steakhouse e Ale & Compass. Pet-friendly.","img":"","url":"https://disneyworld.disney.go.com/resorts/yacht-club-resort/","status":"Active"},{"id":"disneys-old-key-west-resort","nome":"Disney's Old Key West Resort","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":3,"quartos":761,"preco":"US$280–US$1400/noite","tema":"Key West Florida — casual tropical","beneficios":["Early Theme Park Entry","Extended Evening Hours","Boat a Disney Springs"],"destaques":[],"desc":"O primeiro DVC da Disney (1991)! Temática Key West relaxante. Villas espaçosas. Olivia's Cafe com culinária floridiana. Barco ao Disney Springs.","img":"","url":"https://disneyworld.disney.go.com/resorts/old-key-west-resort/","status":"Active"},{"id":"walt-disney-world-swan","nome":"Walt Disney World Swan","dest":"Orlando","resort":"walt-disney-world","operadora":"Marriott/Westin (managed by Marriott)","tipo":"partner_hotel","estrelas":4,"quartos":756,"preco":"US$250–US$1200/noite","tema":"Contemporary / Swan statues","beneficios":["Early Theme Park Entry","Extended Evening Theme Park Hours (como Deluxe!)","Skyliner ao EPCOT e HS","A pé ao EPCOT e Boardwalk","Bonvoy Marriott/Westin points acumuláveis"],"destaques":[],"desc":"Hotel Marriott/Westin COM benefícios Disney Deluxe! Early Entry + Extended Hours + Skyliner + acumula pontos Bonvoy. Melhor custo-benefício para membros Marriott.","img":"","url":"https://www.marriott.com/hotels/travel/mcosi-walt-disney-world-swan/","status":"Active"},{"id":"beach-club-villas","nome":"Disney's Beach Club Villas","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":4,"quartos":205,"preco":"US$400–US$1700/noite","tema":"New England beach resort 1800s","beneficios":["Early Theme Park Entry","Extended Evening Hours","Stormalong Bay (melhor piscina WDW)","Skyliner ao EPCOT e HS","A pé ao EPCOT (5 min)"],"destaques":[],"desc":"DVC do Beach Club! Stormalong Bay + Skyliner + EPCOT a pé. Villas com cozinha. A combinação mais prática do resort.","img":"","url":"https://disneyworld.disney.go.com/resorts/beach-club-villas/","status":"Active"},{"id":"four-seasons-resort-orlando","nome":"Four Seasons Resort Orlando","dest":"Orlando","resort":"walt-disney-world","operadora":"Four Seasons Hotels and Resorts","tipo":"partner_hotel","estrelas":5,"quartos":443,"preco":"US$700–US$5000/noite","tema":"Four Seasons luxury","beneficios":["Early Theme Park Entry","Extended Evening Theme Park Hours","Dedicated theme park concierge"],"destaques":[],"desc":"O hotel mais luxuoso e caro de toda a área Disney! Four Seasons com concierge dedicado de parques. Capa rooftop com fogos do MK. Serviço Five Star. USD 700+/noite.","img":"","url":"https://www.fourseasons.com/orlando/","status":"Active"},{"id":"disneys-port-orleans-resort-riverside","nome":"Disney's Port Orleans Resort — Riverside","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"moderate_hotel","estrelas":3,"quartos":2048,"preco":"US$180–US$550/noite","tema":"Mississippi Bayou / Deep South","beneficios":["Early Theme Park Entry","Boat to Disney Springs (opcional)"],"destaques":[],"desc":"O mais romântico dos Moderate! Temática Bayou do Mississipi. Royal Guest Rooms temáticos de princesas. Pet-friendly. Barco ao Disney Springs.","img":"","url":"https://disneyworld.disney.go.com/resorts/port-orleans-resort-riverside/","status":"Active"},{"id":"walt-disney-world-swan-reserve","nome":"Walt Disney World Swan Reserve","dest":"Orlando","resort":"","operadora":"Marriott/Westin","tipo":"partner_hotel","estrelas":4,"quartos":349,"preco":"US$280–US$1200/noite","tema":"Contemporary luxury boutique","beneficios":["Early Theme Park Entry","Extended Evening Theme Park Hours","Skyliner ao EPCOT e HS","Bonvoy Marriott points acumuláveis"],"destaques":[],"desc":"NOVO 2021 — boutique de 14 andares! O mais novo e menor dos Swan Dolphin. Benefícios Deluxe Disney + Sky Lounge no topo. Acumula pontos Bonvoy.","img":"","url":"https://www.marriott.com/hotels/travel/mcows-walt-disney-world-swan-reserve/","status":"Active"},{"id":"disneys-beach-club-resort","nome":"Disney's Beach Club Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"deluxe_hotel","estrelas":4,"quartos":576,"preco":"US$400–US$1600/noite","tema":"New England beach resort 1800s","beneficios":["Early Theme Park Entry","Extended Evening Hours","Disney Skyliner direto ao EPCOT e Hollywood Studios","A pé ao EPCOT (5 min)","Stormalong Bay — melhor piscina do WDW"],"destaques":[],"desc":"Melhor PISCINA do WDW — Stormalong Bay com 11.000m²! A pé ao EPCOT em 5 min. Skyliner ao HS. Cape May Cafe com character dining.","img":"","url":"https://disneyworld.disney.go.com/resorts/beach-club-resort/","status":"Active"},{"id":"disneys-animal-kingdom-lodge","nome":"Disney's Animal Kingdom Lodge","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"deluxe_hotel","estrelas":5,"quartos":972,"preco":"US$350–US$1800/noite","tema":"African savanna lodge","beneficios":["Early Theme Park Entry","Extended Evening Hours","Animais reais na savana visíveis dos quartos"],"destaques":[],"desc":"Acorde com girafas do lado de fora! Lodge africano com savana de 33 acres. Girafas, zebras e antílopes a metros dos quartos. Jiko e Boma — melhores restaurantes africanos dos EUA.","img":"","url":"https://disneyworld.disney.go.com/resorts/animal-kingdom-lodge/","status":"Active"},{"id":"disneys-grand-floridian-resort-spa","nome":"Disney's Grand Floridian Resort & Spa","dest":"Orlando","resort":"walt-disney-world","operadora":"Walt Disney World","tipo":"deluxe_hotel","estrelas":5,"quartos":867,"preco":"US$700–US$3000/noite","tema":"Victorian / Florida elegance","beneficios":["Early Theme Park Entry","Extended Evening Hours","Complimentary Bus Transportation","Monorail access direto ao Magic Kingdom e EPCOT","Boat to Magic Kingdom","Walking distance to Magic Kingdom","Disney Skyliner (novo)"],"destaques":[],"desc":"O hotel mais luxuoso do WDW. Arquitetura Vitoriana, monorail direto ao MK, spa, fine dining. A experiência Disney mais premium.","img":"","url":"https://disneyworld.disney.go.com/resorts/grand-floridian-resort-and-spa/","status":"Active"},{"id":"copper-creek-villas-wilderness-lodge","nome":"Copper Creek Villas & Cabins at Disney's Wilderness Lodge","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":4,"quartos":184,"preco":"US$320–US$1600/noite","tema":"Pacific Northwest National Park","beneficios":["Early Theme Park Entry","Extended Evening Hours","Boat ao Magic Kingdom","Cabins sobre o lago"],"destaques":[],"desc":"Cabins FLUTUANTES sobre o lago! Única opção de cabin sobre a água de todo o WDW. DVC no Wilderness Lodge. Barco ao MK.","img":"","url":"https://disneyworld.disney.go.com/resorts/copper-creek-villas-and-cabins/","status":"Active"},{"id":"disneys-coronado-springs-resort","nome":"Disney's Coronado Springs Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"moderate_hotel","estrelas":3,"quartos":1900,"preco":"US$200–US$700/noite","tema":"Mexican / Southwest American","beneficios":["Early Theme Park Entry"],"destaques":[],"desc":"Coronado Springs com Gran Destino Tower! Quartos modernos no arranha-céu com vista. Toledo no rooftop. Melhor Moderate para adultos e grupos de negócios.","img":"","url":"https://disneyworld.disney.go.com/resorts/coronado-springs-resort/","status":"Active"},{"id":"disneys-contemporary-resort","nome":"Disney's Contemporary Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"deluxe_hotel","estrelas":4,"quartos":655,"preco":"US$500–US$2000/noite","tema":"Futurist / Modern 1971","beneficios":["Early Theme Park Entry","Extended Evening Hours","Monorail DIRETO ao Magic Kingdom (passa dentro do hotel)","A pé ao Magic Kingdom (10 min)","Boat to Magic Kingdom"],"destaques":[],"desc":"O hotel com monorail passando DENTRO do lobby! A pé ao MK em 10 min. California Grill com vista dos fogos. Chef Mickey's character dining. Original de 1971.","img":"","url":"https://disneyworld.disney.go.com/resorts/contemporary-resort/","status":"Active"},{"id":"disneys-port-orleans-resort-french-quarter","nome":"Disney's Port Orleans Resort — French Quarter","dest":"Orlando","resort":"","operadora":"","tipo":"moderate_hotel","estrelas":3,"quartos":1008,"preco":"US$175–US$520/noite","tema":"New Orleans French Quarter","beneficios":["Early Theme Park Entry","Bus Transportation"],"destaques":[],"desc":"O mais elegante dos Moderate! Temática Bairro Francês de Nova Orleans. Menor e mais tranquilo. Carruagem de cavalos. Pont d'acesso ao Riverside.","img":"","url":"https://disneyworld.disney.go.com/resorts/port-orleans-resort-french-quarter/","status":"Active"},{"id":"disneys-wilderness-lodge","nome":"Disney's Wilderness Lodge","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"deluxe_hotel","estrelas":4,"quartos":407,"preco":"US$300–US$1400/noite","tema":"Pacific Northwest National Park Lodge","beneficios":["Early Theme Park Entry","Extended Evening Hours","Boat ao Magic Kingdom"],"destaques":[],"desc":"Lodge de Parque Nacional! Lobby com toras de 9 andares e lareira de 45m. Barco ao Magic Kingdom. Piscina com gêiser. Whispering Canyon Cafe com cowboys.","img":"","url":"https://disneyworld.disney.go.com/resorts/wilderness-lodge/","status":"Active"},{"id":"walt-disney-world-dolphin","nome":"Walt Disney World Dolphin","dest":"Orlando","resort":"","operadora":"Marriott/Sheraton","tipo":"partner_hotel","estrelas":4,"quartos":1509,"preco":"US$230–US$1100/noite","tema":"Contemporary / Dolphin statues","beneficios":["Early Theme Park Entry","Extended Evening Theme Park Hours","Skyliner ao EPCOT e HS","Bonvoy Marriott/Sheraton points acumuláveis"],"destaques":[],"desc":"O maior hotel parceiro da Disney! 1509 quartos Marriott/Sheraton. Benefícios Deluxe Disney incluídos + acumula pontos Bonvoy. Skyliner. Ideal para membros Marriott.","img":"","url":"https://www.marriott.com/hotels/travel/mcosi-walt-disney-world-dolphin/","status":"Active"},{"id":"disneys-all-star-sports-resort","nome":"Disney's All-Star Sports Resort","dest":"Orlando","resort":"","operadora":"","tipo":"value_hotel","estrelas":2,"quartos":1920,"preco":"US$115–US$330/noite","tema":"American sports — football, basketball, tennis, etc.","beneficios":["Early Theme Park Entry","Complimentary Bus Transportation"],"destaques":[],"desc":"Esportes americanos em tamanho gigante! Capacetes de NFL, bolas de basquete NBA. O mais econômico do WDW. Apenas ônibus.","img":"","url":"https://disneyworld.disney.go.com/resorts/all-star-sports-resort/","status":"Active"},{"id":"disneys-art-of-animation-resort","nome":"Disney's Art of Animation Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"value_hotel","estrelas":2,"quartos":1984,"preco":"US$150–US$500/noite","tema":"Disney/Pixar animated films","beneficios":["Early Theme Park Entry","Disney Skyliner ao EPCOT e Hollywood Studios"],"destaques":[],"desc":"Hotel Value com suítes familiares TEMÁTICAS! Rei Leão, Nemo, Cars, Pequena Sereia. Skyliner ao EPCOT e HS. O melhor Value para famílias grandes.","img":"","url":"https://disneyworld.disney.go.com/resorts/art-of-animation-resort/","status":"Active"},{"id":"disneys-saratoga-springs-resort-spa","nome":"Disney's Saratoga Springs Resort & Spa","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":3,"quartos":552,"preco":"US$300–US$1500/noite","tema":"Saratoga Springs NY — horse racing","beneficios":["Early Theme Park Entry","Extended Evening Hours","Boat a Disney Springs","A pé a Disney Springs"],"destaques":[],"desc":"DVC a pé + barco ao Disney Springs! Único hotel com esse acesso direto. Spa completo. Temática Saratoga Springs NY. Para quem quer Disney Springs como base.","img":"","url":"https://disneyworld.disney.go.com/resorts/saratoga-springs-resort-and-spa/","status":"Active"},{"id":"disneys-all-star-movies-resort","nome":"Disney's All-Star Movies Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"Walt Disney World","tipo":"value_hotel","estrelas":2,"quartos":1920,"preco":"US$120–US$350/noite","tema":"Toy Story / Fantasia / 101 Dalmatians","beneficios":["Early Theme Park Entry","Complimentary Bus Transportation"],"destaques":[],"desc":"O hotel mais econômico do WDW! Temática de filmes Disney. Early Park Entry incluído. Apenas ônibus. Perfeito para famílias com orçamento.","img":"","url":"https://disneyworld.disney.go.com/resorts/all-star-movies-resort/","status":"Active"},{"id":"disneys-riviera-resort","nome":"Disney's Riviera Resort","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":4,"quartos":341,"preco":"US$350–US$1800/noite","tema":"European Riviera — France, Italy, Spain","beneficios":["Early Theme Park Entry","Extended Evening Hours","Skyliner ao EPCOT e Hollywood Studios (DIRETO na porta!)"],"destaques":[],"desc":"O mais novo WDW! Estação Skyliner DENTRO do hotel — acesso instantâneo ao EPCOT e HS. Topolino's Terrace Mickey no rooftop. Temática Riviera Europeia.","img":"","url":"https://disneyworld.disney.go.com/resorts/riviera-resort/","status":"Active"},{"id":"disneys-pop-century-resort","nome":"Disney's Pop Century Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"value_hotel","estrelas":2,"quartos":2880,"preco":"US$130–US$400/noite","tema":"Decades of American Pop Culture","beneficios":["Early Theme Park Entry","Disney Skyliner ao EPCOT e Hollywood Studios"],"destaques":[],"desc":"Décadas americanas dos anos 50 aos 2000! Value com Skyliner. 2880 quartos. O Value mais popular com acesso ao Skyliner. Custo-benefício ótimo.","img":"","url":"https://disneyworld.disney.go.com/resorts/pop-century-resort/","status":"Active"},{"id":"disneys-boardwalk-inn","nome":"Disney's BoardWalk Inn","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"deluxe_hotel","estrelas":4,"quartos":378,"preco":"US$350–US$1400/noite","tema":"Atlantic City Boardwalk 1920s","beneficios":["Early Theme Park Entry","Extended Evening Hours","A pé ao EPCOT (10 min)","Skyliner ao EPCOT e HS"],"destaques":[],"desc":"Boardwalk dos anos 1920 animado! Calçadão com bares, restaurantes e entretenimento. A pé ao EPCOT. Flying Fish frutos do mar. Dueling pianos no AbracadaBar.","img":"","url":"https://disneyworld.disney.go.com/resorts/boardwalk-inn/","status":"Active"},{"id":"disneys-fort-wilderness-resort-campground","nome":"Disney's Fort Wilderness Resort & Campground","dest":"Orlando","resort":"","operadora":"","tipo":"campground","estrelas":2,"quartos":800,"preco":"US$80–US$800/noite","tema":"American wilderness / camping","beneficios":["Early Theme Park Entry","Boat to Magic Kingdom"],"destaques":[],"desc":"Campar NA Disney! Barracas, trailers e cabanas numa floresta de 800 acres. Barco ao MK. Hoop-Dee-Doo Revue — show mais antigo da Disney. Animais selvagens reais.","img":"","url":"https://disneyworld.disney.go.com/resorts/fort-wilderness-resort-and-campground/","status":"Active"}];
+const KB_FESTIVAIS_S = [{"id":"grinchmas-at-hogsmeade","nome":"Grinchmas Who-liday Spectacular","park":"","dest":"Orlando","cat":"show","tipo":"seasonal_event","dur":0,"sazonal":false,"desc":"O Grinch e Whoville tomam o Seuss Landing no Natal! Show ao vivo incluído no ingresso. Novembro e dezembro. O mais popular evento de Natal da Universal.","dicas":["Incluído no ingresso regular — sem custo adicional.","O Grinch pode aparecer para fotos em Seuss Landing durante o período.","Seuss Landing decorada com iluminação natalina temática de Whoville."],"img":"","url":"https://www.universalorlando.com/web/en/us/events-and-concerts/grinchmas","status":"Active"},{"id":"halloween-horror-nights","nome":"Halloween Horror Nights","park":"Universal Studios Florida","dest":"Orlando","cat":"show","tipo":"seasonal_event","dur":0,"sazonal":false,"desc":"O maior evento de Halloween do mundo! 10+ casas assombradas, scare zones, terror real. Agosto a novembro em USF. Ingresso separado. Para maiores de 13 anos.","dicas":["NOT para crianças abaixo de 13 anos — terror intenso e realista.","Stay & Scream: entrar às 15h no parque regular e ficar para o HHN a partir das 18h — evita a fila de entrada.","Express Pass HHN é separado dos passes regulares — não reutilizar."],"img":"","url":"https://www.halloweenhorrornights.com/","status":"Active"},{"id":"mardi-gras-universal-orlando","nome":"Universal's Mardi Gras","park":"Universal Studios Florida","dest":"Orlando","cat":"show","tipo":"seasonal_event","dur":0,"sazonal":false,"desc":"O maior Mardi Gras fora de Nova Orleans! Parade, comida cajun, show de música ao vivo com artistas internacionais. INCLUÍDO no ingresso do parque!","dicas":["Incluído no ingresso regular — sem custo adicional.","Parade de Mardi Gras diária com collares (colares) lançados da carruagem.","Comida cajun especial disponível durante o festival."],"img":"","url":"https://www.universalorlando.com/web/en/us/events-and-concerts/mardi-gras","status":"Active"},{"id":"frozen-musical-dcl","nome":"Frozen — A Musical Spectacular","park":"","dest":"Cruzeiro","cat":"show","tipo":"daytime_show","dur":0,"sazonal":false,"desc":"Musical de Frozen em alto mar! 45 min de Broadway-quality. Atores ao vivo + Elsa + Anna. Produção mais cara de show de cruzeiro. Nível Broadway real.","dicas":["Nível de produção comparável ao Broadway de Nova York — não é apresentação simplificada.","45 minutos de show completo.","Reservar horário preferido no primeiro dia do cruzeiro."],"img":"","url":"https://www.disneycruise.disney.go.com/onboard/entertainment/","status":"Active"},{"id":"believe-sky-full-of-dreams-tds","nome":"Believe! Sea of Dreams","park":"","dest":"Orlando","cat":"show","tipo":"nighttime_spectacular","dur":25,"sazonal":false,"desc":"O melhor show noturno Disney do mundo segundo muitos fãs! 25 min no Mediterranean Harbor com barcos, projeções no Monte Prometheum, fogos e drones.","dicas":["Considerado por muitos fãs o MELHOR show noturno de qualquer parque Disney do mundo.","25 minutos completos com múltiplos elementos.","O cenário natural do TDS (Mediterranean Harbor + Monte Prometheum) é incomparável."],"img":"","url":"https://www.tokyodisneyresort.jp/en/tds/","status":"Active"},{"id":"disney-illuminations-dlp","nome":"Disney Illuminations","park":"","dest":"Orlando","cat":"show","tipo":"nighttime_spectacular","dur":17,"sazonal":false,"desc":"Show de projeções no maior castelo Disney! 17 min de fogos e projeções no Castelo da Bela Adormecida — o mais alto da Disney. Disponível em noites selecionadas.","dicas":["O Castelo da Bela Adormecida é o mais ALTO de qualquer parque Disney — as projeções são espetaculares.","Verificar datas no app — não disponível todas as noites.","Posicionar na Main Street com 45 min de antecedência."],"img":"","url":"https://www.disneylandparis.com/","status":"Active"},{"id":"disney-dreams-dlp","nome":"Disney D-Light","park":"","dest":"Orlando","cat":"show","tipo":"nighttime_spectacular","dur":10,"sazonal":false,"desc":"200 DRONES sincronizados formando imagens no céu! Show de drones mais elaborado de parque temático. 10 min antes do fechamento.","dicas":["200 drones formam personagens Disney no céu — visão única.","Acontece antes do fechamento — verificar horário.","Visível de toda a Main Street e praça do castelo."],"img":"","url":"https://www.disneylandparis.com/","status":"Active"},{"id":"star-wars-galaxy-edge-character-experiences","nome":"Experiências com Personagens de Star Wars — Galaxy's Edge","park":"","dest":"Orlando","cat":"character_meet","tipo":"character_meet","dur":0,"sazonal":false,"desc":"Stormtroopers patrulhando, Kylo Ren confrontando, Chewbacca vagando! Personagens 'reais' de Batuu sem fila formal. Verificar schedule no app.","dicas":["NÃO há fila formal — os personagens aparecem e interagem como se fossem residentes de Batuu.","Verificar no app MDE quando e onde cada personagem aparece.","Stormtroopers patrulham aleatoriamente — podem 'interrogar' visitantes."],"img":"","url":"https://disneyworld.disney.go.com/destinations/hollywood-studios/star-wars-galaxys-edge/","status":"Active"},{"id":"disney-jollywood-nights","nome":"Disney Jollywood Nights","park":"","dest":"Orlando","cat":"show","tipo":"seasonal_event","dur":0,"sazonal":false,"desc":"Natal ticketado no Hollywood Studios! Shows de Holiday, Tower of Terror com 4 temas natalinos, personagens de Natal. Noites selecionadas novembro-dezembro.","dicas":["Tower of Terror tem 4 temas diferentes de hotel natalino — cada queda é diferente.","Shows de Holiday exclusivos do evento.","Personagens Disney em trajes natalinos raros."],"img":"","url":"https://disneyworld.disney.go.com/events-tours/hollywood-studios/disney-jollywood-nights/","status":"Active"},{"id":"fantasmic","nome":"Fantasmic!","park":"Disney's Hollywood Studios","dest":"Orlando","cat":"show","tipo":"nighttime_spectacular","dur":30,"sazonal":false,"desc":"O MELHOR show da Disney! Mickey vs. todos os vilões. Dragão em chamas, jatos d'água, 6900 lugares. Reserve 45 min antes ou use o Dinner Package.","dicas":["O melhor show da Disney — supera até o Happily Ever After em impacto emocional.","Anfiteatro de 6.900 lugares — mas enche! Chegue 45 min antes.","Fantasmic! Dinner Package: jantar em restaurante selecionado + assento reservado no show."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/hollywood-studios/fantasmic/","status":"Active"},{"id":"beauty-and-the-beast-live-on-stage","nome":"Beauty and the Beast: Live on Stage","park":"","dest":"Orlando","cat":"show","tipo":"stage_show","dur":30,"sazonal":false,"desc":"Musical da Broadway em miniatura! 30 min ao vivo com Be Our Guest e Beauty and the Beast. Sunset Boulevard. Múltiplas apresentações diárias.","dicas":["30 minutos de musical real — atores, costumes, orquestra.","Verificar horários no app MDE — múltiplas apresentações.","Anfiteatro ao ar livre parcialmente coberto — sol pode ser intenso."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/hollywood-studios/beauty-and-the-beast-live-on-stage/","status":"Active"},{"id":"little-mermaid-musical-adventure","nome":"The Little Mermaid – A Musical Adventure","park":"Disney's Hollywood Studios","dest":"Orlando","cat":"show","tipo":"stage_show","dur":25,"sazonal":false,"desc":"Show de A Pequena Sereia REFORMULADO! Estreou 27/05/2025 na nova área Walt Disney Studios. Atores ao vivo, novos efeitos. Para todas as idades. AC gelado!","dicas":[],"img":"","url":"https://disneyworld.disney.go.com/entertainment/hollywood-studios/","status":"Active"},{"id":"disney-villains-unfairly-ever-after","nome":"Disney Villains: Unfairly Ever After","park":"Disney's Hollywood Studios","dest":"Orlando","cat":"show","tipo":"stage_show","dur":25,"sazonal":false,"desc":"NOVO 2025! Show dos Villões Disney reclamando da vida! Maleficent, Ursula, Evil Queen. Humor + pirotecnia. Sunset Boulevard.","dicas":["NOVO 2025 — show muito procurado. Verificar horários no app.","Múltiplos villões em palco com humor e pirotecnia.","Anfiteatro ao ar livre — sombra parcial no período da tarde."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/hollywood-studios/disney-villains-unfairly-ever-after/","status":"Active"},{"id":"for-the-first-time-in-forever-frozen-singalong","nome":"Frozen Sing-Along","park":"","dest":"Orlando","cat":"show","tipo":"stage_show","dur":30,"sazonal":false,"desc":"Sing-Along de Frozen! Cantar Let It Go com 1200 pessoas simultâneas é único. Show cômico de 30 min indoor. Anna e Elsa aparecem ao final.","dicas":["Cantar Let It Go com 1200 pessoas na sala é genuinamente emocionante.","Show de humor de verdade — as historiadoras são muito engraçadas.","Indoor com AC — excelente pausa climática."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/hollywood-studios/for-the-first-time-in-forever-frozen-sing-along/","status":"Active"},{"id":"star-wars-galactic-spectacular-fireworks","nome":"Star Wars: A Galactic Spectacular — Fogos","park":"","dest":"Orlando","cat":"show","tipo":"nighttime_spectacular","dur":14,"sazonal":false,"desc":"Fogos Star Wars com John Williams ao vivo! Projeções no Chinese Theatre. Músicas icônicas de Star Wars. Disponível em noites selecionadas.","dicas":["Verificar quais noites está disponível no app MDE.","Posicionar na Hollywood Boulevard com visão do Chinese Theatre.","14 minutos com John Williams — emocionante para fãs da saga."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/hollywood-studios/star-wars-a-galactic-spectacular/","status":"Active"},{"id":"adventurers-outpost-mickey-minnie-ak","nome":"Adventurers Outpost — Mickey e Minnie no Animal Kingdom","park":"","dest":"Orlando","cat":"character_meet","tipo":"character_meet","dur":0,"sazonal":false,"desc":"O único lugar onde Mickey E Minnie aparecem JUNTOS em safari! A única meet & greet do AK para esses dois. LLMP disponível.","dicas":["ÚNICO lugar onde Mickey e Minnie são fotografados juntos na mesma foto.","Ambos em trajes de safari africano — a foto mais fofa do AK.","LLMP disponível."],"img":"","url":"https://disneyworld.disney.go.com/attractions/animal-kingdom/adventurers-outpost/","status":"Active"},{"id":"finding-nemo-the-big-blue-and-beyond","nome":"Finding Nemo: The Big Blue...and Beyond!","park":"Disney's Animal Kingdom","dest":"Orlando","cat":"show","tipo":"stage_show","dur":25,"sazonal":false,"desc":"Show reformulado de Procurando Nemo! Fantoches incríveis de Nemo, Dory, Marlin e Crush. Muito interativo para crianças. AC gelado. 2022.","dicas":[],"img":"","url":"https://disneyworld.disney.go.com/entertainment/animal-kingdom/finding-nemo/","status":"Active"},{"id":"disney-kite-tails","nome":"Disney KiteTails","park":"","dest":"Orlando","cat":"show","tipo":"outdoor_show","dur":12,"sazonal":false,"desc":"Pipas GIGANTES de Simba e personagens Disney! 12 min sobre o lago. Diurno. Múltiplas apresentações. Fora do calor — ao ar livre.","dicas":["Verificar horários no app — múltiplas apresentações por dia.","Simba, Zazu, Baloo e King Louie em pipas de 11 metros.","Posicionar ao redor do lago para melhor visão."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/animal-kingdom/disney-kitetails/","status":"Active"},{"id":"zootopia-better-zoogether","nome":"Zootopia: Better Zoogether!","park":"Disney's Animal Kingdom","dest":"Orlando","cat":"show","tipo":"4d_show","dur":12,"sazonal":false,"desc":"NOVO desde nov/2025! Zootopia no teatro da Tree of Life. Substituiu o Tough to Be a Bug. Óculos CarrotVision. Mais amigável para crianças pequenas. AC gelado!","dicas":[],"img":"","url":"https://disneyworld.disney.go.com/entertainment/animal-kingdom/zootopia-better-zoogether/","status":"Active"},{"id":"feathered-friends-in-flight","nome":"Feathered Friends in Flight!","park":"Disney's Animal Kingdom","dest":"Orlando","cat":"show","tipo":"live_animal_show","dur":25,"sazonal":false,"desc":"Show de aves em voo livre sobre a plateia! Araras, falcões e corujas voando próximos. Ao ar livre em Asia. Chegar cedo para lugar com sombra!","dicas":[],"img":"","url":"https://disneyworld.disney.go.com/entertainment/animal-kingdom/feathered-friends-in-flight/","status":"Active"},{"id":"princess-fairytale-hall","nome":"Princess Fairytale Hall","park":"Magic Kingdom","dest":"Orlando","cat":"character_meet","tipo":"character_meet_greet","dur":10,"sazonal":false,"desc":"Encontro oficial com princesas Disney! Duas salas, fotos incluídas. LLMP recomendado para evitar fila longa.","dicas":["Verificar no app quais princesas disponíveis no dia.","Duas filas paralelas = duas experiências diferentes.","LLMP recomendado — fila pode passar de 90 min em dias cheios."],"img":"","url":"https://disneyworld.disney.go.com/attractions/magic-kingdom/princess-fairytale-hall/","status":"Active"},{"id":"gaston-meet-greet-beauty-beast","nome":"Encontro com Gastão em Fantasyland","park":"","dest":"Orlando","cat":"character_meet","tipo":"character_meet","dur":0,"sazonal":false,"desc":"O meet & greet MAIS ENGRAÇADO da Disney! Gastão é arrogante, se acha lindo e te insulta em personagem. Irresistível. Perto de Gaston's Tavern em Fantasyland.","dicas":["Gastão FINGE ser superior a todos — entrar no jogo torna a experiência hilária.","A interação mais imprevisível de qualquer personagem Disney.","Perto de Gaston's Tavern — aproveitar para tomar LeFou's Brew (cerveja de maçã)."],"img":"","url":"https://disneyworld.disney.go.com/characters/magic-kingdom/gaston/","status":"Active"},{"id":"town-square-theater-mickey-minnie","nome":"Town Square Theater — Mickey e Amigos","park":"","dest":"Orlando","cat":"character_meet","tipo":"character_meet","dur":0,"sazonal":false,"desc":"Foto individual com Mickey e Minnie! Teatro temático da Main Street. LLMP disponível. A única foto privada com Mickey no MK.","dicas":["LLMP disponível — evitar a fila longa nos dias cheios.","Mickey usa trajes especiais sazonais (Natal, Halloween, etc.).","Foto individual em sala privativa — a melhor oportunidade de foto com Mickey."],"img":"","url":"https://disneyworld.disney.go.com/attractions/magic-kingdom/town-square-theater/","status":"Active"},{"id":"meet-princesses-fairytale-hall","nome":"Princess Fairytale Hall","park":"","dest":"Orlando","cat":"character_meet","tipo":"character_meet","dur":0,"sazonal":false,"desc":"Encontro oficial com princesas Disney! Cinderela e Rapunzel fixas. Duas filas, duas princesas cada. Sala privativa com foto. LLMP disponível.","dicas":["Duas filas separadas — cada uma tem 2 princesas.","Verificar quais princesas estão disponíveis no app MDE no dia.","LLMP disponível — usar para princesas mais populares."],"img":"","url":"https://disneyworld.disney.go.com/attractions/magic-kingdom/princess-fairytale-hall/","status":"Active"},{"id":"festival-of-fantasy-parade","nome":"Festival of Fantasy Parade","park":"Magic Kingdom","dest":"Orlando","cat":"show","tipo":"parade","dur":20,"sazonal":false,"desc":"A melhor parada diurna da Disney! Floats grandiosos, dragão da Maleficent com chamas, 100+ performers. Usar como pausa no horário de filas longas (13h).","dicas":[],"img":"","url":"https://disneyworld.disney.go.com/entertainment/magic-kingdom/festival-of-fantasy-parade/","status":"Active"},{"id":"happily-ever-after-fireworks","nome":"Happily Ever After","park":"Magic Kingdom","dest":"Orlando","cat":"show","tipo":"fireworks","dur":18,"sazonal":false,"desc":"O principal show noturno do MK! Projeções no Castelo + fogos épicos. Posicionar na Main Street 30-45 min antes. O grande finale de cada dia!","dicas":["Melhor posição: centro do Hub ou início da Main Street — frente ao castelo.","Chegar 30-45 min antes para boa posição.","Verificar no app — nem toda noite ocorre (chuva cancela)."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/magic-kingdom/happily-ever-after/","status":"Active"},{"id":"jingle-cruise-christmas-overlay","nome":"Jingle Cruise (Overlay de Natal)","park":"","dest":"Orlando","cat":"show","tipo":"seasonal_event","dur":0,"sazonal":false,"desc":"Jungle Cruise no Natal! Piadas natalinas dos skippers + decoração de Natal nos animais. Um dos overlays mais amados. Novembro-dezembro.","dicas":["Disponível de novembro a dezembro.","Os animais têm 'cartas' dos parentes enviando enfeites — detalhe adorável.","Piadas de Natal dos skippers variam por skipper — cada viagem é diferente."],"img":"","url":"https://disneyworld.disney.go.com/attractions/magic-kingdom/jungle-cruise/","status":"Active"},{"id":"disney-starlight-dream-the-night-away","nome":"Disney Starlight: Dream the Night Away","park":"","dest":"Orlando","cat":"show","tipo":"nighttime_parade","dur":15,"sazonal":false,"desc":"NOVO JULHO 2025 — O primeiro desfile noturno permanente do MK desde 2016! Peter Pan, Encanto, Frozen, Moana em starlight. Imperdível.","dicas":["NOVO julho 2025 — o primeiro desfile noturno permanente do MK desde a Electrical Parade.","Posicionar na Main Street com antecedência de 30-45 min para boa visão.","Verificar horário no app — pode ser diferente nos dias de festas."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/magic-kingdom/disney-starlight-dream-the-night-away/","status":"Active"},{"id":"mickeys-magical-friendship-faire","nome":"Mickey's Magical Friendship Faire","park":"Magic Kingdom","dest":"Orlando","cat":"show","tipo":"castle_show","dur":20,"sazonal":false,"desc":"Show no palco do Castelo da Cinderela! Mickey, Minnie, Tiana, Anna e Elsa ao vivo. Múltiplas apresentações por dia.","dicas":["Verificar horários no app MDE — múltiplas apresentações por dia.","Posicionar em frente ao castelo pelo menos 20 min antes.","Personagens: Mickey, Minnie, Tiana, Anna, Elsa, Rapunzel e mais."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/magic-kingdom/mickeys-magical-friendship-faire/","status":"Active"},{"id":"mickeys-very-merry-christmas-party","nome":"Mickey's Very Merry Christmas Party","park":"Magic Kingdom","dest":"Orlando","cat":"show","tipo":"seasonal_party","dur":0,"sazonal":false,"desc":"O maior Natal do mundo em parque temático! Parade especial de Natal, neve na Main Street, cookies grátis e fogos! Novembro-Dezembro. Ingresso separado.","dicas":["Comprar ingresso com ANTECEDÊNCIA — esgota especialmente em dezembro.","Chegar às 16h com ingresso do evento — acesso antecipado.","Cookies e hot chocolate gratuitos em pontos do parque — absolutamente deliciosos."],"img":"","url":"","status":"Annual - Seasonal"},{"id":"mickeys-not-so-scary-halloween-party","nome":"Mickey's Not-So-Scary Halloween Party","park":"Magic Kingdom","dest":"Orlando","cat":"show","tipo":"seasonal_party","dur":0,"sazonal":false,"desc":"O maior evento de Halloween em parques temáticos do mundo! No MK com ingresso separado. Trick-or-treat, parade especial, vilões exclusivos e fogos. Agosto-Outubro.","dicas":["Comprar ingresso com antecedência — esgota especialmente fim de semana de outubro.","Chegar às 16h com ingresso do evento — pode entrar antes do início oficial às 19h.","Trick-or-treat é de graça com o ingresso — levar sacola grande."],"img":"","url":"","status":"Annual - Seasonal"},{"id":"meet-tiana-princess-and-the-frog","nome":"Encontro com Tiana no EPCOT","park":"","dest":"Orlando","cat":"character_meet","tipo":"character_meet","dur":0,"sazonal":false,"desc":"Princesa Tiana no EPCOT! A mais recente meet & greet principal após Tiana's Bayou Adventure. LLMP disponível.","dicas":["Procura crescente com a abertura de Tiana's Bayou Adventure.","LLMP disponível.","Verificar localização exata no app MDE — muda ocasionalmente."],"img":"","url":"https://disneyworld.disney.go.com/characters/epcot/tiana/","status":"Active"},{"id":"meet-anna-elsa-epcot-royal-sommerhus","nome":"Encontro com Anna e Elsa — Royal Sommerhus","park":"","dest":"Orlando","cat":"character_meet","tipo":"character_meet","dur":0,"sazonal":false,"desc":"Encontre Anna e Elsa no chalé norueguês do EPCOT! As princesas mais procuradas da Disney. LLMP praticamente obrigatório — fila sempre longa.","dicas":["LLMP praticamente obrigatório — fila standby de Anna e Elsa é a maior de qualquer meet & greet WDW.","Após a atração Frozen Ever After — combinar visita ao chalé.","Pavilhão da Noruega completo: atração + meet & greet + restaurante Akershus."],"img":"","url":"https://disneyworld.disney.go.com/attractions/epcot/meet-anna-and-elsa-at-royal-sommerhus/","status":"Active"},{"id":"epcot-international-festival-of-the-arts","nome":"EPCOT International Festival of the Arts","park":"EPCOT","dest":"Orlando","cat":"show","tipo":"annual_festival","dur":0,"sazonal":false,"desc":"Festival de artes do EPCOT! Jan-Fev. Disney on Broadway ao vivo, pratos em forma de arte, murais e atividades criativas. Incluso com ingresso do parque.","dicas":["Incluído com ingresso do parque — sem custo adicional.","Disney on Broadway: músicos das produções da Broadway cantam clássicos Disney — reservar jantar com pacote para assento garantido.","Deconstructed Dish: pratos famosos Disney desconstruídos em forma de personagem — fotogênico e delicioso."],"img":"","url":"","status":"Annual - Seasonal"},{"id":"epcot-forever-luminous","nome":"Luminous The Symphony of Us","park":"EPCOT","dest":"Orlando","cat":"show","tipo":"nighttime_spectacular","dur":15,"sazonal":false,"desc":"Show noturno no World Showcase Lagoon! Fogos, água, drones e projeções. Visão panorâmica de qualquer ponto do lago.","dicas":["Visível de qualquer ponto ao redor do lago — não existe 'melhor lugar' obrigatório.","Chegar 30 minutos antes para garantir posição na beira do lago.","O show é mais espetacular do que parece de longe — se posicione o mais próximo do lago possível."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/epcot/luminous/","status":"Active"},{"id":"epcot-international-flower-garden-festival","nome":"EPCOT International Flower & Garden Festival","park":"EPCOT","dest":"Orlando","cat":"show","tipo":"annual_festival","dur":0,"sazonal":false,"desc":"O EPCOT mais bonito do ano! Mar-Jul. Topiários de personagens Disney em flores, Garden Rocks Concert Series e pratos frescos de primavera. Incluso com ingresso.","dicas":["MELHOR época do ano para fotografias no EPCOT — cores espetaculares.","Topiários de Minnie, Mickey, Simba, Nemo, Bambi etc. ficam ao redor do World Showcase Lagoon.","Garden Rocks Concert Series gratuito com ingresso — reservar jantar para assento garantido."],"img":"","url":"","status":"Annual - Seasonal"},{"id":"epcot-international-food-wine-festival","nome":"EPCOT International Food & Wine Festival","park":"EPCOT","dest":"Orlando","cat":"show","tipo":"annual_festival","dur":0,"sazonal":false,"desc":"O MAIOR evento culinário de parques temáticos do MUNDO! Ago-Nov. 50+ países, cervejas, vinhos e pratos únicos. O EPCOT mais movimentado do ano. Absolutamente imperdível!","dicas":["O festival mais popular do WDW — EPCOT fica muito lotado especialmente fins de semana.","Chegue CEDO (abertura às 9h) para os booths de maior demanda antes das filas.","Festival Passport: carimbe em cada booth para completar a coleção — prêmio ao completar Emile's Fromage Montage."],"img":"","url":"","status":"Annual - Seasonal"},{"id":"epcot-international-festival-of-the-holidays","nome":"EPCOT International Festival of the Holidays","park":"EPCOT","dest":"Orlando","cat":"show","tipo":"annual_festival","dur":0,"sazonal":false,"desc":"Natal ao redor do mundo no EPCOT! Nov-Jan. Cookie Stroll, Holiday Kitchens de cada país e o emocionante Candlelight Processional com celebridades. Incluído com ingresso.","dicas":["Candlelight Processional: o show mais emocionante do WDW mas LOTADO. Chegar 2h antes ou comprar Dining Package para assento garantido.","Cookie Stroll: USD 12-15 para o passaporte + cookies de cada pavilhão — delicioso e divertido.","Os pavilhões têm decorações natalinas autênticas de cada país — muito educativo e bonito."],"img":"","url":"","status":"Annual - Seasonal"},{"id":"candlelight-processional","nome":"Candlelight Processional","park":"","dest":"Orlando","cat":"show","tipo":"seasonal_event","dur":0,"sazonal":false,"desc":"O show mais emocionante do WDW! Celebrity narrador + orquestra de 50 + coral de 600. GRÁTIS com ingresso EPCOT mas chegar 2h antes para lugar. Dining Package garante assento.","dicas":["GRÁTIS incluído no ingresso do EPCOT — mas filas de 2-3 horas antes para assento.","Dining Package garante assento reservado sem fila — reservar com antecedência.","Narradores celebrity mudam a cada semana — verificar escala antes de escolher data."],"img":"","url":"https://disneyworld.disney.go.com/entertainment/epcot/candlelight-processional/","status":"Active"},{"id":"avengers-campus-character-meets","nome":"Avengers Campus — Encontros com Personagens","park":"","dest":"California","cat":"character_meet","tipo":"character_meet","dur":0,"sazonal":false,"desc":"Spider-Man LANÇA TEIAS REAIS do teto! Thor, Doutor Estranho e mais em patrulhas pelo campus. Os melhores encontros Marvel de qualquer parque Disney.","dicas":["Spider-Man no WEB lab LANÇA TEIAS reais — programado em horários, verificar no app.","Thor e os Asgardians aparecem em patrulhas — sem horário fixo, mas o app indica.","Doutor Estranho faz demonstrações de feitiçaria ao vivo — espetacular."],"img":"","url":"https://disneyland.disney.go.com/destinations/disney-california-adventure/avengers-campus/","status":"Active"},{"id":"oogie-boogie-bash","nome":"Oogie Boogie Bash","park":"Disney California Adventure","dest":"California","cat":"show","tipo":"seasonal_event","dur":0,"sazonal":false,"desc":"O Halloween da Califórnia! Oogie Boogie Bash no DCA — agosto a outubro. Ingresso separado. Personagens raros, trick-or-treat, show exclusivo. Superior ao MNSSHP para muitos.","dicas":["Ingresso separado — comprar com muita antecedência pois esgota meses antes.","Personagens raros que não aparecem nos parques regulares.","Mais adulto e temático que o Mickey's Not-So-Scary do WDW."],"img":"","url":"https://disneyland.disney.go.com/events-tours/oogie-boogie-bash/","status":"Active"},{"id":"world-of-color","nome":"World of Color","park":"Disney California Adventure","dest":"California","cat":"show","tipo":"nighttime_spectacular","dur":22,"sazonal":false,"desc":"O maior show aquático do mundo Disney! EXCLUSIVO do DL — não existe no WDW. 1200 jatos de 60m, projeções em água, fogo e laser. 22 min épicos.","dicas":["EXCLUSIVO do Disneyland Resort — não existe no WDW.","Chegar 60 min antes para boa posição próxima à água.","Virtualqueue via app Disneyland disponível — reservar cedo."],"img":"","url":"https://disneyland.disney.go.com/entertainment/disney-california-adventure/world-of-color/","status":"Active"},{"id":"mickey-meet-toontown-dl","nome":"Casa do Mickey — Encontro com Mickey","park":"","dest":"California","cat":"character_meet","tipo":"character_meet","dur":0,"sazonal":false,"desc":"Foto individual com Mickey na CASA DELE! Toontown reformado 2023 é espetacular. Lightning Lane disponível.","dicas":["Toontown reformado em 2023 — área toda nova e muito mais interativa.","Foto individual em quarto privado com Mickey.","Lightning Lane disponível."],"img":"","url":"https://disneyland.disney.go.com/attractions/disneyland/mickeys-house/","status":"Active"},{"id":"merriest-nites-christmas-disneyland","nome":"Disney Merriest Nites","park":"Disneyland Park","dest":"California","cat":"show","tipo":"seasonal_event","dur":0,"sazonal":false,"desc":"O Natal ticketado do Disneyland! Equivalente ao Mickey's Very Merry Christmas Party do WDW. Personagens de Natal, shows exclusivos. Novembro e dezembro.","dicas":["Ingresso separado — comprar antecipado.","Personagens em trajes de Natal exclusivos do evento.","Shows natalinos exclusivos não disponíveis no ingresso regular."],"img":"","url":"https://disneyland.disney.go.com/events-tours/disney-merriest-nites/","status":"Active"},{"id":"fantasmic-dl","nome":"Fantasmic!","park":"Disneyland Park","dest":"California","cat":"show","tipo":"nighttime_spectacular","dur":25,"sazonal":false,"desc":"O ORIGINAL Fantasmic! de 1992 — 7 anos antes do WDW! Mickey vs Vilões, fogos, água, barcos com personagens. Melhor show ao ar livre da Disney segundo muitos fãs.","dicas":["ORIGINAL de 1992 — mais íntimo e emocionante que a versão WDW por muitos.","Chegar 45-60 min antes para bom lugar — o Rivers of America loteia rápido.","Segunda apresentação tem menos gente."],"img":"","url":"https://disneyland.disney.go.com/entertainment/disneyland/fantasmic/","status":"Active"},{"id":"disneyland-forever-fireworks","nome":"Disneyland Forever — Fogos de Artifício","park":"Disneyland Park","dest":"California","cat":"show","tipo":"nighttime_spectacular","dur":20,"sazonal":false,"desc":"Fogos do Disneyland com o Castelo mais próximo! Projeções + fogos sincronizados. O castelo fica ao alcance da mão — perspectiva única vs WDW.","dicas":["O Castelo do DL fica muito mais perto que o do WDW — foto de fogos com castelo é única.","Posicionar na Main Street 30 min antes.","Projeções nas fachadas da Main Street são parte do show."],"img":"","url":"https://disneyland.disney.go.com/entertainment/disneyland/disneyland-forever/","status":"Active"}];
+
+const CROWD_DAILY_S = {"2026-01":[{"day":1,"date":"2026-01-01","level":10,"weekday":3},{"day":2,"date":"2026-01-02","level":9,"weekday":4},{"day":3,"date":"2026-01-03","level":9,"weekday":5},{"day":4,"date":"2026-01-04","level":4,"weekday":6},{"day":5,"date":"2026-01-05","level":2,"weekday":0},{"day":6,"date":"2026-01-06","level":2,"weekday":1},{"day":7,"date":"2026-01-07","level":3,"weekday":2},{"day":8,"date":"2026-01-08","level":3,"weekday":3},{"day":9,"date":"2026-01-09","level":4,"weekday":4},{"day":10,"date":"2026-01-10","level":4,"weekday":5},{"day":11,"date":"2026-01-11","level":4,"weekday":6},{"day":12,"date":"2026-01-12","level":2,"weekday":0},{"day":13,"date":"2026-01-13","level":2,"weekday":1},{"day":14,"date":"2026-01-14","level":3,"weekday":2},{"day":15,"date":"2026-01-15","level":3,"weekday":3},{"day":16,"date":"2026-01-16","level":4,"weekday":4},{"day":17,"date":"2026-01-17","level":4,"weekday":5},{"day":18,"date":"2026-01-18","level":6,"weekday":6},{"day":19,"date":"2026-01-19","level":4,"weekday":0},{"day":20,"date":"2026-01-20","level":4,"weekday":1},{"day":21,"date":"2026-01-21","level":3,"weekday":2},{"day":22,"date":"2026-01-22","level":3,"weekday":3},{"day":23,"date":"2026-01-23","level":4,"weekday":4},{"day":24,"date":"2026-01-24","level":4,"weekday":5},{"day":25,"date":"2026-01-25","level":4,"weekday":6},{"day":26,"date":"2026-01-26","level":2,"weekday":0},{"day":27,"date":"2026-01-27","level":2,"weekday":1},{"day":28,"date":"2026-01-28","level":3,"weekday":2},{"day":29,"date":"2026-01-29","level":3,"weekday":3},{"day":30,"date":"2026-01-30","level":4,"weekday":4},{"day":31,"date":"2026-01-31","level":4,"weekday":5}],"2026-02":[{"day":1,"date":"2026-02-01","level":4,"weekday":6},{"day":2,"date":"2026-02-02","level":2,"weekday":0},{"day":3,"date":"2026-02-03","level":2,"weekday":1},{"day":4,"date":"2026-02-04","level":3,"weekday":2},{"day":5,"date":"2026-02-05","level":3,"weekday":3},{"day":6,"date":"2026-02-06","level":4,"weekday":4},{"day":7,"date":"2026-02-07","level":4,"weekday":5},{"day":8,"date":"2026-02-08","level":4,"weekday":6},{"day":9,"date":"2026-02-09","level":2,"weekday":0},{"day":10,"date":"2026-02-10","level":2,"weekday":1},{"day":11,"date":"2026-02-11","level":3,"weekday":2},{"day":12,"date":"2026-02-12","level":3,"weekday":3},{"day":13,"date":"2026-02-13","level":4,"weekday":4},{"day":14,"date":"2026-02-14","level":4,"weekday":5},{"day":15,"date":"2026-02-15","level":4,"weekday":6},{"day":16,"date":"2026-02-16","level":2,"weekday":0},{"day":17,"date":"2026-02-17","level":2,"weekday":1},{"day":18,"date":"2026-02-18","level":3,"weekday":2},{"day":19,"date":"2026-02-19","level":3,"weekday":3},{"day":20,"date":"2026-02-20","level":4,"weekday":4},{"day":21,"date":"2026-02-21","level":4,"weekday":5},{"day":22,"date":"2026-02-22","level":4,"weekday":6},{"day":23,"date":"2026-02-23","level":2,"weekday":0},{"day":24,"date":"2026-02-24","level":2,"weekday":1},{"day":25,"date":"2026-02-25","level":3,"weekday":2},{"day":26,"date":"2026-02-26","level":3,"weekday":3},{"day":27,"date":"2026-02-27","level":4,"weekday":4},{"day":28,"date":"2026-02-28","level":4,"weekday":5}],"2026-03":[{"day":1,"date":"2026-03-01","level":9,"weekday":6},{"day":2,"date":"2026-03-02","level":7,"weekday":0},{"day":3,"date":"2026-03-03","level":7,"weekday":1},{"day":4,"date":"2026-03-04","level":8,"weekday":2},{"day":5,"date":"2026-03-05","level":8,"weekday":3},{"day":6,"date":"2026-03-06","level":9,"weekday":4},{"day":7,"date":"2026-03-07","level":9,"weekday":5},{"day":8,"date":"2026-03-08","level":9,"weekday":6},{"day":9,"date":"2026-03-09","level":7,"weekday":0},{"day":10,"date":"2026-03-10","level":7,"weekday":1},{"day":11,"date":"2026-03-11","level":8,"weekday":2},{"day":12,"date":"2026-03-12","level":8,"weekday":3},{"day":13,"date":"2026-03-13","level":9,"weekday":4},{"day":14,"date":"2026-03-14","level":10,"weekday":5},{"day":15,"date":"2026-03-15","level":10,"weekday":6},{"day":16,"date":"2026-03-16","level":9,"weekday":0},{"day":17,"date":"2026-03-17","level":9,"weekday":1},{"day":18,"date":"2026-03-18","level":10,"weekday":2},{"day":19,"date":"2026-03-19","level":10,"weekday":3},{"day":20,"date":"2026-03-20","level":10,"weekday":4},{"day":21,"date":"2026-03-21","level":10,"weekday":5},{"day":22,"date":"2026-03-22","level":10,"weekday":6},{"day":23,"date":"2026-03-23","level":9,"weekday":0},{"day":24,"date":"2026-03-24","level":9,"weekday":1},{"day":25,"date":"2026-03-25","level":10,"weekday":2},{"day":26,"date":"2026-03-26","level":10,"weekday":3},{"day":27,"date":"2026-03-27","level":10,"weekday":4},{"day":28,"date":"2026-03-28","level":10,"weekday":5},{"day":29,"date":"2026-03-29","level":9,"weekday":6},{"day":30,"date":"2026-03-30","level":7,"weekday":0},{"day":31,"date":"2026-03-31","level":7,"weekday":1}],"2026-04":[{"day":1,"date":"2026-04-01","level":9,"weekday":2},{"day":2,"date":"2026-04-02","level":9,"weekday":3},{"day":3,"date":"2026-04-03","level":10,"weekday":4},{"day":4,"date":"2026-04-04","level":10,"weekday":5},{"day":5,"date":"2026-04-05","level":10,"weekday":6},{"day":6,"date":"2026-04-06","level":8,"weekday":0},{"day":7,"date":"2026-04-07","level":8,"weekday":1},{"day":8,"date":"2026-04-08","level":7,"weekday":2},{"day":9,"date":"2026-04-09","level":7,"weekday":3},{"day":10,"date":"2026-04-10","level":8,"weekday":4},{"day":11,"date":"2026-04-11","level":8,"weekday":5},{"day":12,"date":"2026-04-12","level":8,"weekday":6},{"day":13,"date":"2026-04-13","level":6,"weekday":0},{"day":14,"date":"2026-04-14","level":6,"weekday":1},{"day":15,"date":"2026-04-15","level":7,"weekday":2},{"day":16,"date":"2026-04-16","level":7,"weekday":3},{"day":17,"date":"2026-04-17","level":8,"weekday":4},{"day":18,"date":"2026-04-18","level":8,"weekday":5},{"day":19,"date":"2026-04-19","level":8,"weekday":6},{"day":20,"date":"2026-04-20","level":6,"weekday":0},{"day":21,"date":"2026-04-21","level":6,"weekday":1},{"day":22,"date":"2026-04-22","level":7,"weekday":2},{"day":23,"date":"2026-04-23","level":7,"weekday":3},{"day":24,"date":"2026-04-24","level":8,"weekday":4},{"day":25,"date":"2026-04-25","level":8,"weekday":5},{"day":26,"date":"2026-04-26","level":8,"weekday":6},{"day":27,"date":"2026-04-27","level":6,"weekday":0},{"day":28,"date":"2026-04-28","level":6,"weekday":1},{"day":29,"date":"2026-04-29","level":7,"weekday":2},{"day":30,"date":"2026-04-30","level":7,"weekday":3}],"2026-05":[{"day":1,"date":"2026-05-01","level":5,"weekday":4},{"day":2,"date":"2026-05-02","level":5,"weekday":5},{"day":3,"date":"2026-05-03","level":5,"weekday":6},{"day":4,"date":"2026-05-04","level":3,"weekday":0},{"day":5,"date":"2026-05-05","level":3,"weekday":1},{"day":6,"date":"2026-05-06","level":4,"weekday":2},{"day":7,"date":"2026-05-07","level":4,"weekday":3},{"day":8,"date":"2026-05-08","level":5,"weekday":4},{"day":9,"date":"2026-05-09","level":5,"weekday":5},{"day":10,"date":"2026-05-10","level":5,"weekday":6},{"day":11,"date":"2026-05-11","level":3,"weekday":0},{"day":12,"date":"2026-05-12","level":3,"weekday":1},{"day":13,"date":"2026-05-13","level":4,"weekday":2},{"day":14,"date":"2026-05-14","level":4,"weekday":3},{"day":15,"date":"2026-05-15","level":5,"weekday":4},{"day":16,"date":"2026-05-16","level":5,"weekday":5},{"day":17,"date":"2026-05-17","level":5,"weekday":6},{"day":18,"date":"2026-05-18","level":3,"weekday":0},{"day":19,"date":"2026-05-19","level":3,"weekday":1},{"day":20,"date":"2026-05-20","level":4,"weekday":2},{"day":21,"date":"2026-05-21","level":4,"weekday":3},{"day":22,"date":"2026-05-22","level":5,"weekday":4},{"day":23,"date":"2026-05-23","level":8,"weekday":5},{"day":24,"date":"2026-05-24","level":8,"weekday":6},{"day":25,"date":"2026-05-25","level":6,"weekday":0},{"day":26,"date":"2026-05-26","level":6,"weekday":1},{"day":27,"date":"2026-05-27","level":7,"weekday":2},{"day":28,"date":"2026-05-28","level":4,"weekday":3},{"day":29,"date":"2026-05-29","level":5,"weekday":4},{"day":30,"date":"2026-05-30","level":5,"weekday":5},{"day":31,"date":"2026-05-31","level":5,"weekday":6}],"2026-06":[{"day":1,"date":"2026-06-01","level":6,"weekday":0},{"day":2,"date":"2026-06-02","level":6,"weekday":1},{"day":3,"date":"2026-06-03","level":7,"weekday":2},{"day":4,"date":"2026-06-04","level":7,"weekday":3},{"day":5,"date":"2026-06-05","level":8,"weekday":4},{"day":6,"date":"2026-06-06","level":8,"weekday":5},{"day":7,"date":"2026-06-07","level":8,"weekday":6},{"day":8,"date":"2026-06-08","level":6,"weekday":0},{"day":9,"date":"2026-06-09","level":6,"weekday":1},{"day":10,"date":"2026-06-10","level":7,"weekday":2},{"day":11,"date":"2026-06-11","level":7,"weekday":3},{"day":12,"date":"2026-06-12","level":8,"weekday":4},{"day":13,"date":"2026-06-13","level":8,"weekday":5},{"day":14,"date":"2026-06-14","level":8,"weekday":6},{"day":15,"date":"2026-06-15","level":6,"weekday":0},{"day":16,"date":"2026-06-16","level":6,"weekday":1},{"day":17,"date":"2026-06-17","level":7,"weekday":2},{"day":18,"date":"2026-06-18","level":7,"weekday":3},{"day":19,"date":"2026-06-19","level":8,"weekday":4},{"day":20,"date":"2026-06-20","level":8,"weekday":5},{"day":21,"date":"2026-06-21","level":8,"weekday":6},{"day":22,"date":"2026-06-22","level":6,"weekday":0},{"day":23,"date":"2026-06-23","level":6,"weekday":1},{"day":24,"date":"2026-06-24","level":7,"weekday":2},{"day":25,"date":"2026-06-25","level":7,"weekday":3},{"day":26,"date":"2026-06-26","level":8,"weekday":4},{"day":27,"date":"2026-06-27","level":8,"weekday":5},{"day":28,"date":"2026-06-28","level":8,"weekday":6},{"day":29,"date":"2026-06-29","level":6,"weekday":0},{"day":30,"date":"2026-06-30","level":6,"weekday":1}],"2026-07":[{"day":1,"date":"2026-07-01","level":9,"weekday":2},{"day":2,"date":"2026-07-02","level":9,"weekday":3},{"day":3,"date":"2026-07-03","level":10,"weekday":4},{"day":4,"date":"2026-07-04","level":10,"weekday":5},{"day":5,"date":"2026-07-05","level":10,"weekday":6},{"day":6,"date":"2026-07-06","level":10,"weekday":0},{"day":7,"date":"2026-07-07","level":8,"weekday":1},{"day":8,"date":"2026-07-08","level":9,"weekday":2},{"day":9,"date":"2026-07-09","level":9,"weekday":3},{"day":10,"date":"2026-07-10","level":10,"weekday":4},{"day":11,"date":"2026-07-11","level":10,"weekday":5},{"day":12,"date":"2026-07-12","level":10,"weekday":6},{"day":13,"date":"2026-07-13","level":8,"weekday":0},{"day":14,"date":"2026-07-14","level":8,"weekday":1},{"day":15,"date":"2026-07-15","level":9,"weekday":2},{"day":16,"date":"2026-07-16","level":9,"weekday":3},{"day":17,"date":"2026-07-17","level":10,"weekday":4},{"day":18,"date":"2026-07-18","level":10,"weekday":5},{"day":19,"date":"2026-07-19","level":10,"weekday":6},{"day":20,"date":"2026-07-20","level":8,"weekday":0},{"day":21,"date":"2026-07-21","level":8,"weekday":1},{"day":22,"date":"2026-07-22","level":9,"weekday":2},{"day":23,"date":"2026-07-23","level":9,"weekday":3},{"day":24,"date":"2026-07-24","level":10,"weekday":4},{"day":25,"date":"2026-07-25","level":10,"weekday":5},{"day":26,"date":"2026-07-26","level":10,"weekday":6},{"day":27,"date":"2026-07-27","level":8,"weekday":0},{"day":28,"date":"2026-07-28","level":8,"weekday":1},{"day":29,"date":"2026-07-29","level":9,"weekday":2},{"day":30,"date":"2026-07-30","level":9,"weekday":3},{"day":31,"date":"2026-07-31","level":10,"weekday":4}],"2026-08":[{"day":1,"date":"2026-08-01","level":8,"weekday":5},{"day":2,"date":"2026-08-02","level":8,"weekday":6},{"day":3,"date":"2026-08-03","level":6,"weekday":0},{"day":4,"date":"2026-08-04","level":6,"weekday":1},{"day":5,"date":"2026-08-05","level":7,"weekday":2},{"day":6,"date":"2026-08-06","level":7,"weekday":3},{"day":7,"date":"2026-08-07","level":8,"weekday":4},{"day":8,"date":"2026-08-08","level":8,"weekday":5},{"day":9,"date":"2026-08-09","level":8,"weekday":6},{"day":10,"date":"2026-08-10","level":6,"weekday":0},{"day":11,"date":"2026-08-11","level":6,"weekday":1},{"day":12,"date":"2026-08-12","level":7,"weekday":2},{"day":13,"date":"2026-08-13","level":7,"weekday":3},{"day":14,"date":"2026-08-14","level":8,"weekday":4},{"day":15,"date":"2026-08-15","level":8,"weekday":5},{"day":16,"date":"2026-08-16","level":8,"weekday":6},{"day":17,"date":"2026-08-17","level":6,"weekday":0},{"day":18,"date":"2026-08-18","level":6,"weekday":1},{"day":19,"date":"2026-08-19","level":7,"weekday":2},{"day":20,"date":"2026-08-20","level":7,"weekday":3},{"day":21,"date":"2026-08-21","level":8,"weekday":4},{"day":22,"date":"2026-08-22","level":8,"weekday":5},{"day":23,"date":"2026-08-23","level":8,"weekday":6},{"day":24,"date":"2026-08-24","level":6,"weekday":0},{"day":25,"date":"2026-08-25","level":6,"weekday":1},{"day":26,"date":"2026-08-26","level":7,"weekday":2},{"day":27,"date":"2026-08-27","level":7,"weekday":3},{"day":28,"date":"2026-08-28","level":8,"weekday":4},{"day":29,"date":"2026-08-29","level":8,"weekday":5},{"day":30,"date":"2026-08-30","level":8,"weekday":6},{"day":31,"date":"2026-08-31","level":6,"weekday":0}],"2026-09":[{"day":1,"date":"2026-09-01","level":2,"weekday":1},{"day":2,"date":"2026-09-02","level":3,"weekday":2},{"day":3,"date":"2026-09-03","level":3,"weekday":3},{"day":4,"date":"2026-09-04","level":4,"weekday":4},{"day":5,"date":"2026-09-05","level":7,"weekday":5},{"day":6,"date":"2026-09-06","level":7,"weekday":6},{"day":7,"date":"2026-09-07","level":5,"weekday":0},{"day":8,"date":"2026-09-08","level":5,"weekday":1},{"day":9,"date":"2026-09-09","level":6,"weekday":2},{"day":10,"date":"2026-09-10","level":3,"weekday":3},{"day":11,"date":"2026-09-11","level":4,"weekday":4},{"day":12,"date":"2026-09-12","level":4,"weekday":5},{"day":13,"date":"2026-09-13","level":4,"weekday":6},{"day":14,"date":"2026-09-14","level":2,"weekday":0},{"day":15,"date":"2026-09-15","level":2,"weekday":1},{"day":16,"date":"2026-09-16","level":3,"weekday":2},{"day":17,"date":"2026-09-17","level":3,"weekday":3},{"day":18,"date":"2026-09-18","level":4,"weekday":4},{"day":19,"date":"2026-09-19","level":4,"weekday":5},{"day":20,"date":"2026-09-20","level":4,"weekday":6},{"day":21,"date":"2026-09-21","level":2,"weekday":0},{"day":22,"date":"2026-09-22","level":2,"weekday":1},{"day":23,"date":"2026-09-23","level":3,"weekday":2},{"day":24,"date":"2026-09-24","level":3,"weekday":3},{"day":25,"date":"2026-09-25","level":4,"weekday":4},{"day":26,"date":"2026-09-26","level":4,"weekday":5},{"day":27,"date":"2026-09-27","level":4,"weekday":6},{"day":28,"date":"2026-09-28","level":2,"weekday":0},{"day":29,"date":"2026-09-29","level":2,"weekday":1},{"day":30,"date":"2026-09-30","level":3,"weekday":2}],"2026-10":[{"day":1,"date":"2026-10-01","level":5,"weekday":3},{"day":2,"date":"2026-10-02","level":6,"weekday":4},{"day":3,"date":"2026-10-03","level":6,"weekday":5},{"day":4,"date":"2026-10-04","level":6,"weekday":6},{"day":5,"date":"2026-10-05","level":4,"weekday":0},{"day":6,"date":"2026-10-06","level":4,"weekday":1},{"day":7,"date":"2026-10-07","level":5,"weekday":2},{"day":8,"date":"2026-10-08","level":5,"weekday":3},{"day":9,"date":"2026-10-09","level":6,"weekday":4},{"day":10,"date":"2026-10-10","level":6,"weekday":5},{"day":11,"date":"2026-10-11","level":6,"weekday":6},{"day":12,"date":"2026-10-12","level":4,"weekday":0},{"day":13,"date":"2026-10-13","level":4,"weekday":1},{"day":14,"date":"2026-10-14","level":5,"weekday":2},{"day":15,"date":"2026-10-15","level":5,"weekday":3},{"day":16,"date":"2026-10-16","level":6,"weekday":4},{"day":17,"date":"2026-10-17","level":6,"weekday":5},{"day":18,"date":"2026-10-18","level":6,"weekday":6},{"day":19,"date":"2026-10-19","level":4,"weekday":0},{"day":20,"date":"2026-10-20","level":4,"weekday":1},{"day":21,"date":"2026-10-21","level":5,"weekday":2},{"day":22,"date":"2026-10-22","level":5,"weekday":3},{"day":23,"date":"2026-10-23","level":6,"weekday":4},{"day":24,"date":"2026-10-24","level":6,"weekday":5},{"day":25,"date":"2026-10-25","level":6,"weekday":6},{"day":26,"date":"2026-10-26","level":4,"weekday":0},{"day":27,"date":"2026-10-27","level":4,"weekday":1},{"day":28,"date":"2026-10-28","level":5,"weekday":2},{"day":29,"date":"2026-10-29","level":5,"weekday":3},{"day":30,"date":"2026-10-30","level":6,"weekday":4},{"day":31,"date":"2026-10-31","level":6,"weekday":5}],"2026-11":[{"day":1,"date":"2026-11-01","level":7,"weekday":6},{"day":2,"date":"2026-11-02","level":5,"weekday":0},{"day":3,"date":"2026-11-03","level":5,"weekday":1},{"day":4,"date":"2026-11-04","level":6,"weekday":2},{"day":5,"date":"2026-11-05","level":6,"weekday":3},{"day":6,"date":"2026-11-06","level":7,"weekday":4},{"day":7,"date":"2026-11-07","level":7,"weekday":5},{"day":8,"date":"2026-11-08","level":7,"weekday":6},{"day":9,"date":"2026-11-09","level":5,"weekday":0},{"day":10,"date":"2026-11-10","level":5,"weekday":1},{"day":11,"date":"2026-11-11","level":6,"weekday":2},{"day":12,"date":"2026-11-12","level":6,"weekday":3},{"day":13,"date":"2026-11-13","level":7,"weekday":4},{"day":14,"date":"2026-11-14","level":7,"weekday":5},{"day":15,"date":"2026-11-15","level":7,"weekday":6},{"day":16,"date":"2026-11-16","level":5,"weekday":0},{"day":17,"date":"2026-11-17","level":5,"weekday":1},{"day":18,"date":"2026-11-18","level":6,"weekday":2},{"day":19,"date":"2026-11-19","level":6,"weekday":3},{"day":20,"date":"2026-11-20","level":7,"weekday":4},{"day":21,"date":"2026-11-21","level":7,"weekday":5},{"day":22,"date":"2026-11-22","level":7,"weekday":6},{"day":23,"date":"2026-11-23","level":10,"weekday":0},{"day":24,"date":"2026-11-24","level":10,"weekday":1},{"day":25,"date":"2026-11-25","level":10,"weekday":2},{"day":26,"date":"2026-11-26","level":10,"weekday":3},{"day":27,"date":"2026-11-27","level":10,"weekday":4},{"day":28,"date":"2026-11-28","level":10,"weekday":5},{"day":29,"date":"2026-11-29","level":10,"weekday":6},{"day":30,"date":"2026-11-30","level":5,"weekday":0}],"2026-12":[{"day":1,"date":"2026-12-01","level":7,"weekday":1},{"day":2,"date":"2026-12-02","level":8,"weekday":2},{"day":3,"date":"2026-12-03","level":8,"weekday":3},{"day":4,"date":"2026-12-04","level":9,"weekday":4},{"day":5,"date":"2026-12-05","level":9,"weekday":5},{"day":6,"date":"2026-12-06","level":9,"weekday":6},{"day":7,"date":"2026-12-07","level":7,"weekday":0},{"day":8,"date":"2026-12-08","level":7,"weekday":1},{"day":9,"date":"2026-12-09","level":8,"weekday":2},{"day":10,"date":"2026-12-10","level":8,"weekday":3},{"day":11,"date":"2026-12-11","level":9,"weekday":4},{"day":12,"date":"2026-12-12","level":9,"weekday":5},{"day":13,"date":"2026-12-13","level":9,"weekday":6},{"day":14,"date":"2026-12-14","level":7,"weekday":0},{"day":15,"date":"2026-12-15","level":7,"weekday":1},{"day":16,"date":"2026-12-16","level":8,"weekday":2},{"day":17,"date":"2026-12-17","level":8,"weekday":3},{"day":18,"date":"2026-12-18","level":9,"weekday":4},{"day":19,"date":"2026-12-19","level":9,"weekday":5},{"day":20,"date":"2026-12-20","level":9,"weekday":6},{"day":21,"date":"2026-12-21","level":7,"weekday":0},{"day":22,"date":"2026-12-22","level":7,"weekday":1},{"day":23,"date":"2026-12-23","level":10,"weekday":2},{"day":24,"date":"2026-12-24","level":10,"weekday":3},{"day":25,"date":"2026-12-25","level":10,"weekday":4},{"day":26,"date":"2026-12-26","level":10,"weekday":5},{"day":27,"date":"2026-12-27","level":10,"weekday":6},{"day":28,"date":"2026-12-28","level":10,"weekday":0},{"day":29,"date":"2026-12-29","level":10,"weekday":1},{"day":30,"date":"2026-12-30","level":10,"weekday":2},{"day":31,"date":"2026-12-31","level":10,"weekday":3}],"2027-01":[{"day":1,"date":"2027-01-01","level":10,"weekday":4},{"day":2,"date":"2027-01-02","level":9,"weekday":5},{"day":3,"date":"2027-01-03","level":9,"weekday":6},{"day":4,"date":"2027-01-04","level":2,"weekday":0},{"day":5,"date":"2027-01-05","level":2,"weekday":1},{"day":6,"date":"2027-01-06","level":3,"weekday":2},{"day":7,"date":"2027-01-07","level":3,"weekday":3},{"day":8,"date":"2027-01-08","level":4,"weekday":4},{"day":9,"date":"2027-01-09","level":4,"weekday":5},{"day":10,"date":"2027-01-10","level":4,"weekday":6},{"day":11,"date":"2027-01-11","level":2,"weekday":0},{"day":12,"date":"2027-01-12","level":2,"weekday":1},{"day":13,"date":"2027-01-13","level":3,"weekday":2},{"day":14,"date":"2027-01-14","level":3,"weekday":3},{"day":15,"date":"2027-01-15","level":4,"weekday":4},{"day":16,"date":"2027-01-16","level":4,"weekday":5},{"day":17,"date":"2027-01-17","level":6,"weekday":6},{"day":18,"date":"2027-01-18","level":4,"weekday":0},{"day":19,"date":"2027-01-19","level":4,"weekday":1},{"day":20,"date":"2027-01-20","level":3,"weekday":2},{"day":21,"date":"2027-01-21","level":3,"weekday":3},{"day":22,"date":"2027-01-22","level":4,"weekday":4},{"day":23,"date":"2027-01-23","level":4,"weekday":5},{"day":24,"date":"2027-01-24","level":4,"weekday":6},{"day":25,"date":"2027-01-25","level":2,"weekday":0},{"day":26,"date":"2027-01-26","level":2,"weekday":1},{"day":27,"date":"2027-01-27","level":3,"weekday":2},{"day":28,"date":"2027-01-28","level":3,"weekday":3},{"day":29,"date":"2027-01-29","level":4,"weekday":4},{"day":30,"date":"2027-01-30","level":4,"weekday":5},{"day":31,"date":"2027-01-31","level":4,"weekday":6}],"2027-02":[{"day":1,"date":"2027-02-01","level":2,"weekday":0},{"day":2,"date":"2027-02-02","level":2,"weekday":1},{"day":3,"date":"2027-02-03","level":3,"weekday":2},{"day":4,"date":"2027-02-04","level":3,"weekday":3},{"day":5,"date":"2027-02-05","level":4,"weekday":4},{"day":6,"date":"2027-02-06","level":4,"weekday":5},{"day":7,"date":"2027-02-07","level":4,"weekday":6},{"day":8,"date":"2027-02-08","level":2,"weekday":0},{"day":9,"date":"2027-02-09","level":2,"weekday":1},{"day":10,"date":"2027-02-10","level":3,"weekday":2},{"day":11,"date":"2027-02-11","level":3,"weekday":3},{"day":12,"date":"2027-02-12","level":4,"weekday":4},{"day":13,"date":"2027-02-13","level":4,"weekday":5},{"day":14,"date":"2027-02-14","level":4,"weekday":6},{"day":15,"date":"2027-02-15","level":2,"weekday":0},{"day":16,"date":"2027-02-16","level":2,"weekday":1},{"day":17,"date":"2027-02-17","level":3,"weekday":2},{"day":18,"date":"2027-02-18","level":3,"weekday":3},{"day":19,"date":"2027-02-19","level":4,"weekday":4},{"day":20,"date":"2027-02-20","level":4,"weekday":5},{"day":21,"date":"2027-02-21","level":4,"weekday":6},{"day":22,"date":"2027-02-22","level":2,"weekday":0},{"day":23,"date":"2027-02-23","level":2,"weekday":1},{"day":24,"date":"2027-02-24","level":3,"weekday":2},{"day":25,"date":"2027-02-25","level":3,"weekday":3},{"day":26,"date":"2027-02-26","level":4,"weekday":4},{"day":27,"date":"2027-02-27","level":4,"weekday":5},{"day":28,"date":"2027-02-28","level":4,"weekday":6}],"2027-03":[{"day":1,"date":"2027-03-01","level":7,"weekday":0},{"day":2,"date":"2027-03-02","level":7,"weekday":1},{"day":3,"date":"2027-03-03","level":8,"weekday":2},{"day":4,"date":"2027-03-04","level":8,"weekday":3},{"day":5,"date":"2027-03-05","level":9,"weekday":4},{"day":6,"date":"2027-03-06","level":9,"weekday":5},{"day":7,"date":"2027-03-07","level":9,"weekday":6},{"day":8,"date":"2027-03-08","level":7,"weekday":0},{"day":9,"date":"2027-03-09","level":7,"weekday":1},{"day":10,"date":"2027-03-10","level":8,"weekday":2},{"day":11,"date":"2027-03-11","level":8,"weekday":3},{"day":12,"date":"2027-03-12","level":9,"weekday":4},{"day":13,"date":"2027-03-13","level":9,"weekday":5},{"day":14,"date":"2027-03-14","level":10,"weekday":6},{"day":15,"date":"2027-03-15","level":9,"weekday":0},{"day":16,"date":"2027-03-16","level":9,"weekday":1},{"day":17,"date":"2027-03-17","level":10,"weekday":2},{"day":18,"date":"2027-03-18","level":10,"weekday":3},{"day":19,"date":"2027-03-19","level":10,"weekday":4},{"day":20,"date":"2027-03-20","level":10,"weekday":5},{"day":21,"date":"2027-03-21","level":10,"weekday":6},{"day":22,"date":"2027-03-22","level":9,"weekday":0},{"day":23,"date":"2027-03-23","level":9,"weekday":1},{"day":24,"date":"2027-03-24","level":10,"weekday":2},{"day":25,"date":"2027-03-25","level":10,"weekday":3},{"day":26,"date":"2027-03-26","level":10,"weekday":4},{"day":27,"date":"2027-03-27","level":10,"weekday":5},{"day":28,"date":"2027-03-28","level":10,"weekday":6},{"day":29,"date":"2027-03-29","level":7,"weekday":0},{"day":30,"date":"2027-03-30","level":7,"weekday":1},{"day":31,"date":"2027-03-31","level":8,"weekday":2}],"2027-04":[{"day":1,"date":"2027-04-01","level":8,"weekday":3},{"day":2,"date":"2027-04-02","level":9,"weekday":4},{"day":3,"date":"2027-04-03","level":9,"weekday":5},{"day":4,"date":"2027-04-04","level":9,"weekday":6},{"day":5,"date":"2027-04-05","level":7,"weekday":0},{"day":6,"date":"2027-04-06","level":7,"weekday":1},{"day":7,"date":"2027-04-07","level":8,"weekday":2},{"day":8,"date":"2027-04-08","level":6,"weekday":3},{"day":9,"date":"2027-04-09","level":7,"weekday":4},{"day":10,"date":"2027-04-10","level":7,"weekday":5},{"day":11,"date":"2027-04-11","level":7,"weekday":6},{"day":12,"date":"2027-04-12","level":5,"weekday":0},{"day":13,"date":"2027-04-13","level":5,"weekday":1},{"day":14,"date":"2027-04-14","level":6,"weekday":2},{"day":15,"date":"2027-04-15","level":6,"weekday":3},{"day":16,"date":"2027-04-16","level":7,"weekday":4},{"day":17,"date":"2027-04-17","level":7,"weekday":5},{"day":18,"date":"2027-04-18","level":7,"weekday":6},{"day":19,"date":"2027-04-19","level":5,"weekday":0},{"day":20,"date":"2027-04-20","level":5,"weekday":1},{"day":21,"date":"2027-04-21","level":6,"weekday":2},{"day":22,"date":"2027-04-22","level":6,"weekday":3},{"day":23,"date":"2027-04-23","level":7,"weekday":4},{"day":24,"date":"2027-04-24","level":7,"weekday":5},{"day":25,"date":"2027-04-25","level":7,"weekday":6},{"day":26,"date":"2027-04-26","level":5,"weekday":0},{"day":27,"date":"2027-04-27","level":5,"weekday":1},{"day":28,"date":"2027-04-28","level":6,"weekday":2},{"day":29,"date":"2027-04-29","level":6,"weekday":3},{"day":30,"date":"2027-04-30","level":7,"weekday":4}],"2027-05":[{"day":1,"date":"2027-05-01","level":5,"weekday":5},{"day":2,"date":"2027-05-02","level":5,"weekday":6},{"day":3,"date":"2027-05-03","level":3,"weekday":0},{"day":4,"date":"2027-05-04","level":3,"weekday":1},{"day":5,"date":"2027-05-05","level":4,"weekday":2},{"day":6,"date":"2027-05-06","level":4,"weekday":3},{"day":7,"date":"2027-05-07","level":5,"weekday":4},{"day":8,"date":"2027-05-08","level":5,"weekday":5},{"day":9,"date":"2027-05-09","level":5,"weekday":6},{"day":10,"date":"2027-05-10","level":3,"weekday":0},{"day":11,"date":"2027-05-11","level":3,"weekday":1},{"day":12,"date":"2027-05-12","level":4,"weekday":2},{"day":13,"date":"2027-05-13","level":4,"weekday":3},{"day":14,"date":"2027-05-14","level":5,"weekday":4},{"day":15,"date":"2027-05-15","level":5,"weekday":5},{"day":16,"date":"2027-05-16","level":5,"weekday":6},{"day":17,"date":"2027-05-17","level":3,"weekday":0},{"day":18,"date":"2027-05-18","level":3,"weekday":1},{"day":19,"date":"2027-05-19","level":4,"weekday":2},{"day":20,"date":"2027-05-20","level":4,"weekday":3},{"day":21,"date":"2027-05-21","level":5,"weekday":4},{"day":22,"date":"2027-05-22","level":5,"weekday":5},{"day":23,"date":"2027-05-23","level":5,"weekday":6},{"day":24,"date":"2027-05-24","level":3,"weekday":0},{"day":25,"date":"2027-05-25","level":3,"weekday":1},{"day":26,"date":"2027-05-26","level":4,"weekday":2},{"day":27,"date":"2027-05-27","level":4,"weekday":3},{"day":28,"date":"2027-05-28","level":5,"weekday":4},{"day":29,"date":"2027-05-29","level":8,"weekday":5},{"day":30,"date":"2027-05-30","level":8,"weekday":6},{"day":31,"date":"2027-05-31","level":6,"weekday":0}],"2027-06":[{"day":1,"date":"2027-06-01","level":6,"weekday":1},{"day":2,"date":"2027-06-02","level":7,"weekday":2},{"day":3,"date":"2027-06-03","level":7,"weekday":3},{"day":4,"date":"2027-06-04","level":8,"weekday":4},{"day":5,"date":"2027-06-05","level":8,"weekday":5},{"day":6,"date":"2027-06-06","level":8,"weekday":6},{"day":7,"date":"2027-06-07","level":6,"weekday":0},{"day":8,"date":"2027-06-08","level":6,"weekday":1},{"day":9,"date":"2027-06-09","level":7,"weekday":2},{"day":10,"date":"2027-06-10","level":7,"weekday":3},{"day":11,"date":"2027-06-11","level":8,"weekday":4},{"day":12,"date":"2027-06-12","level":8,"weekday":5},{"day":13,"date":"2027-06-13","level":8,"weekday":6},{"day":14,"date":"2027-06-14","level":6,"weekday":0},{"day":15,"date":"2027-06-15","level":6,"weekday":1},{"day":16,"date":"2027-06-16","level":7,"weekday":2},{"day":17,"date":"2027-06-17","level":7,"weekday":3},{"day":18,"date":"2027-06-18","level":8,"weekday":4},{"day":19,"date":"2027-06-19","level":8,"weekday":5},{"day":20,"date":"2027-06-20","level":8,"weekday":6},{"day":21,"date":"2027-06-21","level":6,"weekday":0},{"day":22,"date":"2027-06-22","level":6,"weekday":1},{"day":23,"date":"2027-06-23","level":7,"weekday":2},{"day":24,"date":"2027-06-24","level":7,"weekday":3},{"day":25,"date":"2027-06-25","level":8,"weekday":4},{"day":26,"date":"2027-06-26","level":8,"weekday":5},{"day":27,"date":"2027-06-27","level":8,"weekday":6},{"day":28,"date":"2027-06-28","level":6,"weekday":0},{"day":29,"date":"2027-06-29","level":6,"weekday":1},{"day":30,"date":"2027-06-30","level":7,"weekday":2}],"2027-07":[{"day":1,"date":"2027-07-01","level":9,"weekday":3},{"day":2,"date":"2027-07-02","level":10,"weekday":4},{"day":3,"date":"2027-07-03","level":10,"weekday":5},{"day":4,"date":"2027-07-04","level":10,"weekday":6},{"day":5,"date":"2027-07-05","level":10,"weekday":0},{"day":6,"date":"2027-07-06","level":10,"weekday":1},{"day":7,"date":"2027-07-07","level":9,"weekday":2},{"day":8,"date":"2027-07-08","level":9,"weekday":3},{"day":9,"date":"2027-07-09","level":10,"weekday":4},{"day":10,"date":"2027-07-10","level":10,"weekday":5},{"day":11,"date":"2027-07-11","level":10,"weekday":6},{"day":12,"date":"2027-07-12","level":8,"weekday":0},{"day":13,"date":"2027-07-13","level":8,"weekday":1},{"day":14,"date":"2027-07-14","level":9,"weekday":2},{"day":15,"date":"2027-07-15","level":9,"weekday":3},{"day":16,"date":"2027-07-16","level":10,"weekday":4},{"day":17,"date":"2027-07-17","level":10,"weekday":5},{"day":18,"date":"2027-07-18","level":10,"weekday":6},{"day":19,"date":"2027-07-19","level":8,"weekday":0},{"day":20,"date":"2027-07-20","level":8,"weekday":1},{"day":21,"date":"2027-07-21","level":9,"weekday":2},{"day":22,"date":"2027-07-22","level":9,"weekday":3},{"day":23,"date":"2027-07-23","level":10,"weekday":4},{"day":24,"date":"2027-07-24","level":10,"weekday":5},{"day":25,"date":"2027-07-25","level":10,"weekday":6},{"day":26,"date":"2027-07-26","level":8,"weekday":0},{"day":27,"date":"2027-07-27","level":8,"weekday":1},{"day":28,"date":"2027-07-28","level":9,"weekday":2},{"day":29,"date":"2027-07-29","level":9,"weekday":3},{"day":30,"date":"2027-07-30","level":10,"weekday":4},{"day":31,"date":"2027-07-31","level":10,"weekday":5}],"2027-08":[{"day":1,"date":"2027-08-01","level":8,"weekday":6},{"day":2,"date":"2027-08-02","level":6,"weekday":0},{"day":3,"date":"2027-08-03","level":6,"weekday":1},{"day":4,"date":"2027-08-04","level":7,"weekday":2},{"day":5,"date":"2027-08-05","level":7,"weekday":3},{"day":6,"date":"2027-08-06","level":8,"weekday":4},{"day":7,"date":"2027-08-07","level":8,"weekday":5},{"day":8,"date":"2027-08-08","level":8,"weekday":6},{"day":9,"date":"2027-08-09","level":6,"weekday":0},{"day":10,"date":"2027-08-10","level":6,"weekday":1},{"day":11,"date":"2027-08-11","level":7,"weekday":2},{"day":12,"date":"2027-08-12","level":7,"weekday":3},{"day":13,"date":"2027-08-13","level":8,"weekday":4},{"day":14,"date":"2027-08-14","level":8,"weekday":5},{"day":15,"date":"2027-08-15","level":8,"weekday":6},{"day":16,"date":"2027-08-16","level":6,"weekday":0},{"day":17,"date":"2027-08-17","level":6,"weekday":1},{"day":18,"date":"2027-08-18","level":7,"weekday":2},{"day":19,"date":"2027-08-19","level":7,"weekday":3},{"day":20,"date":"2027-08-20","level":8,"weekday":4},{"day":21,"date":"2027-08-21","level":8,"weekday":5},{"day":22,"date":"2027-08-22","level":8,"weekday":6},{"day":23,"date":"2027-08-23","level":6,"weekday":0},{"day":24,"date":"2027-08-24","level":6,"weekday":1},{"day":25,"date":"2027-08-25","level":7,"weekday":2},{"day":26,"date":"2027-08-26","level":7,"weekday":3},{"day":27,"date":"2027-08-27","level":8,"weekday":4},{"day":28,"date":"2027-08-28","level":8,"weekday":5},{"day":29,"date":"2027-08-29","level":8,"weekday":6},{"day":30,"date":"2027-08-30","level":6,"weekday":0},{"day":31,"date":"2027-08-31","level":6,"weekday":1}],"2027-09":[{"day":1,"date":"2027-09-01","level":3,"weekday":2},{"day":2,"date":"2027-09-02","level":3,"weekday":3},{"day":3,"date":"2027-09-03","level":4,"weekday":4},{"day":4,"date":"2027-09-04","level":7,"weekday":5},{"day":5,"date":"2027-09-05","level":7,"weekday":6},{"day":6,"date":"2027-09-06","level":5,"weekday":0},{"day":7,"date":"2027-09-07","level":5,"weekday":1},{"day":8,"date":"2027-09-08","level":6,"weekday":2},{"day":9,"date":"2027-09-09","level":3,"weekday":3},{"day":10,"date":"2027-09-10","level":4,"weekday":4},{"day":11,"date":"2027-09-11","level":4,"weekday":5},{"day":12,"date":"2027-09-12","level":4,"weekday":6},{"day":13,"date":"2027-09-13","level":2,"weekday":0},{"day":14,"date":"2027-09-14","level":2,"weekday":1},{"day":15,"date":"2027-09-15","level":3,"weekday":2},{"day":16,"date":"2027-09-16","level":3,"weekday":3},{"day":17,"date":"2027-09-17","level":4,"weekday":4},{"day":18,"date":"2027-09-18","level":4,"weekday":5},{"day":19,"date":"2027-09-19","level":4,"weekday":6},{"day":20,"date":"2027-09-20","level":2,"weekday":0},{"day":21,"date":"2027-09-21","level":2,"weekday":1},{"day":22,"date":"2027-09-22","level":3,"weekday":2},{"day":23,"date":"2027-09-23","level":3,"weekday":3},{"day":24,"date":"2027-09-24","level":4,"weekday":4},{"day":25,"date":"2027-09-25","level":4,"weekday":5},{"day":26,"date":"2027-09-26","level":4,"weekday":6},{"day":27,"date":"2027-09-27","level":2,"weekday":0},{"day":28,"date":"2027-09-28","level":2,"weekday":1},{"day":29,"date":"2027-09-29","level":3,"weekday":2},{"day":30,"date":"2027-09-30","level":3,"weekday":3}],"2027-10":[{"day":1,"date":"2027-10-01","level":6,"weekday":4},{"day":2,"date":"2027-10-02","level":6,"weekday":5},{"day":3,"date":"2027-10-03","level":6,"weekday":6},{"day":4,"date":"2027-10-04","level":4,"weekday":0},{"day":5,"date":"2027-10-05","level":4,"weekday":1},{"day":6,"date":"2027-10-06","level":5,"weekday":2},{"day":7,"date":"2027-10-07","level":5,"weekday":3},{"day":8,"date":"2027-10-08","level":6,"weekday":4},{"day":9,"date":"2027-10-09","level":6,"weekday":5},{"day":10,"date":"2027-10-10","level":6,"weekday":6},{"day":11,"date":"2027-10-11","level":4,"weekday":0},{"day":12,"date":"2027-10-12","level":4,"weekday":1},{"day":13,"date":"2027-10-13","level":5,"weekday":2},{"day":14,"date":"2027-10-14","level":5,"weekday":3},{"day":15,"date":"2027-10-15","level":6,"weekday":4},{"day":16,"date":"2027-10-16","level":6,"weekday":5},{"day":17,"date":"2027-10-17","level":6,"weekday":6},{"day":18,"date":"2027-10-18","level":4,"weekday":0},{"day":19,"date":"2027-10-19","level":4,"weekday":1},{"day":20,"date":"2027-10-20","level":5,"weekday":2},{"day":21,"date":"2027-10-21","level":5,"weekday":3},{"day":22,"date":"2027-10-22","level":6,"weekday":4},{"day":23,"date":"2027-10-23","level":6,"weekday":5},{"day":24,"date":"2027-10-24","level":6,"weekday":6},{"day":25,"date":"2027-10-25","level":4,"weekday":0},{"day":26,"date":"2027-10-26","level":4,"weekday":1},{"day":27,"date":"2027-10-27","level":5,"weekday":2},{"day":28,"date":"2027-10-28","level":5,"weekday":3},{"day":29,"date":"2027-10-29","level":6,"weekday":4},{"day":30,"date":"2027-10-30","level":6,"weekday":5},{"day":31,"date":"2027-10-31","level":6,"weekday":6}],"2027-11":[{"day":1,"date":"2027-11-01","level":5,"weekday":0},{"day":2,"date":"2027-11-02","level":5,"weekday":1},{"day":3,"date":"2027-11-03","level":6,"weekday":2},{"day":4,"date":"2027-11-04","level":6,"weekday":3},{"day":5,"date":"2027-11-05","level":7,"weekday":4},{"day":6,"date":"2027-11-06","level":7,"weekday":5},{"day":7,"date":"2027-11-07","level":7,"weekday":6},{"day":8,"date":"2027-11-08","level":5,"weekday":0},{"day":9,"date":"2027-11-09","level":5,"weekday":1},{"day":10,"date":"2027-11-10","level":6,"weekday":2},{"day":11,"date":"2027-11-11","level":6,"weekday":3},{"day":12,"date":"2027-11-12","level":7,"weekday":4},{"day":13,"date":"2027-11-13","level":7,"weekday":5},{"day":14,"date":"2027-11-14","level":7,"weekday":6},{"day":15,"date":"2027-11-15","level":5,"weekday":0},{"day":16,"date":"2027-11-16","level":5,"weekday":1},{"day":17,"date":"2027-11-17","level":6,"weekday":2},{"day":18,"date":"2027-11-18","level":6,"weekday":3},{"day":19,"date":"2027-11-19","level":7,"weekday":4},{"day":20,"date":"2027-11-20","level":7,"weekday":5},{"day":21,"date":"2027-11-21","level":7,"weekday":6},{"day":22,"date":"2027-11-22","level":10,"weekday":0},{"day":23,"date":"2027-11-23","level":10,"weekday":1},{"day":24,"date":"2027-11-24","level":10,"weekday":2},{"day":25,"date":"2027-11-25","level":10,"weekday":3},{"day":26,"date":"2027-11-26","level":10,"weekday":4},{"day":27,"date":"2027-11-27","level":10,"weekday":5},{"day":28,"date":"2027-11-28","level":10,"weekday":6},{"day":29,"date":"2027-11-29","level":5,"weekday":0},{"day":30,"date":"2027-11-30","level":5,"weekday":1}],"2027-12":[{"day":1,"date":"2027-12-01","level":8,"weekday":2},{"day":2,"date":"2027-12-02","level":8,"weekday":3},{"day":3,"date":"2027-12-03","level":9,"weekday":4},{"day":4,"date":"2027-12-04","level":9,"weekday":5},{"day":5,"date":"2027-12-05","level":9,"weekday":6},{"day":6,"date":"2027-12-06","level":7,"weekday":0},{"day":7,"date":"2027-12-07","level":7,"weekday":1},{"day":8,"date":"2027-12-08","level":8,"weekday":2},{"day":9,"date":"2027-12-09","level":8,"weekday":3},{"day":10,"date":"2027-12-10","level":9,"weekday":4},{"day":11,"date":"2027-12-11","level":9,"weekday":5},{"day":12,"date":"2027-12-12","level":9,"weekday":6},{"day":13,"date":"2027-12-13","level":7,"weekday":0},{"day":14,"date":"2027-12-14","level":7,"weekday":1},{"day":15,"date":"2027-12-15","level":8,"weekday":2},{"day":16,"date":"2027-12-16","level":8,"weekday":3},{"day":17,"date":"2027-12-17","level":9,"weekday":4},{"day":18,"date":"2027-12-18","level":9,"weekday":5},{"day":19,"date":"2027-12-19","level":9,"weekday":6},{"day":20,"date":"2027-12-20","level":7,"weekday":0},{"day":21,"date":"2027-12-21","level":7,"weekday":1},{"day":22,"date":"2027-12-22","level":8,"weekday":2},{"day":23,"date":"2027-12-23","level":10,"weekday":3},{"day":24,"date":"2027-12-24","level":10,"weekday":4},{"day":25,"date":"2027-12-25","level":10,"weekday":5},{"day":26,"date":"2027-12-26","level":10,"weekday":6},{"day":27,"date":"2027-12-27","level":10,"weekday":0},{"day":28,"date":"2027-12-28","level":10,"weekday":1},{"day":29,"date":"2027-12-29","level":10,"weekday":2},{"day":30,"date":"2027-12-30","level":10,"weekday":3},{"day":31,"date":"2027-12-31","level":10,"weekday":4}]};
+
 function renderTemporada(){
   const grid = document.getElementById('temporada-grid'); if(!grid) return;
-  const nivelColor = n => n<=3?'#22c55e':n<=6?'#eab308':n<=8?'#f97316':'#ef4444';
-  const nivelLabel = n => n<=3?'🟢 Baixa':n<=6?'🟡 Média':n<=8?'🟠 Alta':'🔴 Pico';
-  grid.innerHTML = Object.entries(CROWD_DATA).map(([key,m])=>`
-    <div style="background:var(--surface);border:1px solid var(--surface3);border-radius:12px;padding:16px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <h3 style="font-size:15px;font-weight:700;color:var(--text1)">${esc(m.label)}</h3>
-        <span style="background:${nivelColor(m.nivel)};color:${m.nivel<=3?'#14532d':m.nivel<=6?'#713f12':m.nivel<=8?'#431407':'#7f1d1d'};border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700">${nivelLabel(m.nivel)} · ${m.nivel}/10</span>
+  const nc = n=>n<=3?'#22c55e':n<=6?'#eab308':n<=8?'#f97316':'#ef4444';
+  const nl = n=>n<=3?'🟢 Baixa':n<=6?'🟡 Média':n<=8?'🟠 Alta':'🔴 Pico';
+  const wd = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  grid.innerHTML = Object.entries(CROWD_DATA).map(([k,m])=>{
+    const days = CROWD_DAILY_S[k]||[];
+    const dayHtml = days.map(d=>{
+      const wdLabel = wd[d.weekday===6?0:d.weekday+1]||'';
+      const isWknd = d.weekday>=4;
+      return `<div style="background:${nc(d.level)};border-radius:4px;padding:2px 4px;cursor:default;min-width:30px;text-align:center" title="${d.date} — ${nl(d.level)} (${d.level}/10)">
+        <div style="font-size:9px;color:#fff;font-weight:700;line-height:1.2">${d.day}</div>
+        <div style="font-size:7px;color:rgba(255,255,255,0.85);line-height:1">${wdLabel}</div>
+        <div style="font-size:8px;color:#fff;font-weight:700">${d.level}</div>
+      </div>`;
+    }).join('');
+    return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:12px;padding:16px">
+      <div style="cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===''?'none':''">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <h3 style="font-size:14px;font-weight:700;color:var(--text1)">${esc(m.label)} <span style="font-size:10px;font-weight:400;color:var(--text2)">(clique para dia a dia)</span></h3>
+          <span style="background:${nc(m.nivel)};color:${m.nivel<=3?'#14532d':m.nivel<=6?'#713f12':'#fff'};border-radius:16px;padding:2px 8px;font-size:11px;font-weight:700">${nl(m.nivel)} · ${m.nivel}/10</span>
+        </div>
+        <div style="background:var(--surface3);border-radius:4px;height:6px;margin-bottom:6px">
+          <div style="background:${nc(m.nivel)};height:6px;border-radius:4px;width:${m.nivel*10}%"></div>
+        </div>
+        <p style="font-size:11px;color:var(--text2)">${esc(m.desc)}</p>
       </div>
-      <div style="background:var(--surface3);border-radius:6px;height:8px;margin-bottom:10px">
-        <div style="background:${nivelColor(m.nivel)};height:8px;border-radius:6px;width:${m.nivel*10}%;transition:width 0.3s"></div>
+      <div style="display:none;margin-top:10px;border-top:1px solid var(--surface3);padding-top:10px">
+        <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px">${dayHtml}</div>
+        ${(m.eventos||[]).map(e=>`<div style="font-size:10px;color:var(--text2);margin-bottom:2px">📌 ${esc(e)}</div>`).join('')}
       </div>
-      <p style="font-size:12px;color:var(--text2);margin-bottom:8px">${esc(m.desc)}</p>
-      <div style="display:flex;flex-direction:column;gap:3px">${(m.eventos||[]).map(e=>`<span style="font-size:11px;color:var(--text2)">• ${esc(e)}</span>`).join('')}</div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 
@@ -5935,7 +6839,10 @@ function renderLeadCard(lead){
     </div>
     <div class="card-phone">📱 ${escapeHtml(lead.telefone)||'—'} ${origem}</div>
     ${lead.vendedor?`<div class="card-vendedor">👤 ${lead.vendedor}</div>`:''}
-    ${lead.destino?`<div style="font-size:10px;color:var(--text2);margin-top:2px">🗺️ ${lead.destino}${lead.pax&&lead.pax>1?' · '+lead.pax+' pax':''}</div>`:''}
+    ${lead.destino?`<div style="font-size:10px;color:var(--text2);margin-top:2px">🗺️ ${lead.destino}${lead.pax&&lead.pax>1?' · '+lead.pax+' pax':''}${lead.criancas?'+'+lead.criancas+'cri':''}</div>`:''}
+    ${lead.budget?`<div style="font-size:10px;color:var(--success);margin-top:1px">💰 ${escapeHtml(lead.budget)}</div>`:''}
+    ${lead.periodo?`<div style="font-size:10px;color:var(--text3);margin-top:1px">📅 ${escapeHtml(lead.periodo)}</div>`:''}
+    ${lead.primeiraVez==='primeira'?`<div style="font-size:10px;color:#7c3aed;margin-top:1px">🌟 1ª viagem</div>`:lead.primeiraVez==='retorno'?`<div style="font-size:10px;color:#2563eb;margin-top:1px">🔄 Retorno</div>`:''}
     ${lead.valorProposta?`<div style="font-size:11px;color:var(--success);font-weight:700;margin-top:3px">💰 ${fmtR(lead.valorProposta)}</div>`:''}
     ${since?`<div class="card-timer">⏱ ${since} nesta etapa</div>`:''}
     ${nextEv?`<div style="font-size:10px;color:var(--primary);margin-top:3px">📅 ${nextEv.titulo} · ${formatDate(nextEv.data)}</div>`:''}
@@ -6179,21 +7086,63 @@ function buildLeadForm(lead, stage){
           ${vds.map(v=>`<option value="${v.nome}" ${(lead?lead.vendedor:curVend)===v.nome?'selected':''}>${escapeHtml(v.nome)}</option>`).join('')}
         </select>
       </div>
-      <div class="form-group"><label class="form-label">Origem</label>
+      <div class="form-group"><label class="form-label">Canal de origem</label>
         <select class="form-select" id="lf-origem">
-          ${['Instagram','Facebook','WhatsApp','Indicação','Google','Site','Outro'].map(o=>`<option ${lead&&lead.origem===o?'selected':''}>${o}</option>`).join('')}
+          ${['Instagram','Facebook','WhatsApp','Indicação','Google','Site','TikTok','YouTube','LinkedIn','Evento','Outro'].map(o=>`<option ${lead&&lead.origem===o?'selected':''}>${o}</option>`).join('')}
         </select>
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Destino de interesse</label>
-        <select class="form-select" id="lf-destino">
-          ${(DB.config?.destinos||[]).map(d=>`<option ${lead&&lead.destino===d?'selected':''}>${d}</option>`).join('')}
-        </select>
+
+    <!-- Perfil de Viagem -->
+    <div style="background:var(--surface2);border-radius:8px;padding:12px;margin:8px 0">
+      <div style="font-size:11px;font-weight:700;color:var(--primary);margin-bottom:10px;text-transform:uppercase">✈️ Perfil de Viagem</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Destino de interesse</label>
+          <select class="form-select" id="lf-destino">
+            ${(DB.config?.destinos||[]).map(d=>`<option ${lead&&lead.destino===d?'selected':''}>${d}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Período pretendido</label>
+          <select class="form-select" id="lf-periodo">
+            ${['','Jan/Fev (baixa)','Mar/Abr (Spring Break)','Mai (ótimo)','Jun/Jul/Ago (verão)','Set (melhor época)','Out (Halloween)','Nov/Dez (Natal)','Datas flexíveis'].map(p=>`<option value="${p}" ${lead&&lead.periodo===p?'selected':''}>${p||'Não definido'}</option>`).join('')}
+          </select>
+        </div>
       </div>
-      <div class="form-group"><label class="form-label">Nº Pessoas</label><input type="number" class="form-input" id="lf-pax" value="${lead?lead.pax||1:1}" min="1"/></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Adultos</label><input type="number" class="form-input" id="lf-pax" value="${lead?lead.pax||1:2}" min="1"/></div>
+        <div class="form-group"><label class="form-label">Crianças</label><input type="number" class="form-input" id="lf-criancas" value="${lead?lead.criancas||0:0}" min="0"/></div>
+        <div class="form-group"><label class="form-label">Idades crianças</label><input class="form-input" id="lf-idades" value="${lead?escapeHtml(lead.idadesCri||''):''}" placeholder="Ex: 8, 5, 3"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Budget estimado</label>
+          <select class="form-select" id="lf-budget">
+            ${['','Até R$ 10.000','R$ 10.000 – R$ 20.000','R$ 20.000 – R$ 35.000','R$ 35.000 – R$ 60.000','Acima de R$ 60.000','Não informado'].map(b=>`<option value="${b}" ${lead&&lead.budget===b?'selected':''}>${b||'Não informado'}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Tipo de viagem</label>
+          <select class="form-select" id="lf-tipo-viagem">
+            ${['','Família com crianças','Casal','Amigos','Solo','Grupo corporativo','Lua de mel','Aniversário'].map(t=>`<option value="${t}" ${lead&&lead.tipoViagem===t?'selected':''}>${t||'Selecionar...'}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Já foi à Disney/Universal?</label>
+          <select class="form-select" id="lf-primeira">
+            <option value="" ${!lead?.primeiraVez?'selected':''}>Não informado</option>
+            <option value="primeira" ${lead?.primeiraVez==='primeira'?'selected':''}>🌟 Primeira viagem</option>
+            <option value="retorno" ${lead?.primeiraVez==='retorno'?'selected':''}>🔄 Retorno</option>
+            <option value="multiplas" ${lead?.primeiraVez==='multiplas'?'selected':''}>🏆 Múltiplas visitas</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Prioridade nos parques</label>
+          <select class="form-select" id="lf-prioridade">
+            ${['','Mais Disney','Mais Universal','Equilíbrio Disney + Universal','United Parks também','California Adventure','Paris','Japão'].map(p=>`<option value="${p}" ${lead&&lead.prioridade===p?'selected':''}>${p||'Selecionar...'}</option>`).join('')}
+          </select>
+        </div>
+      </div>
     </div>
-    <div class="form-group"><label class="form-label">OBS / Notas</label><textarea class="form-textarea" id="lf-obs" rows="2">${lead?escapeHtml(lead.obs||""):""}</textarea></div>
+
+    <div class="form-group"><label class="form-label">OBS / Notas / Restrições</label><textarea class="form-textarea" id="lf-obs" rows="2">${lead?escapeHtml(lead.obs||""):""}</textarea></div>
     <input type="hidden" id="lf-stage" value="${stage||'lead'}"/>`;
   document.getElementById('lead-form-fields').innerHTML=html;
   if(isVendedor()){
@@ -6206,26 +7155,36 @@ function _saveLead(){
   const vendedor=isVendedor()?(DB.currentUser.vendedorRef||''):document.getElementById('lf-vendedor').value;
   if(!telefone){ toast('Informe o telefone','error'); return; }
   const stage=document.getElementById('lf-stage').value||'lead';
+
+  // Coleta todos os campos enriquecidos
+  const _gv = id => document.getElementById(id)?.value||'';
+  const perfil = {
+    periodo: _gv('lf-periodo'), budget: _gv('lf-budget'),
+    tipoViagem: _gv('lf-tipo-viagem'), primeiraVez: _gv('lf-primeira'),
+    prioridade: _gv('lf-prioridade'), idadesCri: _gv('lf-idades'),
+    criancas: parseInt(_gv('lf-criancas'))||0
+  };
+
   if(editingLeadId){
     const lead=DB.crm.find(l=>l.id===editingLeadId);
     if(lead){
-      lead.telefone=telefone; lead.nome=document.getElementById('lf-nome').value;
+      lead.telefone=telefone; lead.nome=_gv('lf-nome');
       if(isAdm()) lead.vendedor=vendedor;
-      lead.origem=document.getElementById('lf-origem').value;
-      lead.destino=document.getElementById('lf-destino').value;
-      lead.pax=parseInt(document.getElementById('lf-pax').value)||1;
-      lead.obs=document.getElementById('lf-obs').value;
+      lead.origem=_gv('lf-origem'); lead.destino=_gv('lf-destino');
+      lead.pax=parseInt(_gv('lf-pax'))||1; lead.obs=_gv('lf-obs');
+      Object.assign(lead, perfil);
+      lead.atualizadoEm=new Date().toISOString();
     }
     toast('Lead atualizado!');
   } else {
     DB.crm.push({
-      id:DB.nextCrmId++, telefone, nome:document.getElementById('lf-nome').value,
+      id:DB.nextCrmId++, telefone, nome:_gv('lf-nome'),
       vendedor:isVendedor()?(DB.currentUser.vendedorRef||''):vendedor,
-      origem:document.getElementById('lf-origem').value,
-      destino:document.getElementById('lf-destino').value,
-      pax:parseInt(document.getElementById('lf-pax').value)||1,
-      obs:document.getElementById('lf-obs').value,
-      stage, stageChangedAt:new Date().toISOString(), criadoEm:new Date().toISOString()
+      origem:_gv('lf-origem'), destino:_gv('lf-destino'),
+      pax:parseInt(_gv('lf-pax'))||1, obs:_gv('lf-obs'),
+      ...perfil,
+      stage, stageChangedAt:new Date().toISOString(),
+      criadoEm:new Date().toISOString(), atualizadoEm:new Date().toISOString()
     });
     toast('Lead adicionado!');
   }
