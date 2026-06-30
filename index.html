@@ -2094,6 +2094,10 @@ function subscribeFirebaseUpdates(){
       Object.keys(remote).forEach(function(k){
         if(!NON_SERIALIZABLE.has(k)) DB[k] = remote[k];
       });
+      // BUG-CRIT-02: mesma normalização objeto->array do boot inicial — ver init()
+      ['usuarios','clientes','orcamentos'].forEach(function(k){
+        if(DB[k] && !Array.isArray(DB[k])) DB[k] = Object.values(DB[k]);
+      });
       // CORR-04: verificar se conta atual foi desativada remotamente
       if(DB.currentUser){
         var _sUser=(DB.usuarios||[]).find(function(u){return u.id===DB.currentUser.id;});
@@ -6376,6 +6380,14 @@ function init(){
         // Firebase tem dados mais recentes — usa Firebase
         Object.keys(remoteData).forEach(function(k){
           if(!NON_SERIALIZABLE.has(k)) DB[k] = remoteData[k];
+        });
+        // BUG-CRIT-02: usuarios/clientes/orcamentos são gravados individualmente no
+        // Firebase (chave u_id/c_id/o_id), então voltam como OBJETO indexado, não
+        // array — e DB.usuarios/.clientes/.orcamentos são usados como array em
+        // todo o sistema (.find/.filter/.map). Sem isso, .find() quebra com
+        // TypeError assim que o Firebase tiver dados nesses 3 caminhos.
+        ['usuarios','clientes','orcamentos'].forEach(function(k){
+          if(DB[k] && !Array.isArray(DB[k])) DB[k] = Object.values(DB[k]);
         });
       } else {
         // localStorage mais recente que Firebase — carrega local
