@@ -284,14 +284,6 @@ tbody tr:hover{background:var(--surface2)}
         <span class="nav-icon">📚</span>
         <span>Enciclopédia</span>
       </div>
-      <div class="nav-item" onclick="showPage('catalogo')" title="Catálogo de Produtos">
-        <span class="nav-icon">📦</span>
-        <span>Catálogo</span>
-      </div>
-      <div class="nav-item" onclick="showPage('orcamento')" title="Orçamento v2">
-        <span class="nav-icon">💰</span>
-        <span>Orçamento v2</span>
-      </div>
     </div>
     <div class="nav-section">
       <div class="nav-label">Guiamento</div>
@@ -307,10 +299,6 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <div class="nav-section">
       <div class="nav-label">Admin</div>
-      <div class="nav-item" onclick="showPage('backup')" title="Backup & Restauração">
-        <span class="nav-icon">💾</span>
-        <span>Backup</span>
-      </div>
       <div class="nav-item" onclick="showPage('registros')" title="Registros">
         <span class="nav-icon">⚙️</span>
         <span>Registros</span>
@@ -687,6 +675,8 @@ tbody tr:hover{background:var(--surface2)}
     <button class="tab-btn" onclick="switchRegTab('operadoras',this)">🏢 Operadoras</button>
     <button class="tab-btn" onclick="switchRegTab('ingressos',this)">🎟️ Ingressos</button>
     <button class="tab-btn" onclick="switchRegTab('config',this)">⚙️ Configurações</button>
+    <button class="tab-btn" onclick="switchRegTab('catalogo',this)">📦 Catálogo</button>
+    <button class="tab-btn" onclick="switchRegTab('backup',this)">💾 Backup</button>
   </div>
 
   <div id="reg-tab-vendedores" class="tab-panel active">
@@ -784,6 +774,32 @@ tbody tr:hover{background:var(--surface2)}
       </div>
 
     </div>
+  </div>
+  <div id="reg-tab-catalogo" class="tab-panel">
+    <div class="page-body" id="pg-catalogo"></div>
+  </div>
+  <div id="reg-tab-backup" class="tab-panel">
+    <div class="page-body" style="max-width:640px;margin:0 auto">
+    <div class="card mb16">
+      <div class="fw7 mb12" style="font-size:14px">📤 Exportar Backup</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px">
+        Gera um arquivo JSON completo com todos os dados (localStorage + Firebase).
+        Salve em local seguro — use mensalmente ou antes de grandes alterações.
+      </p>
+      <div id="_backup-status" style="font-size:12px;color:var(--text2);margin-bottom:12px">Verificando último backup...</div>
+      <button class="btn btn-primary" onclick="exportarBackupCompleto()">💾 Exportar Backup Agora</button>
+    </div>
+    <div class="card">
+      <div class="fw7 mb12" style="font-size:14px">📥 Restaurar Backup</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px">
+        Selecione um arquivo de backup exportado anteriormente. <strong>Atenção:</strong> os dados atuais serão substituídos.
+      </p>
+      <label class="btn btn-ghost" style="cursor:pointer">
+        📂 Selecionar arquivo JSON
+        <input type="file" accept=".json" style="display:none" onchange="importarBackup(this)"/>
+      </label>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -2353,74 +2369,6 @@ function excluirProduto(id) {
 // ══════════════════════════════════════════════════════════════
 // ORÇAMENTO v2 — Melhoria #1
 // ══════════════════════════════════════════════════════════════
-function renderOrcamento() {
-  const el=document.getElementById('pg-orcamento'); if(!el) return;
-  const orc=DB.orcamentoRascunho||{itens:[],pax:1,usd:5.2,cliente:'',destino:'',datas:'',obs:''};
-  const pax=parseInt(orc.pax)||1; const usd=parseFloat(orc.usd)||5.2;
-  const itens=orc.itens||[];
-  const todos=[...CATALOGO_PADRAO,...(DB.catalogoCustom||[])];
-  const cats=[...new Set(todos.map(p=>p.categoria))].sort();
-  const totalUSD=itens.reduce((s,i)=>s+(i.preco_ref||0)*(i.qty||1)*(i.por_pax!==false?pax:1),0);
-  const totalBRL=totalUSD*usd;
-
-  el.innerHTML=
-    '<div class="card mb14">'
-    +'<div class="fw7 mb12" style="font-size:14px">📋 Dados do Orçamento</div>'
-    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">'
-    +'<div><label style="font-size:11px;font-weight:600">Cliente</label><input id="orc-cliente" class="form-input" style="margin-top:4px" value="'+esc(orc.cliente||'')+'" placeholder="Nome do cliente" oninput="salvarOrcRascunho()"/></div>'
-    +'<div><label style="font-size:11px;font-weight:600">Destino</label><input id="orc-destino" class="form-input" style="margin-top:4px" value="'+esc(orc.destino||'')+'" placeholder="Ex: Orlando 7 dias" oninput="salvarOrcRascunho()"/></div>'
-    +'<div><label style="font-size:11px;font-weight:600">Datas</label><input id="orc-datas" class="form-input" style="margin-top:4px" value="'+esc(orc.datas||'')+'" placeholder="Ex: 10–17 jan 2026" oninput="salvarOrcRascunho()"/></div>'
-    +'<div><label style="font-size:11px;font-weight:600">Pax</label><input id="orc-pax" type="number" class="form-input" style="margin-top:4px" value="'+pax+'" min="1" oninput="salvarOrcRascunho();renderOrcamento()"/></div>'
-    +'<div><label style="font-size:11px;font-weight:600">USD = BRL</label><input id="orc-usd" type="number" step="0.01" class="form-input" style="margin-top:4px" value="'+usd+'" oninput="salvarOrcRascunho();renderOrcamento()"/></div>'
-    +'</div></div>'
-
-    +'<div class="card mb14">'
-    +'<div class="fw7 mb10" style="font-size:13px">➕ Adicionar Produto</div>'
-    +'<div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end">'
-    +'<div>'
-    +'<select id="orc-add-cat" class="form-select" style="margin-bottom:6px;font-size:12px" onchange="filterOrcCatalog()">'
-    +'<option value="">Todas</option>'+cats.map(c=>'<option>'+esc(c)+'</option>').join('')+'</select>'
-    +'<select id="orc-add-prod" class="form-select" style="font-size:12px">'
-    +todos.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.nome)+' — $'+p.preco_ref+'</option>').join('')+'</select>'
-    +'</div>'
-    +'<div><label style="font-size:11px;font-weight:600">Qtd</label><input id="orc-qty" type="number" class="form-input" value="1" min="1" style="width:70px;margin-top:4px"/></div>'
-    +'<button class="btn btn-primary" onclick="addItemOrc()" style="align-self:end">+ Adicionar</button>'
-    +'</div></div>'
-
-    +'<div class="card mb14">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
-    +'<div class="fw7" style="font-size:13px">📋 Itens ('+pax+' pax)</div>'
-    +'<div style="font-size:12px;color:var(--text2)">'+itens.length+' item'+(itens.length!==1?'s':'')+' · $'+totalUSD.toFixed(0)+' USD · R$'+totalBRL.toFixed(0)+'</div></div>'
-
-    +(itens.length===0?'<p style="color:var(--text2);font-size:12px;text-align:center;padding:20px">Nenhum item. Use o catálogo acima.</p>'
-    :'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0"><th style="padding:7px;text-align:left">Produto</th><th style="padding:7px;text-align:center">Qtd</th><th style="padding:7px;text-align:right">Unit USD</th><th style="padding:7px;text-align:right">Total USD</th><th style="padding:7px;text-align:right">Total BRL</th><th></th></tr></thead><tbody>'
-    +itens.map((it,i)=>{
-      const tU=(it.preco_ref||0)*(it.qty||1)*(it.por_pax!==false?pax:1);
-      return '<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:7px"><div style="font-weight:600">'+esc(it.nome)+'</div></td>'
-        +'<td style="padding:7px;text-align:center">'+(it.qty||1)+'</td>'
-        +'<td style="padding:7px;text-align:right">$'+(it.preco_ref||0)+'</td>'
-        +'<td style="padding:7px;text-align:right;font-weight:700;color:var(--primary)">$'+tU.toFixed(0)+'</td>'
-        +'<td style="padding:7px;text-align:right;font-weight:700;color:#16a34a">R$'+(tU*usd).toFixed(0)+'</td>'
-        +'<td style="padding:7px"><button style="background:#fef2f2;border:1px solid #fca5a5;color:#b91c1c;border-radius:4px;padding:3px 7px;cursor:pointer" onclick="removeItemOrc('+i+')">🗑</button></td>'
-        +'</tr>';
-    }).join('')
-    +'<tr style="background:#f0fdf4;font-weight:700;border-top:2px solid #bbf7d0"><td colspan="3" style="padding:9px;font-size:13px">TOTAL</td><td style="padding:9px;text-align:right;font-size:14px;color:var(--primary)">$'+totalUSD.toFixed(0)+'</td><td style="padding:9px;text-align:right;font-size:14px;color:#16a34a">R$'+totalBRL.toFixed(0)+'</td><td></td></tr>'
-    +'<tr><td colspan="6" style="padding:6px 9px;font-size:10px;color:var(--text2);background:#f8fafc">Por passageiro: <strong>$'+(totalUSD/pax).toFixed(0)+' USD</strong> · <strong>R$'+(totalBRL/pax).toFixed(0)+' BRL</strong> · Câmbio: 1 USD = R$'+usd+'</td></tr>'
-    +'</tbody></table></div>')
-
-    +'<div style="margin-top:12px"><label style="font-size:11px;font-weight:600">Observações</label>'
-    +'<textarea id="orc-obs" class="form-textarea" rows="2" style="margin-top:4px" placeholder="Condições, validade, itens não inclusos..." oninput="salvarOrcRascunho()">'+esc(orc.obs||'')+'</textarea></div>'
-    +'</div>'
-
-    +'<div class="card"><div class="fw7 mb10" style="font-size:13px">📤 Exportar</div>'
-    +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
-    +'<button class="btn btn-primary" onclick="gerarPDFOrcamento()">🖨️ Gerar PDF</button>'
-    +'<button class="btn btn-ghost" onclick="copiarResumoOrc()">📋 Copiar WhatsApp</button>'
-    +'<button class="btn btn-ghost" onclick="salvarOrcamentoFinal()" style="color:#16a34a;border-color:#bbf7d0">💾 Salvar</button>'
-    +'<button class="btn btn-danger btn-sm" onclick="if(confirm(\'Limpar orçamento?\')){DB.orcamentoRascunho={itens:[]};saveToStorage();renderOrcamento();}" style="margin-left:auto">🗑 Limpar</button>'
-    +'</div></div>';
-}
-
 function filterOrcCatalog() {
   const cat=(document.getElementById('orc-add-cat')||{}).value||'';
   const sel=document.getElementById('orc-add-prod'); if(!sel) return;
@@ -2455,49 +2403,6 @@ function salvarOrcRascunho() {
   saveToStorage();
 }
 
-function salvarOrcamentoFinal() {
-  salvarOrcRascunho();
-  const orc=DB.orcamentoRascunho||{};
-  if(!orc.cliente){toast('Informe o cliente para salvar','warn');return;}
-  if(!DB.orcamentosSalvos) DB.orcamentosSalvos=[];
-  DB.orcamentosSalvos.push({...orc,id:'orc_'+Date.now(),criadoEm:new Date().toISOString()});
-  saveToStorage(); toast('✅ Orçamento salvo!','success');
-}
-
-function copiarResumoOrc() {
-  salvarOrcRascunho();
-  const orc=DB.orcamentoRascunho||{};
-  const pax=parseInt(orc.pax)||1; const usd=parseFloat(orc.usd)||5.2;
-  const itens=orc.itens||[];
-  const total=itens.reduce((s,i)=>s+(i.preco_ref||0)*(i.qty||1)*(i.por_pax!==false?pax:1),0);
-  const txt=['*ORÇAMENTO DESENROLA TURISMO*','','👤 Cliente: '+(orc.cliente||'—'),'📍 Destino: '+(orc.destino||'—'),'📅 Datas: '+(orc.datas||'—'),'👥 Passageiros: '+pax,'','*COMPOSIÇÃO DO PACOTE:*',...itens.map(i=>'• '+i.nome+': $'+((i.preco_ref||0)*(i.qty||1)*(i.por_pax!==false?pax:1)).toFixed(0)),'','*TOTAL: $'+total.toFixed(0)+' USD (≈ R$'+(total*usd).toFixed(0)+')*','Por passageiro: $'+(total/pax).toFixed(0)+' USD','',orc.obs?'📝 '+orc.obs:'','_Câmbio: 1 USD = R$'+usd+' · '+(new Date().toLocaleDateString('pt-BR'))+'_'].filter(l=>l!==undefined).join('\n');
-  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>toast('✅ Resumo copiado!','success')).catch(()=>{try{const ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;left:-9999px';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('✅ Copiado!','success')}catch(e){}}); 
-  else toast('✅ Copiado!','success');
-}
-
-function gerarPDFOrcamento() {
-  salvarOrcRascunho();
-  const orc=DB.orcamentoRascunho||{};
-  const pax=parseInt(orc.pax)||1; const usd=parseFloat(orc.usd)||5.2;
-  const itens=orc.itens||[];
-  const total=itens.reduce((s,i)=>s+(i.preco_ref||0)*(i.qty||1)*(i.por_pax!==false?pax:1),0);
-  const w=window.open('','_blank');
-  const rows=itens.map(it=>{const tU=(it.preco_ref||0)*(it.qty||1)*(it.por_pax!==false?pax:1); return '<tr><td>'+it.nome+'</td><td style="text-align:center">'+(it.qty||1)+'</td><td style="text-align:right">$'+(it.preco_ref||0)+'</td><td style="text-align:right;font-weight:700">$'+tU.toFixed(0)+'</td><td style="text-align:right;font-weight:700">R$'+(tU*usd).toFixed(0)+'</td></tr>'}).join('');
-  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Orçamento</title><style>body{font-family:Arial,sans-serif;margin:0;padding:40px;font-size:13px;color:#1a1a1a}.hdr{display:flex;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:3px solid #2C6AA3}.logo{font-size:22px;font-weight:900;color:#2C6AA3}.logo span{color:#A4B56E}.info{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#f8fafc;padding:14px;border-radius:8px;margin-bottom:20px}table{width:100%;border-collapse:collapse}th{background:#2C6AA3;color:#fff;padding:8px;text-align:left;font-size:11px}td{padding:8px;border-bottom:1px solid #f1f5f9}.tot{background:#f0fdf4;font-weight:700;border-top:2px solid #16a34a}.footer{margin-top:24px;font-size:10px;color:#94a3b8;text-align:center;border-top:1px solid #e2e8f0;padding-top:12px}@media print{.nopr{display:none}}</style></head><body>'
-    +'<div class="hdr"><div><div class="logo">Desenrola<span>Turismo</span></div><div style="font-size:11px;color:#64748b">Especialistas em Parques Temáticos</div></div><div style="text-align:right"><div style="font-weight:700;font-size:14px;color:#2C6AA3">ORÇAMENTO</div><div style="font-size:11px;color:#64748b">'+(new Date().toLocaleDateString('pt-BR'))+'</div></div></div>'
-    +'<div class="info"><div><div style="font-size:10px;font-weight:700;color:#475569">CLIENTE</div><div>'+(orc.cliente||'—')+'</div></div><div><div style="font-size:10px;font-weight:700;color:#475569">DESTINO</div><div>'+(orc.destino||'—')+'</div></div><div><div style="font-size:10px;font-weight:700;color:#475569">PERÍODO</div><div>'+(orc.datas||'—')+'</div></div><div><div style="font-size:10px;font-weight:700;color:#475569">PASSAGEIROS</div><div>'+pax+' pessoa'+(pax!==1?'s':'')+'</div></div></div>'
-    +'<table><thead><tr><th>Produto</th><th style="text-align:center">Qtd</th><th style="text-align:right">Unit USD</th><th style="text-align:right">Total USD</th><th style="text-align:right">Total BRL</th></tr></thead><tbody>'+rows
-    +'<tr class="tot"><td colspan="3">TOTAL</td><td style="text-align:right;font-size:14px">$'+total.toFixed(0)+'</td><td style="text-align:right;font-size:14px">R$'+(total*usd).toFixed(0)+'</td></tr>'
-    +'<tr><td colspan="5" style="font-size:10px;color:#64748b;background:#f8fafc">Por passageiro: $'+(total/pax).toFixed(0)+' USD · R$'+(total*usd/pax).toFixed(0)+' BRL · Câmbio: 1 USD = R$'+usd+'</td></tr>'
-    +'</tbody></table>'
-    +(orc.obs?'<div style="margin:16px 0;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px;font-size:12px"><strong>Observações:</strong><br/>'+orc.obs+'</div>':'')
-    +'<div class="footer">Valores estimados. Câmbio de referência. Desenrola Turismo · '+(new Date().getFullYear())+'</div>'
-    +'<div class="nopr" style="text-align:center;margin-top:24px"><button onclick="window.print()" style="background:#2C6AA3;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;cursor:pointer">🖨️ Imprimir / Salvar PDF</button></div>'
-    +'</body></html>');
-  w.document.close(); setTimeout(()=>w.print(),600);
-}
-
-// ── Notas internas da Enciclopédia ─────────────────────────
 function _encNotaModal(tipo, idx, nome) {
   const key=tipo+'_nota_'+idx;
   const nota=(DB.encNotas||{})[key]||'';
@@ -2617,9 +2522,6 @@ function showPage(page){
     _fbDb.ref('desenrola_guiamento_v1/grupos').off('value', _agListener);
     _agListener = null;
   }
-  if(page==='catalogo')   renderCatalogoProdutos();
-  if(page==='orcamento')  renderOrcamento();
-  if(page==='backup') { _atualizarStatusBackup(); }
   if(page==='agenda-guias') renderAgendaGuias();
   if(page==='orcamentos')   renderOrcamentos();
   if(page==='perfil'){}
@@ -3911,177 +3813,13 @@ function renderFestivais(){
 
 // ══════════════════════════════════════ ORÇAMENTOS ═══════════════════════════════════════════
 
-const ORC_TIPOS = {
-  ingresso:   {emoji:'🎢', label:'Ingresso / Ticket'},
-  hotel:      {emoji:'🏨', label:'Hotel / Acomodação'},
-  transfer:   {emoji:'🚐', label:'Transfer / Transporte'},
-  carro:      {emoji:'🚗', label:'Aluguel de Carro'},
-  seguro:     {emoji:'🛡️', label:'Seguro Viagem'},
-  guiamento:  {emoji:'🗺️', label:'Guiamento Virtual Desenrola'},
-  chip:       {emoji:'📱', label:'Chip Internacional'},
-  ingresso_extra:{emoji:'🎡', label:'Ingresso Extra / Atração Avulsa'},
-  show_event: {emoji:'🎭', label:'Show / Evento Especial'},
-  refeicao:   {emoji:'🍽️', label:'Refeição / Dining Plan'},
-  outros:     {emoji:'📦', label:'Outros'},
-};
 
-const ORC_INGRESSO_TIPOS = [
-  'Disney — 1 Parque por Dia (MagicBand+)',
-  'Disney — Park Hopper (2+ parques/dia)',
-  'Disney — Park Hopper Plus (parques aquáticos inclusos)',
-  'Disney — Annual Pass',
-  'Universal — 1 Parque Base Ticket',
-  'Universal — Park-to-Park',
-  'Universal — Express Pass',
-  'Universal — Annual Pass',
-  'SeaWorld — Single Day',
-  'United Parks — Multi Park Ticket',
-  'Busch Gardens Tampa — Single Day',
-  'Aquatica — Single Day',
-  'Discovery Cove — All-Inclusive Day Resort',
-  'LEGOLAND — Single Day',
-  'Kennedy Space Center',
-  'ICON Park',
-  'Gatorland',
-  'Fun Spot Orlando',
-  'NBA Experience',
-  'Disney — Lightning Lane Multi Pass (diário)',
-  'Disney — Lightning Lane Single Pass',
-  'Universal — VIP Experience',
-];
 
 function _orcId(){ return 'orc_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
-
-function openOrcamentoModal(id){
-  const orc = id ? (DB.orcamentos||[]).find(o=>o.id===id) : null;
-  document.getElementById('orc-modal-title').textContent = orc ? '✏️ Editar Orçamento' : '📋 Novo Orçamento';
-
-  // Preenchimento do formulário
-  document.getElementById('orc-cliente-nome').value = orc?.cliente?.nome||'';
-  document.getElementById('orc-cliente-wa').value   = orc?.cliente?.wa||'';
-  document.getElementById('orc-cliente-email').value= orc?.cliente?.email||'';
-  document.getElementById('orc-destino').value      = orc?.destino||'Orlando';
-  document.getElementById('orc-chegada').value      = orc?.chegada||'';
-  document.getElementById('orc-retorno').value      = orc?.retorno||'';
-  document.getElementById('orc-adultos').value      = orc?.adultos||2;
-  document.getElementById('orc-criancas').value     = orc?.criancas||0;
-  document.getElementById('orc-idades-cri').value   = (orc?.idadesCri||[]).join(', ');
-  document.getElementById('orc-cotacao').value      = orc?.cotacaoUSD||6.00;
-  document.getElementById('orc-obs').value          = orc?.obs||'';
-
-  // Validade
-  const hoje = new Date();
-  const val24h = new Date(hoje); val24h.setDate(hoje.getDate()+1);
-  const val7d  = new Date(hoje); val7d.setDate(hoje.getDate()+7);
-  document.getElementById('orc-val-preco').value = orc?.validadePreco || val24h.toISOString().split('T')[0];
-  document.getElementById('orc-val-link').value  = orc?.validadeLink  || val7d.toISOString().split('T')[0];
-
-  // Vendedor select
-  const vSel = document.getElementById('orc-vendedor');
-  if(vSel){
-    const vendedores = (DB.vendedores||[]).filter(v=>v.status==='ativo');
-    const curVendedor = orc?.vendedor || DB.currentUser?.nome || DB.currentUser?.vendedorRef || '';
-    vSel.innerHTML = vendedores.map(v=>`<option value="${esc(v.nome)}" ${curVendedor===v.nome?'selected':''}>${esc(v.nome)}</option>`).join('');
-  }
-
-  // Itens
-  window._orcItens = orc ? JSON.parse(JSON.stringify(orc.itens||[])) : [];
-  if(!window._orcItens.length) addOrcItem();
-  else renderOrcItens();
-
-  const orcModal = document.getElementById('modal-orcamento');
-  if(orcModal){
-    orcModal.style.display='flex';
-    orcModal.dataset.editId = id||'';
-  }
-}
 
 function closeOrcamentoModal(){
   document.getElementById('modal-orcamento').style.display='none';
   window._orcItens = [];
-}
-
-function addOrcItem(){
-  if(!window._orcItens) window._orcItens=[];
-  window._orcItens.push({id:'i_'+Date.now(), tipo:'ingresso', nome:'', qtd:1, valorUSD:0, valorBRL:0, comissaoPct:10, inclui:'', foto:''});
-  renderOrcItens();
-}
-
-function removeOrcItem(idx){
-  window._orcItens.splice(idx,1);
-  renderOrcItens();
-}
-
-function renderOrcItens(){
-  const container = document.getElementById('orc-itens-list'); if(!container) return;
-  const cotacao = parseFloat(document.getElementById('orc-cotacao').value)||6.0;
-  container.innerHTML = (window._orcItens||[]).map((item,idx)=>{
-    const tipoObj = ORC_TIPOS[item.tipo]||ORC_TIPOS.outros;
-    const brl = item.valorUSD * cotacao;
-    const comm = brl * (item.comissaoPct||10) / 100;
-    return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:8px;padding:12px;margin-bottom:8px">
-      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start">
-        <select style="padding:5px 8px;border:1px solid var(--surface3);border-radius:6px;font-size:12px;background:var(--surface2)" 
-                onchange="window._orcItens[${idx}].tipo=this.value;renderOrcItens()">
-          ${Object.entries(ORC_TIPOS).map(([k,v])=>`<option value="${k}" ${item.tipo===k?'selected':''}>${v.emoji} ${v.label}</option>`).join('')}
-        </select>
-        <div style="display:grid;grid-template-columns:1fr auto auto auto auto;gap:8px;align-items:center">
-          ${item.tipo==='ingresso'
-            ? `<select style="padding:5px 8px;border:1px solid var(--surface3);border-radius:6px;font-size:11px;background:var(--bg)" 
-                       onchange="window._orcItens[${idx}].nome=this.value;renderOrcItens()">
-                <option value="">Selecionar ingresso...</option>
-                ${ORC_INGRESSO_TIPOS.map(t=>`<option value="${esc(t)}" ${item.nome===t?'selected':''}>${esc(t)}</option>`).join('')}
-              </select>`
-            : `<input style="padding:5px 8px;border:1px solid var(--surface3);border-radius:6px;font-size:12px" 
-                      placeholder="Descrição do item" value="${esc(item.nome)}"
-                      oninput="window._orcItens[${idx}].nome=this.value"/>`}
-          <div style="display:flex;align-items:center;gap:4px;font-size:11px;white-space:nowrap">
-            <span style="color:var(--text2)">Qtd</span>
-            <input type="number" min="1" style="width:46px;padding:4px;border:1px solid var(--surface3);border-radius:4px;font-size:11px;text-align:center"
-                   value="${item.qtd}" oninput="window._orcItens[${idx}].qtd=+this.value||1;recalcOrcItens()"/>
-          </div>
-          <div style="display:flex;align-items:center;gap:4px;font-size:11px;white-space:nowrap">
-            <span style="color:var(--text2)">US$</span>
-            <input type="number" min="0" step="0.01" style="width:80px;padding:4px;border:1px solid var(--surface3);border-radius:4px;font-size:11px;text-align:right"
-                   value="${item.valorUSD}" oninput="window._orcItens[${idx}].valorUSD=+this.value||0;recalcOrcItens()"/>
-          </div>
-          <div style="font-size:11px;white-space:nowrap;min-width:90px;text-align:right">
-            <div style="color:var(--primary);font-weight:700">${fmtR(brl*item.qtd)}</div>
-            <div style="color:var(--success);font-size:10px">Comm: ${fmtR(comm*item.qtd)}</div>
-          </div>
-        </div>
-        <button onclick="removeOrcItem(${idx})" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px;padding:2px 4px" title="Remover item">🗑</button>
-      </div>
-      <div style="margin-top:6px">
-        <input style="width:100%;padding:4px 8px;border:1px solid var(--surface3);border-radius:4px;font-size:11px;color:var(--text2)" 
-               placeholder="O que inclui (opcional, aparece na proposta)" value="${esc(item.inclui||'')}"
-               oninput="window._orcItens[${idx}].inclui=this.value"/>
-      </div>
-    </div>`;
-  }).join('') + (window._orcItens.length?'':'<div style="text-align:center;color:var(--text2);padding:20px">Clique em "+ Adicionar Item" para começar</div>');
-  recalcOrcTotais();
-}
-
-function recalcOrcItens(){
-  const cotacao = parseFloat(document.getElementById('orc-cotacao')?.value)||6.0;
-  (window._orcItens||[]).forEach(item=>{
-    item.valorBRL = item.valorUSD * cotacao;
-  });
-  renderOrcItens();
-}
-
-function recalcOrcTotais(){
-  const cotacao = parseFloat(document.getElementById('orc-cotacao')?.value)||6.0;
-  const itens = window._orcItens||[];
-  const totalUSD = itens.reduce((s,i)=>s+(i.valorUSD||0)*(i.qtd||1),0);
-  const totalBRL = totalUSD * cotacao;
-  const totalComm = itens.reduce((s,i)=>s+((i.valorUSD||0)*(i.qtd||1)*cotacao*((i.comissaoPct||10)/100)),0);
-  const elU = document.getElementById('orc-total-usd'); if(elU) elU.textContent='US$ '+totalUSD.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-  const elB = document.getElementById('orc-total-brl'); if(elB) elB.textContent=fmtR(totalBRL);
-  const elC = document.getElementById('orc-total-comm'); if(elC) elC.textContent=fmtR(totalComm);
-  // Parcelamento
-  const parcEl = document.getElementById('orc-parcelamento');
-  if(parcEl) parcEl.innerHTML=[4,6,8,10,12].map(n=>`<span style="background:var(--surface3);border-radius:6px;padding:3px 10px">${n}x ${fmtR(totalBRL/n)}</span>`).join('');
 }
 
 function updateIdadesOrc(){
@@ -4089,268 +3827,6 @@ function updateIdadesOrc(){
   const el = document.getElementById('orc-idades-cri');
   if(el&&!el.value) el.placeholder = n>0 ? Array.from({length:n},(_,i)=>'?').join(', ') : 'Ex: 8, 5, 3';
 }
-
-async function salvarOrcamento(statusNovo){
-  const nome = document.getElementById('orc-cliente-nome')?.value.trim();
-  if(!nome){ toast('Informe o nome do cliente.','error'); return; }
-  const itens = window._orcItens||[];
-  if(!itens.length){ toast('Adicione pelo menos um item ao orçamento.','error'); return; }
-  const cotacao = parseFloat(document.getElementById('orc-cotacao')?.value)||6.0;
-  const totalUSD = itens.reduce((s,i)=>s+(i.valorUSD||0)*(i.qtd||1),0);
-  const totalBRL = totalUSD * cotacao;
-  const editId = document.getElementById('modal-orcamento').dataset.editId;
-
-  const num = editId ? (DB.orcamentos||[]).find(o=>o.id===editId)?.numero
-             : 'DT-'+new Date().getFullYear()+'-'+(String(DB.nextOrcamentoId||1).padStart(3,'0'));
-
-  const orc = {
-    id: editId||_orcId(),
-    numero: num,
-    cliente: { nome, wa:document.getElementById('orc-cliente-wa')?.value, email:document.getElementById('orc-cliente-email')?.value },
-    vendedor: document.getElementById('orc-vendedor')?.value||'',
-    destino: document.getElementById('orc-destino')?.value||'Orlando',
-    chegada: document.getElementById('orc-chegada')?.value||'',
-    retorno: document.getElementById('orc-retorno')?.value||'',
-    adultos: parseInt(document.getElementById('orc-adultos')?.value)||2,
-    criancas: parseInt(document.getElementById('orc-criancas')?.value)||0,
-    idadesCri: (document.getElementById('orc-idades-cri')?.value||'').split(',').map(x=>x.trim()).filter(Boolean),
-    cotacaoUSD: cotacao,
-    itens,
-    totalUSD,
-    totalBRL,
-    validadePreco: document.getElementById('orc-val-preco')?.value,
-    validadeLink: document.getElementById('orc-val-link')?.value,
-    obs: document.getElementById('orc-obs')?.value||'',
-    status: statusNovo||'rascunho',
-    criadoEm: editId ? (DB.orcamentos.find(o=>o.id===editId)?.criadoEm||Date.now()) : Date.now(),
-    atualizadoEm: Date.now(),
-  };
-
-  if(!DB.orcamentos) DB.orcamentos=[];
-  if(editId){
-    DB.orcamentos = DB.orcamentos.map(o=>o.id===editId?orc:o);
-  } else {
-    DB.orcamentos.push(orc);
-    DB.nextOrcamentoId = (DB.nextOrcamentoId||1)+1;
-  }
-  saveToStorage();
-  closeOrcamentoModal();
-  renderOrcamentos();
-  toast(`Orçamento ${orc.numero} ${statusNovo==='enviado'?'gerado!':'salvo!'}`, 'success');
-  if(statusNovo==='enviado') viewOrcamento(orc.id);
-}
-
-function renderOrcamentos(){
-  const list = document.getElementById('orc-list'); if(!list) return;
-  const met  = document.getElementById('orc-metrics');
-  const filt = (document.getElementById('orc-status-filter')||{}).value||'all';
-  const orcList = (DB.orcamentos||[]).filter(o=>filt==='all'||o.status===filt);
-  const hoje = new Date().toISOString().split('T')[0];
-
-  // Metrics
-  const orcs = DB.orcamentos||[];
-  if(met){
-    const totAprov = orcs.filter(o=>o.status==='aprovado').reduce((s,o)=>s+(o.totalBRL||0),0);
-    const pipeline  = orcs.filter(o=>o.status==='enviado').reduce((s,o)=>s+(o.totalBRL||0),0);
-    met.innerHTML=[
-      {l:'📋 Total',v:orcs.length, sub:'orçamentos', bg:'var(--primary)'},
-      {l:'📤 Enviados',v:orcs.filter(o=>o.status==='enviado').length, sub:'aguardando resp.', bg:'#d97706'},
-      {l:'✅ Aprovados',v:orcs.filter(o=>o.status==='aprovado').length, sub:fmtR(totAprov), bg:'#16a34a'},
-      {l:'💰 Pipeline',v:fmtR(pipeline), sub:'a fechar', bg:'var(--primary)'},
-    ].map(m=>`<div style="background:${m.bg};color:#fff;border-radius:10px;padding:14px">
-      <div style="font-size:11px;opacity:0.85">${m.l}</div>
-      <div style="font-size:20px;font-weight:700;margin:2px 0">${m.v}</div>
-      <div style="font-size:10px;opacity:0.8">${m.sub}</div>
-    </div>`).join('');
-  }
-
-  if(!orcList.length){
-    list.innerHTML='<div style="text-align:center;color:var(--text2);padding:40px"><div style="font-size:48px">📋</div><p>Nenhum orçamento encontrado.</p><button class="btn btn-primary" onclick="openOrcamentoModal(null)">+ Criar primeiro orçamento</button></div>';
-    return;
-  }
-
-  const statusColors = {rascunho:'#94a3b8',enviado:'#d97706',aprovado:'#16a34a',perdido:'#ef4444',expirado:'#9ca3af'};
-  const statusLabels = {rascunho:'📝 Rascunho',enviado:'📤 Enviado',aprovado:'✅ Aprovado',perdido:'❌ Perdido',expirado:'⏰ Expirado'};
-  list.innerHTML=`<div style="background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--surface3)">
-    <table style="width:100%;border-collapse:collapse">
-      <thead><tr style="background:var(--surface2);font-size:12px;color:var(--text2)">
-        <th style="padding:10px 12px;text-align:left">Nº</th>
-        <th style="padding:10px 12px;text-align:left">Cliente</th>
-        <th style="padding:10px 12px;text-align:left">Destino</th>
-        <th style="padding:10px 12px;text-align:left">Viagem</th>
-        <th style="padding:10px 12px;text-align:right">Valor</th>
-        <th style="padding:10px 12px;text-align:center">Status</th>
-        <th style="padding:10px 12px;text-align:left">Vendedor</th>
-        <th style="padding:10px 12px;text-align:center">Ações</th>
-      </tr></thead>
-      <tbody>
-        ${orcList.sort((a,b)=>b.atualizadoEm-a.atualizadoEm).map(o=>{
-          const expirado = o.validadePreco && o.validadePreco < hoje;
-          const st = expirado && o.status==='enviado' ? 'expirado' : o.status;
-          const noites = o.chegada&&o.retorno ? Math.ceil((new Date(o.retorno)-new Date(o.chegada))/86400000) : 0;
-          return `<tr style="border-top:1px solid var(--surface2);font-size:12px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
-            <td style="padding:10px 12px;font-weight:700;color:var(--primary)">${esc(o.numero||'—')}</td>
-            <td style="padding:10px 12px">
-              <div style="font-weight:600">${esc(o.cliente?.nome||'—')}</div>
-              ${o.cliente?.wa?`<div style="font-size:10px;color:var(--text2)">${esc(o.cliente.wa)}</div>`:''}
-            </td>
-            <td style="padding:10px 12px">${esc(o.destino||'—')}</td>
-            <td style="padding:10px 12px;font-size:11px;color:var(--text2)">
-              ${o.chegada?`${formatDate(o.chegada)}${o.retorno?' → '+formatDate(o.retorno):''}`:'-'}
-              <div>${o.adultos||0}A${o.criancas?'+'+o.criancas+'C':''}${noites?' · '+noites+'n':''}</div>
-            </td>
-            <td style="padding:10px 12px;text-align:right;font-weight:700;color:var(--primary)">${fmtR(o.totalBRL||0)}</td>
-            <td style="padding:10px 12px;text-align:center">
-              <span style="background:${statusColors[st]||'#666'};color:#fff;border-radius:12px;padding:2px 8px;font-size:10px;font-weight:700">${statusLabels[st]||st}</span>
-            </td>
-            <td style="padding:10px 12px;font-size:11px">${esc(o.vendedor||'—')}</td>
-            <td style="padding:10px 12px;text-align:center;white-space:nowrap">
-              <button class="btn btn-ghost btn-sm" onclick="viewOrcamento('${o.id}')" style="font-size:11px" title="Ver proposta">👁️</button>
-              <button class="btn btn-ghost btn-sm" onclick="openOrcamentoModal('${o.id}')" style="font-size:11px" title="Editar">✏️</button>
-              <button class="btn btn-ghost btn-sm" onclick="printOrcamento('${o.id}')" style="font-size:11px" title="PDF">📄</button>
-              <button class="btn btn-ghost btn-sm" onclick="mudarStatusOrc('${o.id}')" style="font-size:11px" title="Mudar status">🔄</button>
-              <button class="btn btn-ghost btn-sm" style="color:var(--danger);font-size:11px" onclick="deleteOrcamento('${o.id}')" title="Excluir">🗑</button>
-            </td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>
-  </div>`;
-}
-
-function viewOrcamento(id){
-  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
-  const modal = document.getElementById('modal-view-orcamento');
-  const content = document.getElementById('modal-view-orc-content');
-  if(!modal||!content) return;
-  const noites = o.chegada&&o.retorno ? Math.ceil((new Date(o.retorno)-new Date(o.chegada))/86400000) : 0;
-  content.innerHTML=`
-    <div id="proposta-print" style="padding:24px;font-family:'Montserrat',sans-serif">
-      <!-- Cabeçalho -->
-      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #2C6AA3;padding-bottom:16px;margin-bottom:20px">
-        <div>
-          <div style="font-size:22px;font-weight:800;color:#2C6AA3;letter-spacing:-0.5px">Desenrola Turismo</div>
-          <div style="font-size:12px;color:#64748b">✨ Sua viagem dos sonhos</div>
-        </div>
-        <div style="text-align:right;font-size:11px;color:#64748b">
-          <div style="font-size:16px;font-weight:700;color:#2C6AA3">${esc(o.numero)}</div>
-          <div>Emitido em ${new Date(o.atualizadoEm).toLocaleDateString('pt-BR')}</div>
-          <div>Validade: ${o.validadePreco ? new Date(o.validadePreco+'T12:00:00').toLocaleDateString('pt-BR') : '—'}</div>
-        </div>
-      </div>
-
-      <!-- Cliente + Viagem -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
-        <div style="background:#f0f5fa;border-radius:10px;padding:14px">
-          <div style="font-size:11px;font-weight:700;color:#2C6AA3;margin-bottom:8px;text-transform:uppercase">👤 Cliente</div>
-          <div style="font-size:15px;font-weight:700">${esc(o.cliente?.nome||'—')}</div>
-          ${o.cliente?.wa?`<div style="font-size:12px;color:#64748b;margin-top:2px">📱 ${esc(o.cliente.wa)}</div>`:''}
-          ${o.cliente?.email?`<div style="font-size:12px;color:#64748b">📧 ${esc(o.cliente.email)}</div>`:''}
-          <div style="font-size:11px;color:#64748b;margin-top:4px">Consultor: ${esc(o.vendedor||'—')}</div>
-        </div>
-        <div style="background:#f0f5fa;border-radius:10px;padding:14px">
-          <div style="font-size:11px;font-weight:700;color:#2C6AA3;margin-bottom:8px;text-transform:uppercase">✈️ Viagem</div>
-          <div style="font-size:14px;font-weight:700">${esc(o.destino)}</div>
-          ${o.chegada?`<div style="font-size:12px;color:#64748b;margin-top:2px">📅 ${formatDate(o.chegada)} → ${o.retorno?formatDate(o.retorno):'?'}${noites?' ('+noites+' noites)':''}</div>`:''}
-          <div style="font-size:12px;color:#64748b;margin-top:2px">👥 ${o.adultos||0} adulto${(o.adultos||0)!==1?'s':''}${o.criancas?` + ${o.criancas} criança${o.criancas!==1?'s':''}`:''}</div>
-          ${o.idadesCri?.length?`<div style="font-size:11px;color:#64748b">Idades: ${esc(o.idadesCri.join(', '))} anos</div>`:''}
-        </div>
-      </div>
-
-      <!-- Itens -->
-      <div style="margin-bottom:20px">
-        <div style="font-size:11px;font-weight:700;color:#2C6AA3;margin-bottom:10px;text-transform:uppercase">🧾 O que está incluído</div>
-        ${(o.itens||[]).map(item=>{
-          const t = ORC_TIPOS[item.tipo]||ORC_TIPOS.outros;
-          const tot = (item.valorUSD||0)*(item.qtd||1)*o.cotacaoUSD;
-          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #e8f0f8">
-            <div>
-              <div style="font-size:13px;font-weight:600">${t.emoji} ${esc(item.nome||t.label)}</div>
-              ${item.inclui?`<div style="font-size:11px;color:#64748b">${esc(item.inclui)}</div>`:''}
-              <div style="font-size:11px;color:#94a3b8">Qtd: ${item.qtd||1} · US$ ${(item.valorUSD||0).toFixed(2)}/un.</div>
-            </div>
-            <div style="font-size:14px;font-weight:700;color:#2C6AA3">${fmtR(tot)}</div>
-          </div>`;
-        }).join('')}
-      </div>
-
-      <!-- Total -->
-      <div style="background:linear-gradient(135deg,#2C6AA3,#79ACD9);color:#fff;border-radius:12px;padding:16px;text-align:center;margin-bottom:16px">
-        <div style="font-size:12px;opacity:0.85">INVESTIMENTO TOTAL</div>
-        <div style="font-size:28px;font-weight:800;letter-spacing:-1px">${fmtR(o.totalBRL||0)}</div>
-        <div style="font-size:11px;opacity:0.8">US$ ${(o.totalUSD||0).toFixed(2)} · Cotação R$ ${o.cotacaoUSD}/US$</div>
-      </div>
-
-      <!-- Parcelamento -->
-      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
-        ${[4,6,8,10,12].map(n=>`<div style="background:#f0f5fa;border-radius:8px;padding:8px 14px;text-align:center">
-          <div style="font-size:10px;color:#64748b">${n}x</div>
-          <div style="font-size:13px;font-weight:700;color:#2C6AA3">${fmtR((o.totalBRL||0)/n)}</div>
-        </div>`).join('')}
-      </div>
-
-      ${o.obs?`<div style="background:#fefce8;border:1px solid #fef08a;border-radius:8px;padding:12px;font-size:12px;color:#713f12;margin-bottom:14px"><b>📌 Observações:</b><br/>${esc(o.obs)}</div>`:''}
-
-      <!-- Rodapé -->
-      <div style="text-align:center;color:#94a3b8;font-size:11px;border-top:1px solid #e8f0f8;padding-top:12px">
-        <div style="font-weight:600;color:#2C6AA3">Desenrola Turismo — ✨ Sua viagem dos sonhos</div>
-        <div>Proposta válida até ${o.validadePreco?new Date(o.validadePreco+'T12:00:00').toLocaleDateString('pt-BR'):'consultar'}. Valores sujeitos a alteração após esta data.</div>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;padding:16px;border-top:1px solid var(--surface3);justify-content:flex-end">
-      <button class="btn btn-ghost" onclick="document.getElementById('modal-view-orcamento').style.display='none'">Fechar</button>
-      <button class="btn btn-ghost" onclick="compartilharWA('${id}')" style="color:var(--success)">📲 WhatsApp</button>
-      <button class="btn btn-primary" onclick="printOrcamento('${id}')">📄 Imprimir / PDF</button>
-    </div>`;
-  modal.style.display='flex';
-}
-
-function printOrcamento(id){
-  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) { viewOrcamento(id); return; }
-  const printWin = window.open('','_blank');
-  const propHtml = document.getElementById('proposta-print')?.innerHTML||'';
-  if(!propHtml){ viewOrcamento(id); setTimeout(()=>printOrcamento(id),500); return; }
-  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Proposta ${esc(o.numero)} — ${esc(o.cliente?.nome)}</title>
-    <style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',Arial,sans-serif}
-    @page{size:A4;margin:20mm}body{padding:20px}@media print{.no-print{display:none!important}}</style>
-    </head><body>${propHtml}</body></html>`);
-  printWin.document.close();
-  setTimeout(()=>printWin.print(),500);
-}
-
-function compartilharWA(id){
-  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
-  const txt = `Olá, ${o.cliente?.nome||''}! 🌟\n\nSua proposta de viagem está pronta!\n\n✈️ *Destino:* ${o.destino}\n📅 *Período:* ${o.chegada?formatDate(o.chegada):'?'} → ${o.retorno?formatDate(o.retorno):'?'}\n💰 *Investimento:* ${fmtR(o.totalBRL||0)}\n\n_Validade: ${o.validadePreco?new Date(o.validadePreco+'T12:00:00').toLocaleDateString('pt-BR'):'consultar'}_\n\n*Desenrola Turismo* — ✨ Sua viagem dos sonhos`;
-  const wa = o.cliente?.wa?.replace(/\D/g,'');
-  window.open('https://wa.me/'+(wa||'')+((wa?'?':'')+'text='+encodeURIComponent(txt)),'_blank');
-}
-
-function mudarStatusOrc(id){
-  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
-  const statuses = ['rascunho','enviado','aprovado','perdido'];
-  const cur = statuses.indexOf(o.status);
-  const opts = statuses.filter((_,i)=>i!==cur).map(st=>`<button class="btn btn-sm" onclick="setOrcStatus('${id}','${st}');closeModal('modal-status-orc')" style="margin:4px">${st==='aprovado'?'✅':st==='enviado'?'📤':st==='perdido'?'❌':'📝'} ${st.charAt(0).toUpperCase()+st.slice(1)}</button>`).join('');
-  openAlert(`<div style="text-align:center"><p style="margin-bottom:12px">Status atual: <b>${o.status}</b></p>${opts}</div>`, 'Mudar Status — '+o.numero);
-}
-
-function setOrcStatus(id, status){
-  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
-  o.status = status;
-  o.atualizadoEm = Date.now();
-  saveToStorage();
-  renderOrcamentos();
-  toast('Status atualizado: '+status,'success');
-}
-
-function deleteOrcamento(id){
-  openConfirm('Excluir este orçamento? Esta ação não pode ser desfeita.',function(){
-    DB.orcamentos = (DB.orcamentos||[]).filter(o=>o.id!==id);
-    saveToStorage();
-    renderOrcamentos();
-    toast('Orçamento excluído.','error');
-  });
-}
-
 
 function openAlert(html, title){
   const ex = document.getElementById('modal-status-orc'); if(ex) ex.remove();
@@ -5444,6 +4920,8 @@ function switchRegTab(tab, btn){
   if(tab==='operadoras') renderOperadoras();
   if(tab==='ingressos')  renderIngressosTab();
   if(tab==='config')     renderConfig();
+  if(tab==='catalogo')   renderCatalogoProdutos();
+  if(tab==='backup')     _atualizarStatusBackup();
 }
 
 // ═══════════════════════ CONFIG ═══════════════════════
@@ -6685,6 +6163,15 @@ function init(){
     };
     if(!DB.editingCaixa) DB.editingCaixa = null;
     if(!DB.editingRecebimento) DB.editingRecebimento = null;
+    // Migração one-time: módulo "Orçamento v2" foi descontinuado (unificado em Orçamentos).
+    // Nunca apaga dados — apenas arquiva o que estiver em DB.orcamentosSalvos.
+    if(DB.orcamentosSalvos && DB.orcamentosSalvos.length){
+      if(!DB._archivedOrcamentosSalvos) DB._archivedOrcamentosSalvos = [];
+      DB._archivedOrcamentosSalvos = DB._archivedOrcamentosSalvos.concat(DB.orcamentosSalvos);
+      console.warn('[Migração] '+DB.orcamentosSalvos.length+' orçamento(s) do módulo descontinuado arquivado(s) em DB._archivedOrcamentosSalvos');
+      delete DB.orcamentosSalvos;
+      saveToStorage();
+    }
     rebuildYearSelects();
     rebuildDestinoSelect();
     rebuildServicosContainer();
@@ -7988,6 +7475,108 @@ let _orcEditId=null,_orcItemCount=0;
 const ORC_SERVICO_TIPOS=['Ingressos','Hotel','Guiamento Virtual','Pacote','Voo','Transfer','Outros'];
 const ORC_SERVICO_COM_DIAS=['Ingressos','Hotel','Guiamento Virtual'];
 
+const ORC_TIPO_EMOJI = {'Ingressos':'🎢','Hotel':'🏨','Voo':'✈️','Pacote':'📦','Guiamento Virtual':'🗺️','Outros':'➕'};
+
+function viewOrcamento(id){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
+  const cli = (DB.clientes||[]).find(c=>c.id===o.clienteId);
+  const cliNome = cli ? (cli.nome+' '+(cli.sobrenome||'')).trim() : '—';
+  const noites = o.dataIda&&o.dataVolta ? Math.ceil((new Date(o.dataVolta)-new Date(o.dataIda))/86400000) : 0;
+  const ex=document.getElementById('_m-view-orc'); if(ex) ex.remove();
+  const m=document.createElement('div'); m.id='_m-view-orc';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto';
+  m.innerHTML='<div style="background:#fff;border-radius:16px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto">'
+    +'<div id="proposta-print" style="padding:24px;font-family:\'Montserrat\',sans-serif">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #2C6AA3;padding-bottom:16px;margin-bottom:20px">'
+    +'<div><div style="font-size:22px;font-weight:800;color:#2C6AA3;letter-spacing:-0.5px">Desenrola Turismo</div>'
+    +'<div style="font-size:12px;color:#64748b">✨ Sua viagem dos sonhos</div></div>'
+    +'<div style="text-align:right;font-size:11px;color:#64748b"><div style="font-size:16px;font-weight:700;color:#2C6AA3">Orçamento #'+o.id+'</div>'
+    +'<div>Emitido em '+(o.criadoEm?new Date(o.criadoEm).toLocaleDateString('pt-BR'):'—')+'</div></div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">'
+    +'<div style="background:#f0f5fa;border-radius:10px;padding:14px">'
+    +'<div style="font-size:11px;font-weight:700;color:#2C6AA3;margin-bottom:8px;text-transform:uppercase">👤 Cliente</div>'
+    +'<div style="font-size:15px;font-weight:700">'+esc(cliNome)+'</div>'
+    +(cli&&cli.telefone?'<div style="font-size:12px;color:#64748b;margin-top:2px">📱 '+esc(cli.telefone)+'</div>':'')
+    +(cli&&cli.email?'<div style="font-size:12px;color:#64748b">📧 '+esc(cli.email)+'</div>':'')
+    +'<div style="font-size:11px;color:#64748b;margin-top:4px">Operadora: '+esc(o.operadora||'—')+'</div></div>'
+    +'<div style="background:#f0f5fa;border-radius:10px;padding:14px">'
+    +'<div style="font-size:11px;font-weight:700;color:#2C6AA3;margin-bottom:8px;text-transform:uppercase">✈️ Viagem</div>'
+    +(o.dataIda?'<div style="font-size:12px;color:#64748b;margin-top:2px">📅 '+formatDate(o.dataIda)+' → '+(o.dataVolta?formatDate(o.dataVolta):'?')+(noites?' ('+noites+' noites)':'')+'</div>':'')
+    +'<div style="font-size:12px;color:#64748b;margin-top:2px">👥 '+(o.numAdultos||0)+' adulto'+((o.numAdultos||0)!==1?'s':'')+(o.numCriancas?' + '+o.numCriancas+' criança'+(o.numCriancas!==1?'s':''):'')+'</div>'
+    +(o.idadesCriancas?'<div style="font-size:11px;color:#64748b">Idades: '+esc(o.idadesCriancas)+' anos</div>':'')+'</div></div>'
+    +'<div style="margin-bottom:20px"><div style="font-size:11px;font-weight:700;color:#2C6AA3;margin-bottom:10px;text-transform:uppercase">🧾 O que está incluído</div>'
+    +(o.itens||[]).map(function(item){
+      var emoji=ORC_TIPO_EMOJI[item.tipo]||'📦';
+      var tot=(item.valor||0)*(item.qtd||1);
+      var tag=(item.tipo==='Ingressos'&&item.tipoIngresso)?(' — '+esc(item.tipoIngresso)):'';
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid #e8f0f8">'
+        +'<div><div style="font-size:13px;font-weight:600">'+emoji+' '+esc(item.descricao||item.tipo)+tag+'</div>'
+        +'<div style="font-size:11px;color:#94a3b8">Qtd: '+(item.qtd||1)+(item.dias>1?(' · '+item.dias+' dias'):'')+'</div></div>'
+        +'<div style="font-size:14px;font-weight:700;color:#2C6AA3">'+fmtR(tot)+'</div></div>';
+    }).join('')+'</div>'
+    +'<div style="background:linear-gradient(135deg,#2C6AA3,#79ACD9);color:#fff;border-radius:12px;padding:16px;text-align:center;margin-bottom:16px">'
+    +'<div style="font-size:12px;opacity:0.85">INVESTIMENTO TOTAL</div><div style="font-size:28px;font-weight:800;letter-spacing:-1px">'+fmtR(o.total||0)+'</div>'
+    +(o.formaPagamento?'<div style="font-size:11px;opacity:0.8">Forma de pagamento: '+esc(o.formaPagamento)+'</div>':'')+'</div>'
+    +(o.obs?'<div style="background:#fefce8;border:1px solid #fef08a;border-radius:8px;padding:12px;font-size:12px;color:#713f12;margin-bottom:14px"><b>📌 Observações:</b><br/>'+esc(o.obs)+'</div>':'')
+    +'<div style="text-align:center;color:#94a3b8;font-size:11px;border-top:1px solid #e8f0f8;padding-top:12px">'
+    +'<div style="font-weight:600;color:#2C6AA3">Desenrola Turismo — ✨ Sua viagem dos sonhos</div></div>'
+    +'</div>'
+    +'<div style="display:flex;gap:8px;padding:16px;border-top:1px solid #e2e8f0;justify-content:flex-end">'
+    +'<button class="btn btn-ghost" onclick="document.getElementById(\'_m-view-orc\').remove()">Fechar</button>'
+    +'<button class="btn btn-ghost" onclick="compartilharWA('+o.id+')" style="color:var(--success)">📲 WhatsApp</button>'
+    +'<button class="btn btn-primary" onclick="printOrcamento('+o.id+')">📄 Imprimir / PDF</button>'
+    +'</div></div>';
+  document.body.appendChild(m);
+}
+
+function printOrcamento(id){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
+  const propHtml = document.getElementById('proposta-print')?.innerHTML||'';
+  if(!propHtml){ viewOrcamento(id); setTimeout(()=>printOrcamento(id),400); return; }
+  const cli = (DB.clientes||[]).find(c=>c.id===o.clienteId);
+  const cliNome = cli ? (cli.nome+' '+(cli.sobrenome||'')).trim() : '';
+  const printWin = window.open('','_blank');
+  printWin.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Orçamento #'+o.id+' — '+esc(cliNome)+'</title>'
+    +'<style>*{margin:0;padding:0;box-sizing:border-box;font-family:\'Montserrat\',Arial,sans-serif}'
+    +'@page{size:A4;margin:20mm}body{padding:20px}@media print{.no-print{display:none!important}}</style>'
+    +'</head><body>'+propHtml+'</body></html>');
+  printWin.document.close();
+  setTimeout(()=>printWin.print(),500);
+}
+
+function compartilharWA(id){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
+  const cli = (DB.clientes||[]).find(c=>c.id===o.clienteId);
+  const cliNome = cli ? cli.nome : '';
+  const periodo = o.dataIda ? (formatDate(o.dataIda)+' → '+(o.dataVolta?formatDate(o.dataVolta):'?')) : 'a combinar';
+  const txt = 'Olá, '+cliNome+'! 🌟\n\nSua proposta de viagem está pronta!\n\n📅 *Período:* '+periodo+'\n💰 *Investimento:* '+fmtR(o.total||0)+'\n\n*Desenrola Turismo* — ✨ Sua viagem dos sonhos';
+  const wa = (cli&&cli.telefone)?cli.telefone.replace(/\D/g,''):'';
+  window.open('https://wa.me/'+wa+(wa?'?':'')+'text='+encodeURIComponent(txt),'_blank');
+}
+
+function mudarStatusOrc(id){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
+  const statuses = ['aberto','aprovado','cancelado'];
+  const labels = {aberto:'📝 Em aberto', aprovado:'✅ Aprovado', cancelado:'❌ Cancelado'};
+  const opts = statuses.filter(s=>s!==o.status).map(function(st){
+    return '<button class="btn btn-sm" onclick="setOrcStatus('+id+',\''+st+'\');document.getElementById(\'_m-status-orc\').remove()" style="margin:4px">'+labels[st]+'</button>';
+  }).join('');
+  const ex=document.getElementById('_m-status-orc'); if(ex) ex.remove();
+  const m=document.createElement('div'); m.id='_m-status-orc';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML='<div style="background:#fff;border-radius:14px;padding:20px;max-width:340px;text-align:center">'
+    +'<div class="fw7" style="margin-bottom:10px">Mudar status — Orçamento #'+id+'</div>'
+    +'<p style="font-size:13px;color:var(--text2);margin-bottom:12px">Status atual: <b>'+(labels[o.status]||o.status)+'</b></p>'
+    +opts+'<div style="margin-top:10px"><button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'_m-status-orc\').remove()">Cancelar</button></div></div>';
+  document.body.appendChild(m);
+}
+function setOrcStatus(id, status){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
+  o.status = status; o.atualizadoEm = Date.now();
+  saveToStorage(); renderOrcamentos();
+  toast('Status atualizado: '+status,'success');
+}
+
 function renderOrcamentos(){
   var tb=document.getElementById('orc-body'); if(!tb) return;
   var q=(document.getElementById('orc-search')||{value:''}).value.toLowerCase();
@@ -8007,9 +7596,10 @@ function renderOrcamentos(){
       '<td style="font-size:11px">'+escapeHtml(srvs||'—')+'</td>'+
       '<td style="font-weight:700">'+fmtR(o.total||0)+'</td>'+
       '<td>'+fmtR(o.comissaoValor||0)+' <span style="color:var(--text3)">('+((o.comissaoPct||0).toFixed(1))+'%)</span></td>'+
-      '<td><span class="badge '+(sc[o.status]||'badge-info')+'">'+escapeHtml(o.status||'aberto')+'</span></td>'+
+      '<td><span class="badge '+(sc[o.status]||'badge-info')+'" style="cursor:pointer" onclick="mudarStatusOrc('+o.id+')" title="Clique para mudar status">'+escapeHtml(o.status||'aberto')+'</span></td>'+
       '<td style="font-size:11px;color:var(--text3)">'+new Date(o.criadoEm||Date.now()).toLocaleDateString('pt-BR')+'</td>'+
       '<td style="white-space:nowrap">'+
+        '<button class="btn btn-ghost btn-sm" onclick="viewOrcamento('+o.id+')" title="Visualizar / Compartilhar">👁️</button>'+
         '<button class="btn btn-ghost btn-sm" onclick="abrirModalOrcamento({id:'+o.id+'})">✏️</button>'+
         '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="deleteOrcamento('+o.id+')">🗑</button>'+
       '</td></tr>';
@@ -8067,6 +7657,36 @@ function orcOnOperadoraChange(){
 }
 
 function orcOnClienteChange(){orcRecalcular();}
+
+function openCatalogoPicker(){
+  const todos=[...CATALOGO_PADRAO,...(DB.catalogoCustom||[])];
+  const cats=[...new Set(todos.map(p=>p.categoria))].sort();
+  const ex=document.getElementById('_m-cat-pick'); if(ex) ex.remove();
+  const m=document.createElement('div'); m.id='_m-cat-pick';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML='<div style="background:var(--surface);border-radius:16px;padding:20px;width:min(560px,100%);max-height:80vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center"><div class="fw7" style="font-size:14px">📦 Escolher do Catálogo</div>'
+    +'<button onclick="document.getElementById(\'_m-cat-pick\').remove()" style="background:none;border:none;font-size:18px;cursor:pointer">✕</button></div>'
+    +cats.map(function(cat){
+      var items=todos.filter(function(p){return p.categoria===cat;});
+      return '<div class="fw6" style="font-size:11px;color:var(--text2);margin-top:6px">'+cat+'</div>'
+        +items.map(function(p){
+          return '<div data-pid="'+p.id+'" onclick="addOrcItemFromCatalogo(this.dataset.pid)" style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;cursor:pointer" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'\'">'
+          +'<span style="font-size:12px">'+esc(p.nome)+'</span><span style="font-size:11px;color:var(--text2)">US$ '+p.preco_ref+'</span></div>';
+        }).join('');
+    }).join('');
+  document.body.appendChild(m);
+}
+function addOrcItemFromCatalogo(id){
+  const todos=[...CATALOGO_PADRAO,...(DB.catalogoCustom||[])];
+  const p=todos.find(x=>x.id===id); if(!p) return;
+  const cotacao=parseFloat(document.getElementById('orc-cotacao')?.value)||6.0;
+  const mapaTipo={'Ingressos Disney':'Ingressos','Ingressos Universal':'Ingressos','Hotéis':'Hotel'};
+  const tipo=mapaTipo[p.categoria]||'Outros';
+  orcAddItem({descricao:p.nome, tipo:tipo, valor:Math.round(p.preco_ref*cotacao*100)/100, qtd:1});
+  document.getElementById('_m-cat-pick')?.remove();
+  toast('Item do catálogo adicionado — ajuste o valor se necessário','success');
+}
 
 function orcAddItem(dados){
   _orcItemCount++;
@@ -9040,44 +8660,12 @@ window.addEventListener('load', init);
 </script>
 
 <!-- ── PÁGINA: BACKUP ─────────────────── -->
-<div id="page-backup" class="page">
-  <div class="page-header">
-    <h1>💾 Backup & Restauração</h1>
-    <p>✦ Exporte ou restaure todos os dados do sistema</p>
-  </div>
-  <div class="page-body" style="max-width:640px;margin:0 auto">
-    <div class="card mb16">
-      <div class="fw7 mb12" style="font-size:14px">📤 Exportar Backup</div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:16px">
-        Gera um arquivo JSON completo com todos os dados (localStorage + Firebase).
-        Salve em local seguro — use mensalmente ou antes de grandes alterações.
-      </p>
-      <div id="_backup-status" style="font-size:12px;color:var(--text2);margin-bottom:12px">Verificando último backup...</div>
-      <button class="btn btn-primary" onclick="exportarBackupCompleto()">💾 Exportar Backup Agora</button>
-    </div>
-    <div class="card">
-      <div class="fw7 mb12" style="font-size:14px">📥 Restaurar Backup</div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:16px">
-        Selecione um arquivo de backup exportado anteriormente. <strong>Atenção:</strong> os dados atuais serão substituídos.
-      </p>
-      <label class="btn btn-ghost" style="cursor:pointer">
-        📂 Selecionar arquivo JSON
-        <input type="file" accept=".json" style="display:none" onchange="importarBackup(this)"/>
-      </label>
-    </div>
-  </div>
-</div>
+
 
 <!-- ── PÁGINA: CATÁLOGO DE PRODUTOS ─── -->
-<div id="page-catalogo" class="page">
-  <div class="page-header"><h1>📦 Catálogo de Produtos</h1><p>✦ Preços de referência para montagem de orçamentos</p></div>
-  <div class="page-body" id="pg-catalogo"></div>
-</div>
+
 <!-- ── PÁGINA: ORÇAMENTO v2 ─────────── -->
-<div id="page-orcamento" class="page">
-  <div class="page-header"><h1>💰 Orçamento v2</h1><p>✦ Monte orçamentos profissionais com PDF e resumo WhatsApp</p></div>
-  <div class="page-body" id="pg-orcamento"></div>
-</div>
+
 
 
 <!-- ════════════ MODAL: SENHA MESTRE ════════════ -->
@@ -9198,7 +8786,7 @@ window.addEventListener('load', init);
       <div class="form-group"><label class="form-label">Cliente *</label><select class="form-select" id="orc-cliente" onchange="orcOnClienteChange()"><option value="">Selecione...</option></select></div>
     </div>
     <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><span style="font-weight:700;font-size:13px">Serviços</span><button class="btn btn-ghost btn-sm" onclick="orcAddItem()">+ Serviço</button></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><span style="font-weight:700;font-size:13px">Serviços</span><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="openCatalogoPicker()">📦 Do Catálogo</button><button class="btn btn-ghost btn-sm" onclick="orcAddItem()">+ Serviço</button></div></div>
       <div id="orc-itens-list" style="display:flex;flex-direction:column;gap:10px"></div>
     </div>
     <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
