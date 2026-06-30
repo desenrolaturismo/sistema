@@ -3452,80 +3452,6 @@ function applyVars(txt){
 }
 
 // Templates editáveis: combina padrões fixos com customizados salvos no DB
-function getFestivaisData(){
-  const FESTIVAIS_COMPLETOS = [
-    // ── Disney World ──────────────────────────────────────────────────────────
-    {id:'f01',nome:'EPCOT Festival of the Arts',park:'Disney',parque:'EPCOT',periodo:'Janeiro–Fevereiro',operadora:'Walt Disney World',tipo:'festival',
-     desc:'Festival que celebra artes visuais, culinárias e performáticas em todo o EPCOT. Inclui exposições de arte, apresentações musicais do Broadway + plug in do programa e pratos temáticos baseados em obras de arte em stands especiais. É o festival mais tranquilo do ano — ótimo para visitar EPCOT com menos filas.',
-     dicas:['Melhor época: January–February, menor movimento do ano','Pratos temáticos são imperdíveis nos stands do World Showcase','Espetáculos da Broadway no America Gardens Theatre — incluso no ingresso'],
-     img:'',url:'https://disneyworld.disney.go.com/events-tours/epcot/epcot-international-festival-of-the-arts/'},
-    {id:'f02',nome:'EPCOT Festival of the Arts — Template WhatsApp',park:'Disney',parque:'EPCOT',periodo:'',operadora:'',tipo:'template',
-     templateTexto:'Olá, {cliente}! 🎨\n\nUma dica especial para a viagem de vocês: em {destino}, o EPCOT está com o *Festival of the Arts* — um dos eventos mais especiais do parque!\n\n🎭 O que inclui:\n• Exposições de arte por todo o EPCOT\n• Pratos temáticos baseados em obras de arte\n• Shows da Broadway no America Gardens Theatre\n• Menor movimento do ano = mais tempo para curtir as atrações!\n\nPerfeito para quem quer uma experiência mais sofisticada e única na Disney! 🌟\n\nJá incluí isso no roteiro de vocês. Qualquer dúvida, me chama! 😊\n\n*{vendedor} — Desenrola Turismo*',
-     desc:'Template para comunicar o Festival of the Arts aos clientes',dicas:[],img:'',url:''},
-    {id:'f03',nome:'EPCOT Flower & Garden Festival',park:'Disney',parque:'EPCOT',periodo:'Março–Junho',operadora:'Walt Disney World',tipo:'festival',
-     desc:'Festival de jardins e gastronomia com mais de 70 topiary de personagens Disney espalhados pelo parque. Inclui o Garden Rocks Concert Series com bandas ao vivo, stands de comida garden-to-table e exposições horticulturais. Transformação visual incrível do EPCOT com flores e plantas temáticas.',
-     dicas:['70+ topiários de personagens — perfeito para fotos','Garden Rocks Concert Series — shows gratuitos incluídos no ingresso','Stands gastronômicos com menu de primavera diferenciados','Movimentação baixa a média — bom período para visitar'],
-     img:'',url:'https://disneyworld.disney.go.com/events-tours/epcot/epcot-international-flower-and-garden-festival/'},
-    {id:'f04',nome:'EPCOT Food & Wine Festival',park:'Disney',parque:'EPCOT',periodo:'Agosto–Novembro',operadora:'Walt Disney World',tipo:'festival',
-     desc:'O maior e mais popular festival do EPCOT, com mais de 30 marketplaces internacionais oferecendo pratos e bebidas de todo o mundo. Inclui o Eat to the Beat Concert Series com artistas famosos e o Emile\'s Fromage Montage para colecionadores. Festival que define o outono na Disney.',
-     dicas:['30+ marketplaces de gastronomia internacional','Eat to the Beat Concert Series — shows incluídos no ingresso','Movimentação alta em fins de semana — preferir dias de semana','Passport de degustação: carimbado em cada marketplace visitado'],
-     img:'',url:'https://disneyworld.disney.go.com/events-tours/epcot/epcot-international-food-and-wine-festival/'},
-    {id:'f05',nome:'EPCOT Festival of the Holidays',park:'Disney',parque:'EPCOT',periodo:'Novembro–Janeiro',operadora:'Walt Disney World',tipo:'festival',
-     desc:'Celebração natalina com culinária das festividades de dezembro de diferentes culturas do mundo. Inclui o Candlelight Processional (narração da história de Natal com coral e celebridade convidada) e o Cookies & Cocoa with Santa Claus. Uma das experiências mais mágicas da Disney.',
-     dicas:['Candlelight Processional: experiência icônica — pacote com jantar recomendado','Movimentação muito alta após Thanksgiving','Horários estendidos em dezembro','Cookies & Cocoa com Papai Noel: reservar com antecedência'],
-     img:'',url:'https://disneyworld.disney.go.com/events-tours/epcot/epcot-international-festival-of-the-holidays/'},
-    {id:'f06',nome:"Mickey\'s Not-So-Scary Halloween Party",park:'Disney',parque:'Magic Kingdom',periodo:'Agosto–Outubro (sextas e sábados)',operadora:'Walt Disney World',tipo:'festa_especial',
-     desc:'Evento especial com ingresso separado realizado às sextas e sábados de agosto a outubro no Magic Kingdom. Inclui trick-or-treating em todo o parque, personagens raros (Vilões Disney), desfile Boo-to-You, show de fogos HalloWishes, shows especiais de Oogie Boogie e muito mais. Fantasias liberadas! Ambiente completamente transformado.',
-     dicas:['Ingresso separado necessário — não incluso no parque regular','Personagens exclusivos: Vilões Disney, Headless Horseman','Trick-or-treating para todas as idades em múltiplos locais','Chegar cedo (4pm) para aproveitar a transição mágica do parque','Fantasias são permitidas para todas as idades — aproveitem!'],
-     img:'',url:'https://disneyworld.disney.go.com/events-tours/magic-kingdom/mickeys-not-so-scary-halloween-party/'},
-    {id:'f07',nome:"Mickey\'s Very Merry Christmas Party",park:'Disney',parque:'Magic Kingdom',periodo:'Novembro–Dezembro (selecionado)',operadora:'Walt Disney World',tipo:'festa_especial',
-     desc:'Festa especial com ingresso separado que transforma o Magic Kingdom em um paraíso natalino. Neve artificial na Main Street, chocolate quente e biscoitos de graça, shows exclusivos (Mickey\'s Once Upon a Christmastime Parade, Holiday Wishes Fireworks), personagens com fantasia natalina e decoração especial.',
-     dicas:['Ingresso separado — esgota com meses de antecedência','Neve artificial na Main Street é imperdível','Hot cocoa e cookies GRATUITOS em múltiplos locais','Holiday Wishes: um dos melhores espetáculos de fogos da Disney','Uma das noites mais lotadas do ano — chegue cedo'],
-     img:'',url:'https://disneyworld.disney.go.com/events-tours/magic-kingdom/mickeys-very-merry-christmas-party/'},
-    {id:'f08',nome:'Jollywood Nights',park:'Disney',parque:"Disney's Hollywood Studios",periodo:'Novembro–Dezembro (selecionado)',operadora:'Walt Disney World',tipo:'festa_especial',
-     desc:'Evento especial de Natal no Hollywood Studios com ingresso separado. Inclui parada de Natal no parque, shows de Natal no Hollywood Boulevard, encontro exclusivo com personagens vestidos de Natal, acesso privilegiado a atrações durante o evento e neve artificial no parque. Evento mais recente da Disney, lançado em 2023.',
-     dicas:['Ingresso separado — comprar com antecedência','Personagens com fantasias natalinas exclusivas','Shows de Natal únicos no Hollywood Boulevard','Menor concorrência que os eventos do Magic Kingdom','Ótima oportunidade para quem já foi ao MVMCP antes'],
-     img:'',url:'https://disneyworld.disney.go.com/events-tours/hollywood-studios/jollywood-nights/'},
-    // ── Universal Orlando ──────────────────────────────────────────────────────
-    {id:'f09',nome:'Halloween Horror Nights',park:'Universal',parque:'Universal Studios Florida',periodo:'Setembro–Novembro (selecionado)',operadora:'Universal Orlando',tipo:'festa_especial',
-     desc:'O maior e mais aterrorizante evento de Halloween do mundo. Casas de terror baseadas em IPs de filmes e séries de horror, ruas temáticas com scare zones, shows especiais e acesso às atrações regulares. Evento adulto — não recomendado para crianças. Uma experiência única que vai além do que qualquer parque temático oferece em termos de imersão no horror.',
-     dicas:['Ingresso separado — não incluso no ingresso regular','Não recomendado para crianças menores de 13 anos','Express Pass disponível e muito recomendado nas noites mais lotadas','Chegue cedo para as casas de terror mais procuradas','Sextas e sábados são as noites mais lotadas'],
-     img:'',url:'https://www.universalorlando.com/web/en/us/events/halloween-horror-nights/'},
-    {id:'f10',nome:'Mardi Gras Universal Orlando',park:'Universal',parque:'Universal Studios Florida',periodo:'Fevereiro–Abril',operadora:'Universal Orlando',tipo:'festival',
-     desc:'Celebração do Mardi Gras de New Orleans com parada de carros alegóricos, contas coloridas atiradas ao público, comida cajun e artistas internacionais ao vivo no palco principal. Incluído no ingresso regular. Uma festa única e muito diferente de tudo que Disney oferece.',
-     dicas:['Incluído no ingresso regular — sem custo adicional','Shows de artistas internacionais ao vivo','Parada de carros alegóricos com contas atiradas ao público','Comida cajun especial disponível nos stands do evento'],
-     img:'',url:'https://www.universalorlando.com/web/en/us/events/mardi-gras/'},
-    {id:'f11',nome:'Holidays at Universal Orlando',park:'Universal',parque:'Universal Orlando Resort',periodo:'Novembro–Janeiro',operadora:'Universal Orlando',tipo:'festival',
-     desc:'Celebração de Natal em todo o Universal Orlando Resort, incluindo o Festival of the Stars na Universal Studios, Grinchmas em Islands of Adventure (com shows ao vivo do Grinch) e decorações em todo o CityWalk e áreas do resort. Incluso no ingresso regular.',
-     dicas:['Grinchmas Who-bilation: show do Grinch imperdível (grátis no ingresso)','Decoração de Hogwarts em The Wizarding World','Festivais gratuitos incluídos no ingresso regular','Menos lotado que a Disney nas mesmas datas'],
-     img:'',url:'https://www.universalorlando.com/web/en/us/events/holidays/'},
-    // ── SeaWorld / United Parks ────────────────────────────────────────────────
-    {id:'f12',nome:"Howl-O-Scream",park:'SeaWorld',parque:'SeaWorld Orlando',periodo:'Setembro–Outubro (fins de semana)',operadora:'SeaWorld Orlando',tipo:'festa_especial',
-     desc:'Evento de Halloween da SeaWorld com casas de terror, scare zones aterrorizantes, espetáculos especiais e acesso às atrações regulares. Ingresso separado. Menos lotado que o HHN Universal mas com muito terror e qualidade surpreendente.',
-     dicas:['Ingresso separado','Menor fila que o HHN — boa alternativa','Casas de terror com nível de qualidade crescente a cada ano','Ótima combinação com o Busch Gardens Howl-O-Scream para quem curte Halloween'],
-     img:'',url:'https://seaworld.com/orlando/events/howl-o-scream/'},
-    {id:'f13',nome:'Howl-O-Scream Busch Gardens',park:'SeaWorld',parque:'Busch Gardens Tampa Bay',periodo:'Setembro–Outubro (fins de semana)',operadora:'Busch Gardens Tampa Bay',tipo:'festa_especial',
-     desc:'O Howl-O-Scream da Busch Gardens Tampa é frequentemente considerado um dos melhores eventos de Halloween da Flórida. Com 12+ casas de terror, scare zones temáticas e montanhas-russas no escuro, o ambiente adulto e a intensidade das experiências rivalizam com o Halloween Horror Nights.',
-     dicas:['12+ casas de terror — mais que muitos eventos similares','Montanhas-russas à noite com iluminação especial — experiência única','Menos conhecido = menores filas que o HHN','Compra combo Tampa + SeaWorld para ótimo custo-benefício'],
-     img:'',url:'https://buschgardens.com/tampa/events/howl-o-scream/'},
-    {id:'f14',nome:'Christmas Town Busch Gardens',park:'SeaWorld',parque:'Busch Gardens Tampa Bay',periodo:'Novembro–Dezembro',operadora:'Busch Gardens Tampa Bay',tipo:'festival',
-     desc:'Celebração de Natal na Busch Gardens Tampa com mais de 3 milhões de luzes, espetáculos especiais, personagens natalinos, neve artificial e comida temática. Incluído no ingresso regular. Um dos eventos de Natal mais bem avaliados da Flórida.',
-     dicas:['3 milhões de luzes — espetáculo visual único','Incluído no ingresso regular','Shows de Natal em múltiplos teatros','Ótimo para famílias com crianças'],
-     img:'',url:'https://buschgardens.com/tampa/events/christmas-town/'},
-    {id:'f15',nome:"SeaWorld\'s Christmas Celebration",park:'SeaWorld',parque:'SeaWorld Orlando',periodo:'Novembro–Janeiro',operadora:'SeaWorld Orlando',tipo:'festival',
-     desc:'Celebração natalina da SeaWorld com shows especiais de Natal, personagens temáticos, neve artificial, comida da época e acesso às atrações. Incluído no ingresso regular. O show O Christmas Tree Lighting é um espetáculo de 16 metros de altura com fogos e música.',
-     dicas:['Incluído no ingresso regular','O Christmas Tree Lighting com 16m de altura — imperdível','Personagens do Sesame Street com fantasias de Natal','Ótima alternativa para quem quer Natal mágico sem a multidão da Disney'],
-     img:'',url:'https://seaworld.com/orlando/events/christmas/'},
-    {id:'f16',nome:"Electric Ocean",park:'SeaWorld',parque:'SeaWorld Orlando',periodo:'Junho–Setembro',operadora:'SeaWorld Orlando',tipo:'festival',
-     desc:'Festival de verão noturno com iluminação bioluminescente em todo o parque, shows aquáticos e DJ sets. Transforma a SeaWorld em um espetáculo de luzes noturno diferente de qualquer coisa na região de Orlando. Incluído no ingresso regular.',
-     dicas:['Melhor visitar ao entardecer para ver a transição','Shows de luzes e drones sobre a água','Incluído no ingresso regular','Temperatura mais amena à noite — confortável no verão'],
-     img:'',url:'https://seaworld.com/orlando/events/electric-ocean/'},
-  ];
-
-  const list = FESTIVAIS_COMPLETOS
-  return FESTIVAIS_COMPLETOS;
-}
-
 function renderFestivais(){
   const grid = g('fest-grid'); if(!grid) return;
   const park = (g('fest-park-filter')||{}).value||'';
@@ -3668,11 +3594,11 @@ function _copyFallback(text){
 const KB_HOTEIS_S       = [{"id":"hotel-universal-port","nome":"Hotel Universal Port","dest":"Japao","resort":"universal-studios-japan","operadora":"Universal Studios Japan","tipo":"partner_hotel","estrelas":4,"quartos":395,"preco":"US$120–US$600/noite","tema":"Mediterranean Port","beneficios":["Express Pass disponível para compra","Shuttle ao parque","Early Park Admission"],"destaques":[],"desc":"O hotel mais próximo e popular do USJ! Temática mediterrânea. Express Pass disponível. Early Entry incluído.","img":"","url":"https://www.usj.co.jp/web/en/us/hotel","status":"Active"},{"id":"universal-helios-grand-hotel","nome":"Universal Helios Grand Hotel","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"deluxe_hotel","estrelas":5,"quartos":500,"preco":"US$500–US$2000/noite","tema":"Space Age / Celestial / Epic Universe","beneficios":[],"destaques":[],"desc":"NOVO 2025! O hotel mais novo e luxuoso da Universal. 5 min a pé do Epic Universe. Temática celestial. O flagship do Epic Universe.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/helios-grand-hotel","status":"Active"},{"id":"universal-cabana-bay-beach-resort","nome":"Universal's Cabana Bay Beach Resort","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"value_hotel","estrelas":3,"quartos":1800,"preco":"US$130–US$450/noite","tema":"1950s-60s retro beach resort","beneficios":[],"destaques":[],"desc":"Retro anos 50-60 e mais divertido! Value adjacente ao Volcano Bay. Bowling onsite. 2 piscinas resort. Sem Express Pass mas melhor Value da Universal.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/cabana-bay-beach-resort","status":"Active"},{"id":"loews-royal-pacific-resort","nome":"Loews Royal Pacific Resort","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando / Loews","tipo":"deluxe_hotel","estrelas":4,"quartos":1000,"preco":"US$320–US$1200/noite","tema":"South Pacific / Polynesian Resort","beneficios":[],"destaques":[],"desc":"Paraíso do Pacífico Sul! Express Unlimited incluído. Luau às sextas. Jardim de orquídeas. Water taxi. O maior dos hotéis Signature com 1000 quartos.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/royal-pacific-resort","status":"Active"},{"id":"loews-sapphire-falls-resort","nome":"Loews Sapphire Falls Resort","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando / Loews","tipo":"deluxe_hotel","estrelas":4,"quartos":1000,"preco":"US$220–US$900/noite","tema":"Caribbean waterfall resort","beneficios":[],"destaques":[],"desc":"Signature mais acessível! Express Unlimited incluído. Cascatas caribenhas. Water taxi. O melhor custo-benefício do nível Signature com Express Pass.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/sapphire-falls-resort","status":"Active"},{"id":"universal-terra-luna-resort","nome":"Universal Terra Luna Resort","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"prime_value_hotel","estrelas":3,"quartos":750,"preco":"US$134–US$450/noite","tema":"Planetary / Earth and Moon","beneficios":[],"destaques":[],"desc":"NOVO mar 2025! Irmão do Stella Nova. Temática Terra e Lua. Prime Value sem Express Pass. Próximo ao Epic Universe. Novo e moderno.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/terra-luna-resort","status":"Active"},{"id":"hard-rock-hotel-universal-orlando","nome":"Hard Rock Hotel Universal Orlando","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando / Loews","tipo":"deluxe_hotel","estrelas":4,"quartos":650,"preco":"US$380–US$1500/noite","tema":"Music / Rock n Roll","beneficios":[],"destaques":[],"desc":"Hard Rock com PISCINA 24H! Express Unlimited incluído. Guitarra de 1,5 tonelada no lobby. A 10 min a pé dos parques. O mais popular da Universal.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/hard-rock-hotel","status":"Active"},{"id":"universal-endless-summer-dockside","nome":"Universal Endless Summer Dockside","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"value_hotel","estrelas":2,"quartos":2050,"preco":"US$95–US$310/noite","tema":"Nautical / Dock","beneficios":[],"destaques":[],"desc":"O maior hotel da Universal (2050 quartos) e o mais barato! Temática náutica. Sem Express Pass. A partir de USD 95/noite.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/endless-summer-resort-dockside-inn-and-suites","status":"Active"},{"id":"loews-portofino-bay-hotel","nome":"Loews Portofino Bay Hotel","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando Resort","tipo":"deluxe_hotel","estrelas":4,"quartos":750,"preco":"US$350–US$1200/noite","tema":"Portofino, Italy","beneficios":[],"destaques":[],"desc":"Hotel Premier Universal mais luxuoso! Express Unlimited ILIMITADO em todos os parques incluído. Economiza até USD 130/pessoa/dia. Tema italiano elegante.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/loews-portofino-bay-hotel","status":"Active"},{"id":"universal-endless-summer-surfside","nome":"Universal Endless Summer Surfside","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"value_hotel","estrelas":2,"quartos":750,"preco":"US$100–US$320/noite","tema":"Surf / Beach","beneficios":[],"destaques":[],"desc":"O mais barato da Universal! A partir de USD 100/noite. Praia e verão. Sem Express Pass. Value máximo — bom para quem passa o dia inteiro nos parques.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/endless-summer-resort-surfside-inn-and-suites","status":"Active"},{"id":"universal-stella-nova-resort","nome":"Universal Stella Nova Resort","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"prime_value_hotel","estrelas":3,"quartos":750,"preco":"US$134–US$450/noite","tema":"Space / Stars / Nova","beneficios":[],"destaques":[],"desc":"NOVO jan 2025! Prime Value galáctica próxima ao Epic Universe. 750 quartos modernos. Sem Express Pass. A mais nova opção acessível da Universal.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/stella-nova-resort","status":"Active"},{"id":"universal-aventura-hotel","nome":"Universal's Aventura Hotel","dest":"Orlando","resort":"universal-orlando","operadora":"Universal Orlando","tipo":"prime_value_hotel","estrelas":3,"quartos":600,"preco":"US$140–US$500/noite","tema":"Modern tech / minimalist","beneficios":[],"destaques":[],"desc":"Design moderno com iPad no quarto! Bar no rooftop com vista dos parques Universal. Prime Value sem Express Pass. Para adultos que preferem design a temática.","img":"","url":"https://www.universalorlando.com/web/en/us/places-to-stay/aventura-hotel","status":"Active"},{"id":"disney-destiny","nome":"Disney Destiny","dest":"Cruzeiro","resort":"","operadora":"Disney Cruise Line","tipo":"cruise_ship","estrelas":5,"quartos":1254,"preco":"","tema":"","beneficios":[],"destaques":[],"desc":"O NAVIO DOS VILÕES! Temática completamente de vilões Disney — Ursula, Capitão Gancho, Cruella. O navio mais antecipado da história da DCL. Previsto novembro 2025.","img":"","url":"https://www.disneycruise.disney.go.com/ships/destiny/","status":"Active"},{"id":"disney-fantasy","nome":"Disney Fantasy","dest":"Cruzeiro","resort":"","operadora":"Disney Cruise Line","tipo":"cruise_ship","estrelas":5,"quartos":1250,"preco":"","tema":"","beneficios":[],"destaques":[],"desc":"Rotas de 7 noites Caribe completo! Remy's Pâtisserie a bordo. Port Canaveral. Para quem quer a experiência de cruzeiro mais longa.","img":"","url":"https://www.disneycruise.disney.go.com/ships/fantasy/","status":"Active"},{"id":"disney-treasure","nome":"Disney Treasure","dest":"Cruzeiro","resort":"","operadora":"Disney Cruise Line","tipo":"cruise_ship","estrelas":5,"quartos":1254,"preco":"","tema":"","beneficios":[],"destaques":[],"desc":"NOVO dezembro 2024! Tema Aventura e Tesouros (Aladdin, Tarzan, Lion King). Grand Hall de Tesouro. AquaMouse. Rotas 7 noites Caribe.","img":"","url":"https://www.disneycruise.disney.go.com/ships/treasure/","status":"Active"},{"id":"disney-wish","nome":"Disney Wish","dest":"Cruzeiro","resort":"","operadora":"Disney Cruise Line","tipo":"cruise_ship","estrelas":5,"quartos":1254,"preco":"","tema":"","beneficios":["Character meets daily","Rotational Dining","Broadway-style shows","Castaway Cay stop"],"destaques":[],"desc":"O navio mais avançado da frota! Star Wars Hyperspace Lounge + AquaMouse water coaster. Suítes Frozen e Bela Adormecida. Rotas de 3-4 noites Port Canaveral.","img":"","url":"https://www.disneycruise.disney.go.com/ships/wish/","status":"Active"},{"id":"disney-dream","nome":"Disney Dream","dest":"Cruzeiro","resort":"","operadora":"Disney Cruise Line","tipo":"cruise_ship","estrelas":5,"quartos":1250,"preco":"","tema":"","beneficios":[],"destaques":[],"desc":"O mais popular para brasileiros! AquaDuck water coaster original em alto mar. Rotas 3-5 noites Port Canaveral + Castaway Cay.","img":"","url":"https://www.disneycruise.disney.go.com/ships/dream/","status":"Active"},{"id":"fantasy-springs-hotel-tds","nome":"Fantasy Springs Hotel","dest":"Japao","resort":"tokyo-disney-resort","operadora":"Oriental Land Company","tipo":"deluxe_hotel","estrelas":5,"quartos":475,"preco":"US$500–US$4000/noite","tema":"Fantasy Springs — Peter Pan / Frozen / Tangled","beneficios":["Early Park Admission","Connected directly to Fantasy Springs (TDS)","Exclusive view of Arendelle and Fantasy Springs","Grand Chateau exclusivo para hóspedes — lounge privativo"],"destaques":[],"desc":"NOVO 2024 — O hotel mais exclusivo do TDR! Vista de Arendelle dos quartos. Entrada direta exclusiva à Fantasy Springs. Grand Chateau lounge dentro do parque. USD 500+.","img":"","url":"https://www.tokyodisneyresort.jp/en/hotel/fsh/","status":"Active"},{"id":"miracosta-tds","nome":"MiraCosta (Tokyo DisneySea Hotel)","dest":"Japao","resort":"tokyo-disney-resort","operadora":"Oriental Land Company","tipo":"deluxe_hotel","estrelas":5,"quartos":502,"preco":"US$400–US$3000/noite","tema":"Italian Riviera — Mediterranean Harbor","beneficios":["Early Park Admission","Connected INSIDE Tokyo DisneySea (Mediterranean Harbor)","Window rooms overlook Mediterranean Harbor","Secret entrance within the park"],"destaques":[],"desc":"O hotel DENTRO do DisneySea! Janelas com vista do Mediterranean Harbor ativo. Entrada secreta dentro do parque. O segundo mais desejado do TDR.","img":"","url":"https://www.tokyodisneyresort.jp/en/hotel/mc/","status":"Active"},{"id":"tokyo-disneyland-hotel","nome":"Tokyo Disneyland Hotel","dest":"Japao","resort":"tokyo-disney-resort","operadora":"Oriental Land Company","tipo":"deluxe_hotel","estrelas":5,"quartos":705,"preco":"US$350–US$2000/noite","tema":"Victorian / Disney Fantasy","beneficios":["Early Park Admission to both parks","Connected to TDL entrance","Exclusive character dining"],"destaques":[],"desc":"Hotel victoriano na ENTRADA do TDL! Serviço japonês incomparável. Quarto com vista do castelo. Early Entry a ambos os parques.","img":"","url":"https://www.tokyodisneyresort.jp/en/hotel/tdlh/","status":"Active"},{"id":"sequoia-lodge-dlp","nome":"Disney's Sequoia Lodge","dest":"Paris","resort":"disneyland-paris-resort","operadora":"Disneyland Paris","tipo":"moderate_hotel","estrelas":3,"quartos":1011,"preco":"US$150–US$600/noite","tema":"Pacific Northwest National Park Lodge","beneficios":["Extra Magic Time","Lago com vista das Montana Grizzly Rocks","Hunter's Grill buffet"],"destaques":[],"desc":"O Moderate mais popular de Paris! Tema Parque Nacional com lago e montanhas Grizzly. Piscinas aquecidas internas. O melhor custo-benefício do resort.","img":"","url":"https://www.disneylandparis.com/hotels/disneys-sequoia-lodge/","status":"Active"},{"id":"disneyland-hotel-paris","nome":"Disneyland Hotel (Paris)","dest":"Paris","resort":"disneyland-paris-resort","operadora":"Disneyland Paris","tipo":"deluxe_hotel","estrelas":5,"quartos":496,"preco":"US$500–US$2500/noite","tema":"Victorian Palace","beneficios":["Extra Magic Time (acesso antecipado 2h antes)","Walking distance to Disneyland Park entrance","Special character dining"],"destaques":[],"desc":"O hotel mais icônico de Paris — castelo vitoriano rosa NA ENTRADA do parque! Extra Magic Time de 2 horas. Em renovação, reabrindo 2024-2025.","img":"","url":"https://www.disneylandparis.com/hotels/disneyland-hotel/","status":"Temporarily Closed — Renovation"},{"id":"disney-hotel-new-york-art-of-marvel","nome":"Disney's Hotel New York — The Art of Marvel","dest":"Paris","resort":"disneyland-paris-resort","operadora":"Disneyland Paris","tipo":"deluxe_hotel","estrelas":4,"quartos":565,"preco":"US$300–US$1500/noite","tema":"Marvel / New York Art Gallery","beneficios":["Extra Magic Time","Marvel Art Gallery em todo o hotel","Spider-Man e Capitão América meets exclusivos para hóspedes"],"destaques":[],"desc":"O hotel Marvel oficial do MUNDO! Arte Marvel original em 565 suítes. Encontros exclusivos com Spider-Man e Capitão América para hóspedes. Galeria Marvel mais completa do mundo.","img":"","url":"https://www.disneylandparis.com/hotels/disney-hotel-new-york-the-art-of-marvel/","status":"Active"},{"id":"animal-kingdom-villas-jambo-house","nome":"Disney's Animal Kingdom Villas — Jambo House","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":4,"quartos":438,"preco":"US$350–US$1800/noite","tema":"African savanna lodge","beneficios":["Early Theme Park Entry","Extended Evening Hours","Savana view com animais reais"],"destaques":[],"desc":"DVC com savana de girafas e zebras! Villas espaçosas com vista dos animais. Acesso aos restaurantes de Lodge: Jiko, Boma e Sanaa.","img":"","url":"https://disneyworld.disney.go.com/resorts/animal-kingdom-villas-jambo/","status":"Active"},{"id":"disneys-caribbean-beach-resort","nome":"Disney's Caribbean Beach Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"moderate_hotel","estrelas":3,"quartos":2108,"preco":"US$200–US$600/noite","tema":"Caribbean islands","beneficios":["Early Theme Park Entry","Disney Skyliner direto ao EPCOT e Hollywood Studios"],"destaques":[],"desc":"Único Moderate com Skyliner! Acesso direto ao EPCOT e HS. Temática caribenha colorida. Sebastian's Bistro excelente. O melhor custo-benefício para quem usa EPCOT.","img":"","url":"https://disneyworld.disney.go.com/resorts/caribbean-beach-resort/","status":"Active"},{"id":"disneys-all-star-music-resort","nome":"Disney's All-Star Music Resort","dest":"Orlando","resort":"","operadora":"","tipo":"value_hotel","estrelas":2,"quartos":1604,"preco":"US$120–US$340/noite","tema":"Music genres from Rock to Jazz","beneficios":["Early Theme Park Entry","Complimentary Bus Transportation"],"destaques":[],"desc":"Hotel Value com instrumentos musicais gigantes! Country, Jazz, Rock, Broadway. Suítes familiares disponíveis. Apenas ônibus. Econômico.","img":"","url":"https://disneyworld.disney.go.com/resorts/all-star-music-resort/","status":"Active"},{"id":"bay-lake-tower-contemporary","nome":"Bay Lake Tower at Disney's Contemporary Resort","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":4,"quartos":295,"preco":"US$450–US$2000/noite","tema":"Contemporary / Bay Lake","beneficios":["Early Theme Park Entry","Extended Evening Hours","Monorail","A pé ao Magic Kingdom","Top of the World Lounge (Members only — vista dos fogos)"],"destaques":[],"desc":"DVC do Contemporary com Top of the World Lounge! A MELHOR vista dos fogos do MK de qualquer lugar — exclusiva DVC. Monorail e a pé ao MK.","img":"","url":"https://disneyworld.disney.go.com/resorts/bay-lake-tower/","status":"Active"},{"id":"disneys-polynesian-village-resort","nome":"Disney's Polynesian Village Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"Walt Disney World","tipo":"deluxe_hotel","estrelas":4,"quartos":853,"preco":"US$500–US$2200/noite","tema":"South Pacific / Polynesian","beneficios":["Early Theme Park Entry","Extended Evening Hours","Monorail access direto ao MK e EPCOT","Boat to Magic Kingdom"],"destaques":[],"desc":"Hotel inaugural do WDW de 1971! Tema Polinésio, monorail MK e EPCOT. Vista dos fogos do MK de graça na praia. Ambiente tropical único.","img":"","url":"https://disneyworld.disney.go.com/resorts/polynesian-village-resort/","status":"Active"},{"id":"disneys-yacht-club-resort","nome":"Disney's Yacht Club Resort","dest":"Orlando","resort":"","operadora":"","tipo":"deluxe_hotel","estrelas":4,"quartos":621,"preco":"US$380–US$1500/noite","tema":"New England yacht club 1880s","beneficios":["Early Theme Park Entry","Extended Evening Hours","Stormalong Bay (piscina compartilhada com Beach Club)","Skyliner ao EPCOT e HS","A pé ao EPCOT (5 min)"],"destaques":[],"desc":"Iate clube elegante de Nova Inglaterra! Compartilha Stormalong Bay com o Beach Club. A pé ao EPCOT. Yachtsman Steakhouse e Ale & Compass. Pet-friendly.","img":"","url":"https://disneyworld.disney.go.com/resorts/yacht-club-resort/","status":"Active"},{"id":"disneys-old-key-west-resort","nome":"Disney's Old Key West Resort","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":3,"quartos":761,"preco":"US$280–US$1400/noite","tema":"Key West Florida — casual tropical","beneficios":["Early Theme Park Entry","Extended Evening Hours","Boat a Disney Springs"],"destaques":[],"desc":"O primeiro DVC da Disney (1991)! Temática Key West relaxante. Villas espaçosas. Olivia's Cafe com culinária floridiana. Barco ao Disney Springs.","img":"","url":"https://disneyworld.disney.go.com/resorts/old-key-west-resort/","status":"Active"},{"id":"walt-disney-world-swan","nome":"Walt Disney World Swan","dest":"Orlando","resort":"walt-disney-world","operadora":"Marriott/Westin (managed by Marriott)","tipo":"partner_hotel","estrelas":4,"quartos":756,"preco":"US$250–US$1200/noite","tema":"Contemporary / Swan statues","beneficios":["Early Theme Park Entry","Extended Evening Theme Park Hours (como Deluxe!)","Skyliner ao EPCOT e HS","A pé ao EPCOT e Boardwalk","Bonvoy Marriott/Westin points acumuláveis"],"destaques":[],"desc":"Hotel Marriott/Westin COM benefícios Disney Deluxe! Early Entry + Extended Hours + Skyliner + acumula pontos Bonvoy. Melhor custo-benefício para membros Marriott.","img":"","url":"https://www.marriott.com/hotels/travel/mcosi-walt-disney-world-swan/","status":"Active"},{"id":"beach-club-villas","nome":"Disney's Beach Club Villas","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":4,"quartos":205,"preco":"US$400–US$1700/noite","tema":"New England beach resort 1800s","beneficios":["Early Theme Park Entry","Extended Evening Hours","Stormalong Bay (melhor piscina WDW)","Skyliner ao EPCOT e HS","A pé ao EPCOT (5 min)"],"destaques":[],"desc":"DVC do Beach Club! Stormalong Bay + Skyliner + EPCOT a pé. Villas com cozinha. A combinação mais prática do resort.","img":"","url":"https://disneyworld.disney.go.com/resorts/beach-club-villas/","status":"Active"},{"id":"four-seasons-resort-orlando","nome":"Four Seasons Resort Orlando","dest":"Orlando","resort":"walt-disney-world","operadora":"Four Seasons Hotels and Resorts","tipo":"partner_hotel","estrelas":5,"quartos":443,"preco":"US$700–US$5000/noite","tema":"Four Seasons luxury","beneficios":["Early Theme Park Entry","Extended Evening Theme Park Hours","Dedicated theme park concierge"],"destaques":[],"desc":"O hotel mais luxuoso e caro de toda a área Disney! Four Seasons com concierge dedicado de parques. Capa rooftop com fogos do MK. Serviço Five Star. USD 700+/noite.","img":"","url":"https://www.fourseasons.com/orlando/","status":"Active"},{"id":"disneys-port-orleans-resort-riverside","nome":"Disney's Port Orleans Resort — Riverside","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"moderate_hotel","estrelas":3,"quartos":2048,"preco":"US$180–US$550/noite","tema":"Mississippi Bayou / Deep South","beneficios":["Early Theme Park Entry","Boat to Disney Springs (opcional)"],"destaques":[],"desc":"O mais romântico dos Moderate! Temática Bayou do Mississipi. Royal Guest Rooms temáticos de princesas. Pet-friendly. Barco ao Disney Springs.","img":"","url":"https://disneyworld.disney.go.com/resorts/port-orleans-resort-riverside/","status":"Active"},{"id":"walt-disney-world-swan-reserve","nome":"Walt Disney World Swan Reserve","dest":"Orlando","resort":"","operadora":"Marriott/Westin","tipo":"partner_hotel","estrelas":4,"quartos":349,"preco":"US$280–US$1200/noite","tema":"Contemporary luxury boutique","beneficios":["Early Theme Park Entry","Extended Evening Theme Park Hours","Skyliner ao EPCOT e HS","Bonvoy Marriott points acumuláveis"],"destaques":[],"desc":"NOVO 2021 — boutique de 14 andares! O mais novo e menor dos Swan Dolphin. Benefícios Deluxe Disney + Sky Lounge no topo. Acumula pontos Bonvoy.","img":"","url":"https://www.marriott.com/hotels/travel/mcows-walt-disney-world-swan-reserve/","status":"Active"},{"id":"disneys-beach-club-resort","nome":"Disney's Beach Club Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"deluxe_hotel","estrelas":4,"quartos":576,"preco":"US$400–US$1600/noite","tema":"New England beach resort 1800s","beneficios":["Early Theme Park Entry","Extended Evening Hours","Disney Skyliner direto ao EPCOT e Hollywood Studios","A pé ao EPCOT (5 min)","Stormalong Bay — melhor piscina do WDW"],"destaques":[],"desc":"Melhor PISCINA do WDW — Stormalong Bay com 11.000m²! A pé ao EPCOT em 5 min. Skyliner ao HS. Cape May Cafe com character dining.","img":"","url":"https://disneyworld.disney.go.com/resorts/beach-club-resort/","status":"Active"},{"id":"disneys-animal-kingdom-lodge","nome":"Disney's Animal Kingdom Lodge","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"deluxe_hotel","estrelas":5,"quartos":972,"preco":"US$350–US$1800/noite","tema":"African savanna lodge","beneficios":["Early Theme Park Entry","Extended Evening Hours","Animais reais na savana visíveis dos quartos"],"destaques":[],"desc":"Acorde com girafas do lado de fora! Lodge africano com savana de 33 acres. Girafas, zebras e antílopes a metros dos quartos. Jiko e Boma — melhores restaurantes africanos dos EUA.","img":"","url":"https://disneyworld.disney.go.com/resorts/animal-kingdom-lodge/","status":"Active"},{"id":"disneys-grand-floridian-resort-spa","nome":"Disney's Grand Floridian Resort & Spa","dest":"Orlando","resort":"walt-disney-world","operadora":"Walt Disney World","tipo":"deluxe_hotel","estrelas":5,"quartos":867,"preco":"US$700–US$3000/noite","tema":"Victorian / Florida elegance","beneficios":["Early Theme Park Entry","Extended Evening Hours","Complimentary Bus Transportation","Monorail access direto ao Magic Kingdom e EPCOT","Boat to Magic Kingdom","Walking distance to Magic Kingdom","Disney Skyliner (novo)"],"destaques":[],"desc":"O hotel mais luxuoso do WDW. Arquitetura Vitoriana, monorail direto ao MK, spa, fine dining. A experiência Disney mais premium.","img":"","url":"https://disneyworld.disney.go.com/resorts/grand-floridian-resort-and-spa/","status":"Active"},{"id":"copper-creek-villas-wilderness-lodge","nome":"Copper Creek Villas & Cabins at Disney's Wilderness Lodge","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":4,"quartos":184,"preco":"US$320–US$1600/noite","tema":"Pacific Northwest National Park","beneficios":["Early Theme Park Entry","Extended Evening Hours","Boat ao Magic Kingdom","Cabins sobre o lago"],"destaques":[],"desc":"Cabins FLUTUANTES sobre o lago! Única opção de cabin sobre a água de todo o WDW. DVC no Wilderness Lodge. Barco ao MK.","img":"","url":"https://disneyworld.disney.go.com/resorts/copper-creek-villas-and-cabins/","status":"Active"},{"id":"disneys-coronado-springs-resort","nome":"Disney's Coronado Springs Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"moderate_hotel","estrelas":3,"quartos":1900,"preco":"US$200–US$700/noite","tema":"Mexican / Southwest American","beneficios":["Early Theme Park Entry"],"destaques":[],"desc":"Coronado Springs com Gran Destino Tower! Quartos modernos no arranha-céu com vista. Toledo no rooftop. Melhor Moderate para adultos e grupos de negócios.","img":"","url":"https://disneyworld.disney.go.com/resorts/coronado-springs-resort/","status":"Active"},{"id":"disneys-contemporary-resort","nome":"Disney's Contemporary Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"deluxe_hotel","estrelas":4,"quartos":655,"preco":"US$500–US$2000/noite","tema":"Futurist / Modern 1971","beneficios":["Early Theme Park Entry","Extended Evening Hours","Monorail DIRETO ao Magic Kingdom (passa dentro do hotel)","A pé ao Magic Kingdom (10 min)","Boat to Magic Kingdom"],"destaques":[],"desc":"O hotel com monorail passando DENTRO do lobby! A pé ao MK em 10 min. California Grill com vista dos fogos. Chef Mickey's character dining. Original de 1971.","img":"","url":"https://disneyworld.disney.go.com/resorts/contemporary-resort/","status":"Active"},{"id":"disneys-port-orleans-resort-french-quarter","nome":"Disney's Port Orleans Resort — French Quarter","dest":"Orlando","resort":"","operadora":"","tipo":"moderate_hotel","estrelas":3,"quartos":1008,"preco":"US$175–US$520/noite","tema":"New Orleans French Quarter","beneficios":["Early Theme Park Entry","Bus Transportation"],"destaques":[],"desc":"O mais elegante dos Moderate! Temática Bairro Francês de Nova Orleans. Menor e mais tranquilo. Carruagem de cavalos. Pont d'acesso ao Riverside.","img":"","url":"https://disneyworld.disney.go.com/resorts/port-orleans-resort-french-quarter/","status":"Active"},{"id":"disneys-wilderness-lodge","nome":"Disney's Wilderness Lodge","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"deluxe_hotel","estrelas":4,"quartos":407,"preco":"US$300–US$1400/noite","tema":"Pacific Northwest National Park Lodge","beneficios":["Early Theme Park Entry","Extended Evening Hours","Boat ao Magic Kingdom"],"destaques":[],"desc":"Lodge de Parque Nacional! Lobby com toras de 9 andares e lareira de 45m. Barco ao Magic Kingdom. Piscina com gêiser. Whispering Canyon Cafe com cowboys.","img":"","url":"https://disneyworld.disney.go.com/resorts/wilderness-lodge/","status":"Active"},{"id":"walt-disney-world-dolphin","nome":"Walt Disney World Dolphin","dest":"Orlando","resort":"","operadora":"Marriott/Sheraton","tipo":"partner_hotel","estrelas":4,"quartos":1509,"preco":"US$230–US$1100/noite","tema":"Contemporary / Dolphin statues","beneficios":["Early Theme Park Entry","Extended Evening Theme Park Hours","Skyliner ao EPCOT e HS","Bonvoy Marriott/Sheraton points acumuláveis"],"destaques":[],"desc":"O maior hotel parceiro da Disney! 1509 quartos Marriott/Sheraton. Benefícios Deluxe Disney incluídos + acumula pontos Bonvoy. Skyliner. Ideal para membros Marriott.","img":"","url":"https://www.marriott.com/hotels/travel/mcosi-walt-disney-world-dolphin/","status":"Active"},{"id":"disneys-all-star-sports-resort","nome":"Disney's All-Star Sports Resort","dest":"Orlando","resort":"","operadora":"","tipo":"value_hotel","estrelas":2,"quartos":1920,"preco":"US$115–US$330/noite","tema":"American sports — football, basketball, tennis, etc.","beneficios":["Early Theme Park Entry","Complimentary Bus Transportation"],"destaques":[],"desc":"Esportes americanos em tamanho gigante! Capacetes de NFL, bolas de basquete NBA. O mais econômico do WDW. Apenas ônibus.","img":"","url":"https://disneyworld.disney.go.com/resorts/all-star-sports-resort/","status":"Active"},{"id":"disneys-art-of-animation-resort","nome":"Disney's Art of Animation Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"value_hotel","estrelas":2,"quartos":1984,"preco":"US$150–US$500/noite","tema":"Disney/Pixar animated films","beneficios":["Early Theme Park Entry","Disney Skyliner ao EPCOT e Hollywood Studios"],"destaques":[],"desc":"Hotel Value com suítes familiares TEMÁTICAS! Rei Leão, Nemo, Cars, Pequena Sereia. Skyliner ao EPCOT e HS. O melhor Value para famílias grandes.","img":"","url":"https://disneyworld.disney.go.com/resorts/art-of-animation-resort/","status":"Active"},{"id":"disneys-saratoga-springs-resort-spa","nome":"Disney's Saratoga Springs Resort & Spa","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":3,"quartos":552,"preco":"US$300–US$1500/noite","tema":"Saratoga Springs NY — horse racing","beneficios":["Early Theme Park Entry","Extended Evening Hours","Boat a Disney Springs","A pé a Disney Springs"],"destaques":[],"desc":"DVC a pé + barco ao Disney Springs! Único hotel com esse acesso direto. Spa completo. Temática Saratoga Springs NY. Para quem quer Disney Springs como base.","img":"","url":"https://disneyworld.disney.go.com/resorts/saratoga-springs-resort-and-spa/","status":"Active"},{"id":"disneys-all-star-movies-resort","nome":"Disney's All-Star Movies Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"Walt Disney World","tipo":"value_hotel","estrelas":2,"quartos":1920,"preco":"US$120–US$350/noite","tema":"Toy Story / Fantasia / 101 Dalmatians","beneficios":["Early Theme Park Entry","Complimentary Bus Transportation"],"destaques":[],"desc":"O hotel mais econômico do WDW! Temática de filmes Disney. Early Park Entry incluído. Apenas ônibus. Perfeito para famílias com orçamento.","img":"","url":"https://disneyworld.disney.go.com/resorts/all-star-movies-resort/","status":"Active"},{"id":"disneys-riviera-resort","nome":"Disney's Riviera Resort","dest":"Orlando","resort":"","operadora":"","tipo":"dvc_villa","estrelas":4,"quartos":341,"preco":"US$350–US$1800/noite","tema":"European Riviera — France, Italy, Spain","beneficios":["Early Theme Park Entry","Extended Evening Hours","Skyliner ao EPCOT e Hollywood Studios (DIRETO na porta!)"],"destaques":[],"desc":"O mais novo WDW! Estação Skyliner DENTRO do hotel — acesso instantâneo ao EPCOT e HS. Topolino's Terrace Mickey no rooftop. Temática Riviera Europeia.","img":"","url":"https://disneyworld.disney.go.com/resorts/riviera-resort/","status":"Active"},{"id":"disneys-pop-century-resort","nome":"Disney's Pop Century Resort","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"value_hotel","estrelas":2,"quartos":2880,"preco":"US$130–US$400/noite","tema":"Decades of American Pop Culture","beneficios":["Early Theme Park Entry","Disney Skyliner ao EPCOT e Hollywood Studios"],"destaques":[],"desc":"Décadas americanas dos anos 50 aos 2000! Value com Skyliner. 2880 quartos. O Value mais popular com acesso ao Skyliner. Custo-benefício ótimo.","img":"","url":"https://disneyworld.disney.go.com/resorts/pop-century-resort/","status":"Active"},{"id":"disneys-boardwalk-inn","nome":"Disney's BoardWalk Inn","dest":"Orlando","resort":"walt-disney-world","operadora":"","tipo":"deluxe_hotel","estrelas":4,"quartos":378,"preco":"US$350–US$1400/noite","tema":"Atlantic City Boardwalk 1920s","beneficios":["Early Theme Park Entry","Extended Evening Hours","A pé ao EPCOT (10 min)","Skyliner ao EPCOT e HS"],"destaques":[],"desc":"Boardwalk dos anos 1920 animado! Calçadão com bares, restaurantes e entretenimento. A pé ao EPCOT. Flying Fish frutos do mar. Dueling pianos no AbracadaBar.","img":"","url":"https://disneyworld.disney.go.com/resorts/boardwalk-inn/","status":"Active"},{"id":"disneys-fort-wilderness-resort-campground","nome":"Disney's Fort Wilderness Resort & Campground","dest":"Orlando","resort":"","operadora":"","tipo":"campground","estrelas":2,"quartos":800,"preco":"US$80–US$800/noite","tema":"American wilderness / camping","beneficios":["Early Theme Park Entry","Boat to Magic Kingdom"],"destaques":[],"desc":"Campar NA Disney! Barracas, trailers e cabanas numa floresta de 800 acres. Barco ao MK. Hoop-Dee-Doo Revue — show mais antigo da Disney. Animais selvagens reais.","img":"","url":"https://disneyworld.disney.go.com/resorts/fort-wilderness-resort-and-campground/","status":"Active"},{"id":"disney-grand-californian-hotel-spa","nome":"Disney's Grand Californian Hotel & Spa","dest":"California","resort":"disneyland-resort","operadora":"Disney","tipo":"deluxe_hotel","estrelas":5,"quartos":1019,"preco":"US$450–US$2200/noite","tema":"Arts & Crafts Redwood Lodge","beneficios":["Early Theme Park Entry (30 min antes)","Magic Morning","Entrada EXCLUSIVA ao DCA pelo hotel — sem passar pelo TTC","Early Entry DCA via hotel gate"],"destaques":[],"desc":"O hotel 5 estrelas do DL! Única porta direta de hotel para dentro do DCA. Lobby de toras de 7 andares. Napa Rose — melhor restaurante do resort. A pé ao DCA em 2 min.","img":"","url":"https://disneyland.disney.go.com/hotels/disney-grand-californian-hotel/","status":"Active"},{"id":"pixar-place-hotel","nome":"Pixar Place Hotel","dest":"California","resort":"disneyland-resort","operadora":"Disney","tipo":"deluxe_hotel","estrelas":4,"quartos":481,"preco":"US$300–US$1400/noite","tema":"Pixar films — Toy Story, Cars, Up","beneficios":["Early Theme Park Entry (30 min antes)","Magic Morning"],"destaques":[],"desc":"NOVO 2023! Hotel Pixar com quartos de Toy Story, Cars e Incríveis. O mais novo do resort. Melhor custo-benefício Deluxe. Próximo ao DCA.","img":"","url":"https://disneyland.disney.go.com/hotels/pixar-place-hotel/","status":"Active"},{"id":"disneyland-hotel","nome":"Disneyland Hotel","dest":"California","resort":"disneyland-resort","operadora":"Disney","tipo":"deluxe_hotel","estrelas":4,"quartos":973,"preco":"US$350–US$1500/noite","tema":"Fantasy Tower rooms — Disneyland history","beneficios":["Early Theme Park Entry (30 min antes)","Complimentary transportation","Magic Morning (1 hora antes em dia especificado)"],"destaques":[],"desc":"O hotel ORIGINAL de 1955 — mais antigo que o próprio parque! Fantasy Rooms com temática de contos de fada. Pool com escorregador. 5 min a pé do Downtown Disney.","img":"","url":"https://disneyland.disney.go.com/hotels/disneyland-hotel/","status":"Active"},{"id":"jw-marriott-anaheim","nome":"JW Marriott Anaheim Resort","dest":"California","resort":"disneyland-resort","operadora":"Marriott","tipo":"partner_hotel","estrelas":5,"quartos":466,"preco":"US$280–US$1200/noite","tema":"Luxury resort — modern","beneficios":["Early Theme Park Entry (1 hora antes para Good Neighbor)","Shuttle to parks"],"destaques":[],"desc":"O parceiro mais luxuoso do Disneyland! 5 estrelas Marriott Bonvoy adjacente ao DCA. Vista do parque dos quartos superiores. Early Entry incluído. USD 280+.","img":"","url":"https://www.marriott.com/hotels/travel/laxjw-jw-marriott-anaheim-resort/","status":"Active"}];
 
 const HOTEL_IMAGES = {};
-const FESTIVAL_IMAGES = {};
 let _encTab = 'hoteis';
 
 async function switchEnciclopediaTab(tab){
   _encTab = tab;
+  _dclNavioAtivo = null;
   const hBtn = g('enc-tab-hoteis-btn');
   const cBtn = g('enc-tab-cruzeiros-btn');
   const fBtn = g('enc-tab-festivais-btn');
@@ -3834,62 +3760,239 @@ function kbInvalidateCache() {
 
 function _kbUserNameSis(){ return (DB.currentUser && DB.currentUser.nome) ? DB.currentUser.nome : 'Equipe'; }
 
-// ── Festivais: mesmo padrão visual de editar/ocultar, mas sem o Knowledge Base
-// (festivais não são dado do KB v7) — overrides ficam em DB.festOverrides,
-// sincronizados pelo mecanismo padrão do Sistema (saveToStorage).
-function _festGetOverride(id){ return (DB.festOverrides||{})[id] || {}; }
-function _festToggleHide(id, hide){
-  if(!DB.festOverrides) DB.festOverrides = {};
-  if(!DB.festOverrides[id]) DB.festOverrides[id] = {};
-  DB.festOverrides[id].hidden = hide;
-  DB.festOverrides[id].editedBy = _kbUserNameSis();
-  DB.festOverrides[id].editedAt = Date.now();
-  saveToStorage();
-  toast(hide ? 'Item ocultado' : 'Item reexibido novamente');
+// ── Hotéis, Cruzeiros e Festivais: um único padrão de editar/ocultar via
+// Knowledge Base centralizado (desenrola_kb/overrides) — ver kb-client.js.
+const KB_ENC_TAB_ICON = { hoteis:'🏨', cruzeiros:'🚢', navios:'🚢', atracoes:'🎢', restaurantes:'🍽️', shows:'🎭', lojas:'🛍️', festivais:'🌸' };
+const KB_ENC_TAB_LABEL = { hoteis:'hotel', cruzeiros:'item', navios:'navio', atracoes:'atração', restaurantes:'restaurante', shows:'show', lojas:'loja', festivais:'festival/evento' };
+
+const KB_FIELD_SCHEMA_SIS = {
+  hoteis: [
+    {key:'star_rating', label:'Classificação (estrelas, 1-5)', type:'number'},
+    {key:'price_range', label:'Média de valor', type:'text'},
+    {key:'benefits', label:'Benefícios do hotel (um por linha)', type:'tips'},
+    {key:'short_description_pt', label:'Descrição', type:'textarea'},
+    {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
+  ],
+  festivais: [
+    {key:'operator', label:'Marca/Operadora (Disney, Universal, SeaWorld...)', type:'text'},
+    {key:'park', label:'Parque', type:'text'},
+    {key:'access_type', label:'Acesso', type:'select', opts:[['included','Incluído no ingresso regular'],['separate_ticket','Ingresso separado (hard-ticket)']]},
+    {key:'period', label:'Período típico do ano', type:'text'},
+    {key:'short_description_pt', label:'Descrição', type:'textarea'},
+    {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
+  ],
+  // Schema dos navios em si (card de topo da Cruzeiros) — campos próprios de navio
+  navios: [
+    {key:'star_rating', label:'Classificação (estrelas, 1-5)', type:'number'},
+    {key:'gross_tonnage', label:'Tonelagem bruta', type:'text'},
+    {key:'short_description_pt', label:'Descrição', type:'textarea'},
+    {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
+  ],
+  // Conteúdo dentro de cada navio reaproveita exatamente o schema do Guiamento
+  atracoes: [
+    {key:'area', label:'Área do navio', type:'text'},
+    {key:'height_requirement_cm', label:'Altura mínima (cm)', type:'number'},
+    {key:'short_description_pt', label:'Descrição', type:'textarea'},
+    {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
+  ],
+  restaurantes: [
+    {key:'reserva', label:'Reserva', type:'select', opts:[['nao','Não precisa'],['recomendada','Recomendada'],['obrigatoria','Obrigatória']]},
+    {key:'service_type', label:'Tipo de serviço', type:'select', opts:[['quick','Quick Service'],['table','Table Service']]},
+    {key:'allergy_menu', label:'Menu para alérgicos', type:'select', opts:[['nao','Não'],['sim','Sim']]},
+    {key:'character_dining', label:'Refeição com personagens', type:'select', opts:[['nao','Não'],['sim','Sim']]},
+    {key:'short_description_pt', label:'Descrição', type:'textarea'},
+    {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
+  ],
+  shows: [
+    {key:'showtimes', label:'Horário(s) — sempre confira no app oficial', type:'text'},
+    {key:'duration_minutes', label:'Duração (minutos)', type:'number'},
+    {key:'short_description_pt', label:'Descrição', type:'textarea'},
+    {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
+  ],
+  lojas: [
+    {key:'area', label:'Área do navio', type:'text'},
+    {key:'short_description_pt', label:'Descrição', type:'textarea'},
+    {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
+  ],
+};
+
+const KB_FIELD_VALUE_LABEL_SIS = {};
+Object.values(KB_FIELD_SCHEMA_SIS).forEach(fields => fields.forEach(f => {
+  if(f.opts) f.opts.forEach(([v,l]) => { KB_FIELD_VALUE_LABEL_SIS[f.key+':'+v] = l; });
+}));
+
+function _kbFieldValSis(item, key, schemaKey){
+  const def = (KB_FIELD_SCHEMA_SIS[schemaKey]||[]).find(f=>f.key===key);
+  let v = item[key];
+  if(def && def.type==='tips'){ return Array.isArray(v) ? v.join('\n') : (v||''); }
+  return v===undefined||v===null ? '' : v;
+}
+
+function _kbRenderExtraFieldsSis(schemaKey, item, idPrefix){
+  const schema = KB_FIELD_SCHEMA_SIS[schemaKey] || [];
+  if(!schema.length) return '';
+  return schema.map(f => {
+    const fieldId = idPrefix + '-' + f.key;
+    const val = _kbFieldValSis(item||{}, f.key, schemaKey);
+    let inputHtml = '';
+    if(f.type==='select'){
+      inputHtml = `<select id="${fieldId}" class="form-input" data-kbfield="${f.key}">
+        ${f.opts.map(([v,l])=>`<option value="${esc(v)}" ${String(val)===v?'selected':''}>${esc(l)}</option>`).join('')}
+      </select>`;
+    } else if(f.type==='textarea' || f.type==='tips'){
+      inputHtml = `<textarea id="${fieldId}" class="form-textarea" data-kbfield="${f.key}" rows="${f.type==='tips'?2:3}">${esc(val)}</textarea>`;
+    } else {
+      inputHtml = `<input id="${fieldId}" class="form-input" type="${f.type==='number'?'number':'text'}" data-kbfield="${f.key}" value="${esc(val)}"/>`;
+    }
+    return `<div><label style="font-size:11px;font-weight:600;color:var(--text2)">${esc(f.label)}</label>
+      <div style="margin-top:4px">${inputHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function _kbCollectExtraFieldsSis(schemaKey, idPrefix){
+  const schema = KB_FIELD_SCHEMA_SIS[schemaKey] || [];
+  const out = {};
+  schema.forEach(f => {
+    const el = document.getElementById(idPrefix+'-'+f.key);
+    if(!el) return;
+    if(f.type==='tips'){
+      const linhas = (el.value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+      if(linhas.length) out[f.key] = linhas;
+    } else if(f.type==='number'){
+      if(el.value) out[f.key] = Number(el.value);
+    } else {
+      if(el.value) out[f.key] = el.value;
+    }
+  });
+  return out;
+}
+
+function _kbRenderExtraBadgesSis(schemaKey, item){
+  const schema = KB_FIELD_SCHEMA_SIS[schemaKey] || [];
+  const badges = [];
+  schema.forEach(f => {
+    if(f.key==='short_description_pt' || f.key==='tips_pt') return;
+    const v = item[f.key];
+    if(v===undefined||v===null||v===''||(Array.isArray(v)&&!v.length)) return;
+    let texto;
+    if(f.type==='select') texto = KB_FIELD_VALUE_LABEL_SIS[f.key+':'+v] || v;
+    else if(f.key==='height_requirement_cm') texto = '📏 '+v+'cm';
+    else if(f.key==='duration_minutes') texto = '⏱️ '+v+'min';
+    else if(f.key==='star_rating') texto = '⭐'.repeat(Math.min(Number(v),5));
+    else if(Array.isArray(v)) texto = v.join(' · ');
+    else texto = String(v);
+    const icone = {area:'📍', reserva:'📅', service_type:'🍽️', allergy_menu:'🌾', character_dining:'🎭', price_range:'💰', showtimes:'🕐', gross_tonnage:'⚓'}[f.key] || '';
+    badges.push(`<span style="background:#f1f5f9;color:#334155;border-radius:4px;padding:1px 6px;font-size:10px">${icone} ${esc(texto)}</span>`);
+  });
+  if(item.showtimes) badges.push(`<span style="background:#fef3c7;color:#92400e;border-radius:4px;padding:1px 6px;font-size:10px">⚠️ confirme no app oficial</span>`);
+  return badges;
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════
+// CRUZEIROS — navegação em duas camadas: grade de navios → dentro de um
+// navio, sub-abas de Lojas/Atrações/Shows/Restaurantes específicas dele.
+// ══════════════════════════════════════════════════════════════════════════
+
+const DCL_SHIP_SUBTABS = { atracoes:'attraction', restaurantes:'restaurant', shows:'show', lojas:'shop' };
+const DCL_SHIP_SUBTAB_LABEL = { atracoes:'🎢 Atrações', restaurantes:'🍽️ Restaurantes', shows:'🎭 Shows', lojas:'🛍️ Lojas' };
+
+let _dclNavioAtivo = null;   // slug do navio (ex: 'disney-wish') ou null = grade de navios
+let _dclSubTabAtiva = 'atracoes';
+let _dclShipsCache = null;   // {slug: item} dos 8 navios, carregado uma vez
+
+function _dclExtractShipSlug(record){
+  const parts = (record._source_file||'').split('/');
+  const i = parts.indexOf('ships-detail');
+  return i>=0 ? parts[i+1] : null;
+}
+
+async function _kbRenderCruzeiros(grid){
+  if(_dclNavioAtivo) return _kbRenderShipDetail(grid);
+  return _kbRenderShipsGrid(grid);
+}
+
+async function _kbRenderShipsGrid(grid){
+  grid.innerHTML = '<p style="color:var(--text2);padding:30px;text-align:center;grid-column:1/-1">Carregando navios...</p>';
+  const allHotels = await kbFetch('hotel', 'disney-cruise-line', {incluirOcultos:true});
+  const navios = Object.keys(allHotels)
+    .map(uuid=>({uuid, ...allHotels[uuid]}))
+    .filter(r => (r._source_file||'').includes('/ships/'));
+  navios.sort((a,b)=>(a.official_name_pt||'').localeCompare(b.official_name_pt||'','pt'));
+  _dclShipsCache = {}; navios.forEach(n=>{ _dclShipsCache[n.slug||n.uuid] = n; });
+  _kbEncCurrentItems = {}; navios.forEach(n=>{ _kbEncCurrentItems[n.uuid]=n; });
+
+  if(!navios.length){ grid.innerHTML='<p style="color:var(--text2);padding:30px;text-align:center;grid-column:1/-1">Nenhum navio encontrado.</p>'; return; }
+
+  grid.innerHTML = navios.map(n => {
+    const img = n.image_url||'';
+    const badges = _kbRenderExtraBadgesSis('navios', n);
+    return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;opacity:${n._hidden?'0.5':'1'}">
+      ${img?`<img src="${esc(img)}" alt="${esc(n.official_name_pt)}" style="width:100%;height:150px;object-fit:cover" onerror="this.style.display='none'"/>`
+           :`<div style="height:110px;display:flex;align-items:center;justify-content:center;font-size:44px;background:linear-gradient(135deg,var(--primary),var(--primary-light))">🚢</div>`}
+      <div style="padding:14px;display:flex;flex-direction:column;gap:8px;flex:1">
+        <div style="font-size:13px;font-weight:700;color:var(--text1)">${esc(n.official_name_pt||n.official_name||'')}</div>
+        ${badges.length?`<div style="display:flex;gap:5px;flex-wrap:wrap">${badges.join('')}</div>`:''}
+        ${n.short_description_pt?`<p style="font-size:11px;color:var(--text2);line-height:1.5;margin:0">${esc(n.short_description_pt)}</p>`:''}
+        <div style="display:flex;gap:5px;margin-top:auto;padding-top:6px">
+          <button class="btn btn-primary btn-sm" style="flex:1;font-size:11px" onclick="_kbOpenShipDetail('${esc(n.slug||n.uuid)}')">Ver conteúdo do navio →</button>
+          <button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="_kbOpenEditSis('${esc(n.uuid)}','navios')" title="Editar">✏️</button>
+          <button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="_kbToggleHideSis('${esc(n.uuid)}','navios',${n._hidden?'false':'true'})" title="${n._hidden?'Mostrar':'Ocultar'}">${n._hidden?'👁️':'🙈'}</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function _kbOpenShipDetail(shipSlug){
+  _dclNavioAtivo = shipSlug;
+  _dclSubTabAtiva = 'atracoes';
   renderEnciclopedia();
 }
-let _festEditId = null;
-function _festOpenEdit(id, nomeOriginal, descOriginal){
-  _festEditId = id;
-  const ov = _festGetOverride(id);
-  const ex = g('_m-fest-edit'); if(ex) ex.remove();
-  const m = document.createElement('div'); m.id='_m-fest-edit';
-  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto';
-  m.innerHTML = `<div style="background:var(--surface);border-radius:16px;padding:24px;width:min(520px,100%);display:flex;flex-direction:column;gap:12px">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h3 style="font-size:15px;font-weight:700">✏️ Editar festival</h3>
-      <button onclick="g('_m-fest-edit').remove()" style="background:none;border:none;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div><label style="font-size:11px;font-weight:600;color:var(--text2)">Nome</label>
-      <input id="_feste-nome" class="form-input" style="margin-top:4px" value="${esc(ov.nome||nomeOriginal||'')}"/></div>
-    <div><label style="font-size:11px;font-weight:600;color:var(--text2)">Descrição</label>
-      <textarea id="_feste-desc" class="form-textarea" rows="3" style="margin-top:4px">${esc(ov.desc!==undefined?ov.desc:(descOriginal||''))}</textarea></div>
-    <div><label style="font-size:11px;font-weight:600;color:var(--text2)">📝 Nota interna da equipe</label>
-      <textarea id="_feste-nota" class="form-textarea" rows="2" style="margin-top:4px">${esc(ov.notaInterna||'')}</textarea></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button class="btn btn-ghost" onclick="g('_m-fest-edit').remove()">Cancelar</button>
-      <button class="btn btn-primary" onclick="_festSaveEdit()">💾 Salvar</button>
-    </div>
-  </div>`;
-  document.body.appendChild(m);
+function _kbBackToShipsGrid(){
+  _dclNavioAtivo = null;
+  renderEnciclopedia();
 }
-function _festSaveEdit(){
-  if(!_festEditId) return;
-  if(!DB.festOverrides) DB.festOverrides = {};
-  if(!DB.festOverrides[_festEditId]) DB.festOverrides[_festEditId] = {};
-  DB.festOverrides[_festEditId].nome = g('_feste-nome')?.value?.trim()||'';
-  DB.festOverrides[_festEditId].desc = g('_feste-desc')?.value?.trim()||'';
-  DB.festOverrides[_festEditId].notaInterna = g('_feste-nota')?.value?.trim()||'';
-  DB.festOverrides[_festEditId].editedBy = _kbUserNameSis();
-  DB.festOverrides[_festEditId].editedAt = Date.now();
-  saveToStorage();
-  toast('Edição salva');
-  g('_m-fest-edit')?.remove();
+function _kbSwitchShipSubTab(subTab){
+  _dclSubTabAtiva = subTab;
   renderEnciclopedia();
 }
 
-const KB_ENC_TAB_ICON = { hoteis:'🏨', cruzeiros:'🚢' };
-const KB_ENC_TAB_LABEL = { hoteis:'hotel', cruzeiros:'item' };
+async function _kbRenderShipDetail(grid){
+  const navio = _dclShipsCache ? _dclShipsCache[_dclNavioAtivo] : null;
+  const nomeNavio = navio ? (navio.official_name_pt||navio.official_name) : _dclNavioAtivo;
+  const cat = DCL_SHIP_SUBTABS[_dclSubTabAtiva] || 'attraction';
+
+  grid.innerHTML = `<div style="grid-column:1/-1;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="btn btn-ghost btn-sm" onclick="_kbBackToShipsGrid()">← Navios</button>
+      <h3 style="font-size:15px;font-weight:700;margin:0">🚢 ${esc(nomeNavio)}</h3>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${Object.keys(DCL_SHIP_SUBTABS).map(t=>`<button class="btn btn-sm ${t===_dclSubTabAtiva?'btn-primary':'btn-ghost'}" onclick="_kbSwitchShipSubTab('${t}')">${DCL_SHIP_SUBTAB_LABEL[t]}</button>`).join('')}
+    </div>
+    <div id="_dcl-ship-content" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">
+      <p style="color:var(--text2);padding:20px;grid-column:1/-1">Carregando...</p>
+    </div>
+  </div>`;
+
+  const data = await kbFetch(cat, 'disney-cruise-line', {incluirOcultos:true});
+  let items = Object.keys(data)
+    .map(uuid=>({uuid, ...data[uuid]}))
+    .filter(r => _dclExtractShipSlug(r) === _dclNavioAtivo);
+  items.sort((a,b)=>(!!a._hidden - !!b._hidden) || (a.official_name_pt||'').localeCompare(b.official_name_pt||'','pt'));
+  _kbEncCurrentItems = {}; items.forEach(it=>{ _kbEncCurrentItems[it.uuid]=it; });
+
+  const content = document.getElementById('_dcl-ship-content');
+  if(!content) return;
+  if(!items.length){
+    content.innerHTML = `<p style="color:var(--text2);padding:20px;grid-column:1/-1">Nenhum item nesta categoria para este navio ainda.</p>`;
+    return;
+  }
+  content.innerHTML = items.map(it => _kbCardSis(it, it.uuid, _dclSubTabAtiva)).join('');
+}
+
 
 function _kbCardSis(item, uuid, tab){
   const nome = item.official_name_pt || item.official_name || 'Sem nome';
@@ -3897,20 +4000,21 @@ function _kbCardSis(item, uuid, tab){
   const img  = item.image_url || '';
   const isHidden = !!item._hidden;
   const isCustom = !!item.isCustom;
+  const dicas = (item.tips_pt || []);
 
   const badges = [];
-  if (item.star_rating) badges.push(`<span style="background:#fef9c3;color:#854d0e;border-radius:4px;padding:1px 6px;font-size:10px">${'⭐'.repeat(Math.min(item.star_rating,5))}</span>`);
-  if (item.fleet) badges.push(`<span style="background:#dbeafe;color:#1e40af;border-radius:4px;padding:1px 6px;font-size:10px">🚢 ${item.fleet.length} navios</span>`);
   if (item.status && item.status !== 'Active') badges.push(`<span style="background:#fef2f2;color:#b91c1c;border-radius:4px;padding:1px 6px;font-size:10px">⚠️ ${esc(item.status)}</span>`);
+  badges.push(..._kbRenderExtraBadgesSis(tab, item));
 
   return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;opacity:${isHidden?'0.5':'1'}">
-    ${img ? `<img src="${esc(img)}" alt="${esc(nome)}" style="width:100%;height:130px;object-fit:cover" onerror="this.style.display='none'" loading="lazy"/>`
+    ${img ? `<img src="${esc(img)}" alt="${esc(nome)}" style="width:100%;height:150px;object-fit:cover" onerror="this.style.display='none'" loading="lazy"/>`
           : `<div style="height:110px;display:flex;align-items:center;justify-content:center;font-size:44px;background:linear-gradient(135deg,var(--primary),var(--primary-light))">${KB_ENC_TAB_ICON[tab]||'📋'}</div>`}
     <div style="padding:14px;display:flex;flex-direction:column;gap:8px;flex:1">
       <div style="font-size:13px;font-weight:700;color:var(--text1)">${esc(nome)}${isCustom?' <span style="font-size:9px;color:#7c3aed;font-weight:600">· personalizado</span>':''}${item._edited?' <span style="font-size:9px;color:#2563eb">· editado</span>':''}</div>
       ${badges.length ? `<div style="display:flex;gap:5px;flex-wrap:wrap">${badges.join('')}</div>` : ''}
-      ${desc?`<p style="font-size:11px;color:var(--text2);line-height:1.5;margin:0">${esc(desc.slice(0,200))}</p>`:''}
-      ${item.notaInterna?`<div style="font-size:10px;color:#92400e;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:4px;padding:5px 8px">📝 ${esc(item.notaInterna.slice(0,150))}</div>`:''}
+      ${desc?`<p style="font-size:11px;color:var(--text2);line-height:1.5;margin:0">${esc(desc)}</p>`:''}
+      ${dicas.length?`<div style="border-top:1px solid var(--surface3);padding-top:6px;display:flex;flex-direction:column;gap:2px">${dicas.map(d=>`<div style="font-size:10px;color:var(--text2)">💡 ${esc(String(d))}</div>`).join('')}</div>`:''}
+      ${item.notaInterna?`<div style="font-size:10px;color:#92400e;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:4px;padding:5px 8px">📝 ${esc(item.notaInterna)}</div>`:''}
       <div style="display:flex;gap:5px;margin-top:auto;padding-top:6px">
         ${item.source_url?`<a href="${esc(item.source_url)}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;font-size:10px;text-decoration:none;text-align:center">🔗 Site oficial</a>`:''}
         <button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="_kbCopyInfoSis('${esc(uuid)}')" title="Copiar para WhatsApp">📋</button>
@@ -3954,17 +4058,15 @@ function _kbOpenEditSis(uuid, tab){
   const m = document.createElement('div'); m.id='_m-kb-edit-sis';
   m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto';
   const nome = item.official_name_pt || item.official_name || '';
-  const desc = item.short_description_pt || item.description_pt || '';
   const notaInterna = item.notaInterna || '';
-  m.innerHTML = `<div style="background:var(--surface);border-radius:16px;padding:24px;width:min(520px,100%);display:flex;flex-direction:column;gap:12px">
+  m.innerHTML = `<div style="background:var(--surface);border-radius:16px;padding:24px;width:min(560px,100%);display:flex;flex-direction:column;gap:12px;max-height:90vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:center">
       <h3 style="font-size:15px;font-weight:700">✏️ Editar ${KB_ENC_TAB_LABEL[tab]||'item'}</h3>
       <button onclick="g('_m-kb-edit-sis').remove()" style="background:none;border:none;font-size:20px;cursor:pointer">✕</button>
     </div>
     <div><label style="font-size:11px;font-weight:600;color:var(--text2)">Nome</label>
       <input id="_kbe-nome-sis" class="form-input" style="margin-top:4px" value="${esc(nome)}"/></div>
-    <div><label style="font-size:11px;font-weight:600;color:var(--text2)">Descrição</label>
-      <textarea id="_kbe-desc-sis" class="form-textarea" rows="3" style="margin-top:4px">${esc(desc)}</textarea></div>
+    ${_kbRenderExtraFieldsSis(tab, item, '_kbe-sis')}
     <div><label style="font-size:11px;font-weight:600;color:var(--text2)">📝 Nota interna da equipe (não aparece para o cliente)</label>
       <textarea id="_kbe-nota-sis" class="form-textarea" rows="2" style="margin-top:4px" placeholder="Ex: preço negociado, contato direto, observação de atendimento...">${esc(notaInterna)}</textarea></div>
     <div style="font-size:11px;color:var(--text2)">Item original do Knowledge Base não é alterado — sua edição fica registrada por cima, e pode ser desfeita a qualquer momento.</div>
@@ -3978,12 +4080,10 @@ function _kbOpenEditSis(uuid, tab){
 async function _kbSaveEditSis(){
   if(!_kbEncEditUuid) return;
   const nome = g('_kbe-nome-sis')?.value?.trim();
-  const desc = g('_kbe-desc-sis')?.value?.trim();
   const nota = g('_kbe-nota-sis')?.value?.trim();
-  const fields = {};
+  const fields = _kbCollectExtraFieldsSis(_kbEncEditTab, '_kbe-sis');
   const original = _kbEncEditItem || {};
   if(nome && nome !== (original.official_name_pt||original.official_name)) fields.official_name_pt = nome;
-  if(desc !== (original.short_description_pt||original.description_pt||'')) fields.short_description_pt = desc;
   if(nota !== (original.notaInterna||'')) fields.notaInterna = nota;
   if(Object.keys(fields).length){
     await kbEditFields(_kbEncEditUuid, fields, _kbUserNameSis());
@@ -3995,19 +4095,20 @@ async function _kbSaveEditSis(){
 
 function openEncAddForTabSis(){
   const tab = _encTab || 'hoteis';
-  if(tab === 'festivais'){ toast('Festivais não usam o Knowledge Base — edição direta em breve', 'warn'); return; }
-  const fDest = (g('enc-dest-f')||{}).value || '';
+  if(tab === 'cruzeiros' && !_dclNavioAtivo){ toast('Entre em um navio para adicionar itens a ele', 'warn'); return; }
+  const schemaKey = tab === 'cruzeiros' ? _dclSubTabAtiva : tab;
+  const fDest = tab === 'cruzeiros' ? 'disney-cruise-line' : ((g('enc-dest-f')||{}).value || '');
   if(!fDest){ toast('Selecione um destino antes de adicionar um item', 'warn'); return; }
   const ex = g('_m-kb-add-sis'); if(ex) ex.remove();
   const m = document.createElement('div'); m.id='_m-kb-add-sis';
-  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
-  m.innerHTML = `<div style="background:var(--surface);border-radius:16px;padding:24px;width:min(480px,100%);display:flex;flex-direction:column;gap:12px">
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto';
+  m.innerHTML = `<div style="background:var(--surface);border-radius:16px;padding:24px;width:min(560px,100%);display:flex;flex-direction:column;gap:12px;max-height:90vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <h3 style="font-size:15px;font-weight:700">+ Novo ${KB_ENC_TAB_LABEL[tab]||'item'}</h3>
+      <h3 style="font-size:15px;font-weight:700">+ Novo ${KB_ENC_TAB_LABEL[schemaKey]||KB_ENC_TAB_LABEL[tab]||'item'}</h3>
       <button onclick="g('_m-kb-add-sis').remove()" style="background:none;border:none;font-size:18px;cursor:pointer">✕</button>
     </div>
     <div><label style="font-size:11px;font-weight:600">Nome *</label><input id="_kba-nome-sis" class="form-input" style="margin-top:4px"/></div>
-    <div><label style="font-size:11px;font-weight:600">Descrição</label><textarea id="_kba-desc-sis" class="form-textarea" rows="3" style="margin-top:4px"></textarea></div>
+    ${_kbRenderExtraFieldsSis(schemaKey, null, '_kba-sis')}
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-ghost" onclick="g('_m-kb-add-sis').remove()">Cancelar</button>
       <button class="btn btn-primary" onclick="_kbSaveAddSis()">💾 Adicionar</button>
@@ -4019,39 +4120,31 @@ function openEncAddForTabSis(){
 async function _kbSaveAddSis(){
   const nome = g('_kba-nome-sis')?.value?.trim();
   if(!nome){ toast('Informe o nome', 'warn'); return; }
-  const desc = g('_kba-desc-sis')?.value?.trim()||'';
   const tab = _encTab || 'hoteis';
-  const cat = tab === 'cruzeiros' ? 'attraction' : 'hotel';
-  const fDest = (g('enc-dest-f')||{}).value || '';
-  await kbAddCustom(cat, fDest, { official_name_pt: nome, short_description_pt: desc }, _kbUserNameSis());
+  const schemaKey = tab === 'cruzeiros' ? _dclSubTabAtiva : tab;
+  const fields = _kbCollectExtraFieldsSis(schemaKey, '_kba-sis');
+  const cat = tab === 'cruzeiros' ? (DCL_SHIP_SUBTABS[_dclSubTabAtiva]||'attraction') : 'hotel';
+  const fDest = tab === 'cruzeiros' ? 'disney-cruise-line' : ((g('enc-dest-f')||{}).value || '');
+  await kbAddCustom(cat, fDest, Object.assign({ official_name_pt: nome }, fields), _kbUserNameSis());
   toast('Item adicionado!');
   g('_m-kb-add-sis')?.remove();
   renderEnciclopedia();
 }
 
 
-const KB_ENC_CATEGORY = { hoteis:'hotel', cruzeiros:'attraction' }; // Cruzeiros: atrações de bordo do KB (DCL)
-const FESTIVAIS_DEST_OPTS = `<option value="">Todas as marcas</option>
-        <option value="Disney">🏰 Disney (festivais)</option>
-        <option value="Universal">🎥 Universal (festivais)</option>
-        <option value="SeaWorld">🐬 United Parks (festivais)</option>`;
+const KB_ENC_CATEGORY = { hoteis:'hotel', festivais:'festival' };
 
 async function _kbPopulateDestinoSelectSis(){
   const sel = g('enc-dest-f'); if(!sel) return;
-  if(_encTab === 'festivais'){
-    sel.innerHTML = FESTIVAIS_DEST_OPTS;
+  if(_encTab === 'cruzeiros'){
+    // Cruzeiros usa navegação própria (grade de navios) — sem seletor de destino
+    sel.style.display = 'none';
     return;
   }
+  sel.style.display = '';
   const destinos = await kbGetDestinos();
   const slugs = Object.keys(destinos);
-  if(_encTab === 'cruzeiros'){
-    // Cruzeiros: só o próprio destino-navio, sem geografia
-    sel.innerHTML = slugs.includes('disney-cruise-line')
-      ? `<option value="disney-cruise-line">🚢 ${esc(destinos['disney-cruise-line'].label)}</option>`
-      : '<option value="">Nenhum dado de cruzeiro disponível</option>';
-    return;
-  }
-  // Hoteis: todos os destinos geográficos, sem Cruzeiro misturado
+  // Hoteis/Festivais: todos os destinos geográficos, sem Cruzeiro misturado
   const geograficos = slugs.filter(s=>s!=='disney-cruise-line').sort((a,b)=>destinos[a].label.localeCompare(destinos[b].label,'pt'));
   const padrao = slugs.includes('walt-disney-world') ? 'walt-disney-world' : (geograficos[0]||'');
   sel.innerHTML = '<option value="">Todos os destinos</option>'
@@ -4093,8 +4186,8 @@ async function renderEnciclopedia(){
   const dest = (g('enc-dest-f')||{}).value||'';
   const q    = ((g('enc-search-f')||{}).value||'').toLowerCase();
 
-  if(_encTab === 'festivais'){
-    _renderFestivaisEnc(grid, dest, q);
+  if(_encTab === 'cruzeiros'){
+    await _kbRenderCruzeiros(grid);
   } else {
     await _renderEncKBSis(grid, dest, q);
   }
@@ -4107,65 +4200,6 @@ async function renderEnciclopediaInit(){
     _kbEncDestinosCarregados = true;
   }
   await renderEnciclopedia();
-}
-
-function _renderFestivaisEnc(grid, dest, q){
-  const festData = typeof _FEST_DATA !== 'undefined' ? _FEST_DATA : getFestivaisData();
-  let list = festData
-    .filter(f=>f.tipo!=='template')
-    .filter(f=>!dest||f.park===dest||f.parque===dest)
-    .filter(f=>!q||f.nome.toLowerCase().includes(q)||(f.desc||'').toLowerCase().includes(q))
-    .map(f=>{
-      const ov = _festGetOverride(f.id);
-      return Object.assign({}, f, {
-        nome: ov.nome || f.nome,
-        desc: ov.desc !== undefined ? ov.desc : f.desc,
-        notaInterna: ov.notaInterna || '',
-        _hidden: !!ov.hidden,
-        _edited: !!(ov.nome || ov.desc !== undefined),
-      });
-    });
-  list.sort((a,b)=>(!!a._hidden - !!b._hidden));
-  if(!list.length){grid.innerHTML='<p style="color:var(--text2);padding:30px;text-align:center;grid-column:1/-1">Nenhum festival encontrado.</p>';return;}
-  const parkColors={Disney:'#2563eb',Universal:'#7c3aed',SeaWorld:'#0891b2'};
-  const tipoLabel={festival:'🌸 Festival',festa_especial:'🎟️ Evento Especial'};
-  grid.innerHTML = list.map((f,fi)=>{
-    const img = FESTIVAL_IMAGES[f.nome]||'';
-    return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;opacity:${f._hidden?'0.5':'1'}">
-      <div style="height:140px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,${parkColors[f.park]||'#475569'},${(parkColors[f.park]||'#94a3b8')+'99'});flex-shrink:0">
-        ${f.tipo==='festa_especial'?'🎟️':f.park==='Disney'?'✨':f.park==='Universal'?'🎬':f.park==='SeaWorld'?'🐬':'🌟'}
-      </div>
-      <div style="padding:14px;flex:1;display:flex;flex-direction:column;gap:8px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
-          <span style="font-size:13px;font-weight:700;color:var(--text1)">${esc(f.nome)}${f._edited?' <span style="font-size:9px;color:#2563eb">· editado</span>':''}</span>
-          <span style="background:${parkColors[f.park]||'#475569'};color:#fff;border-radius:5px;padding:1px 7px;font-size:9px;font-weight:700;flex-shrink:0">${esc(f.park||'')}</span>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${f.periodo?`<span style="background:var(--surface2);border-radius:4px;padding:1px 6px;font-size:10px">📅 ${esc(f.periodo)}</span>`:''}
-          <span style="background:var(--surface2);border-radius:4px;padding:1px 6px;font-size:10px">${tipoLabel[f.tipo]||f.tipo||''}</span>
-        </div>
-        ${f.desc?`<p style="font-size:11px;color:var(--text2);line-height:1.5;margin:0">${esc(f.desc.slice(0,220))}</p>`:''}
-        ${f.notaInterna?`<div style="font-size:10px;color:#92400e;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:4px;padding:5px 8px">📝 ${esc(f.notaInterna.slice(0,150))}</div>`:''}
-        ${f.dicas&&f.dicas.length?`<div style="border-top:1px solid var(--surface3);padding-top:6px">${f.dicas.slice(0,3).map(d=>`<div style="font-size:10px;color:var(--text2)">💡 ${esc(d.slice(0,100))}</div>`).join('')}</div>`:''}
-        <div style="display:flex;gap:5px;margin-top:auto;padding-top:4px">
-          ${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;font-size:10px;text-decoration:none;text-align:center">🔗 Site</a>`:''}
-          <button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="copyFestInfo(${fi})" title="Copiar para WhatsApp">📋</button>
-          <button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="_festOpenEdit('${esc(f.id)}','${esc(f.nome).replace(/'/g,"\\'")}','${esc((f.desc||'')).replace(/'/g,"\\'")}')" title="Editar">✏️</button>
-          <button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="_festToggleHide('${esc(f.id)}',${f._hidden?'false':'true'})" title="${f._hidden?'Mostrar':'Ocultar'}">${f._hidden?'👁️':'🙈'}</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function copyFestInfo(fi){
-  const data = getFestivaisData();
-  if(!data[fi]) return;
-  const f = data[fi];
-  const txt = `🌸 *${f.nome}*\n${f.park||''} · ${f.periodo||''}\n${f.desc?f.desc.slice(0,200):''}
-\n*Desenrola Turismo* — ✨ Sua viagem dos sonhos`;
-  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>toast('Info copiada!','success')).catch(()=>_copyFallback(txt));
-  else _copyFallback(txt);
 }
 
 function _getTemplatesAtivos(){
