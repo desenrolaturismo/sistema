@@ -1795,7 +1795,8 @@ const DB = {
   divisaoPadrao: {vendedor:40, mkt:20, thomaz:10, camila:10, empresa:20},
   config: {
     destinos: ['Orlando Disney','Universal Orlando','Miami','New York','Outros EUA','Europa','Nacional','Outro'],
-    servicos: ['Ingressos','Hotel','Voo','Pacote','Guiamento Virtual','Cruzeiro','Outros'],
+    servicos: [
+    {key:'image_url', label:'📷 URL da Foto', type:'text'},'Ingressos','Hotel','Voo','Pacote','Guiamento Virtual','Cruzeiro','Outros'],
     categorias: ['Tráfego Pago','Comissão interna','MKT','Imposto','Cursos','Brindes','Eventos','Recebimento Operadora','Outros'],
     dataCorteComissoes: '2026-06',
     senhaMestre: null, // SEC-01: deve ser configurada em Registros → Configurações, nunca hardcoded
@@ -3767,6 +3768,7 @@ const KB_ENC_TAB_LABEL = { hoteis:'hotel', cruzeiros:'item', navios:'navio', atr
 
 const KB_FIELD_SCHEMA_SIS = {
   hoteis: [
+    {key:'image_url', label:'📷 URL da Foto', type:'text'},
     {key:'star_rating', label:'Classificação (estrelas, 1-5)', type:'number'},
     {key:'price_range', label:'Média de valor', type:'text'},
     {key:'benefits', label:'Benefícios do hotel (um por linha)', type:'tips'},
@@ -3774,6 +3776,7 @@ const KB_FIELD_SCHEMA_SIS = {
     {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
   ],
   festivais: [
+    {key:'image_url', label:'📷 URL da Foto', type:'text'},
     {key:'operator', label:'Marca/Operadora (Disney, Universal, SeaWorld...)', type:'text'},
     {key:'park', label:'Parque', type:'text'},
     {key:'access_type', label:'Acesso', type:'select', opts:[['included','Incluído no ingresso regular'],['separate_ticket','Ingresso separado (hard-ticket)']]},
@@ -3783,6 +3786,7 @@ const KB_FIELD_SCHEMA_SIS = {
   ],
   // Schema dos navios em si (card de topo da Cruzeiros) — campos próprios de navio
   navios: [
+    {key:'image_url', label:'📷 URL da Foto', type:'text'},
     {key:'star_rating', label:'Classificação (estrelas, 1-5)', type:'number'},
     {key:'gross_tonnage', label:'Tonelagem bruta', type:'text'},
     {key:'short_description_pt', label:'Descrição', type:'textarea'},
@@ -3790,12 +3794,14 @@ const KB_FIELD_SCHEMA_SIS = {
   ],
   // Conteúdo dentro de cada navio reaproveita exatamente o schema do Guiamento
   atracoes: [
+    {key:'image_url', label:'📷 URL da Foto', type:'text'},
     {key:'area', label:'Área do navio', type:'text'},
     {key:'height_requirement_cm', label:'Altura mínima (cm)', type:'number'},
     {key:'short_description_pt', label:'Descrição', type:'textarea'},
     {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
   ],
   restaurantes: [
+    {key:'image_url', label:'📷 URL da Foto', type:'text'},
     {key:'reserva', label:'Reserva', type:'select', opts:[['nao','Não precisa'],['recomendada','Recomendada'],['obrigatoria','Obrigatória']]},
     {key:'service_type', label:'Tipo de serviço', type:'select', opts:[['quick','Quick Service'],['table','Table Service']]},
     {key:'allergy_menu', label:'Menu para alérgicos', type:'select', opts:[['nao','Não'],['sim','Sim']]},
@@ -3804,12 +3810,14 @@ const KB_FIELD_SCHEMA_SIS = {
     {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
   ],
   shows: [
+    {key:'image_url', label:'📷 URL da Foto', type:'text'},
     {key:'showtimes', label:'Horário(s) — sempre confira no app oficial', type:'text'},
     {key:'duration_minutes', label:'Duração (minutos)', type:'number'},
     {key:'short_description_pt', label:'Descrição', type:'textarea'},
     {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
   ],
   lojas: [
+    {key:'image_url', label:'📷 URL da Foto', type:'text'},
     {key:'area', label:'Área do navio', type:'text'},
     {key:'short_description_pt', label:'Descrição', type:'textarea'},
     {key:'tips_pt', label:'Dicas do guia (uma por linha)', type:'tips'},
@@ -3842,7 +3850,7 @@ function _kbRenderExtraFieldsSis(schemaKey, item, idPrefix){
     } else if(f.type==='textarea' || f.type==='tips'){
       inputHtml = `<textarea id="${fieldId}" class="form-textarea" data-kbfield="${f.key}" rows="${f.type==='tips'?2:3}">${esc(val)}</textarea>`;
     } else {
-      inputHtml = `<input id="${fieldId}" class="form-input" type="${f.type==='number'?'number':'text'}" data-kbfield="${f.key}" value="${esc(val)}"/>`;
+      inputHtml = `<input id="${fieldId}" class="form-input" type="${f.type==='number'?'number':f.type==='url'?'url':'text'}" data-kbfield="${f.key}" value="${esc(val)}"/>`;
     }
     return `<div><label style="font-size:11px;font-weight:600;color:var(--text2)">${esc(f.label)}</label>
       <div style="margin-top:4px">${inputHtml}</div>
@@ -3929,7 +3937,7 @@ async function _kbRenderShipsGrid(grid){
     const img = n.image_url||'';
     const badges = _kbRenderExtraBadgesSis('navios', n);
     return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;opacity:${n._hidden?'0.5':'1'}">
-      ${img?`<img src="${esc(img)}" alt="${esc(n.official_name_pt)}" style="width:100%;height:150px;object-fit:cover" onerror="this.style.display='none'"/>`
+      ${img?`<img src="${esc(img)}" alt="${esc(n.official_name_pt)}" style="width:100%;height:150px;object-fit:cover" onerror="this.parentElement.style.background='linear-gradient(135deg,#1e293b,#334155)';this.style.display='none'"/>`
            :`<div style="height:110px;display:flex;align-items:center;justify-content:center;font-size:44px;background:linear-gradient(135deg,var(--primary),var(--primary-light))">🚢</div>`}
       <div style="padding:14px;display:flex;flex-direction:column;gap:8px;flex:1">
         <div style="font-size:13px;font-weight:700;color:var(--text1)">${esc(n.official_name_pt||n.official_name||'')}</div>
@@ -4007,7 +4015,7 @@ function _kbCardSis(item, uuid, tab){
   badges.push(..._kbRenderExtraBadgesSis(tab, item));
 
   return `<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;opacity:${isHidden?'0.5':'1'}">
-    ${img ? `<img src="${esc(img)}" alt="${esc(nome)}" style="width:100%;height:150px;object-fit:cover" onerror="this.style.display='none'" loading="lazy"/>`
+    ${img ? `<img src="${esc(img)}" alt="${esc(nome)}" style="width:100%;height:150px;object-fit:cover" onerror="this.parentElement.style.background='linear-gradient(135deg,#1e293b,#334155)';this.style.display='none'" loading="lazy"/>`
           : `<div style="height:110px;display:flex;align-items:center;justify-content:center;font-size:44px;background:linear-gradient(135deg,var(--primary),var(--primary-light))">${KB_ENC_TAB_ICON[tab]||'📋'}</div>`}
     <div style="padding:14px;display:flex;flex-direction:column;gap:8px;flex:1">
       <div style="font-size:13px;font-weight:700;color:var(--text1)">${esc(nome)}${isCustom?' <span style="font-size:9px;color:#7c3aed;font-weight:600">· personalizado</span>':''}${item._edited?' <span style="font-size:9px;color:#2563eb">· editado</span>':''}</div>
@@ -5695,7 +5703,8 @@ const VENDAS_ALIASES = {
   data:['data','date','dt','data venda','data da venda'],
   passageiro:['passageiro','passenger','cliente','nome','name','pax name','nome do cliente'],
   destino:['destino','destination','destino viagem'],
-  servicos:['serviços','servicos','serviço','servico','services','tipo serviço','tipo de serviço'],
+  servicos:[
+    {key:'image_url', label:'📷 URL da Foto', type:'text'},'serviços','servicos','serviço','servico','services','tipo serviço','tipo de serviço'],
   pax:['pax','qtd pax','qtd passageiros','num pax','número pax','passageiros'],
   operadora:['operadora','operator','agência','agencia','fornecedor'],
   vendedor:['vendedor','seller','agente','consultor','vendedor(a)'],
@@ -6354,7 +6363,8 @@ function init(){
     // Ensure config exists (backwards compat)
     if(!DB.config) DB.config = {
       destinos: ['Orlando Disney','Universal Orlando','Miami','New York','Outros EUA','Europa','Nacional','Outro'],
-      servicos: ['Ingressos','Hotel','Voo','Pacote','Guiamento Virtual','Cruzeiro','Outros'],
+      servicos: [
+    {key:'image_url', label:'📷 URL da Foto', type:'text'},'Ingressos','Hotel','Voo','Pacote','Guiamento Virtual','Cruzeiro','Outros'],
       categorias: ['Tráfego Pago','Comissão interna','MKT','Imposto','Cursos','Brindes','Eventos','Recebimento Operadora','Outros'],
       dataCorteComissoes: '2026-06',
       senhaMestre: null, // SEC-01: deve ser configurada em Registros → Configurações, nunca hardcoded
