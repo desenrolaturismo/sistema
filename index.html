@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v3.28</title>
+<title>Desenrola Turismo — Sistema de Gestão v3.30</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -323,7 +323,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v3.28
+    ✦ Desenrola Turismo · v3.30
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -692,6 +692,10 @@ tbody tr:hover{background:var(--surface2)}
     <button class="tab-btn active" onclick="switchRegTab('vendedores',this)">👤 Vendedores</button>
     <button class="tab-btn" onclick="switchRegTab('operadoras',this)">🏢 Operadoras</button>
     <button class="tab-btn" onclick="switchRegTab('ingressos',this)">🎟️ Ingressos</button>
+    <button class="tab-btn" onclick="switchRegTab('conteudo',this)">📝 Conteúdo</button>
+    <button class="tab-btn" onclick="switchRegTab('seguradoras',this)">🛡️ Seguradoras</button>
+    <button class="tab-btn" onclick="switchRegTab('hoteis',this)">🏨 Hotéis</button>
+    <button class="tab-btn" onclick="switchRegTab('locadoras',this)">🚗 Locadoras</button>
     <button class="tab-btn" onclick="switchRegTab('config',this)">⚙️ Configurações</button>
     <button class="tab-btn" onclick="switchRegTab('backup',this)">💾 Backup</button>
   </div>
@@ -793,6 +797,65 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   
+
+  <!-- CONTEÚDO -->
+  <div id="reg-tab-conteudo" class="tab-panel">
+    <div style="display:grid;gap:16px;max-width:760px">
+      <div class="card">
+        <div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:.8px;color:var(--primary);margin-bottom:14px;text-transform:uppercase">🏢 Dados da Empresa</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="form-group"><label class="form-label">Nome Fantasia</label><input class="form-input" id="cnt-emp-nome" style="font-size:12px"/></div>
+          <div class="form-group"><label class="form-label">Razão Social</label><input class="form-input" id="cnt-emp-razao" style="font-size:12px"/></div>
+          <div class="form-group"><label class="form-label">CNPJ</label><input class="form-input" id="cnt-emp-cnpj" style="font-size:12px"/></div>
+          <div class="form-group"><label class="form-label">Endereço</label><input class="form-input" id="cnt-emp-end" style="font-size:12px"/></div>
+          <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" id="cnt-emp-email" style="font-size:12px"/></div>
+          <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" id="cnt-emp-tel" style="font-size:12px"/></div>
+          <div class="form-group"><label class="form-label">Site</label><input class="form-input" id="cnt-emp-site" style="font-size:12px"/></div>
+        </div>
+        <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="salvarConteudoEmpresa()">💾 Salvar Empresa</button>
+      </div>
+      <div class="card">
+        <div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:.8px;color:var(--primary);margin-bottom:8px;text-transform:uppercase">✨ Quem Somos</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Aparece no orçamento enviado ao cliente.</div>
+        <textarea class="form-input" id="cnt-quem-somos" rows="4" style="font-size:12px;resize:vertical"></textarea>
+        <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="salvarCampoConteudo('quemSomos','cnt-quem-somos')">💾 Salvar</button>
+      </div>
+      <div class="card">
+        <div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:.8px;color:var(--primary);margin-bottom:8px;text-transform:uppercase">🗺️ Descrição do Guiamento Virtual</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Preenchido automaticamente ao adicionar Guiamento Virtual no orçamento.</div>
+        <textarea class="form-input" id="cnt-guiamento" rows="4" style="font-size:12px;resize:vertical"></textarea>
+        <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="salvarCampoConteudo('guiamentoVirtual','cnt-guiamento')">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEGURADORAS -->
+  <div id="reg-tab-seguradoras" class="tab-panel">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+      <button class="btn btn-primary" onclick="openModalSeguradora(null)">+ Nova Seguradora</button>
+    </div>
+    <div id="seguradoras-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px"></div>
+  </div>
+
+  <!-- HOTÉIS CUSTOM -->
+  <div id="reg-tab-hoteis" class="tab-panel">
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#0369a1">
+      ℹ️ Hotéis <b>fora do banco da Enciclopédia</b>. Para hotéis Disney/Universal, use a Enciclopédia. Fotos → Drive: <code>Desenrola Turismo/Hotels/[Nome]/</code>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+      <button class="btn btn-primary" onclick="openModalHotelCustom(null)">+ Cadastrar Hotel</button>
+    </div>
+    <div id="hoteis-custom-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px"></div>
+  </div>
+
+  <!-- LOCADORAS -->
+  <div id="reg-tab-locadoras" class="tab-panel">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+      <button class="btn btn-primary" onclick="openModalLocadora(null)">+ Nova Locadora</button>
+    </div>
+    <div id="locadoras-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px"></div>
+  </div>
+
   <div id="reg-tab-backup" class="tab-panel">
     <div class="page-body" style="max-width:640px;margin:0 auto">
     <div class="card mb16">
@@ -1752,7 +1815,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wgARCAH0AfQDASIAAhEBAxEB/8QAGgABAQADAQEAAAAAAAAAAAAAAAUCAwQGAf/EABgBAQEBAQEAAAAAAAAAAAAAAAADAgEE/9oADAMBAAIQAxAAAALjHp8oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACzGt432s0bYT6c7WYovAAAAAAAAAAAAAAAAAAAAAAAAAAAABbiW8boCN06jO1mKL+cAAAAAAAAAAAAAAAAAAAAAAAAAAABbiW8boCN06jO1mKL+cAAAAAAAAAAAAAAAAAAAAAAAAzzd0t2sxDgC3Et43QEbp1GdrMUX84AAAAAAAAAAAAAAAAAAAAAyMd9KlOk3t2p0DmgNHFUdz5rT6ubSca3Gs95QEbp1GdrMUX84AAAAAAAAAAAAAAAAAAAAzPt/7vjcMbANHH3NNH+95XT+3msxzujV2O8DnU6jO1mKL+cAAAAAAAAAAAAAAAAAAABdnX51CVRpcyi8+q0Q3gzwGWIq1fK9c6egY5SsAnUZ2sxRfzgAAAAAAAAAAAAAAAAAADc7b6jzegHcfOUJNYhSY+nfweikzpxCkwO+55T0Eq9bWnTZO7Z+syBeAAAAAAAAAAAAAAAAAAACjOsZ1TEPQNTnntR6fOMnMamVWVWncnTzGv0kO0ecbwAAAAAAAAAAAAAAAAAAAAAAAtRbON0hG7m6dHeeb+/Ho83ZY83ljfqUupKwc6+aoesd03UtIO5AAAAAAAAAAAAAAAAAAAAAAVJfXnXoBD0Pn0eV+dnH6fMDirK+876rVhKjbl1l4ANud/G+LZ2pVkTfU8G8QxWQAAAAAAAAAAAAAAAAAAD78HqM5lPz+gOa5PP8Aq49JTBWQFGflhzod43/b+N/cyNgdA83opzPR5w7kAAAAAAAAAAAAAAAAAADZ6Xy1HFLQjYCRM9VopPzaro3Phd20mdlPsxvDMnQ1w9c9AmU+dDnZsa3EtAN4AAAAAAAAAAAAAAAAAAAAsU/KVZVrCdQAAAGGMHWHOXjTsSqsLBnc6LXkWgG8AAAAAAAAAAAAAAAAAAAAAdVfzzO/VvN9k92E3LmqCZoctcEjVvGzWUmBd7vM/Z19K8053sm5Y0kHeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/2gAMAwEAAgADAAAAIf8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.28</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.30</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -1776,7 +1839,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.28</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.30</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -2058,6 +2121,9 @@ const DB = {
     {id:13,nome:'Viator',exec:'',contato:'',email:'',forma:'Pix',obs:'',status:'ativo'}
   ],
   metas: {},
+  conteudo:{quemSomos:'A Desenrola Turismo é uma agência especializada em transformar viagens em experiências memoráveis.',guiamentoVirtual:'O Guiamento Virtual Desenrola é um serviço exclusivo de acompanhamento em tempo real durante sua visita aos parques.',empresa:{nome:'Desenrola Turismo',razao:'Camila Pascholati Gusmão Righetti MEI',cnpj:'56.004.414/0001-43',endereco:'Rua Limoeiro, nº 955, Jardim Limoeiro, Arujá/SP',site:'desenrolaturismo.com.br',email:'',telefone:''}},
+  seguradoras:[{id:1,nome:'Hero Seguros',logo:'',ativo:true},{id:2,nome:'AsistCard',logo:'',ativo:true},{id:3,nome:'Universal Assistance',logo:'',ativo:true},{id:4,nome:'Coris',logo:'',ativo:true},{id:5,nome:'GTA Seguros',logo:'',ativo:true},{id:6,nome:'Assist 24h',logo:'',ativo:true}],
+  hoteisCustom:[],locadoras:[],nextSeguradoraId:7,nextHotelCustomId:1,nextLocadoraId:1,
   divisaoPadrao: {vendedor:40, mkt:20, thomaz:10, camila:10, empresa:20},
   config: {
     destinos: ['Orlando Disney','Universal Orlando','Miami','New York','Outros EUA','Europa','Nacional','Outro'],
@@ -2510,11 +2576,11 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 
 
 // ══════════════════════════════════════════════════════════════
-// BACKUP AUTOMÁTICO — DesenrolaSistema v3.28
+// BACKUP AUTOMÁTICO — DesenrolaSistema v3.30
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v3.28',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v3.30',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_db')||'{}');
   if (_fbDb && _fbOnline) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -5434,6 +5500,10 @@ function switchRegTab(tab, btn){
   if(tab==='vendedores') renderVendedores();
   if(tab==='operadoras') renderOperadoras();
   if(tab==='ingressos')  renderIngressosTab();
+  if(tab==='conteudo')   renderConteudoTab();
+  if(tab==='seguradoras') renderSeguradoras();
+  if(tab==='hoteis')     renderHoteisCustom();
+  if(tab==='locadoras')  renderLocadoras();
   if(tab==='config')     renderConfig();
   if(tab==='backup')     _atualizarStatusBackup();
 }
@@ -7933,7 +8003,7 @@ function _atualizarBadgesCRM(){
 }
 
 // ──────────────────────────────────────────────────────────────
-// SISTEMA DE TAREFAS — v3.28
+// SISTEMA DE TAREFAS — v3.30
 // Tarefas vinculadas a cards do Pipeline CRM
 // Integração: Calendário + Notificações Pop-up
 // ──────────────────────────────────────────────────────────────
@@ -7946,7 +8016,7 @@ const TAREFA_PRIORIDADES = {
 
 
 // ══════════════════════════════════════════════════════════════
-// SISTEMA v3.28 — Novas funcionalidades
+// SISTEMA v3.30 — Novas funcionalidades
 // 1. Viagens: sub-tab Arquivados (auto-arquivo 30d após retorno)
 // 2. Clientes: link Drive
 // 3. Venda: vinculação obrigatória a Cliente
@@ -8110,7 +8180,7 @@ function _populateTarefaVendFilter(){
 }
 
 // ══════════════════════════════════════════════════════════════
-// TAREFAS — redesign completo v3.28
+// TAREFAS — redesign completo v3.30
 // Inspirado em Pipedrive / HubSpot best practices
 // Tipos de atividade, resultado ao concluir, dashboard, view modes
 // ══════════════════════════════════════════════════════════════
@@ -8532,7 +8602,7 @@ function _extrairDataViagem(venda){
   return '';
 }
 
-// FIX v3.28: corrige etapas de cards existentes que foram criados com nome errado
+// FIX v3.30: corrige etapas de cards existentes que foram criados com nome errado
 function _corrigirEtapasExistentes(){
   if(!DB.posVendas || !DB.posVendas.length) return;
   var _rePassageiro = /^passageiro(\s*#?\d+)?$/i;
@@ -8555,7 +8625,7 @@ function _corrigirEtapasExistentes(){
       changed++;
     }
   });
-  if(changed > 0){ saveToStorage(); console.log('[v3.28] Corrigidas ' + changed + ' etapas de viagem.'); }
+  if(changed > 0){ saveToStorage(); console.log('[v3.30] Corrigidas ' + changed + ' etapas de viagem.'); }
 }
 
 
@@ -9003,34 +9073,39 @@ function verVouchersDrive(pvId){
 // ── PDF Consolidado (versão robusta sem crashes) ──────────────────
 
 function exportarDayByDayPDF(){
-  var pv=(DB.posVendas||[]).find(function(x){return x.id===_dxdPvId;});
-  if(!pv){toast('Salve primeiro','warn');return;}
-  var dias=_coletarDxDDias();
-  var html='<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Day-by-Day — '+escapeHtml(pv.cliente)+'</title>' +
-    '<style>body{font-family:Nunito,sans-serif;color:#0f2d4e;padding:24px;font-size:13px}' +
-    'h1{font-family:Anton,sans-serif;font-size:20px;letter-spacing:1.5px;text-transform:uppercase;color:#2C6AA3;margin:0 0 4px}' +
-    '.sub{font-size:12px;color:#4a6280;margin-bottom:20px}' +
-    '.dia{border:1px solid #e2e8f0;border-radius:10px;padding:14px;margin-bottom:12px;break-inside:avoid}' +
-    '.dia-header{font-weight:800;font-size:14px;color:#2C6AA3;margin-bottom:6px}' +
-    '.dia-data{font-size:11px;color:#64748b;margin-bottom:8px}' +
-    'pre{white-space:pre-wrap;font-family:inherit;font-size:12px;color:#334155;margin:0}' +
-    '.obs{font-size:11px;color:#64748b;margin-top:6px;font-style:italic}' +
-    '@page{size:A4;margin:15mm}@media print{body{padding:0}}</style></head><body>' +
-    '<h1>'+escapeHtml(pv.cliente)+'</h1>' +
-    '<div class="sub">'+escapeHtml(pv.destino||'')+(pv.dataViagem?' · Embarque: '+pv.dataViagem.split('-').reverse().join('/'):'')+(pv.dataVolta?' · Retorno: '+pv.dataVolta.split('-').reverse().join('/'):'')+'</div>' +
-    dias.map(function(d){
-      return '<div class="dia">' +
-        '<div class="dia-header">'+escapeHtml(d.titulo||'Dia')+'</div>' +
-        (d.data?'<div class="dia-data">📅 '+d.data.split('-').reverse().join('/')+'</div>':'') +
-        '<pre>'+escapeHtml(d.atividades||'—')+'</pre>' +
-        (d.obs?'<div class="obs">📝 '+escapeHtml(d.obs)+'</div>':'') +
-      '</div>';
-    }).join('') +
-    '<div style="margin-top:20px;font-size:10px;color:#94a3b8;text-align:center">Desenrola Turismo · Sua viagem dos sonhos ✦</div>' +
-    '<script>window.onload=function(){setTimeout(function(){window.print();},400);}<\/script></body></html>';
-  var win=window.open('','_blank','width=900,height=700'); win.document.write(html); win.document.close();
+  var pvId=_voucherPvId;
+  var pv=pvId?(DB.posVendas||[]).find(function(x){return x.id===pvId;}):null;
+  var dias=pv?(pv.dayByDay||[]):[];
+  if(!dias.length){toast('Nenhum dia cadastrado','warn');return;}
+  var fmtBR=function(s){if(!s)return'\u2014';var p=s.split('-');return(p[2]||'')+'/'+(p[1]||'')+'/'+(p[0]||'');};
+  var nomeCliente=pv?escapeHtml(pv.cliente||'Cliente'):'Day by Day';
+  var dxdHTML=dias.map(function(d,i){
+    return '<div style="border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px;break-inside:avoid">'+
+      '<div style="font-family:Anton,sans-serif;font-size:14px;color:#1a4570;margin-bottom:4px">DIA '+(i+1)+(d.titulo?' \u2014 '+escapeHtml(d.titulo):'')+'</div>'+
+      (d.data?'<div style="font-size:11px;color:#64748b;margin-bottom:8px">\ud83d\udcc5 '+fmtBR(d.data)+'</div>':'')+
+      '<pre style="white-space:pre-wrap;font-family:Nunito,sans-serif;font-size:12px;color:#334155;margin:0;line-height:1.6">'+escapeHtml(d.atividades||'\u2014')+'</pre>'+
+      (d.obs?'<div style="font-size:11px;color:#64748b;margin-top:8px;border-top:1px dashed #e2e8f0;padding-top:8px;font-style:italic">\ud83d\udcdd '+escapeHtml(d.obs)+'</div>':'')+
+    '</div>';
+  }).join('');
+  var win=window.open('','_blank','width=900,height=800');
+  if(!win){toast('\u26a0\ufe0f Permita pop-ups para gerar o PDF','warn');return;}
+  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">'+
+    '<title>Day by Day \u2014 '+nomeCliente+'</title>'+
+    '<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Anton&display=swap" rel="stylesheet">'+
+    _pdfStyles()+
+  '</head><body>'+
+    _pdfHeader('Planejamento Day by Day \u2014 '+nomeCliente)+
+    '<div style="padding:20px 24px">'+
+      '<div class="sec">\ud83d\udcc5 Day by Day</div>'+
+      dxdHTML+
+      _pdfFooter('')+
+    '</div>'+
+    '<div class="no-print" style="text-align:center;margin-top:16px">'+
+      '<button onclick="window.print()" style="padding:12px 28px;background:#2A69A5;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700">\ud83d\udda8\ufe0f Imprimir / Salvar PDF</button>'+
+    '</div>'+
+  '</body></html>');
+  win.document.close();
 }
-
 
 function _renderPvCard(pv, today){
   var venda = (DB.vendas||[]).find(function(v){ return v.id===pv.vendaId; });
@@ -9317,6 +9392,27 @@ var _driveToken = null;
 var _driveTokenExpiry = 0;
 var _driveTokenClient = null; // Google Identity Services token client
 
+const BRAND={corPrimaria:'#2A69A5',slogan:'Desenrola, sua viagem dos sonhos',
+  logo:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wgARCAH0AfQDASIAAhEBAxEB/8QAGgABAQADAQEAAAAAAAAAAAAAAAUCAwQGAf/EABgBAQEBAQEAAAAAAAAAAAAAAAADAgEE/9oADAMBAAIQAxAAAALjHp8oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACzGt432s0bYT6c7WYovAAAAAAAAAAAAAAAAAAAAAAAAAAAABbiW8boCN06jO1mKL+cAAAAAAAAAAAAAAAAAAAAAAAAAAABbiW8boCN06jO1mKL+cAAAAAAAAAAAAAAAAAAAAAAAAzzd0t2sxDgC3Et43QEbp1GdrMUX84AAAAAAAAAAAAAAAAAAAAAyMd9KlOk3t2p0DmgNHFUdz5rT6ubSca3Gs95QEbp1GdrMUX84AAAAAAAAAAAAAAAAAAAAzPt/7vjcMbANHH3NNH+95XT+3msxzujV2O8DnU6jO1mKL+cAAAAAAAAAAAAAAAAAAABdnX51CVRpcyi8+q0Q3gzwGWIq1fK9c6egY5SsAnUZ2sxRfzgAAAAAAAAAAAAAAAAAADc7b6jzegHcfOUJNYhSY+nfweikzpxCkwO+55T0Eq9bWnTZO7Z+syBeAAAAAAAAAAAAAAAAAAACjOsZ1TEPQNTnntR6fOMnMamVWVWncnTzGv0kO0ecbwAAAAAAAAAAAAAAAAAAAAAAAtRbON0hG7m6dHeeb+/Ho83ZY83ljfqUupKwc6+aoesd03UtIO5AAAAAAAAAAAAAAAAAAAAAAVJfXnXoBD0Pn0eV+dnH6fMDirK+876rVhKjbl1l4ANud/G+LZ2pVkTfU8G8QxWQAAAAAAAAAAAAAAAAAAD78HqM5lPz+gOa5PP8Aq49JTBWQFGflhzod43/b+N/cyNgdA83opzPR5w7kAAAAAAAAAAAAAAAAAADZ6Xy1HFLQjYCRM9VopPzaro3Phd20mdlPsxvDMnQ1w9c9AmU+dDnZsa3EtAN4AAAAAAAAAAAAAAAAAAAAsU/KVZVrCdQAAAGGMHWHOXjTsSqsLBnc6LXkWgG8AAAAAAAAAAAAAAAAAAAAAdVfzzO/VvN9k92E3LmqCZoctcEjVvGzWUmBd7vM/Z19K8053sm5Y0kHeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/2gAMAwEAAgADAAAAIf8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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',
+  empresa:{nome:'Desenrola Turismo',razao:'Camila Pascholati Gusmão Righetti MEI',
+    cnpj:'56.004.414/0001-43',endereco:'Rua Limoeiro, nº 955, Jardim Limoeiro, Arujá/SP',
+    site:'desenrolaturismo.com.br',email:'',telefone:''}};
+function _pdfHeader(sub){
+  return '<div style="background:linear-gradient(135deg,#1a4a7a,#2A69A5);padding:20px 28px;display:flex;align-items:center;gap:16px;border-radius:12px 12px 0 0">'+
+    '<img src="'+BRAND.logo+'" style="width:48px;height:48px;border-radius:8px;flex-shrink:0"/>'+
+    '<div><div style="font-family:Anton,sans-serif;font-size:22px;letter-spacing:2px;color:#fff;text-transform:uppercase;line-height:1">DESENROLA <span style=\'color:#A4B56E\'>TURISMO</span></div>'+
+    (sub?'<div style="font-size:11px;color:rgba(255,255,255,.65);margin-top:2px">'+sub+'</div>':'')+
+    '</div><div style="margin-left:auto;text-align:right;font-size:10px;color:rgba(255,255,255,.55)">'+BRAND.empresa.cnpj+'<br>'+BRAND.empresa.endereco+'</div></div>';
+}
+function _pdfFooter(extra){
+  var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  return '<div style="text-align:center;font-size:10px;color:#94a3b8;margin-top:24px;padding-top:12px;border-top:1px solid #e2e8f0">Desenrola Turismo · '+BRAND.slogan+' ✦ · '+BRAND.empresa.cnpj+'<br>'+BRAND.empresa.endereco+(extra?'<br>'+extra:'')+'<br>Gerado em '+hoje+'</div>';
+}
+function _pdfStyles(extra){
+  return '<style>*{box-sizing:border-box}body{margin:0;padding:20px;background:#fff;font-family:Nunito,sans-serif;color:#0f2d4e;font-size:13px}pre{white-space:pre-wrap;font-family:Nunito,sans-serif}img{max-width:100%;height:auto}.sec{font-family:Anton,sans-serif;font-size:14px;letter-spacing:1px;text-transform:uppercase;color:#fff;background:#2A69A5;padding:9px 16px;border-radius:8px;margin:20px 0 12px}@page{size:A4;margin:10mm}@media print{body{padding:0}.no-print{display:none!important}}'+(extra||'')+'</style>';
+}
+
+
 function _isDriveConfigurado(){ return !!DRIVE_CLIENT_ID; }
 
 // ── Google Identity Services (GIS) ─────────────────────────────
@@ -9518,7 +9614,7 @@ function _renderVouchersList(){
           '<div style="font-size:10px;color:#8aa0b8">'+_fmtBytes(f.size)+' · Pendente de upload</div>'+
         '</div>'+
         '<input type="text" placeholder="Tipo (Hotel, Voo...)" value="" id="vf-tipo-'+i+'" style="width:120px;font-size:11px;border:1px solid #c8daea;border-radius:5px;padding:3px 7px"/>'+
-        '<button onclick="_voucherFiles.splice('+i+',1);_renderVouchersList()" style="background:none;border:none;cursor:pointer;color:#c0392b;font-size:14px">🗑</button>';
+        '<button onclick="_voucherFiles.splice(\'+i+\',1);_renderVouchersList()" style="background:none;border:none;cursor:pointer;color:#c0392b;font-size:14px">🗑</button>';
       lista.appendChild(div);
     });
   }
@@ -9698,7 +9794,7 @@ async function exportarPDFConsolidado(){
       '@media print{body{padding:0}.no-print{display:none!important}embed{page-break-before:always}img{page-break-inside:avoid}}'+
     '</style>'+
   '</head><body>'+
-    '<div class="hdr"><h1>'+escapeHtml(pv.cliente)+'</h1>'+
+    '<div style="border-radius:12px;overflow:hidden;">'+_pdfHeader(escapeHtml(pv.destino||'Viagem'))+'</div><div style="padding:0 4px"><h1 style="font-family:Anton,sans-serif;font-size:20px;color:#1a4570;margin:16px 0 4px">'+escapeHtml(pv.cliente)+'</h1>'+
     '<div style="font-size:12px;opacity:.7">\u2708\ufe0f '+escapeHtml(pv.destino||'\u2014')+
       (pv.dataViagem?' \u00b7 Embarque: '+fmtBR(pv.dataViagem):'')+
       (pv.dataVolta?' \u00b7 Retorno: '+fmtBR(pv.dataVolta):'')+
@@ -10142,11 +10238,11 @@ function getClientePax(id){
 
 // ═══════════════════════ ORÇAMENTOS ═══════════════════════
 let _orcEditId=null,_orcItemCount=0;
-const ORC_SERVICO_TIPOS=['Ingressos','Hotel','Guiamento Virtual','Pacote','Voo','Transfer','Seguro','Cruzeiro','Outros'];
-const ORC_CRUZEIRO_COMPANHIAS=['Disney Cruise Line','MSC Cruzeiros','Costa Cruzeiros','Royal Caribbean','Outra'];
-const ORC_SERVICO_COM_DIAS=['Ingressos','Hotel','Guiamento Virtual'];
-
-const ORC_TIPO_EMOJI = {'Ingressos':'🎢','Hotel':'🏨','Voo':'✈️','Pacote':'📦','Guiamento Virtual':'🗺️','Transfer':'🚐','Seguro':'🛡️','Cruzeiro':'🚢','Outros':'➕'};
+const ORC_SERVICO_TIPOS=['Ingressos','Hotel','Voo','Transfer','Seguro','Cruzeiro','Guiamento Virtual','Pacote','Outros'];
+const ORC_CRUZEIRO_COMPANHIAS=['Disney Cruise Line','MSC Cruzeiros','Costa Cruzeiros','Royal Caribbean','Norwegian Cruise Line','Celebrity Cruises','Princess Cruises','Outra'];
+const ORC_SERVICO_COM_DIAS=['Ingressos','Hotel','Guiamento Virtual','Cruzeiro'];
+const ORC_TIPO_EMOJI={'Ingressos':'🎢','Hotel':'🏨','Voo':'✈️','Pacote':'📦','Guiamento Virtual':'🗺️','Transfer':'🚐','Seguro':'🛡️','Cruzeiro':'🚢','Outros':'➕'};
+const AEROPORTOS_COMUNS=['GRU — Guarulhos','GIG — Galeão','BSB — Brasília','FOR — Fortaleza','SSA — Salvador','REC — Recife','MCO — Orlando','MIA — Miami','JFK — Nova York','LAX — Los Angeles','CDG — Paris Charles de Gaulle','LHR — Londres Heathrow','FCO — Roma','MAD — Madrid','NRT — Tóquio Narita','HND — Tóquio Haneda'];
 
 function viewOrcamento(id){
   const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
@@ -10179,30 +10275,45 @@ function viewOrcamento(id){
   // Gerar seções de itens
   const ORC_EMOJI2 = {Voo:'✈️',Hotel:'🏨',Resort:'🏖️',Ingressos:'🎢',Parque:'🎡',Cruzeiro:'🛳️',Transfer:'🚐',Seguro:'🛡️',Outros:'📦',Extras:'✨'};
   const secaoItens = Object.entries(gruposItens).map(([tipo,items])=>{
-    const emoji = ORC_TIPO_EMOJI[tipo]||ORC_EMOJI2[tipo]||'📦';
+    const emoji = ORC_TIPO_EMOJI[tipo]||'📦';
     const rows = items.map(item=>{
       const tot = (item.valor||0)*(item.qtd||1);
-      const vooInfo = (item.trechos||[]).map((t,i)=>{
-        const dt = t.data?fmtBR(t.data):'';
-        return `<div style="font-size:11px;color:#64748b;margin-top:2px">${i+1}. ${esc(t.origem||'?')} → ${esc(t.destino||'?')}${dt?' · '+dt:''}${t.hora?' '+t.hora:''}${t.cia?' | '+esc(t.cia):''}</div>`;
-      }).join('');
-      const tag = (item.tipoIngresso?' <span style="background:#dbeafe;color:#1d4ed8;border-radius:4px;padding:1px 6px;font-size:10px">'+esc(item.tipoIngresso)+'</span>':'')
-                +(item.companhiaCruzeiro?' <span style="background:#e0f2fe;color:#0369a1;border-radius:4px;padding:1px 6px;font-size:10px">'+esc(item.companhiaCruzeiro)+'</span>':'');
+      // ── Renderização específica por tipo ──────────────────────
+      let corpo = '';
+
+      if(tipo==='Voo' && item.trechos&&item.trechos.length){
+        const vooRows = item.trechos.map(t=>{
+          const hasEscala = t.escala && t.escalaAero;
+          return `<div style="margin-bottom:${hasEscala?'12':'6'}px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="text-align:center"><div style="font-weight:800;font-size:14px">${esc(t.origem||'?')}</div><div style="font-size:9px;color:#64748b">Partida</div>${t.hora?`<div style="font-size:10px;color:#2A69A5;font-weight:700">${t.hora}</div>`:''}</div>
+              <div style="flex:1;text-align:center;position:relative">
+                <div style="height:2px;background:linear-gradient(90deg,#2A69A5,#79ACD9);border-radius:1px;margin:0 8px"></div>
+                <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:16px">✈️</span>
+                ${t.cia?`<div style="font-size:9px;color:#64748b;margin-top:4px">${esc(t.cia)}</div>`:''}
+                ${t.data?`<div style="font-size:9px;color:#64748b">${t.data.split('-').reverse().join('/')}</div>`:''}
+              </div>
+              <div style="text-align:center"><div style="font-weight:800;font-size:14px">${esc(t.destino||'?')}</div><div style="font-size:9px;color:#64748b">Chegada</div>${t.chegada?`<div style="font-size:10px;color:#2A69A5;font-weight:700">${t.chegada}</div>`:''}</div>
+            </div>
+            ${hasEscala?`<div style="background:#fdf4ff;border:1px dashed #d8b4fe;border-radius:6px;padding:6px 10px;margin-top:6px;font-size:10px;color:#7c3aed">
+              ⇄ Escala: <b>${esc(t.escalaAero)}</b>${t.escalaChegada?' · Chega: '+t.escalaChegada:''}${t.escalaPartida?' · Parte: '+t.escalaPartida:''}${t.escalaCia?' · '+esc(t.escalaCia):''}
+            </div>`:''}
+          </div>`;
+        }).join('');
+        corpo = vooRows;
+      }
+
       return `<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9">
-        <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:700;color:#0f2d4e">${esc(item.descricao||item.tipo)}${tag}</div>
-          ${item.dias>1?`<div style="font-size:11px;color:#64748b">${item.dias} dias</div>`:''}
-          ${item.qtd>1?`<div style="font-size:11px;color:#64748b">Qtd: ${item.qtd}</div>`:''}
-          ${vooInfo}
-        </div>
-        <div style="text-align:right;flex-shrink:0;margin-left:12px">
-          <div style="font-size:15px;font-weight:800;color:#2C6AA3">${fmtR(tot)}</div>
+        <div style="flex:1;min-width:0;padding-right:12px">${corpo}</div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:15px;font-weight:800;color:#2A69A5">${fmtR(tot)}</div>
           ${pax>1?`<div style="font-size:10px;color:#94a3b8">${fmtR(tot/pax)} p/ pax</div>`:''}
         </div>
       </div>`;
     }).join('');
+
     return `<div style="margin-bottom:20px;break-inside:avoid">
-      <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:linear-gradient(135deg,#e8f0f8,#f0f5fa);border-radius:10px;margin-bottom:8px;border-left:3px solid #2C6AA3">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:linear-gradient(135deg,#e8f0f8,#f0f5fa);border-radius:10px;margin-bottom:8px;border-left:3px solid #2A69A5">
         <span style="font-size:18px">${emoji}</span>
         <span style="font-family:'Anton',sans-serif;font-size:12px;letter-spacing:0.8px;text-transform:uppercase;color:#1a4570">${esc(tipo)}</span>
       </div>
@@ -10210,7 +10321,6 @@ function viewOrcamento(id){
     </div>`;
   }).join('');
 
-  // Passageiros section
   const paxSection = passageirosList.length ? `
     <div style="margin-bottom:20px;break-inside:avoid">
       <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:linear-gradient(135deg,#fdf4ff,#f5f0ff);border-radius:10px;margin-bottom:8px;border-left:3px solid #7c3aed">
@@ -10477,63 +10587,300 @@ function orcOnClienteChange(){orcRecalcular();}
 
 function orcAddItem(dados){
   _orcItemCount++;
-  var i=_orcItemCount;
-  var il=g('orc-itens-list'); if(!il) return;
-  var tipo=(dados&&dados.tipo)||'';
-  var temDias=ORC_SERVICO_COM_DIAS.includes(tipo);
-  var row=document.createElement('div');
-  row.id='orc-item-'+i;
-  row.style.cssText='background:var(--surface2);border-radius:8px;padding:10px;position:relative';
-  var tiposOpts=ORC_SERVICO_TIPOS.map(function(t){return '<option value="'+t+'"'+(t===tipo?' selected':'')+'>'+t+'</option>';}).join('');
-  var ingressoOpts=(DB.config.tiposIngresso||[]).map(function(t){ var nm=t.nome||t; return '<option value="'+escapeHtml(nm)+'"'+(dados&&dados.tipoIngresso===nm?' selected':'')+'>'+escapeHtml(nm)+'</option>'; }).join('');
-  row.innerHTML='<button onclick="g(\'orc-item-'+i+'\').remove();orcRecalcular()" style="position:absolute;top:6px;right:8px;background:none;border:none;color:var(--danger);cursor:pointer">✕</button>'+
-    '<div style="display:grid;grid-template-columns:140px 1fr;gap:8px;margin-bottom:8px">'+
-    '<div class="form-group" style="margin:0"><label class="form-label">Tipo *</label><select class="form-select" id="orc-tipo-'+i+'" onchange="orcItemTipoChange('+i+')">'+tiposOpts+'</select></div>'+
-    '<div class="form-group" style="margin:0" id="orc-desc-group-'+i+'"><label class="form-label">Descrição</label><input type="text" class="form-input" id="orc-desc-'+i+'" value="'+escapeHtml((dados&&dados.descricao)||'')+'"/></div></div>'+
+  var i = _orcItemCount;
+  var il = g('orc-itens-list'); if(!il) return;
+  var tipo = (dados&&dados.tipo)||'';
+  var row = document.createElement('div');
+  row.id = 'orc-item-'+i;
+  row.style.cssText = 'background:var(--surface2);border-radius:10px;padding:12px;position:relative;border:1px solid var(--border)';
+
+  var tiposOpts = ORC_SERVICO_TIPOS.map(function(t){
+    return '<option value="'+t+'"'+(t===tipo?' selected':'')+'>'+ORC_TIPO_EMOJI[t]+' '+t+'</option>';
+  }).join('');
+
+  row.innerHTML =
+    '<button onclick="g(\'orc-item-\'+i+\'\').remove();orcRecalcular()" style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px">✕</button>'+
+    '<div style="display:grid;grid-template-columns:160px 1fr;gap:8px;margin-bottom:10px">'+
+      '<div class="form-group" style="margin:0"><label class="form-label">Tipo *</label>'+
+        '<select class="form-select" id="orc-tipo-'+i+'" onchange="orcItemTipoChange('+i+')">'+tiposOpts+'</select></div>'+
+      '<div class="form-group" style="margin:0" id="orc-desc-group-'+i+'"><label class="form-label">Descrição / Nome</label>'+
+        '<input type="text" class="form-input" id="orc-desc-'+i+'" value="'+escapeHtml((dados&&dados.descricao)||'')+'"/></div>'+
+    '</div>'+
+
+    // ── INGRESSOS ──────────────────────────────────────────────
     '<div id="orc-ingresso-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Ingressos'?'':'display:none')+'">'+
-    '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Ingresso</label><select class="form-select" id="orc-ingresso-'+i+'" onchange="orcIngressoChange('+i+')"><option value="">Selecione...</option>'+ingressoOpts+'</select></div></div>'+
-    '<div id="orc-cruzeiro-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Cruzeiro'?'':'display:none')+'">'+
-    '<div class="form-group" style="margin:0"><label class="form-label">Companhia</label><select class="form-select" id="orc-cruzeiro-'+i+'"><option value="">Selecione...</option>'+ORC_CRUZEIRO_COMPANHIAS.map(function(c){return '<option value="'+c+'"'+(dados&&dados.companhiaCruzeiro===c?' selected':'')+'>'+c+'</option>';}).join('')+'</select></div></div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Ingresso</label>'+
+          '<select class="form-select" id="orc-ingresso-'+i+'">'+
+            '<option value="">Selecione...</option>'+
+            (DB.config.tiposIngresso||[]).map(function(t){ var nm=t.nome||t; return '<option value="'+escapeHtml(nm)+'"'+(dados&&dados.tipoIngresso===nm?' selected':'')+'>'+escapeHtml(nm)+'</option>'; }).join('')+
+          '</select></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Foto (URL Drive)</label>'+
+          '<div style="display:flex;gap:6px;align-items:center">'+
+            '<input type="text" class="form-input" id="orc-ing-foto-'+i+'" value="'+escapeHtml((dados&&dados.fotoUrl)||'')+'" placeholder="URL da imagem..." style="font-size:11px"/>'+
+            '<button class="btn btn-ghost btn-sm" onclick="_selFoto(\'orc-ing-foto-\',i,\'\')" title="Selecionar do Drive" style="flex-shrink:0">📁</button>'+
+          '</div></div>'+
+      '</div>'+
+    '</div>'+
+
+    // ── HOTEL ──────────────────────────────────────────────────
+    '<div id="orc-hotel-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Hotel'?'':'display:none')+'">'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr 80px 80px;gap:8px;margin-bottom:8px">'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Nome do Hotel</label>'+
+          '<select class="form-select" id="orc-hotel-sel-'+i+'" onchange="orcHotelChange('+i+')" style="font-size:11px">'+
+            '<option value="">— Selecione ou descreva —</option>'+
+            (DB.hoteisCustom||[]).map(function(h){ return '<option value="'+h.id+'"'+(dados&&dados.hotelId==h.id?' selected':'')+'>'+escapeHtml(h.nome)+'</option>'; }).join('')+
+          '</select></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Categoria</label>'+
+          '<select class="form-select" id="orc-hotel-cat-'+i+'" style="font-size:11px">'+
+            ['⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'].map(function(s){return '<option value="'+s+'"'+(dados&&dados.hotelCategoria===s?' selected':'')+'>'+s+'</option>';}).join('')+
+          '</select></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Diárias</label>'+
+          '<input type="number" class="form-input" id="orc-hotel-diarias-'+i+'" value="'+(dados&&dados.hotelDiarias||1)+'" min="1"/></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Quartos</label>'+
+          '<input type="number" class="form-input" id="orc-hotel-quartos-'+i+'" value="'+(dados&&dados.hotelQuartos||1)+'" min="1"/></div>'+
+      '</div>'+
+      '<div class="form-group" style="margin:0 0 6px"><label class="form-label">Descrição do Hotel</label>'+
+        '<textarea class="form-input" id="orc-hotel-desc-'+i+'" rows="2" style="font-size:11px;resize:vertical">'+escapeHtml((dados&&dados.hotelDescricao)||'')+'</textarea></div>'+
+      '<div><label class="form-label">Fotos (até 3) <span style="font-size:10px;color:var(--text3)">— URLs do Drive</span></label>'+
+        '<div style="display:flex;gap:6px;margin-top:4px">'+
+          [1,2,3].map(function(n){
+            var fv = dados&&dados.hotelFotos&&dados.hotelFotos[n-1]||'';
+            return '<div style="flex:1;min-width:0">'+
+              '<div style="display:flex;gap:4px">'+
+                '<input type="text" class="form-input" id="orc-hotel-foto'+n+'-'+i+'" value="'+escapeHtml(fv)+'" placeholder="Foto '+n+'..." style="font-size:10px;min-width:0"/>'+
+                '<button class="btn btn-ghost btn-sm" class="orc-foto-btn" data-prefix="orc-hotel-foto" data-n="${n}" data-i="${i}" onclick="_selFotoN(this)" style="flex-shrink:0;padding:4px 6px">📁</button>'+
+              '</div>'+
+              (fv?'<img src="'+fv+'" style="width:100%;height:40px;object-fit:cover;border-radius:4px;margin-top:3px"/>':'')+
+            '</div>';
+          }).join('')+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+
+    // ── VOO ────────────────────────────────────────────────────
     '<div id="orc-voo-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Voo'?'':'display:none')+'">'+
-    '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Voo</label>'+
-    '<select class="form-select" id="orc-voo-sub-'+i+'" onchange="orcVooTipoChange('+i+')">'+
-    '<option value="">Selecione...</option>'+
-    '<option value="so-ida"'+(dados&&dados.subTipoVoo==='so-ida'?' selected':'')+'>Só Ida (1 trecho)</option>'+
-    '<option value="ida-volta"'+(dados&&dados.subTipoVoo==='ida-volta'?' selected':'')+'>Ida e Volta (2 trechos)</option>'+
-    '<option value="multiplo"'+(dados&&dados.subTipoVoo==='multiplo'?' selected':'')+'>Múltiplo (até 5 trechos)</option>'+
-    '</select></div>'+
-    '<div id="orc-voo-trechos-'+i+'" style="margin-top:6px"></div></div>'+
-    '<div style="display:grid;grid-template-columns:'+(temDias?'80px ':'')+' 1fr 80px;gap:8px">'+
-    '<div id="orc-dias-col-'+i+'" class="form-group" style="margin:0;'+(temDias?'':'display:none')+'"><label class="form-label">Dias</label><input type="number" class="form-input" id="orc-dias-'+i+'" value="'+(dados&&dados.dias||1)+'" min="1"/></div>'+
-    '<div class="form-group" style="margin:0"><label class="form-label">Valor (R$) *</label><input type="number" class="form-input" id="orc-val-'+i+'" value="'+((dados&&dados.valor)||'')+'" step="0.01" oninput="orcRecalcular()"/></div>'+
-    '<div class="form-group" style="margin:0"><label class="form-label">Qtd</label><input type="number" class="form-input" id="orc-qtd-'+i+'" value="'+((dados&&dados.qtd)||1)+'" min="1" oninput="orcRecalcular()"/></div></div>';
+      '<div id="orc-voo-trechos-'+i+'"></div>'+
+      '<div style="display:flex;gap:6px;margin-top:6px">'+
+        '<button class="btn btn-ghost btn-sm" onclick="orcVooAddTrecho('+i+',false)" style="font-size:11px">+ Trecho direto</button>'+
+        '<button class="btn btn-ghost btn-sm" onclick="orcVooAddTrecho('+i+',true)" style="font-size:11px;color:#7c3aed">⇄ Com escala</button>'+
+      '</div>'+
+    '</div>'+
+
+    // ── TRANSFER ───────────────────────────────────────────────
+    '<div id="orc-transfer-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Transfer'?'':'display:none')+'">'+
+      '<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center">'+
+        '<div class="form-group" style="margin:0"><label class="form-label">De (Aeroporto / Hotel)</label>'+
+          '<input type="text" class="form-input" id="orc-transf-de-'+i+'" value="'+escapeHtml((dados&&dados.transferDe)||'')+'" placeholder="Ex: MCO — Orlando Intl." style="font-size:11px"/></div>'+
+        '<div style="text-align:center;font-size:24px;margin-top:16px">🚐</div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Para (Hotel / Aeroporto)</label>'+
+          '<input type="text" class="form-input" id="orc-transf-para-'+i+'" value="'+escapeHtml((dados&&dados.transferPara)||'')+'" placeholder="Ex: Disney Grand Floridian" style="font-size:11px"/></div>'+
+      '</div>'+
+      '<div style="display:flex;gap:8px;margin-top:6px">'+
+        '<div class="form-group" style="margin:0;flex:1"><label class="form-label">Data</label>'+
+          '<input type="date" class="form-input" id="orc-transf-data-'+i+'" value="'+(dados&&dados.transferData||'')+'"/></div>'+
+        '<div class="form-group" style="margin:0;flex:1"><label class="form-label">Horário</label>'+
+          '<input type="time" class="form-input" id="orc-transf-hora-'+i+'" value="'+(dados&&dados.transferHora||'')+'" style="font-size:11px"/></div>'+
+        '<div style="display:flex;align-items:flex-end;margin-bottom:4px">'+
+          '<label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">'+
+            '<input type="checkbox" id="orc-transf-volta-'+i+'" '+(dados&&dados.transferVolta?'checked':'')+' style="width:14px;height:14px"/> Inclui retorno'+
+          '</label>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+
+    // ── SEGURO ─────────────────────────────────────────────────
+    '<div id="orc-seguro-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Seguro'?'':'display:none')+'">'+
+      '<div style="display:grid;grid-template-columns:1fr 80px;gap:8px;margin-bottom:6px">'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Seguradora</label>'+
+          '<select class="form-select" id="orc-seguro-seg-'+i+'" onchange="orcSeguroChange('+i+')" style="font-size:11px">'+
+            '<option value="">Selecione...</option>'+
+            (DB.seguradoras||[]).filter(function(s){return s.ativo;}).map(function(s){
+              return '<option value="'+s.id+'"'+(dados&&dados.seguradoraId==s.id?' selected':'')+'>'+escapeHtml(s.nome)+'</option>';
+            }).join('')+
+          '</select></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Dias cobertos</label>'+
+          '<input type="number" class="form-input" id="orc-seguro-dias-'+i+'" value="'+(dados&&dados.seguroDias||0)+'" min="0" style="font-size:11px"/></div>'+
+      '</div>'+
+      '<div id="orc-seguro-logo-'+i+'" style="margin-bottom:6px"></div>'+
+      '<div class="form-group" style="margin:0"><label class="form-label">Descritivo do Seguro</label>'+
+        '<textarea class="form-input" id="orc-seguro-desc-'+i+'" rows="2" style="font-size:11px;resize:vertical">'+escapeHtml((dados&&dados.seguroDescricao)||'')+'</textarea></div>'+
+    '</div>'+
+
+    // ── CRUZEIRO ───────────────────────────────────────────────
+    '<div id="orc-cruzeiro-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Cruzeiro'?'':'display:none')+'">'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Companhia</label>'+
+          '<select class="form-select" id="orc-cruز-cia-'+i+'" style="font-size:11px">'+
+            ORC_CRUZEIRO_COMPANHIAS.map(function(c){return '<option value="'+c+'"'+(dados&&dados.companhiaCruzeiro===c?' selected':'')+'>'+c+'</option>';}).join('')+
+          '</select></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Nome do Navio</label>'+
+          '<input type="text" class="form-input" id="orc-cruz-navio-'+i+'" value="'+escapeHtml((dados&&dados.cruzNavio)||'')+'" style="font-size:11px"/></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Cabine</label>'+
+          '<select class="form-select" id="orc-cruz-cabine-'+i+'" style="font-size:11px">'+
+            ['Interior','Oceanview','Varanda','Suite','Suite Concierge','Suite de Luxo'].map(function(c){
+              return '<option value="'+c+'"'+(dados&&dados.cruzCabine===c?' selected':'')+'>'+c+'</option>';
+            }).join('')+
+          '</select></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Porto Saída → Porto Chegada</label>'+
+          '<div style="display:flex;gap:6px;align-items:center">'+
+            '<input type="text" class="form-input" id="orc-cruz-porto-s-'+i+'" value="'+escapeHtml((dados&&dados.cruzPortoSaida)||'')+'" placeholder="Ex: Miami" style="font-size:11px;width:50%"/>'+
+            '<span>→</span>'+
+            '<input type="text" class="form-input" id="orc-cruz-porto-c-'+i+'" value="'+escapeHtml((dados&&dados.cruzPortoChegada)||'')+'" placeholder="Ex: Nassau" style="font-size:11px;width:50%"/>'+
+          '</div></div>'+
+        '<div class="form-group" style="margin:0;grid-column:1/-1"><label class="form-label">Roteiro / Itinerário</label>'+
+          '<textarea class="form-input" id="orc-cruz-roteiro-'+i+'" rows="2" style="font-size:11px;resize:vertical">'+escapeHtml((dados&&dados.cruzRoteiro)||'')+'</textarea></div>'+
+      '</div>'+
+      '<div><label class="form-label">Fotos (Navio / Cabine)</label>'+
+        '<div style="display:flex;gap:6px;margin-top:4px">'+
+          ['Navio','Cabine'].map(function(label,n){
+            var key = n===0?'cruzFotoNavio':'cruzFotoCabine';
+            var fv = dados&&dados[key]||'';
+            return '<div style="flex:1">'+
+              '<div style="display:flex;gap:4px">'+
+                '<input type="text" class="form-input" id="orc-cruz-foto'+n+'-'+i+'" value="'+escapeHtml(fv)+'" placeholder="Foto '+label+' (URL)..." style="font-size:10px"/>'+
+                '<button class="btn btn-ghost btn-sm" class="orc-foto-btn" data-prefix="orc-cruz-foto" data-n="${n}" data-i="${i}" onclick="_selFotoN(this)" style="padding:4px 6px">📁</button>'+
+              '</div>'+
+            '</div>';
+          }).join('')+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+
+    // ── GUIAMENTO VIRTUAL ──────────────────────────────────────
+    '<div id="orc-guia-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Guiamento Virtual'?'':'display:none')+'">'+
+      '<div style="display:grid;grid-template-columns:80px 1fr;gap:8px;margin-bottom:6px">'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Dias</label>'+
+          '<input type="number" class="form-input" id="orc-guia-dias-'+i+'" value="'+(dados&&dados.guiaDias||1)+'" min="1"/></div>'+
+        '<div class="form-group" style="margin:0"><label class="form-label">Parques inclusos</label>'+
+          '<input type="text" class="form-input" id="orc-guia-parques-'+i+'" value="'+escapeHtml((dados&&dados.guiaParques)||'')+'" placeholder="Ex: Magic Kingdom, EPCOT, Hollywood Studios..." style="font-size:11px"/></div>'+
+      '</div>'+
+      '<div class="form-group" style="margin:0"><label class="form-label">Descrição <button class="btn btn-ghost btn-sm" style="font-size:10px;margin-left:6px" onclick="orcAutoPreencheGuia('+i+')">↻ Auto-preencher</button></label>'+
+        '<textarea class="form-input" id="orc-guia-desc-'+i+'" rows="3" style="font-size:11px;resize:vertical">'+escapeHtml((dados&&dados.guiaDescricao)||(DB.conteudo&&DB.conteudo.guiamentoVirtual)||'')+'</textarea></div>'+
+    '</div>'+
+
+    // ── VALOR / QTD (always visible) ───────────────────────────
+    '<div style="display:grid;grid-template-columns:1fr 80px 80px;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">'+
+      '<div class="form-group" style="margin:0"><label class="form-label">Valor (R$) *</label>'+
+        '<input type="number" class="form-input" id="orc-val-'+i+'" value="'+((dados&&dados.valor)||'')+'" step="0.01" oninput="orcRecalcular()"/></div>'+
+      '<div class="form-group" style="margin:0"><label class="form-label">Qtd</label>'+
+        '<input type="number" class="form-input" id="orc-qtd-'+i+'" value="'+((dados&&dados.qtd)||1)+'" min="1" oninput="orcRecalcular()"/></div>'+
+      '<div class="form-group" style="margin:0" id="orc-dias-col-'+i+'"><label class="form-label">Dias</label>'+
+        '<input type="number" class="form-input" id="orc-dias-'+i+'" value="'+((dados&&dados.dias)||1)+'" min="1"/></div>'+
+    '</div>';
+
   il.appendChild(row);
-  // Se for Voo com trechos existentes, restaurar
-  if(tipo==='Voo' && dados && dados.subTipoVoo){
-    setTimeout(function(){
-      var subEl=g('orc-voo-sub-'+i); if(subEl) subEl.value=dados.subTipoVoo;
-      var nTr=dados.subTipoVoo==='multiplo'?5:dados.subTipoVoo==='ida-volta'?2:1;
-      orcVooRenderTrechos(i,nTr);
-      if(dados.trechos) dados.trechos.forEach(function(tr,ti){
-        var t=ti+1;
-        ['orig','dest','data','hora','cia'].forEach(function(f){
-          var el=g('orc-voo-'+f+'-'+i+'-'+t);
-          if(el) el.value=tr[f==='orig'?'origem':f==='dest'?'destino':f]||'';
-        });
-      });
-    },30);
+  // Initialize type-specific content
+  orcItemTipoChange(i);
+  // Restore voo trechos if any
+  if(tipo==='Voo' && dados&&dados.trechos&&dados.trechos.length){
+    dados.trechos.forEach(function(t){ orcVooAddTrecho(i, !!t.escala, t); });
+  }
+  // Show seguro logo
+  if(tipo==='Seguro' && dados&&dados.seguradoraId) orcSeguroChange(i);
+}
+
+function orcAutoPreencheGuia(i){
+  var el = g('orc-guia-desc-'+i);
+  if(el && DB.conteudo && DB.conteudo.guiamentoVirtual){
+    el.value = DB.conteudo.guiamentoVirtual;
+    toast('✅ Descrição preenchida do Registros → Conteúdo');
+  } else {
+    toast('Configure o texto em Registros → Conteúdo → Guiamento Virtual','warn');
   }
 }
 
+function orcHotelChange(i){
+  var sel = g('orc-hotel-sel-'+i); if(!sel||!sel.value) return;
+  var hotel = (DB.hoteisCustom||[]).find(function(h){ return h.id==sel.value; });
+  if(!hotel) return;
+  var descEl = g('orc-hotel-desc-'+i);
+  var catEl  = g('orc-hotel-cat-'+i);
+  if(descEl && hotel.descricao) descEl.value = hotel.descricao;
+  if(catEl  && hotel.categoria) catEl.value  = hotel.categoria;
+  // Fill photos
+  (hotel.fotos||[]).slice(0,3).forEach(function(f,n){
+    var fEl = g('orc-hotel-foto'+(n+1)+'-'+i);
+    if(fEl) fEl.value = f;
+  });
+  toast('✅ Hotel preenchido: '+hotel.nome);
+}
+
+function orcSeguroChange(i){
+  var sel = g('orc-seguro-seg-'+i); if(!sel) return;
+  var seg = (DB.seguradoras||[]).find(function(s){ return s.id==sel.value; });
+  var logoDiv = g('orc-seguro-logo-'+i); if(!logoDiv) return;
+  if(seg&&seg.logo){
+    logoDiv.innerHTML = '<img src="'+seg.logo+'" style="height:32px;object-fit:contain;border-radius:4px;border:1px solid var(--border)"/>';
+  } else {
+    logoDiv.innerHTML = seg?'<span style="font-size:11px;color:var(--text3)">🛡️ '+escapeHtml(seg.nome)+' (sem logo)</span>':'';
+  }
+}
+
+
+
+function _selFotoN(btn){
+  var prefix = btn.getAttribute('data-prefix');
+  var n = btn.getAttribute('data-n');
+  var i = btn.getAttribute('data-i');
+  _selecionarFotoDrive(prefix + n + '-' + i);
+}
+function _selFoto(prefix, idx, suffix){
+  _selecionarFotoDrive(prefix + idx + suffix);
+}
+function _selecionarFotoDrive(fieldId){
+  // Opens a Drive file picker — requires Drive token
+  if(!_driveToken || Date.now() > _driveTokenExpiry){
+    toast('Conecte o Google Drive primeiro (vá em Viagens → Vouchers)','warn');
+    return;
+  }
+  // Use Google Picker API or manual URL input
+  var url = prompt('Cole a URL da imagem do Google Drive (formato: https://drive.google.com/file/d/ID/view):');
+  if(!url) return;
+  // Extract file ID and convert to thumbnail URL
+  var match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if(match){
+    var thumbUrl = 'https://drive.google.com/thumbnail?id='+match[1]+'&sz=w800';
+    var el = g(fieldId); if(el) el.value = thumbUrl;
+    toast('✅ URL convertida para thumbnail Drive');
+  } else {
+    var el2 = g(fieldId); if(el2) el2.value = url;
+  }
+}
+
+
 function orcItemTipoChange(i){
-  var tipo=g('orc-tipo-'+i).value;
-  var temDias=ORC_SERVICO_COM_DIAS.includes(tipo);
-  var dc=g('orc-dias-col-'+i); if(dc) dc.style.display=temDias?'':'none';
-  var ir=g('orc-ingresso-row-'+i); if(ir) ir.style.display=tipo==='Ingressos'?'':'none';
-  var vr=g('orc-voo-row-'+i); if(vr) vr.style.display=tipo==='Voo'?'':'none';
-  var cr=g('orc-cruzeiro-row-'+i); if(cr) cr.style.display=tipo==='Cruzeiro'?'':'none';
-  // Esconder campo de descrição padrão se for Voo (trechos têm suas próprias descrições)
-  var dr=g('orc-desc-group-'+i); if(dr) dr.style.display=tipo==='Voo'?'none':'';
+  var tipo = (g('orc-tipo-'+i)||{}).value||'';
+  // Show/hide type-specific rows
+  var rows = {
+    'ingresso-row': tipo==='Ingressos',
+    'hotel-row': tipo==='Hotel',
+    'voo-row': tipo==='Voo',
+    'transfer-row': tipo==='Transfer',
+    'seguro-row': tipo==='Seguro',
+    'cruzeiro-row': tipo==='Cruzeiro',
+    'guia-row': tipo==='Guiamento Virtual',
+  };
+  Object.entries(rows).forEach(function(kv){
+    var el = g('orc-'+kv[0]+'-'+i);
+    if(el) el.style.display = kv[1] ? '' : 'none';
+  });
+  // Show/hide dias column
+  var diasCol = g('orc-dias-col-'+i);
+  if(diasCol) diasCol.style.display = ORC_SERVICO_COM_DIAS.includes(tipo) ? '' : 'none';
+  // Auto-fill guiamento description
+  if(tipo==='Guiamento Virtual'){
+    var descEl = g('orc-guia-desc-'+i);
+    if(descEl && !descEl.value && DB.conteudo && DB.conteudo.guiamentoVirtual){
+      descEl.value = DB.conteudo.guiamentoVirtual;
+    }
+  }
+  // Initialize voo trechos if empty
+  if(tipo==='Voo'){
+    var trechosDiv = g('orc-voo-trechos-'+i);
+    if(trechosDiv && !trechosDiv.children.length) orcVooAddTrecho(i, false);
+  }
+  orcRecalcular();
 }
 
 function orcIngressoChange(i){
@@ -10551,30 +10898,54 @@ function orcVooTipoChange(i){
   orcVooRenderTrechos(i, n);
 }
 
-function orcVooRenderTrechos(i, n){
-  var cont=g('orc-voo-trechos-'+i); if(!cont) return;
-  cont.innerHTML='';
-  for(var t=1;t<=n;t++){
-    var row=document.createElement('div');
-    row.style.cssText='background:#f0f9ff;border-radius:6px;padding:8px;margin-top:6px;border:1px solid #bae6fd';
-    row.innerHTML='<div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:6px">✈️ Trecho '+t+(n>1?' de '+n:'')+' </div>'+
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">'+
-        '<div class="form-group" style="margin:0"><label class="form-label">Origem</label>'+
-          '<input type="text" class="form-input" id="orc-voo-orig-'+i+'-'+t+'" placeholder="GRU" list="aer-list" style="text-transform:uppercase"/></div>'+
-        '<div class="form-group" style="margin:0"><label class="form-label">Destino</label>'+
-          '<input type="text" class="form-input" id="orc-voo-dest-'+i+'-'+t+'" placeholder="MCO" list="aer-list" style="text-transform:uppercase"/></div>'+
+function orcVooAddTrecho(i, comEscala, dados){
+  var container = g('orc-voo-trechos-'+i); if(!container) return;
+  var n = container.children.length + 1;
+  var div = document.createElement('div');
+  div.className = 'orc-voo-trecho';
+  div.style.cssText = 'background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;position:relative';
+  div.innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'+
+      '<span style="font-size:11px;font-weight:700;color:#2A69A5">✈️ Trecho '+n+(comEscala?' (com escala)':'')+'</span>'+
+      '<button onclick="this.closest(\'.orc-voo-trecho\').remove()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:13px">✕</button>'+
+    '</div>'+
+    // Voo principal
+    '<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:6px">'+
+      '<div>'+
+        '<label class="form-label" style="font-size:10px">Origem</label>'+
+        '<input type="text" class="form-input" id="orc-voo-orig-'+i+'-'+n+'" value="'+escapeHtml(dados&&dados.origem||'')+'" placeholder="GRU" style="font-size:11px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"/>'+
       '</div>'+
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+
-        '<div class="form-group" style="margin:0"><label class="form-label">Data</label>'+
-          '<input type="date" class="form-input" id="orc-voo-data-'+i+'-'+t+'"/></div>'+
-        '<div class="form-group" style="margin:0"><label class="form-label">Horário</label>'+
-          '<input type="time" class="form-input" id="orc-voo-hora-'+i+'-'+t+'"/></div>'+
+      '<div style="text-align:center;font-size:20px;padding-top:16px">✈️</div>'+
+      '<div>'+
+        '<label class="form-label" style="font-size:10px">Destino</label>'+
+        '<input type="text" class="form-input" id="orc-voo-dest-'+i+'-'+n+'" value="'+escapeHtml(dados&&dados.destino||'')+'" placeholder="MCO" style="font-size:11px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"/>'+
       '</div>'+
-      '<div class="form-group" style="margin:4px 0 0"><label class="form-label">Companhia Aérea</label>'+
-        '<input type="text" class="form-input" id="orc-voo-cia-'+i+'-'+t+'" placeholder="Ex: American Airlines (AA)" list="cia-list"/></div>';
-    cont.appendChild(row);
-  }
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">'+
+      '<div><label class="form-label" style="font-size:10px">Companhia Aérea</label><input type="text" class="form-input" id="orc-voo-cia-'+i+'-'+n+'" value="'+escapeHtml(dados&&dados.cia||'')+'" placeholder="Ex: LATAM, Azul" style="font-size:11px"/></div>'+
+      '<div><label class="form-label" style="font-size:10px">Data</label><input type="date" class="form-input" id="orc-voo-data-'+i+'-'+n+'" value="'+(dados&&dados.data||'')+'"/></div>'+
+      '<div><label class="form-label" style="font-size:10px">Horário Partida</label><input type="time" class="form-input" id="orc-voo-hora-'+i+'-'+n+'" value="'+(dados&&dados.hora||'')+'" style="font-size:11px"/></div>'+
+    '</div>'+
+    // Escala (se com escala)
+    (comEscala?
+      '<div style="background:#fdf4ff;border:1px dashed #d8b4fe;border-radius:6px;padding:8px;margin-bottom:6px">'+
+        '<div style="font-size:10px;font-weight:700;color:#7c3aed;margin-bottom:6px">⇄ Aeroporto de Escala</div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">'+
+          '<div><label class="form-label" style="font-size:10px">Aeroporto Escala</label><input type="text" class="form-input" id="orc-voo-esc-'+i+'-'+n+'" value="'+escapeHtml(dados&&dados.escalaAero||'')+'" placeholder="Ex: GIG" style="font-size:11px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"/></div>'+
+          '<div><label class="form-label" style="font-size:10px">Chegada Escala</label><input type="time" class="form-input" id="orc-voo-esc-chg-'+i+'-'+n+'" value="'+(dados&&dados.escalaChegada||'')+'" style="font-size:11px"/></div>'+
+          '<div><label class="form-label" style="font-size:10px">Partida Escala</label><input type="time" class="form-input" id="orc-voo-esc-par-'+i+'-'+n+'" value="'+(dados&&dados.escalaPartida||'')+'" style="font-size:11px"/></div>'+
+          '<div><label class="form-label" style="font-size:10px">Cia Pós-Escala</label><input type="text" class="form-input" id="orc-voo-esc-cia-'+i+'-'+n+'" value="'+escapeHtml(dados&&dados.escalaCia||'')+'" style="font-size:11px"/></div>'+
+        '</div>'+
+      '</div>'
+    :'')+
+    '<div><label class="form-label" style="font-size:10px">Horário Chegada Destino</label><input type="time" class="form-input" id="orc-voo-chg-'+i+'-'+n+'" value="'+(dados&&dados.chegada||'')+'" style="font-size:11px;width:120px"/></div>';
+
+  container.appendChild(div);
 }
+
+// Legacy compatibility
+function orcVooTipoChange(i){ orcItemTipoChange(i); }
+function orcVooRenderTrechos(i){ }
 
 function orcRecalcular(){
   var totalItens=0;
@@ -10612,25 +10983,68 @@ function _saveOrcamento(){
   document.querySelectorAll('[id^="orc-item-"]').forEach(function(row){
     var i=row.id.replace('orc-item-','');
     var tipo=(g('orc-tipo-'+i)||{value:''}).value; if(!tipo) return;
-    var itemObj={tipo:tipo,descricao:(g('orc-desc-'+i)||{value:''}).value.trim(),
-      tipoIngresso:(g('orc-ingresso-'+i)||{value:''}).value,
-      companhiaCruzeiro:(g('orc-cruzeiro-'+i)||{value:''}).value,
-      dias:parseInt((g('orc-dias-'+i)||{value:1}).value)||1,
+    var itemObj={tipo:tipo,
+      descricao:(g('orc-desc-'+i)||{value:''}).value.trim(),
       valor:parseFloat((g('orc-val-'+i)||{value:0}).value)||0,
-      qtd:parseInt((g('orc-qtd-'+i)||{value:1}).value)||1};
-    // Trechos de voo
+      qtd:parseInt((g('orc-qtd-'+i)||{value:1}).value)||1,
+      dias:parseInt((g('orc-dias-'+i)||{value:1}).value)||1,
+      // Ingressos
+      tipoIngresso:(g('orc-ingresso-'+i)||{value:''}).value,
+      fotoUrl:(g('orc-ing-foto-'+i)||{value:''}).value.trim(),
+      // Hotel
+      hotelId:parseInt((g('orc-hotel-sel-'+i)||{value:0}).value)||null,
+      hotelCategoria:(g('orc-hotel-cat-'+i)||{value:''}).value,
+      hotelDiarias:parseInt((g('orc-hotel-diarias-'+i)||{value:1}).value)||1,
+      hotelQuartos:parseInt((g('orc-hotel-quartos-'+i)||{value:1}).value)||1,
+      hotelDescricao:(g('orc-hotel-desc-'+i)||{value:''}).value.trim(),
+      hotelFotos:[1,2,3].map(function(n){return (g('orc-hotel-foto'+n+'-'+i)||{value:''}).value.trim();}).filter(Boolean),
+      // Transfer
+      transferDe:(g('orc-transf-de-'+i)||{value:''}).value.trim(),
+      transferPara:(g('orc-transf-para-'+i)||{value:''}).value.trim(),
+      transferData:(g('orc-transf-data-'+i)||{value:''}).value,
+      transferHora:(g('orc-transf-hora-'+i)||{value:''}).value,
+      transferVolta:(g('orc-transf-volta-'+i)||{checked:false}).checked,
+      // Seguro
+      seguradoraId:parseInt((g('orc-seguro-seg-'+i)||{value:0}).value)||null,
+      seguroDias:parseInt((g('orc-seguro-dias-'+i)||{value:0}).value)||0,
+      seguroDescricao:(g('orc-seguro-desc-'+i)||{value:''}).value.trim(),
+      // Cruzeiro
+      companhiaCruzeiro:(g('orc-cruز-cia-'+i)||{value:''}).value,
+      cruzNavio:(g('orc-cruz-navio-'+i)||{value:''}).value.trim(),
+      cruzCabine:(g('orc-cruz-cabine-'+i)||{value:''}).value,
+      cruzPortoSaida:(g('orc-cruz-porto-s-'+i)||{value:''}).value.trim(),
+      cruzPortoChegada:(g('orc-cruz-porto-c-'+i)||{value:''}).value.trim(),
+      cruzRoteiro:(g('orc-cruz-roteiro-'+i)||{value:''}).value.trim(),
+      cruzFotoNavio:(g('orc-cruz-foto0-'+i)||{value:''}).value.trim(),
+      cruzFotoCabine:(g('orc-cruz-foto1-'+i)||{value:''}).value.trim(),
+      // Guiamento Virtual
+      guiaDias:parseInt((g('orc-guia-dias-'+i)||{value:1}).value)||1,
+      guiaParques:(g('orc-guia-parques-'+i)||{value:''}).value.trim(),
+      guiaDescricao:(g('orc-guia-desc-'+i)||{value:''}).value.trim(),
+    };
+    // Trechos de voo (novo formato com escalas)
     if(tipo==='Voo'){
-      var subVoo=(g('orc-voo-sub-'+i)||{value:''}).value;
-      var nTrechos=subVoo==='multiplo'?5:subVoo==='ida-volta'?2:1;
-      itemObj.subTipoVoo=subVoo; itemObj.trechos=[];
-      for(var t=1;t<=nTrechos;t++){
-        var orig=(g('orc-voo-orig-'+i+'-'+t)||{value:''}).value.trim().toUpperCase();
-        var dest=(g('orc-voo-dest-'+i+'-'+t)||{value:''}).value.trim().toUpperCase();
-        if(orig||dest){
-          itemObj.trechos.push({origem:orig,destino:dest,
-            data:(g('orc-voo-data-'+i+'-'+t)||{value:''}).value,
-            hora:(g('orc-voo-hora-'+i+'-'+t)||{value:''}).value,
-            cia:(g('orc-voo-cia-'+i+'-'+t)||{value:''}).value.trim()});
+      itemObj.trechos=[];
+      var trechosDiv=g('orc-voo-trechos-'+i);
+      if(trechosDiv){
+        var trochos=trechosDiv.querySelectorAll('.orc-voo-trecho');
+        for(var t=1;t<=trochos.length;t++){
+          var orig=(g('orc-voo-orig-'+i+'-'+t)||{value:''}).value.trim().toUpperCase();
+          var dest=(g('orc-voo-dest-'+i+'-'+t)||{value:''}).value.trim().toUpperCase();
+          if(orig||dest){
+            itemObj.trechos.push({
+              origem:orig,destino:dest,
+              cia:(g('orc-voo-cia-'+i+'-'+t)||{value:''}).value.trim(),
+              data:(g('orc-voo-data-'+i+'-'+t)||{value:''}).value,
+              hora:(g('orc-voo-hora-'+i+'-'+t)||{value:''}).value,
+              chegada:(g('orc-voo-chg-'+i+'-'+t)||{value:''}).value,
+              escala:!!(g('orc-voo-esc-'+i+'-'+t)||{value:''}).value,
+              escalaAero:(g('orc-voo-esc-'+i+'-'+t)||{value:''}).value.trim().toUpperCase(),
+              escalaChegada:(g('orc-voo-esc-chg-'+i+'-'+t)||{value:''}).value,
+              escalaPartida:(g('orc-voo-esc-par-'+i+'-'+t)||{value:''}).value,
+              escalaCia:(g('orc-voo-esc-cia-'+i+'-'+t)||{value:''}).value.trim(),
+            });
+          }
         }
       }
     }
@@ -10806,6 +11220,231 @@ function deleteOrcamento(id){
 }
 
 // ═══════════════════════ INGRESSOS CONFIG ═══════════════════════
+
+// ═══ REGISTROS — Conteúdo / Seguradoras / Hotéis / Locadoras ═══
+
+function renderConteudoTab(){
+  var cnt=DB.conteudo||{};var emp=cnt.empresa||{};
+  var fields={nome:'cnt-emp-nome',razao:'cnt-emp-razao',cnpj:'cnt-emp-cnpj',
+    endereco:'cnt-emp-end',email:'cnt-emp-email',telefone:'cnt-emp-tel',site:'cnt-emp-site'};
+  Object.entries(fields).forEach(function(kv){var el=g(kv[1]);if(el)el.value=emp[kv[0]]||BRAND.empresa[kv[0]]||'';});
+  var qs=g('cnt-quem-somos');if(qs)qs.value=cnt.quemSomos||'';
+  var gv=g('cnt-guiamento');if(gv)gv.value=cnt.guiamentoVirtual||'';
+}
+function salvarCampoConteudo(campo,elId){
+  if(!DB.conteudo)DB.conteudo={};
+  DB.conteudo[campo]=(g(elId)||{}).value||'';
+  saveToStorage();toast('✅ Salvo!');
+}
+function salvarConteudoEmpresa(){
+  if(!DB.conteudo)DB.conteudo={};if(!DB.conteudo.empresa)DB.conteudo.empresa={};
+  var e=DB.conteudo.empresa;
+  e.nome=(g('cnt-emp-nome')||{}).value||'';e.razao=(g('cnt-emp-razao')||{}).value||'';
+  e.cnpj=(g('cnt-emp-cnpj')||{}).value||'';e.endereco=(g('cnt-emp-end')||{}).value||'';
+  e.email=(g('cnt-emp-email')||{}).value||'';e.telefone=(g('cnt-emp-tel')||{}).value||'';
+  e.site=(g('cnt-emp-site')||{}).value||'';
+  Object.assign(BRAND.empresa,e);
+  saveToStorage();toast('✅ Dados da empresa salvos!');
+}
+
+function renderSeguradoras(){
+  var el=g('seguradoras-grid');if(!el)return;
+  var lista=DB.seguradoras||[];
+  if(!lista.length){el.innerHTML='<div style="color:var(--text3);text-align:center;grid-column:1/-1;padding:40px">Nenhuma seguradora</div>';return;}
+  el.innerHTML=lista.map(function(s){
+    return '<div class="card" style="display:flex;flex-direction:column;gap:10px">'+
+      '<div style="display:flex;align-items:center;gap:10px">'+
+        (s.logo?'<img src="'+s.logo+'" style="height:36px;object-fit:contain;border-radius:4px"/>':'<span style="font-size:24px">🛡️</span>')+
+        '<div><div style="font-weight:700;font-size:13px">'+escapeHtml(s.nome)+'</div>'+
+        '<div style="font-size:10px;color:var(--text3)">'+(s.ativo?'✅ Ativa':'⏸️ Inativa')+'</div></div>'+
+      '</div>'+
+      '<div style="display:flex;gap:6px">'+
+        '<button class="btn btn-ghost btn-sm" onclick="openModalSeguradora('+s.id+')">✏️</button>'+
+        '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="deleteSeguradora('+s.id+')">🗑</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+function openModalSeguradora(id){
+  var s=id?(DB.seguradoras||[]).find(function(x){return x.id===id;}):null;
+  var ex=g('_m-seg');if(ex)ex.remove();
+  var m=document.createElement('div');m.id='_m-seg';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;max-width:420px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2)">'+
+    '<div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:.8px;color:var(--primary);margin-bottom:14px;text-transform:uppercase">'+(id?'✏️ Editar Seguradora':'🛡️ Nova Seguradora')+'</div>'+
+    '<div class="form-group"><label class="form-label">Nome *</label><input class="form-input" id="_seg-nome" value="'+escapeHtml(s?s.nome:'')+'" style="font-size:12px"/></div>'+
+    '<div class="form-group"><label class="form-label">URL do Logo</label><input class="form-input" id="_seg-logo" value="'+escapeHtml(s?s.logo||'':'')+'" placeholder="https://..." style="font-size:12px"/></div>'+
+    '<div class="form-group"><label class="form-label">Observações</label><textarea class="form-input" id="_seg-obs" rows="2" style="font-size:12px">'+escapeHtml(s?s.obs||'':'')+'</textarea></div>'+
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><input type="checkbox" id="_seg-ativo" '+(s&&!s.ativo?'':'checked')+'><label for="_seg-ativo" style="font-size:12px">Ativa</label></div>'+
+    '<div style="display:flex;gap:8px;justify-content:flex-end">'+
+      '<button class="btn btn-ghost btn-sm" onclick="g(\'_m-seg\').remove()">Cancelar</button>'+
+      '<button class="btn btn-primary btn-sm" onclick="_salvarSeguradora('+(id||'null')+')">💾 Salvar</button>'+
+    '</div></div>';
+  m.addEventListener('click',function(e){if(e.target===m)m.remove();});
+  document.body.appendChild(m);
+}
+function _salvarSeguradora(id){
+  var nome=(g('_seg-nome')||{}).value.trim();if(!nome){toast('Informe o nome','error');return;}
+  if(!DB.seguradoras)DB.seguradoras=[];
+  var obj={nome:nome,logo:(g('_seg-logo')||{}).value.trim(),obs:(g('_seg-obs')||{}).value.trim(),ativo:(g('_seg-ativo')||{}).checked!==false};
+  if(id){var ex=DB.seguradoras.find(function(x){return x.id===id;});if(ex)Object.assign(ex,obj);}
+  else{obj.id=DB.nextSeguradoraId++;DB.seguradoras.push(obj);}
+  saveToStorage();var m=g('_m-seg');if(m)m.remove();renderSeguradoras();toast('✅ Seguradora salva!');
+}
+function deleteSeguradora(id){
+  if(!confirm('Excluir?'))return;
+  DB.seguradoras=(DB.seguradoras||[]).filter(function(x){return x.id!==id;});
+  saveToStorage();renderSeguradoras();
+}
+
+function renderHoteisCustom(){
+  var el=g('hoteis-custom-grid');if(!el)return;
+  var lista=DB.hoteisCustom||[];
+  if(!lista.length){el.innerHTML='<div style="color:var(--text3);text-align:center;grid-column:1/-1;padding:40px">Nenhum hotel cadastrado</div>';return;}
+  el.innerHTML=lista.map(function(h){
+    var f=(h.fotos&&h.fotos[0])?h.fotos[0]:'';
+    return '<div class="card" style="padding:0;overflow:hidden">'+
+      (f?'<img src="'+f+'" style="width:100%;height:120px;object-fit:cover"/>'
+        :'<div style="height:60px;background:#e8f0f8;display:flex;align-items:center;justify-content:center;font-size:28px">🏨</div>')+
+      '<div style="padding:12px">'+
+        '<div style="font-weight:700;font-size:13px">'+escapeHtml(h.nome)+'</div>'+
+        (h.destino?'<div style="font-size:10px;color:var(--text3)">📍 '+escapeHtml(h.destino)+'</div>':'')+
+        '<div style="font-size:11px;color:var(--text2);margin:4px 0">'+escapeHtml((h.descricao||'').slice(0,60))+'</div>'+
+        '<div style="display:flex;gap:6px;margin-top:6px">'+
+          '<button class="btn btn-ghost btn-sm" onclick="openModalHotelCustom('+h.id+')">✏️</button>'+
+          '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="deleteHotelCustom('+h.id+')">🗑</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+window._hcFotosNovas=[];
+function openModalHotelCustom(id){
+  var h=id?(DB.hoteisCustom||[]).find(function(x){return x.id===id;}):null;
+  var ex=g('_m-hc');if(ex)ex.remove();
+  _hcFotosNovas=[];
+  var driveOk=_driveToken&&Date.now()<_driveTokenExpiry;
+  var m=document.createElement('div');m.id='_m-hc';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto';
+  m.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;max-width:520px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2);margin-top:20px">'+
+    '<div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:.8px;color:var(--primary);margin-bottom:14px;text-transform:uppercase">'+(id?'✏️ Editar Hotel':'🏨 Novo Hotel')+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
+      '<div class="form-group" style="grid-column:1/-1"><label class="form-label">Nome *</label><input class="form-input" id="_hc-nome" value="'+escapeHtml(h?h.nome:'')+'" style="font-size:12px"/></div>'+
+      '<div class="form-group"><label class="form-label">Destino</label><input class="form-input" id="_hc-dest" value="'+escapeHtml(h?h.destino||'':'')+'" style="font-size:12px"/></div>'+
+      '<div class="form-group"><label class="form-label">Categoria</label><select class="form-select" id="_hc-cat" style="font-size:12px">'+
+        ['⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'].map(function(s){return '<option value="'+s+'"'+(h&&h.categoria===s?' selected':'')+'>'+s+'</option>';}).join('')+
+      '</select></div>'+
+      '<div class="form-group" style="grid-column:1/-1"><label class="form-label">Descrição</label><textarea class="form-input" id="_hc-desc" rows="3" style="font-size:12px;resize:vertical">'+escapeHtml(h?h.descricao||'':'')+'</textarea></div>'+
+    '</div>'+
+    '<div style="margin:10px 0">'+
+      '<div style="font-size:11px;font-weight:700;color:var(--primary);margin-bottom:6px">📷 Fotos</div>'+
+      (!driveOk?'<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:8px;font-size:11px;color:#9a3412;margin-bottom:6px">⚠️ <button onclick="_iniciarConexaoDrive()" style="background:none;border:none;color:#9a3412;font-weight:700;cursor:pointer;padding:0">Conectar Drive</button> para salvar no Drive</div>':'<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:6px 10px;font-size:11px;color:#16a34a;margin-bottom:6px">✅ Drive conectado</div>')+
+      '<div id="_hc-preview" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">'+
+        (h&&h.fotos?h.fotos.map(function(f){return '<img src="'+f+'" style="width:72px;height:54px;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0"/>';}).join(''):'')+
+      '</div>'+
+      '<input type="file" id="_hc-files" accept="image/*" multiple style="display:none" onchange="_previewHCFotos(this)"/>'+
+      '<button class="btn btn-ghost btn-sm" onclick="g(\'_hc-files\').click()">📷 Adicionar fotos</button>'+
+    '</div>'+
+    '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">'+
+      '<button class="btn btn-ghost btn-sm" onclick="g(\'_m-hc\').remove()">Cancelar</button>'+
+      '<button class="btn btn-primary btn-sm" onclick="_salvarHotelCustom('+(id||'null')+')">💾 Salvar</button>'+
+    '</div>'+
+  '</div>';
+  m.addEventListener('click',function(e){if(e.target===m)m.remove();});
+  document.body.appendChild(m);
+}
+function _previewHCFotos(input){
+  var p=g('_hc-preview');
+  Array.from(input.files).forEach(function(f){
+    var r=new FileReader();r.onload=function(e){
+      _hcFotosNovas.push({file:f,dataUrl:e.target.result});
+      if(p){var i=document.createElement('img');i.src=e.target.result;i.style.cssText='width:72px;height:54px;object-fit:cover;border-radius:4px;border:2px solid #A4B56E';p.appendChild(i);}
+    };r.readAsDataURL(f);
+  });
+}
+async function _salvarHotelCustom(id){
+  var nome=(g('_hc-nome')||{}).value.trim();if(!nome){toast('Informe o nome','error');return;}
+  if(!DB.hoteisCustom)DB.hoteisCustom=[];
+  var fotos=[];
+  if(id){var ex2=DB.hoteisCustom.find(function(x){return x.id===id;});if(ex2)fotos=(ex2.fotos||[]).slice();}
+  if(_hcFotosNovas.length){
+    if(_driveToken&&Date.now()<_driveTokenExpiry){
+      try{
+        var rootId=await _obterOuCriarPastaDrive(_driveToken,'Desenrola Turismo');
+        var hotelsId=await _obterOuCriarPastaDrive(_driveToken,'Hotels',rootId);
+        var hotelId=await _obterOuCriarPastaDrive(_driveToken,nome,hotelsId);
+        for(var i=0;i<_hcFotosNovas.length;i++){
+          var up=await _uploadFileDrive(_driveToken,_hcFotosNovas[i].file,hotelId);
+          if(up&&up.id)fotos.push('https://drive.google.com/thumbnail?id='+up.id+'&sz=w800');
+        }
+        toast('✅ Fotos no Drive: Hotels/'+nome);
+      }catch(e){_hcFotosNovas.forEach(function(x){fotos.push(x.dataUrl);});toast('⚠️ Drive indisponível','warn');}
+    }else{_hcFotosNovas.forEach(function(x){fotos.push(x.dataUrl);});}
+    _hcFotosNovas=[];
+  }
+  var obj={nome:nome,destino:(g('_hc-dest')||{}).value.trim(),categoria:(g('_hc-cat')||{}).value||'⭐⭐⭐⭐',descricao:(g('_hc-desc')||{}).value.trim(),fotos:fotos,atualizadoEm:Date.now()};
+  if(id){var ex3=DB.hoteisCustom.find(function(x){return x.id===id;});if(ex3)Object.assign(ex3,obj);}
+  else{obj.id=DB.nextHotelCustomId++;obj.criadoEm=Date.now();DB.hoteisCustom.push(obj);}
+  saveToStorage();var m=g('_m-hc');if(m)m.remove();renderHoteisCustom();toast('✅ Hotel salvo!');
+}
+function deleteHotelCustom(id){
+  if(!confirm('Excluir hotel?'))return;
+  DB.hoteisCustom=(DB.hoteisCustom||[]).filter(function(x){return x.id!==id;});
+  saveToStorage();renderHoteisCustom();
+}
+
+function renderLocadoras(){
+  var el=g('locadoras-grid');if(!el)return;
+  var lista=DB.locadoras||[];
+  if(!lista.length){el.innerHTML='<div style="color:var(--text3);text-align:center;grid-column:1/-1;padding:40px">Nenhuma locadora</div>';return;}
+  el.innerHTML=lista.map(function(l){
+    return '<div class="card">'+
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+
+        '<span style="font-size:24px">🚗</span>'+
+        '<div><div style="font-weight:700;font-size:13px">'+escapeHtml(l.nome)+'</div>'+
+        '<div style="font-size:10px;color:var(--text3)">'+escapeHtml(l.destinos||'—')+'</div></div>'+
+      '</div>'+
+      '<div style="font-size:11px;color:var(--text2);margin-bottom:8px">'+escapeHtml((l.obs||'').slice(0,80))+'</div>'+
+      '<div style="display:flex;gap:6px">'+
+        '<button class="btn btn-ghost btn-sm" onclick="openModalLocadora('+l.id+')">✏️</button>'+
+        '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="deleteLocadora('+l.id+')">🗑</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+function openModalLocadora(id){
+  var l=id?(DB.locadoras||[]).find(function(x){return x.id===id;}):null;
+  var ex=g('_m-loc');if(ex)ex.remove();
+  var m=document.createElement('div');m.id='_m-loc';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;max-width:420px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2)">'+
+    '<div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:.8px;color:var(--primary);margin-bottom:14px;text-transform:uppercase">'+(id?'✏️ Editar Locadora':'🚗 Nova Locadora')+'</div>'+
+    '<div class="form-group"><label class="form-label">Nome *</label><input class="form-input" id="_loc-nome" value="'+escapeHtml(l?l.nome:'')+'" style="font-size:12px"/></div>'+
+    '<div class="form-group"><label class="form-label">Destinos</label><input class="form-input" id="_loc-dest" value="'+escapeHtml(l?l.destinos||'':'')+'" placeholder="Ex: Orlando, Miami" style="font-size:12px"/></div>'+
+    '<div class="form-group"><label class="form-label">Site</label><input class="form-input" id="_loc-site" value="'+escapeHtml(l?l.site||'':'')+'" style="font-size:12px"/></div>'+
+    '<div class="form-group"><label class="form-label">Contato</label><input class="form-input" id="_loc-cont" value="'+escapeHtml(l?l.contato||'':'')+'" style="font-size:12px"/></div>'+
+    '<div class="form-group"><label class="form-label">Obs</label><textarea class="form-input" id="_loc-obs" rows="2" style="font-size:12px">'+escapeHtml(l?l.obs||'':'')+'</textarea></div>'+
+    '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">'+
+      '<button class="btn btn-ghost btn-sm" onclick="g(\'_m-loc\').remove()">Cancelar</button>'+
+      '<button class="btn btn-primary btn-sm" onclick="_salvarLocadora('+(id||'null')+')">💾 Salvar</button>'+
+    '</div></div>';
+  m.addEventListener('click',function(e){if(e.target===m)m.remove();});
+  document.body.appendChild(m);
+}
+function _salvarLocadora(id){
+  var nome=(g('_loc-nome')||{}).value.trim();if(!nome){toast('Informe o nome','error');return;}
+  if(!DB.locadoras)DB.locadoras=[];
+  var obj={nome:nome,destinos:(g('_loc-dest')||{}).value.trim(),site:(g('_loc-site')||{}).value.trim(),contato:(g('_loc-cont')||{}).value.trim(),obs:(g('_loc-obs')||{}).value.trim()};
+  if(id){var ex=DB.locadoras.find(function(x){return x.id===id;});if(ex)Object.assign(ex,obj);}
+  else{obj.id=DB.nextLocadoraId++;DB.locadoras.push(obj);}
+  saveToStorage();var m=g('_m-loc');if(m)m.remove();renderLocadoras();toast('✅ Locadora salva!');
+}
+function deleteLocadora(id){
+  if(!confirm('Excluir?'))return;
+  DB.locadoras=(DB.locadoras||[]).filter(function(x){return x.id!==id;});
+  saveToStorage();renderLocadoras();
+}
+
 function renderIngressosTab(){
   var ti=g('tipos-ingresso-list');
   if(ti){
@@ -11893,7 +12532,7 @@ window.addEventListener('load', init);
 
 <!-- ════════════════════════════════════════════════════════════
      MODAL DRE — Demonstrativo de Resultado do Exercício
-     v3.28 · Desenrola Turismo · uso interno
+     v3.30 · Desenrola Turismo · uso interno
      ════════════════════════════════════════════════════════════ -->
 <div id="modal-dre" class="modal-overlay">
   <div class="modal" style="max-width:900px;width:100%;padding:0;border-radius:16px;overflow:hidden">
