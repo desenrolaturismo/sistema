@@ -9315,6 +9315,7 @@ var DRIVE_CLIENT_ID = '590034906102-0ahn3na8508b8t9tt2n306ccpdiejmgq.apps.google
 var DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 var _driveToken = null;
 var _driveTokenExpiry = 0;
+var _driveTokenClient = null; // Google Identity Services token client
 
 function _isDriveConfigurado(){ return !!DRIVE_CLIENT_ID; }
 
