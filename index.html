@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v3.21</title>
+<title>Desenrola Turismo — Sistema de Gestão v3.22</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -321,7 +321,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v3.21
+    ✦ Desenrola Turismo · v3.22
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -831,7 +831,7 @@ tbody tr:hover{background:var(--surface2)}
 
   <!-- Sub-tabs: Kanban | Tarefas -->
   <div class="tab-bar" style="margin-bottom:14px">
-    <button class="tab-btn active" id="pip-sub-btn-kanban"  onclick="switchPipelineSubTab('kanban',this)">📊 Kanban</button>
+    <button class="tab-btn active" id="pip-sub-btn-kanban"  onclick="switchPipelineSubTab('kanban',this)">📊 Pipeline</button>
     <button class="tab-btn"        id="pip-sub-btn-tarefas" onclick="switchPipelineSubTab('tarefas',this)">✅ Tarefas <span id="badge-tarefas" style="background:#d97706;color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;margin-left:3px"></span></button>
   </div>
 
@@ -842,25 +842,65 @@ tbody tr:hover{background:var(--surface2)}
 
   <!-- Sub-panel: Tarefas -->
   <div id="pip-sub-panel-tarefas" style="display:none">
-    <div class="header-actions" style="margin-bottom:14px">
-      <select class="form-select" id="tarefa-filter-status" onchange="renderTarefas()" style="width:140px">
-        <option value="all">Todas</option>
-        <option value="pendente">Pendentes</option>
-        <option value="vencida">Vencidas</option>
-        <option value="hoje">Vencem hoje</option>
-        <option value="concluida">Concluídas</option>
+
+    <!-- Dashboard rápido -->
+    <div id="tarefas-dashboard" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px"></div>
+
+    <!-- Alertas banner -->
+    <div id="tarefas-alertas-banner" style="margin-bottom:10px"></div>
+
+    <!-- View rápida -->
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" id="tv-all"      onclick="setTarefaView('all')"       style="font-size:11px">📋 Todas</button>
+      <button class="btn btn-ghost btn-sm" id="tv-hoje"     onclick="setTarefaView(&apos;hoje&apos;)"      style="font-size:11px">⏰ Hoje</button>
+      <button class="btn btn-ghost btn-sm" id="tv-7dias"    onclick="setTarefaView('7dias')"     style="font-size:11px">📅 Próximos 7 dias</button>
+      <button class="btn btn-ghost btn-sm" id="tv-atrasadas" onclick="setTarefaView(&apos;atrasadas&apos;)" style="font-size:11px;color:#c0392b">🚨 Atrasadas</button>
+    </div>
+
+    <!-- Filtros + busca + novo -->
+    <div class="header-actions" style="margin-bottom:14px;flex-wrap:wrap">
+      <select class="form-select" id="tarefa-filter-tipo" onchange="renderTarefas()" style="width:130px;font-size:11px">
+        <option value="all">Todos os tipos</option>
+        <option value="ligacao">📞 Ligação</option>
+        <option value="email">✉️ E-mail</option>
+        <option value="whatsapp">💬 WhatsApp</option>
+        <option value="reuniao">🤝 Reunião</option>
+        <option value="proposta">📋 Proposta</option>
+        <option value="followup">🎯 Follow-up</option>
+        <option value="outro">📝 Outro</option>
       </select>
-      <select class="form-select" id="tarefa-filter-vend" onchange="renderTarefas()" style="width:140px">
+      <select class="form-select" id="tarefa-filter-status" onchange="renderTarefas()" style="width:130px;font-size:11px">
+        <option value="all">Todos os status</option>
+        <option value="pendente">🕐 Pendentes</option>
+        <option value="vencida">🚨 Vencidas</option>
+        <option value="hoje">⏰ Vencem hoje</option>
+        <option value="concluida">✅ Concluídas</option>
+      </select>
+      <select class="form-select" id="tarefa-filter-vend" onchange="renderTarefas()" style="width:130px;font-size:11px">
         <option value="all">Todos responsáveis</option>
       </select>
-      <input type="text" class="form-input" id="tarefa-search" placeholder="🔍 Buscar tarefa..." oninput="debounceCall('tarefas',renderTarefas)" style="width:200px"/>
+      <input type="text" class="form-input" id="tarefa-search" placeholder="🔍 Buscar tarefa ou lead..." oninput="debounceCall('tarefas',renderTarefas)" style="width:200px;font-size:11px"/>
       <button class="btn btn-primary" onclick="openTarefaModal(null)">+ Nova Tarefa</button>
     </div>
-    <div id="tarefas-alertas-banner" style="margin-bottom:12px"></div>
+
     <div class="table-container">
       <table class="data-table">
-        <thead><tr><th style="width:36px"></th><th>Tarefa</th><th>Lead vinculado</th><th>Responsável</th><th>Vencimento</th><th>Status</th><th>Prioridade</th><th>Ações</th></tr></thead>
-        <tbody id="tarefas-body"><tr><td colspan="8" style="text-align:center;color:var(--text3);padding:40px">Nenhuma tarefa cadastrada</td></tr></tbody>
+        <thead>
+          <tr>
+            <th style="width:32px"></th>
+            <th style="width:90px">Tipo</th>
+            <th>Tarefa</th>
+            <th>Lead vinculado</th>
+            <th>Responsável</th>
+            <th>Vencimento</th>
+            <th>Prioridade</th>
+            <th>Resultado</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tarefas-body">
+          <tr><td colspan="9" style="text-align:center;color:var(--text3);padding:40px">Nenhuma tarefa cadastrada</td></tr>
+        </tbody>
       </table>
     </div>
   </div>
@@ -1677,7 +1717,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.21</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.22</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -1701,7 +1741,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.21</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.22</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -2435,11 +2475,11 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 
 
 // ══════════════════════════════════════════════════════════════
-// BACKUP AUTOMÁTICO — DesenrolaSistema v3.21
+// BACKUP AUTOMÁTICO — DesenrolaSistema v3.22
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v3.21',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v3.22',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_db')||'{}');
   if (_fbDb && _fbOnline) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -7855,7 +7895,7 @@ function _atualizarBadgesCRM(){
 }
 
 // ──────────────────────────────────────────────────────────────
-// SISTEMA DE TAREFAS — v3.21
+// SISTEMA DE TAREFAS — v3.22
 // Tarefas vinculadas a cards do Pipeline CRM
 // Integração: Calendário + Notificações Pop-up
 // ──────────────────────────────────────────────────────────────
@@ -7878,107 +7918,200 @@ function _populateTarefaVendFilter(){
   });
 }
 
+// ══════════════════════════════════════════════════════════════
+// TAREFAS — redesign completo v3.22
+// Inspirado em Pipedrive / HubSpot best practices
+// Tipos de atividade, resultado ao concluir, dashboard, view modes
+// ══════════════════════════════════════════════════════════════
+
+var TAREFA_TIPOS = {
+  ligacao:  { emoji:'📞', label:'Ligação',   cor:'#2C6AA3' },
+  email:    { emoji:'✉️', label:'E-mail',    cor:'#7c3aed' },
+  whatsapp: { emoji:'💬', label:'WhatsApp',  cor:'#16a34a' },
+  reuniao:  { emoji:'🤝', label:'Reunião',   cor:'#d97706' },
+  proposta: { emoji:'📋', label:'Proposta',  cor:'#0891b2' },
+  followup: { emoji:'🎯', label:'Follow-up', cor:'#c0392b' },
+  outro:    { emoji:'📝', label:'Outro',     cor:'#64748b' },
+};
+
+var _tarefaView = 'all'; // 'all' | 'hoje' | '7dias' | 'atrasadas'
+
+function setTarefaView(view){
+  _tarefaView = view;
+  // Highlight ativo
+  ['all','hoje','7dias','atrasadas'].forEach(function(v){
+    var b = g('tv-'+v); if(!b) return;
+    b.style.background = v===view ? 'var(--primary)' : '';
+    b.style.color = v===view ? '#fff' : '';
+    b.style.borderColor = v===view ? 'var(--primary)' : '';
+  });
+  // Sincronizar filter-status
+  var sel = g('tarefa-filter-status');
+  if(sel){
+    if(view==='hoje')       sel.value='hoje';
+    else if(view==='atrasadas') sel.value='vencida';
+    else if(view==='all')   sel.value='all';
+  }
+  renderTarefas();
+}
+
+function _renderTarefasDashboard(){
+  var el = g('tarefas-dashboard'); if(!el) return;
+  var today = new Date().toISOString().split('T')[0];
+  var amanha = new Date(Date.now()+86400000).toISOString().split('T')[0];
+  var em7 = new Date(Date.now()+7*86400000).toISOString().split('T')[0];
+  var todas = DB.tarefas||[];
+  var abertas = todas.filter(function(t){ return t.status!=='concluida'; });
+  var atrasadas = abertas.filter(function(t){ return t.vencimento && t.vencimento < today; });
+  var hoje = abertas.filter(function(t){ return t.vencimento === today; });
+  var proximas = abertas.filter(function(t){ return t.vencimento > today && t.vencimento <= em7; });
+  var concluidasHoje = todas.filter(function(t){ return t.status==='concluida' && t.concluidoEm && new Date(t.concluidoEm).toISOString().split('T')[0] === today; });
+
+  var cards = [
+    { label:'Atrasadas', val: atrasadas.length, cor:'#c0392b', bg:'#fee2e2', emoji:'🚨', view:'atrasadas' },
+    { label:'Vencem hoje', val: hoje.length, cor:'#d97706', bg:'#fef3c7', emoji:'⏰', view:'hoje' },
+    { label:'Próx. 7 dias', val: proximas.length, cor:'#2C6AA3', bg:'#e8f0f8', emoji:'📅', view:'7dias' },
+    { label:'Abertas', val: abertas.length, cor:'#64748b', bg:'#f1f5f9', emoji:'🕐', view:'all' },
+    { label:'Concluídas hoje', val: concluidasHoje.length, cor:'#16a34a', bg:'#dcfce7', emoji:'✅', view:'all' },
+  ];
+    el.innerHTML = '';
+  cards.forEach(function(c){
+    var div = document.createElement('div');
+    div.style.cssText = 'background:'+c.bg+';border:1px solid '+c.cor+'33;border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:transform .15s';
+    div.addEventListener('mouseover', function(){ this.style.transform='scale(1.03)'; });
+    div.addEventListener('mouseout',  function(){ this.style.transform=''; });
+    div.addEventListener('click', function(){ setTarefaView(c.view); });
+    div.innerHTML = '<div style="font-size:20px;margin-bottom:4px">'+c.emoji+'</div>'+
+      '<div style="font-size:20px;font-weight:800;color:'+c.cor+';font-family:Anton,sans-serif">'+c.val+'</div>'+
+      '<div style="font-size:10px;color:'+c.cor+';font-weight:700;text-transform:uppercase;letter-spacing:0.5px">'+c.label+'</div>';
+    el.appendChild(div);
+  });
+}
+
 function renderTarefas(){
+  _renderTarefasDashboard();
   var tb = g('tarefas-body'); if(!tb) return;
   var today = new Date().toISOString().split('T')[0];
   var amanha = new Date(Date.now()+86400000).toISOString().split('T')[0];
-  var em3dias = new Date(Date.now()+3*86400000).toISOString().split('T')[0];
+  var em3 = new Date(Date.now()+3*86400000).toISOString().split('T')[0];
+  var em7 = new Date(Date.now()+7*86400000).toISOString().split('T')[0];
 
+  var filterTipo   = (g('tarefa-filter-tipo')||{}).value   || 'all';
   var filterStatus = (g('tarefa-filter-status')||{}).value || 'all';
   var filterVend   = (g('tarefa-filter-vend')||{}).value   || 'all';
   var q = ((g('tarefa-search')||{}).value||'').toLowerCase();
+  var nomeUser = DB.currentUser ? (DB.currentUser.vendedorRef || DB.currentUser.nome || '') : '';
 
-  // Só mostra tarefas do próprio vendedor se não for adm
   var lista = (DB.tarefas||[]).filter(function(t){
-    if(isVendedor() && t.responsavel !== (DB.currentUser.vendedorRef||DB.currentUser.nome)) return false;
+    if(isVendedor() && t.responsavel !== nomeUser) return false;
     if(filterVend !== 'all' && t.responsavel !== filterVend) return false;
+    if(filterTipo !== 'all' && (t.tipo||'outro') !== filterTipo) return false;
     if(q && !(t.titulo||'').toLowerCase().includes(q) && !(t.descricao||'').toLowerCase().includes(q)) return false;
+    // View override
+    var venc = t.vencimento||'';
+    if(_tarefaView === 'hoje')       return t.status!=='concluida' && venc === today;
+    if(_tarefaView === '7dias')      return t.status!=='concluida' && venc > today && venc <= em7;
+    if(_tarefaView === 'atrasadas')  return t.status!=='concluida' && venc && venc < today;
+    // Standard filter
     if(filterStatus === 'pendente')  return t.status === 'pendente';
     if(filterStatus === 'concluida') return t.status === 'concluida';
-    if(filterStatus === 'vencida')   return t.status !== 'concluida' && t.vencimento && t.vencimento < today;
-    if(filterStatus === 'hoje')      return t.status !== 'concluida' && t.vencimento === today;
+    if(filterStatus === 'vencida')   return t.status !== 'concluida' && venc && venc < today;
+    if(filterStatus === 'hoje')      return t.status !== 'concluida' && venc === today;
     return true;
   }).sort(function(a,b){
-    // Ordenar: vencidas primeiro, depois por data, depois por prioridade
-    var aVencida = a.status!=='concluida' && a.vencimento && a.vencimento < today;
-    var bVencida = b.status!=='concluida' && b.vencimento && b.vencimento < today;
-    if(aVencida && !bVencida) return -1;
-    if(!aVencida && bVencida) return  1;
-    return (a.vencimento||'9999') > (b.vencimento||'9999') ? 1 : -1;
+    // Atrasadas primeiro, depois por data, depois prioridade
+    var ordemPrio = {alta:0, media:1, baixa:2};
+    var aAtrasada = a.status!=='concluida' && a.vencimento && a.vencimento < today;
+    var bAtrasada = b.status!=='concluida' && b.vencimento && b.vencimento < today;
+    if(aAtrasada && !bAtrasada) return -1;
+    if(!aAtrasada && bAtrasada) return  1;
+    var da = a.vencimento||'9999', db2 = b.vencimento||'9999';
+    if(da !== db2) return da > db2 ? 1 : -1;
+    return (ordemPrio[a.prioridade||'media']||1) - (ordemPrio[b.prioridade||'media']||1);
   });
 
-  // Banner de alertas
+  // Banner alertas
   var banner = g('tarefas-alertas-banner');
   if(banner){
-    var vencidas  = (DB.tarefas||[]).filter(function(t){ return t.status!=='concluida' && t.vencimento && t.vencimento < today; });
-    var venceHoje = (DB.tarefas||[]).filter(function(t){ return t.status!=='concluida' && t.vencimento === today; });
-    var vence3d   = (DB.tarefas||[]).filter(function(t){ return t.status!=='concluida' && t.vencimento > today && t.vencimento <= em3dias; });
+    var atrasadasN = (DB.tarefas||[]).filter(function(t){ return t.status!=='concluida' && t.vencimento && t.vencimento < today; });
+    var hojeN = (DB.tarefas||[]).filter(function(t){ return t.status!=='concluida' && t.vencimento === today; });
     var alertas = [];
-    if(vencidas.length)  alertas.push('<span style="background:#fee2e2;color:#c0392b;border:1px solid #fca5a5;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700">🚨 '+vencidas.length+' tarefa'+( vencidas.length>1?'s':'')+' VENCIDA'+(vencidas.length>1?'S':'')+'</span>');
-    if(venceHoje.length) alertas.push('<span style="background:#fef3c7;color:#b45309;border:1px solid #fde68a;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700">⏰ '+venceHoje.length+' vence'+( venceHoje.length>1?'m':'')+'  HOJE</span>');
-    if(vence3d.length)   alertas.push('<span style="background:#e0f2fe;color:#0369a1;border:1px solid #7dd3fc;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700">📅 '+vence3d.length+' vence'+( vence3d.length>1?'m':'')+' nos próximos 3 dias</span>');
+    if(atrasadasN.length) alertas.push('<span style="background:#fee2e2;color:#c0392b;border:1px solid #fca5a5;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer" onclick="setTarefaView(\'atrasadas\')">🚨 '+atrasadasN.length+' tarefa'+(atrasadasN.length>1?'s':'')+' ATRASADA'+(atrasadasN.length>1?'S':'')+'</span>');
+    if(hojeN.length) alertas.push('<span style="background:#fef3c7;color:#b45309;border:1px solid #fde68a;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer" onclick="setTarefaView(\'hoje\')">⏰ '+hojeN.length+' vence'+(hojeN.length>1?'m':'')+' HOJE</span>');
     banner.innerHTML = alertas.length ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">'+alertas.join('')+'</div>' : '';
   }
 
   _atualizarBadgesCRM();
 
   if(!lista.length){
-    tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:40px">Nenhuma tarefa encontrada</td></tr>';
+    tb.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:40px">Nenhuma tarefa encontrada</td></tr>';
     return;
   }
 
   tb.innerHTML = lista.map(function(t){
-    var venc = t.vencimento || '';
-    var isVencida  = t.status!=='concluida' && venc && venc < today;
-    var isHoje     = t.status!=='concluida' && venc === today;
-    var isProxima  = t.status!=='concluida' && venc > today && venc <= em3dias;
-    var isConcluida= t.status === 'concluida';
+    var venc = t.vencimento||'';
+    var isConcluida = t.status==='concluida';
+    var isAtrasada  = !isConcluida && venc && venc < today;
+    var isHoje      = !isConcluida && venc === today;
+    var isProxima   = !isConcluida && venc > today && venc <= em3;
 
-    var statusBadge =
-      isConcluida ? '<span style="background:#dcfce7;color:#16a34a;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700">✅ Concluída</span>' :
-      isVencida   ? '<span style="background:#fee2e2;color:#c0392b;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;animation:pulse 1.5s infinite">🚨 Vencida</span>' :
-      isHoje      ? '<span style="background:#fef3c7;color:#b45309;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700">⏰ Hoje</span>' :
-      isProxima   ? '<span style="background:#e0f2fe;color:#0369a1;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700">📅 Em breve</span>' :
-                    '<span style="background:#f1f5f9;color:#64748b;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700">🕐 Pendente</span>';
+    var tipo = TAREFA_TIPOS[t.tipo||'outro'] || TAREFA_TIPOS.outro;
+    var tipoBadge = '<span style="background:'+tipo.cor+'18;color:'+tipo.cor+';border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;white-space:nowrap">'+tipo.emoji+' '+tipo.label+'</span>';
+
+    var statusBadge = isConcluida
+      ? '<span style="background:#dcfce7;color:#16a34a;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700">✅ Concluída</span>'
+      : isAtrasada ? '<span style="background:#fee2e2;color:#c0392b;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700">🚨 Atrasada</span>'
+      : isHoje     ? '<span style="background:#fef3c7;color:#b45309;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700">⏰ Hoje</span>'
+      : isProxima  ? '<span style="background:#e0f2fe;color:#0369a1;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700">📅 Em breve</span>'
+                   : '<span style="background:#f1f5f9;color:#64748b;border-radius:6px;padding:2px 8px;font-size:10px">🕐 Pendente</span>';
 
     var prio = TAREFA_PRIORIDADES[t.prioridade||'media'];
     var prioBadge = '<span style="background:'+prio.bg+';color:'+prio.cor+';border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700">'+prio.emoji+' '+prio.label+'</span>';
 
-    // Lead vinculado
     var lead = t.leadId ? (DB.crm||[]).find(function(l){ return l.id==t.leadId; }) : null;
     var leadCell = lead
-      ? '<span style="font-size:11px;background:#e8f0f8;color:#1a4570;border-radius:6px;padding:2px 8px;cursor:pointer" onclick="openLead('+lead.id+')">🎯 '+escapeHtml(lead.nome||lead.telefone||'Lead #'+lead.id)+'</span>'
+      ? '<span style="font-size:11px;background:#e8f0f8;color:#1a4570;border-radius:5px;padding:1px 7px;cursor:pointer" onclick="openLead('+lead.id+')">🎯 '+escapeHtml((lead.nome||lead.telefone||'#'+lead.id).slice(0,20))+'</span>'
       : '<span style="color:var(--text3);font-size:11px">—</span>';
 
     var vencFmt = venc ? venc.split('-').reverse().join('/') : '—';
-    var rowBg = isVencida ? 'background:#fff5f5' : isHoje ? 'background:#fffbeb' : '';
+    var vencCor = isAtrasada ? '#c0392b' : isHoje ? '#b45309' : 'var(--text)';
+    var rowBg = isAtrasada ? 'background:#fff5f5' : isHoje ? 'background:#fffbeb' : '';
 
-    return '<tr style="'+rowBg+'">' +
-      '<td style="text-align:center"><input type="checkbox" '+(isConcluida?'checked':'')+' onchange="toggleTarefaConcluida('+t.id+',this.checked)" style="cursor:pointer;width:16px;height:16px"></td>'+
-      '<td><div style="font-weight:600;font-size:13px;'+(isConcluida?'text-decoration:line-through;color:var(--text3)':'')+'">'+escapeHtml(t.titulo)+'</div>'+(t.descricao?'<div style="font-size:11px;color:var(--text3);margin-top:2px">'+escapeHtml(t.descricao.slice(0,60))+(t.descricao.length>60?'…':'')+'</div>':'')+'</td>'+
+    // Resultado da atividade (quando concluída)
+    var resultadoEmoji = {positivo:'😊', neutro:'😐', negativo:'😞'}[t.resultado||''] || '';
+    var resultadoCell = t.resultado
+      ? '<span style="font-size:11px">'+resultadoEmoji+' <span style="color:var(--text3)">'+t.resultado.charAt(0).toUpperCase()+t.resultado.slice(1)+'</span></span>'
+      : '<span style="color:var(--text3);font-size:10px">—</span>';
+
+    return '<tr style="'+rowBg+'">'+
+      '<td style="text-align:center"><input type="checkbox" '+(isConcluida?'checked':'')+' onchange="toggleTarefaConcluida('+t.id+',this.checked)" style="cursor:pointer;width:15px;height:15px"></td>'+
+      '<td>'+tipoBadge+'</td>'+
+      '<td><div style="font-weight:700;font-size:13px;'+(isConcluida?'text-decoration:line-through;color:var(--text3)':'')+'">'+escapeHtml(t.titulo)+'</div>'+(t.descricao?'<div style="font-size:10px;color:var(--text3)">'+escapeHtml(t.descricao.slice(0,50))+(t.descricao.length>50?'…':'')+'</div>':'')+(t.nota?'<div style="font-size:10px;color:var(--text2);margin-top:2px;background:#f8fafc;border-radius:4px;padding:1px 5px">📝 '+escapeHtml(t.nota.slice(0,40))+'</div>':'')+'</td>'+
       '<td>'+leadCell+'</td>'+
       '<td style="font-size:12px">'+escapeHtml(t.responsavel||'—')+'</td>'+
-      '<td style="font-size:12px;font-weight:700;color:'+(isVencida?'#c0392b':isHoje?'#b45309':'var(--text)')+'">'+vencFmt+'</td>'+
-      '<td>'+statusBadge+'</td>'+
+      '<td style="font-size:12px;font-weight:700;color:'+vencCor+'">'+vencFmt+'</td>'+
       '<td>'+prioBadge+'</td>'+
+      '<td>'+resultadoCell+'</td>'+
       '<td style="white-space:nowrap">'+
-        '<button class="btn btn-ghost btn-sm" onclick="openTarefaModal('+t.id+')" title="Editar">✏️</button>'+
-        (isAdm()?'<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="deleteTarefa('+t.id+')" title="Excluir">🗑</button>':'')+
+        '<button class="btn btn-ghost btn-sm" onclick="openTarefaModal('+t.id+')" title="Editar" style="font-size:11px">✏️</button>'+
+        (isAdm()?'<button class="btn btn-ghost btn-sm" style="color:var(--danger);font-size:11px" onclick="deleteTarefa('+t.id+')" title="Excluir">🗑</button>':'')+
       '</td>'+
     '</tr>';
   }).join('');
 }
 
+// ── Tarefa CRUD functions ──────────────────────────────────────
 function openTarefaModal(id){
   var t = id ? (DB.tarefas||[]).find(function(x){ return x.id===id; }) : null;
   var modalEl = g('modal-tarefa');
   if(!modalEl){ _injectTarefaModal(); modalEl = g('modal-tarefa'); }
 
-  g('tf-titulo').value      = t ? t.titulo      : '';
-  g('tf-desc').value        = t ? (t.descricao||'')  : '';
-  g('tf-vencimento').value  = t ? (t.vencimento||'') : '';
+  g('tf-titulo').value      = t ? t.titulo               : '';
+  g('tf-desc').value        = t ? (t.descricao||'')       : '';
+  g('tf-vencimento').value  = t ? (t.vencimento||'')      : '';
+  g('tf-tipo').value        = t ? (t.tipo||'followup')    : 'followup';
   g('tf-prioridade').value  = t ? (t.prioridade||'media') : 'media';
-  g('tf-responsavel').value = t ? (t.responsavel||'') : (DB.currentUser.nome||'');
+  g('tf-responsavel').value = t ? (t.responsavel||'')     : (DB.currentUser.nome||'');
 
   // Popula select de Lead
   var ls = g('tf-lead');
@@ -7986,7 +8119,7 @@ function openTarefaModal(id){
   (DB.crm||[]).forEach(function(l){
     var o = document.createElement('option');
     o.value = l.id;
-    o.textContent = (l.nome||l.telefone||'Lead #'+l.id)+' — '+l.stage;
+    o.textContent = (l.nome||l.telefone||'Lead #'+l.id).slice(0,40)+' — '+l.stage;
     if(t && l.id == t.leadId) o.selected = true;
     ls.appendChild(o);
   });
@@ -7997,19 +8130,27 @@ function openTarefaModal(id){
 }
 
 function _injectTarefaModal(){
-  // Injeta o modal de tarefa dinamicamente se ainda não existir
   var el = document.createElement('div');
   el.innerHTML = `
   <div id="modal-tarefa" class="modal-overlay">
-    <div class="modal" style="max-width:540px">
+    <div class="modal" style="max-width:560px">
       <div class="modal-header">
         <div class="modal-title" id="modal-tarefa-title">Nova Tarefa</div>
         <button class="modal-close" onclick="closeModal('modal-tarefa')">✕</button>
       </div>
-      <div class="form-group"><label class="form-label">Título *</label><input type="text" class="form-input" id="tf-titulo" placeholder="Descrição curta da tarefa"/></div>
-      <div class="form-group"><label class="form-label">Descrição</label><textarea class="form-input" id="tf-desc" rows="2" placeholder="Detalhes opcionais..." style="resize:vertical"></textarea></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="form-group"><label class="form-label">Vencimento *</label><input type="date" class="form-input" id="tf-vencimento"/></div>
+        <div class="form-group" style="grid-column:1/-1"><label class="form-label">Título *</label><input type="text" class="form-input" id="tf-titulo" placeholder="Ex: Ligar para confirmar proposta"/></div>
+        <div class="form-group"><label class="form-label">Tipo de atividade</label>
+          <select class="form-select" id="tf-tipo">
+            <option value="ligacao">📞 Ligação</option>
+            <option value="email">✉️ E-mail</option>
+            <option value="whatsapp">💬 WhatsApp</option>
+            <option value="reuniao">🤝 Reunião</option>
+            <option value="proposta">📋 Proposta</option>
+            <option value="followup" selected>🎯 Follow-up</option>
+            <option value="outro">📝 Outro</option>
+          </select>
+        </div>
         <div class="form-group"><label class="form-label">Prioridade</label>
           <select class="form-select" id="tf-prioridade">
             <option value="alta">🔴 Alta</option>
@@ -8017,15 +8158,17 @@ function _injectTarefaModal(){
             <option value="baixa">🟢 Baixa</option>
           </select>
         </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label class="form-label">Vencimento *</label><input type="date" class="form-input" id="tf-vencimento"/></div>
         <div class="form-group"><label class="form-label">Responsável</label>
           <select class="form-select" id="tf-responsavel">
             <option value="">— Selecione —</option>
           </select>
         </div>
-        <div class="form-group"><label class="form-label">Lead vinculado</label>
-          <select class="form-select" id="tf-lead"><option value="">Nenhum</option></select>
+        <div class="form-group" style="grid-column:1/-1"><label class="form-label">Lead vinculado</label>
+          <select class="form-select" id="tf-lead"><option value="">Nenhum (tarefa geral)</option></select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1"><label class="form-label">Descrição</label>
+          <textarea class="form-input" id="tf-desc" rows="2" placeholder="Detalhes adicionais..." style="resize:vertical"></textarea>
         </div>
       </div>
       <div class="modal-footer">
@@ -8035,12 +8178,10 @@ function _injectTarefaModal(){
     </div>
   </div>`;
   document.body.appendChild(el.firstElementChild);
-  // Popula responsáveis
   var rs = g('tf-responsavel');
   (DB.vendedores||[]).filter(function(v){ return v.status==='ativo'; }).forEach(function(v){
     var o = document.createElement('option'); o.value = v.nome; o.textContent = v.nome; rs.appendChild(o);
   });
-  // Registrar click-outside
   g('modal-tarefa').addEventListener('click', function(e){ if(e.target===this) closeModal('modal-tarefa'); });
 }
 
@@ -8049,221 +8190,94 @@ function saveTarefa(){
   var venc   = (g('tf-vencimento')||{}).value;
   if(!titulo) { toast('Título é obrigatório','error'); return; }
   if(!venc)   { toast('Data de vencimento é obrigatória','error'); return; }
-
   if(!DB.tarefas) DB.tarefas=[];
   var editId = g('modal-tarefa').dataset.editId;
   var obj = {
     titulo:      titulo,
     descricao:   (g('tf-desc')||{}).value.trim(),
     vencimento:  venc,
+    tipo:        (g('tf-tipo')||{}).value || 'followup',
     prioridade:  (g('tf-prioridade')||{}).value || 'media',
     responsavel: (g('tf-responsavel')||{}).value || '',
     leadId:      parseInt((g('tf-lead')||{}).value) || null,
     status:      'pendente',
     criadoEm:    Date.now(),
   };
-
   if(editId){
     var ex = DB.tarefas.find(function(x){ return x.id==editId; });
     if(ex){ obj.status = ex.status; obj.criadoEm = ex.criadoEm; Object.assign(ex, obj); toast('✅ Tarefa atualizada!'); }
   } else {
     obj.id = DB.nextTarefaId++;
     DB.tarefas.push(obj);
-    // Criar evento no Calendário automaticamente
+    // Criar evento no Calendário
     DB.calendario.push({
-      id: DB.nextCalId++,
-      data: venc,
-      titulo: '✅ [Tarefa] ' + titulo,
-      hora: '',
-      tipo: 'lembrete',
-      desc: obj.descricao || ('Responsável: '+(obj.responsavel||'—')),
-      leadId: obj.leadId || null,
-      tarefaId: obj.id,
+      id: DB.nextCalId++, data: venc,
+      titulo: (TAREFA_TIPOS[obj.tipo]||TAREFA_TIPOS.outro).emoji+' [Tarefa] '+titulo,
+      hora:'', tipo:'lembrete', desc: obj.descricao||('Responsável: '+(obj.responsavel||'—')),
+      leadId: obj.leadId||null, tarefaId: obj.id,
     });
     toast('✅ Tarefa criada e adicionada ao calendário!');
   }
   saveToStorage();
   closeModal('modal-tarefa');
   renderTarefas();
-  if(typeof renderCalendario === 'function' && g('page-calendario')&&g('page-calendario').classList.contains('active')) renderCalendario();
 }
 
 function toggleTarefaConcluida(id, checked){
   var t = (DB.tarefas||[]).find(function(x){ return x.id===id; });
   if(!t) return;
-  t.status = checked ? 'concluida' : 'pendente';
-  t.concluidoEm = checked ? Date.now() : null;
-  saveToStorage();
-  renderTarefas();
-  toast(checked ? '✅ Tarefa concluída!' : 'Tarefa reaberta');
+  if(!checked){
+    t.status = 'pendente'; t.concluidoEm = null; t.resultado = null; t.nota = null;
+    saveToStorage(); renderTarefas(); toast('Tarefa reaberta');
+    return;
+  }
+  // Ao concluir: popup de resultado (estilo Pipedrive)
+  var ex = g('_modal-resultado-tarefa'); if(ex) ex.remove();
+  var m = document.createElement('div');
+  m.id = '_modal-resultado-tarefa';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
+  m.innerHTML =
+    '<div style="background:#fff;border-radius:14px;padding:24px;max-width:420px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2)">' +
+      '<div style="font-family:Anton,sans-serif;font-size:13px;letter-spacing:.8px;color:#0f2d4e;margin-bottom:4px;text-transform:uppercase">✅ Registrar Resultado</div>' +
+      '<div style="font-size:12px;color:var(--text3);margin-bottom:16px;font-weight:600">'+escapeHtml(t.titulo)+'</div>' +
+      '<div style="font-size:11px;font-weight:700;margin-bottom:8px;color:#4a6280;text-transform:uppercase;letter-spacing:0.5px">Qual foi o resultado da atividade?</div>' +
+      '<div style="display:flex;gap:8px;margin-bottom:14px">' +
+        '<button onclick="_salvarResultadoTarefa('+id+',\'positivo\')" style="flex:1;padding:10px;border:2px solid #86efac;border-radius:10px;background:#dcfce7;cursor:pointer;font-size:13px;font-weight:700;color:#16a34a">😊<br><span style="font-size:10px">Positivo</span></button>' +
+        '<button onclick="_salvarResultadoTarefa('+id+',\'neutro\')" style="flex:1;padding:10px;border:2px solid #e2e8f0;border-radius:10px;background:#f8fafc;cursor:pointer;font-size:13px;font-weight:700;color:#64748b">😐<br><span style="font-size:10px">Neutro</span></button>' +
+        '<button onclick="_salvarResultadoTarefa('+id+',\'negativo\')" style="flex:1;padding:10px;border:2px solid #fca5a5;border-radius:10px;background:#fee2e2;cursor:pointer;font-size:13px;font-weight:700;color:#c0392b">😞<br><span style="font-size:10px">Negativo</span></button>' +
+      '</div>' +
+      '<div class="form-group"><label class="form-label" style="font-size:11px">Nota sobre a atividade (opcional)</label>' +
+        '<textarea class="form-input" id="_res-nota" rows="2" placeholder="O que aconteceu? Próximos passos..." style="font-size:12px"></textarea></div>' +
+      '<div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">' +
+        '<button class="btn btn-ghost btn-sm" onclick="g(\'_modal-resultado-tarefa\').remove()">Cancelar</button>' +
+        '<button class="btn btn-primary btn-sm" onclick="_salvarResultadoTarefa('+id+',null)">Concluir sem registrar</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(m);
+}
+
+function _salvarResultadoTarefa(id, resultado){
+  var t = (DB.tarefas||[]).find(function(x){ return x.id===id; });
+  if(!t) return;
+  t.status = 'concluida'; t.concluidoEm = Date.now();
+  if(resultado) t.resultado = resultado;
+  var notaEl = g('_res-nota');
+  if(notaEl && notaEl.value.trim()) t.nota = notaEl.value.trim();
+  var m = g('_modal-resultado-tarefa'); if(m) m.remove();
+  saveToStorage(); renderTarefas();
+  toast('✅ '+(resultado==='positivo'?'Ótimo resultado! ':'')+'Tarefa concluída!');
 }
 
 function deleteTarefa(id){
   if(!confirm('Excluir esta tarefa?')) return;
   DB.tarefas = (DB.tarefas||[]).filter(function(t){ return t.id!==id; });
-  // Remover evento do calendário vinculado
   DB.calendario = (DB.calendario||[]).filter(function(e){ return e.tarefaId!==id; });
-  saveToStorage();
-  renderTarefas();
-  toast('Tarefa removida');
+  saveToStorage(); renderTarefas(); toast('Tarefa removida');
 }
 
-// ══════════════════════════════════════════════════════════════
-// SISTEMA PÓS-VENDA / VIAGENS — v3.21
-// Pipeline automático gerado a partir de vendas
-// Day-by-Day, Vouchers, Templates de proximidade
-// ══════════════════════════════════════════════════════════════
-
-const PV_ETAPAS = [
-  { id:'nova_venda',  label:'Nova Venda',       emoji:'🎉', cor:'#2C6AA3' },
-  { id:'vouchers',    label:'Envio Vouchers',   emoji:'🎟️', cor:'#7c3aed' },
-  { id:'brindes',     label:'Envio Brindes',    emoji:'🎁', cor:'#d97706' },
-  { id:'em_viagem',   label:'Em Viagem',        emoji:'✈️', cor:'#16a34a' },
-  { id:'pos_viagem',  label:'Pós-Viagem',       emoji:'⭐', cor:'#0891b2' },
-];
-
-// Garante que toda venda fechada tenha um card pós-venda correspondente
-function _sincronizarPosVendas(){
-  if(!DB.vendas || !DB.vendas.length) return;
-  // Últimas 3 vendas COM nome de passageiro definido
-  var vendasComNome = (DB.vendas||[]).filter(function(v){
-    return v.passageiro && v.passageiro.trim() && v.sitPgto !== 'cancelado';
-  });
-  var idsUltimas3 = vendasComNome.slice(-3).map(function(v){ return v.id; });
-
-  DB.vendas.forEach(function(v){
-    if(v.sitPgto === 'cancelado') return;
-    var jaExiste = (DB.posVendas||[]).find(function(pv){ return pv.vendaId === v.id; });
-    if(!jaExiste){
-      if(!DB.posVendas) DB.posVendas = [];
-      var temNome = !!(v.passageiro && v.passageiro.trim());
-      var etapaInicial = (temNome && idsUltimas3.includes(v.id)) ? 'nova_venda' : 'pos_viagem';
-      DB.posVendas.push({
-        id: DB.nextPosVendaId++,
-        vendaId: v.id,
-        etapa: etapaInicial,
-        cliente: v.passageiro || '(Sem nome)',
-        destino: v.destino || '',
-        dataViagem: _extrairDataViagem(v),
-        dataVolta: '',
-        orcamentoId: v.orcamentoId || null,
-        dayByDay: [],
-        vouchers: [],
-        obs: '',
-        criadoEm: Date.now(),
-        etapaChangedAt: new Date().toISOString(),
-        voucherEnviadoEm: null,
-        brindeLembreteEm: null,
-        driveClienteId: null,
-      });
-    }
-  });
-}
-
-function _extrairDataViagem(venda){
-  var orcId = venda.orcamentoId;
-  if(orcId){
-    var orc = (DB.orcamentos||[]).find(function(o){ return o.id===orcId; });
-    if(orc && orc.dataIda) return orc.dataIda;
-  }
-  var orcPax = (DB.orcamentos||[]).find(function(o){
-    var cli = (DB.clientes||[]).find(function(c){ return c.id===o.clienteId; });
-    return cli && (cli.nome+' '+(cli.sobrenome||'')).trim().toLowerCase() === (venda.passageiro||'').toLowerCase();
-  });
-  if(orcPax && orcPax.dataIda) return orcPax.dataIda;
-  return '';
-}
-
-function renderPosVendas(){
-  _sincronizarPosVendas();
-  var el = g('pv-board'); if(!el) return;
-  var today = new Date().toISOString().split('T')[0];
-
-  var filterMes  = (g('pv-filter-mes')||{}).value  || 'all';
-  var filterEtapa= (g('pv-filter-etapa')||{}).value || 'all';
-
-  var lista = (DB.posVendas||[]).filter(function(pv){
-    if(filterEtapa !== 'all' && pv.etapa !== filterEtapa) return false;
-    var dt = pv.dataViagem;
-    if(!dt || filterMes === 'all') return true;
-    var diff = Math.ceil((new Date(dt) - new Date(today)) / 86400000);
-    if(filterMes === 'passadas') return diff < 0;
-    if(filterMes === 'hoje')     return diff === 0;
-    if(filterMes === '1dia')     return diff === 1;
-    if(filterMes === '7dias')    return diff >= 0 && diff <= 7;
-    if(filterMes === '15dias')   return diff >= 0 && diff <= 15;
-    return true;
-  }).sort(function(a,b){
-    var da = a.dataViagem||'9999'; var db2 = b.dataViagem||'9999';
-    return da > db2 ? 1 : -1;
-  });
-
-  // Badge
-  var badge = g('posvendas-badge');
-  if(badge) badge.textContent = lista.length + ' viagem' + (lista.length!==1?'s':'');
-
-  // Alertas
-  var alertasEl = g('pv-alertas');
-  if(alertasEl){
-    var alertas = [];
-    lista.forEach(function(pv){
-      if(!pv.dataViagem) return;
-      var diff = Math.ceil((new Date(pv.dataViagem) - new Date(today)) / 86400000);
-      if(diff === 1)  alertas.push('⏰ <b>'+escapeHtml(pv.cliente)+'</b> viaja AMANHÃ ('+pv.destino+')');
-      if(diff === 7)  alertas.push('📅 <b>'+escapeHtml(pv.cliente)+'</b> viaja em 7 dias ('+pv.destino+')');
-      if(diff === 15) alertas.push('📅 <b>'+escapeHtml(pv.cliente)+'</b> viaja em 15 dias ('+pv.destino+')');
-      if(diff === 45 && pv.etapa === 'nova_venda')
-        alertas.push('🎁 <b>'+escapeHtml(pv.cliente)+'</b> — 45 dias para viagem, hora de enviar brindes!');
-    });
-    alertasEl.innerHTML = alertas.length
-      ? '<div style="display:flex;flex-direction:column;gap:6px">' +
-          alertas.map(function(a){ return '<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:8px 14px;font-size:12px;color:#78350f">'+a+'</div>'; }).join('') +
-        '</div>'
-      : '';
-  }
-
-  // Cards de resumo por etapa
-  var resumoEl = g('pv-resumo');
-  if(resumoEl){
-    resumoEl.innerHTML = PV_ETAPAS.map(function(et){
-      var n = (DB.posVendas||[]).filter(function(pv){ return pv.etapa===et.id; }).length;
-      return '<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer" onclick="document.getElementById(\'pv-filter-etapa\').value=\''+et.id+'\';renderPosVendas()">' +
-        '<div style="font-size:20px;margin-bottom:4px">'+et.emoji+'</div>' +
-        '<div style="font-size:18px;font-weight:800;color:'+et.cor+'">'+n+'</div>' +
-        '<div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">'+et.label+'</div>' +
-      '</div>';
-    }).join('');
-  }
-
-  if(!lista.length){
-    el.innerHTML = '<div class="card" style="text-align:center;padding:48px">' +
-      '<div style="font-size:48px;margin-bottom:12px">✈️</div>' +
-      '<div style="font-size:16px;font-weight:700;margin-bottom:8px">Nenhuma viagem encontrada</div>' +
-      '<p style="color:var(--text3)">As viagens aparecem aqui automaticamente quando uma venda é cadastrada.</p>' +
-    '</div>';
-    return;
-  }
-
-  // Agrupar por etapa
-  var porEtapa = {};
-  PV_ETAPAS.forEach(function(et){ porEtapa[et.id] = []; });
-  lista.forEach(function(pv){ if(porEtapa[pv.etapa]) porEtapa[pv.etapa].push(pv); });
-
-  el.innerHTML = PV_ETAPAS.map(function(et){
-    var cards = porEtapa[et.id];
-    if(!cards.length) return '';
-    return '<div style="margin-bottom:24px">' +
-      '<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:'+et.cor+'18;border-radius:10px;border-left:4px solid '+et.cor+';margin-bottom:10px">' +
-        '<span style="font-size:18px">'+et.emoji+'</span>' +
-        '<span style="font-family:Anton,sans-serif;font-size:13px;color:'+et.cor+';letter-spacing:0.8px;text-transform:uppercase">'+et.label+'</span>' +
-        '<span style="background:'+et.cor+';color:#fff;border-radius:10px;padding:1px 8px;font-size:10px;font-weight:700;margin-left:4px">'+cards.length+'</span>' +
-      '</div>' +
-      '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px">' +
-        cards.map(function(pv){ return _renderPvCard(pv, today); }).join('') +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
+function editarPassageiroIdx(i){ openAddPassageiro(i); }
+function excluirPassageiro(idx){ if(!confirm('Excluir?')) return; _resolvePaxArray().splice(idx,1); saveData().then(()=>{ window._fichaGrupoAlvo=null; if(typeof renderFichasPassageiros==='function') renderFichasPassageiros(); }); }
+function editarPassageiro(idx){ openAddPassageiro(idx); }
 
 function _renderPvCard(pv, today){
   var venda = (DB.vendas||[]).find(function(v){ return v.id===pv.vendaId; });
@@ -8544,7 +8558,7 @@ function exportarDayByDayPDF(){
 // Configure seu Client ID abaixo após criar o projeto no Google Cloud
 // Passo a passo completo ao final deste arquivo
 // ════════════════════════════════════════════════════════════
-var DRIVE_CLIENT_ID = '590034906102-0ahn3na8508b8t9tt2n306ccpdiejmgq.apps.googleusercontent.com'; // Google OAuth Client ID
+var DRIVE_CLIENT_ID = '590034906102-0ahn3na8508b8t9tt2n306ccpdiejmgq.apps.googleusercontent.com';
 var DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 var _driveToken = null;
 var _driveTokenExpiry = 0;
@@ -8562,7 +8576,7 @@ function autenticarDrive(){
     // Abre popup OAuth
     var params = new URLSearchParams({
       client_id: DRIVE_CLIENT_ID,
-      redirect_uri: window.location.href.split('?')[0],
+      redirect_uri: DRIVE_REDIRECT_URI,
       response_type: 'token',
       scope: DRIVE_SCOPE,
       prompt: 'consent',
@@ -10647,7 +10661,7 @@ window.addEventListener('load', init);
 
 <!-- ════════════════════════════════════════════════════════════
      MODAL DRE — Demonstrativo de Resultado do Exercício
-     v3.21 · Desenrola Turismo · uso interno
+     v3.22 · Desenrola Turismo · uso interno
      ════════════════════════════════════════════════════════════ -->
 <div id="modal-dre" class="modal-overlay">
   <div class="modal" style="max-width:900px;width:100%;padding:0;border-radius:16px;overflow:hidden">
