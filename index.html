@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v3.32</title>
+<title>Desenrola Turismo — Sistema de Gestão v3.33</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -324,7 +324,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v3.32
+    ✦ Desenrola Turismo · v3.33
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -729,7 +729,7 @@ tbody tr:hover{background:var(--surface2)}
 
   <div id="reg-tab-ingressos" class="tab-panel" style="display:none">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-      <div class="card"><div class="card-title">🎟️ Tipos de Ingresso</div><div id="tipos-ingresso-list" style="margin-bottom:10px"></div><div style="display:flex;gap:8px"><div style="display:flex;flex-direction:column;gap:4px;flex:1"><input type="text" class="form-input" id="new-tipo-ingresso" placeholder="Nome do tipo (ex: Disney Park Hopper)"/><input type="text" class="form-input" id="new-tipo-ingresso-desc" placeholder="Descrição (ex: Acesso a todos os parques Disney...)" style="font-size:12px"/></div><button class="btn btn-primary btn-sm" onclick="addTipoIngresso()">+</button></div></div>
+      <div class="card"><div class="card-title">🎟️ Tipos de Ingresso</div><div id="tipos-ingresso-list" style="margin-bottom:10px"></div><div style="display:flex;gap:8px"><div style="display:flex;flex-direction:column;gap:4px;flex:1"><input type="text" class="form-input" id="new-tipo-ingresso" placeholder="Nome do tipo (ex: Disney Park Hopper)"/><input type="text" class="form-input" id="new-tipo-ingresso-desc" placeholder="Descrição (ex: Acesso a todos os parques Disney...)" style="font-size:12px"/><div style="display:flex;gap:6px"><input type="text" class="form-input" id="new-tipo-ingresso-foto" placeholder="URL da foto (opcional)" style="font-size:12px"/><button class="btn btn-ghost btn-sm" onclick="_selecionarFotoDrive('new-tipo-ingresso-foto')" title="Selecionar do Drive" style="flex-shrink:0">📁</button></div></div><button class="btn btn-primary btn-sm" onclick="addTipoIngresso()">+</button></div></div>
       <div class="card"><div class="card-title">💳 Pagamento por Operadora</div><div id="formas-op-list" style="margin-bottom:10px"></div><div style="display:flex;flex-direction:column;gap:6px"><select class="form-select" id="new-forma-op-sel"><option value="">Operadora...</option></select><input type="text" class="form-input" id="new-forma-op-val" placeholder="Ex: 10x sem juros"/><button class="btn btn-primary btn-sm" onclick="addFormaPagOperadora()">+ Adicionar</button></div></div>
     </div>
   </div>
@@ -1812,7 +1812,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.32</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.33</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -1836,7 +1836,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.32</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.33</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -2573,11 +2573,11 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 
 
 // ══════════════════════════════════════════════════════════════
-// BACKUP AUTOMÁTICO — DesenrolaSistema v3.32
+// BACKUP AUTOMÁTICO — DesenrolaSistema v3.33
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v3.32',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v3.33',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_db')||'{}');
   if (_fbDb && _fbOnline) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -2973,7 +2973,7 @@ function vendaPuxarOrcamento(){
   var orc = (DB.orcamentos||[]).find(function(o){ return o.id===orcId; });
   if(!orc) return;
   var cli = (DB.clientes||[]).find(function(x){ return x.id===orc.clienteId; });
-  if(cli){ g('v-passageiro').value = (cli.nome+' '+(cli.sobrenome||'')).trim(); }
+  // v-passageiro removido — nome vem do cliente automaticamente
   // Preencher operadora
   var opSel = g('v-operadora');
   if(opSel) opSel.value = orc.operadora||'';
@@ -3002,7 +3002,7 @@ function vendaPuxarCliente(){
   if(!cliId) return;
   var cli = (DB.clientes||[]).find(function(x){ return x.id===cliId; });
   if(!cli) return;
-  g('v-passageiro').value = (cli.nome+' '+(cli.sobrenome||'')).trim();
+  // v-passageiro removido
   g('v-pax').value = getClientePax(cliId)||1;
   toast('✅ Cliente importado!','success');
 }
@@ -3013,7 +3013,7 @@ function _abrirVendaDoCRM(cli, orc, lead) {
   setTimeout(function() {
     var hoje = new Date().toISOString().split('T')[0];
     g('v-data').value = hoje;
-    g('v-passageiro').value = cli ? (cli.nome+' '+(cli.sobrenome||'')).trim() : '';
+    // v-passageiro removido
     g('v-pax').value = getClientePax(cli ? cli.id : 0) || 1;
     if(orc) {
       // Operadora
@@ -3061,9 +3061,10 @@ function prepareVendaModal(){
       }).join('');
   }
   populateSelects();
+  _popularSelectClientesVenda();
   if(!DB.editingVenda){
     g('v-data').value = new Date().toISOString().split('T')[0];
-    g('v-passageiro').value='';
+    
     g('v-destino').value='Orlando Disney';
     g('v-pax').value='1';
     g('v-operadora').value='';
@@ -3096,7 +3097,7 @@ function prepareVendaModal(){
   } else {
     const v = DB.editingVenda;
     g('v-data').value=v.data;
-    g('v-passageiro').value=v.passageiro;
+    // v-passageiro removido (passageiro=cliente)
     g('v-destino').value=v.destino;
     g('v-pax').value=v.pax;
     setTimeout(()=>{ g('v-operadora').value=v.operadora; g('v-vendedor').value=v.vendedor; }, 50);
@@ -6700,6 +6701,8 @@ function init(){
   // Inicializar Firebase e BroadcastChannel
   initFirebase();
   initBroadcastChannel();
+  // Link público de orçamento (?orc=ID) — roda ANTES do login
+  setTimeout(_checkOrcamentoLink, 800);
 
   // Mostrar overlay de carregamento
   var _ov = document.createElement('div');
@@ -8004,7 +8007,7 @@ function _atualizarBadgesCRM(){
 }
 
 // ──────────────────────────────────────────────────────────────
-// SISTEMA DE TAREFAS — v3.32
+// SISTEMA DE TAREFAS — v3.33
 // Tarefas vinculadas a cards do Pipeline CRM
 // Integração: Calendário + Notificações Pop-up
 // ──────────────────────────────────────────────────────────────
@@ -8017,7 +8020,7 @@ const TAREFA_PRIORIDADES = {
 
 
 // ══════════════════════════════════════════════════════════════
-// SISTEMA v3.32 — Novas funcionalidades
+// SISTEMA v3.33 — Novas funcionalidades
 // 1. Viagens: sub-tab Arquivados (auto-arquivo 30d após retorno)
 // 2. Clientes: link Drive
 // 3. Venda: vinculação obrigatória a Cliente
@@ -8181,7 +8184,7 @@ function _populateTarefaVendFilter(){
 }
 
 // ══════════════════════════════════════════════════════════════
-// TAREFAS — redesign completo v3.32
+// TAREFAS — redesign completo v3.33
 // Inspirado em Pipedrive / HubSpot best practices
 // Tipos de atividade, resultado ao concluir, dashboard, view modes
 // ══════════════════════════════════════════════════════════════
@@ -8603,7 +8606,7 @@ function _extrairDataViagem(venda){
   return '';
 }
 
-// FIX v3.32: corrige etapas de cards existentes que foram criados com nome errado
+// FIX v3.33: corrige etapas de cards existentes que foram criados com nome errado
 function _corrigirEtapasExistentes(){
   if(!DB.posVendas || !DB.posVendas.length) return;
   var _rePassageiro = /^passageiro(\s*#?\d+)?$/i;
@@ -8626,7 +8629,7 @@ function _corrigirEtapasExistentes(){
       changed++;
     }
   });
-  if(changed > 0){ saveToStorage(); console.log('[v3.32] Corrigidas ' + changed + ' etapas de viagem.'); }
+  if(changed > 0){ saveToStorage(); console.log('[v3.33] Corrigidas ' + changed + ' etapas de viagem.'); }
 }
 
 
@@ -9731,13 +9734,24 @@ async function exportarPDFConsolidado(){
       }
     } else if(v.driveLink||v.driveId){
       var url=v.driveLink||('https://drive.google.com/file/d/'+v.driveId+'/view');
-      corpo='<div style="border:1px solid #2A69A5;border-top:none;border-radius:0 0 8px 8px;padding:20px;text-align:center;background:#f0f9ff">'+
-        '<div style="font-size:26px;margin-bottom:6px">\ud83d\udcc1</div>'+
-        '<div style="font-size:12px;color:#0369a1;font-weight:700">Arquivo no Google Drive</div>'+
-        '<div style="font-size:11px;color:#64748b;margin:3px 0 8px">'+escapeHtml(v.nome||'')+'</div>'+
-        '<a href="'+url+'" style="background:#2A69A5;color:#fff;padding:6px 18px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:700" target="_blank">\ud83d\udcc1 Abrir</a>'+
-        '<div style="font-size:10px;color:#94a3b8;margin-top:8px">Reimporte para ver a imagem no PDF</div>'+
-      '</div>';
+      // Extrair fileId para thumbnail (Drive renderiza a 1ª página de PDFs como imagem)
+      var did=v.driveId||'';
+      if(!did&&v.driveLink){
+        var mm=v.driveLink.match(/\/d\/([a-zA-Z0-9_-]+)/)||v.driveLink.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if(mm) did=mm[1];
+      }
+      if(did){
+        corpo='<div style="border:1px solid #2A69A5;border-top:none;border-radius:0 0 8px 8px;overflow:hidden">'+
+          '<img src="https://drive.google.com/thumbnail?id='+did+'&sz=w1600" style="width:100%;display:block" '+
+            'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"/>'+
+          '<div style="display:none;padding:18px;text-align:center;background:#f0f9ff">'+
+            '<div style="font-size:12px;color:#0369a1;font-weight:700;margin-bottom:6px">\ud83d\udcc1 '+escapeHtml(v.nome||'Arquivo no Drive')+'</div>'+
+            '<a href="'+url+'" style="background:#2A69A5;color:#fff;padding:6px 18px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:700" target="_blank">Abrir no Drive</a>'+
+          '</div>'+
+        '</div>';
+      } else {
+        corpo='<div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;padding:16px;text-align:center"><a href="'+url+'" target="_blank">\ud83d\udcc1 '+escapeHtml(v.nome||'Abrir arquivo')+'</a></div>';
+      }
     } else {
       corpo='<div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;padding:16px;text-align:center;color:#94a3b8">Sem conteúdo</div>';
     }
@@ -10228,15 +10242,14 @@ const ORC_SERVICO_COM_DIAS=['Ingressos','Hotel','Guiamento Virtual','Cruzeiro'];
 const ORC_TIPO_EMOJI={'Ingressos':'🎢','Hotel':'🏨','Voo':'✈️','Pacote':'📦','Guiamento Virtual':'🗺️','Transfer':'🚐','Seguro':'🛡️','Cruzeiro':'🚢','Outros':'➕'};
 const AEROPORTOS_COMUNS=['GRU — Guarulhos','GIG — Galeão','BSB — Brasília','FOR — Fortaleza','SSA — Salvador','REC — Recife','MCO — Orlando','MIA — Miami','JFK — Nova York','LAX — Los Angeles','CDG — Paris Charles de Gaulle','LHR — Londres Heathrow','FCO — Roma','MAD — Madrid','NRT — Tóquio Narita','HND — Tóquio Haneda'];
 
-function viewOrcamento(id){
-  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
-  _orcEditId = id; // para printOrcamento / exportarOrcamentoPDF
+function _buildPropostaHTML(o){
   const cli = (DB.clientes||[]).find(c=>c.id===o.clienteId);
   const cliNome = cli ? (cli.nome+' '+(cli.sobrenome||'')).trim() : '—';
   const noites = o.dataIda&&o.dataVolta ? Math.ceil((new Date(o.dataVolta+'T12:00:00')-new Date(o.dataIda+'T12:00:00'))/86400000) : 0;
   const fmtBR = s => { if(!s) return '—'; const [y,m,d]=s.split('-'); return d+'/'+m+'/'+y; };
   const pax = (o.numAdultos||0)+(o.numCriancas||0)||1;
   const hoje = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const destStr = o.destino || (o.itens||[]).map(x=>x.tipo).filter(Boolean).filter((v,i2,a)=>a.indexOf(v)===i2).join(' · ') || 'Sua Viagem';
 
   // Passageiros string
   let paxStr='';
@@ -10245,7 +10258,10 @@ function viewOrcamento(id){
   if(!paxStr) paxStr='1 passageiro';
 
   // Passageiros adicionais do cliente
-  const passageirosList = cli ? [cli.nome+' '+(cli.sobrenome||''), ...(cli.passageiros||[]).map(p=>p.nome+' '+(p.sobrenome||''))].filter(Boolean) : [];
+  const passageirosList = cli ? [
+    {nome:(cli.nome+' '+(cli.sobrenome||'')).trim()},
+    ...(cli.passageiros||[]).map(p=>({nome:((p.nome||'')+' '+(p.sobrenome||'')).trim(), idade:p.idade||null}))
+  ].filter(p=>p.nome) : [];
 
   // Agrupar itens por categoria
   const gruposItens = {};
@@ -10347,9 +10363,18 @@ function viewOrcamento(id){
         </div>`;
       }
       else if(tipo==='Guiamento Virtual'){
+        const _pks = (item.guiaParques||'').split(' · ').filter(Boolean);
+        const _pksHtml = _pks.map(pk=>{
+          const inf = (typeof PARQUES_INFO!=='undefined'&&PARQUES_INFO[pk])||'';
+          return `<div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px dashed rgba(13,148,136,.2)">
+            <span style="font-size:13px;flex-shrink:0">🎡</span>
+            <div><div style="font-weight:700;font-size:11px;color:${cor.texto}">${esc(pk)}</div>
+            ${inf?`<div style="font-size:10px;color:#475569;line-height:1.4">${esc(inf)}</div>`:''}</div>
+          </div>`;
+        }).join('');
         corpo=`<div style="font-weight:800;font-size:13px;color:${cor.texto};margin-bottom:4px">Guiamento Virtual Desenrola${item.guiaDias?' — '+item.guiaDias+' dia'+(item.guiaDias>1?'s':''):''}</div>
-        ${item.guiaParques?`<div style="font-size:10px;color:${cor.borda};font-weight:700;margin-bottom:4px">🎡 ${esc(item.guiaParques)}</div>`:''}
-        <div style="font-size:11px;color:#334155;line-height:1.5">${esc(item.guiaDescricao||item.descricao||'')}</div>`;
+        <div style="font-size:11px;color:#334155;line-height:1.5;margin-bottom:6px">${esc(item.guiaDescricao||item.descricao||'')}</div>
+        ${_pksHtml}`;
       }
       else if(tipo==='Ingressos'){
         corpo=`<div style="display:grid;grid-template-columns:${item.fotoUrl?'1fr 90px':'1fr'};gap:10px;align-items:center">
@@ -10389,7 +10414,7 @@ function viewOrcamento(id){
       ${passageirosList.map(p=>`<div style="padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:13px;color:#0f2d4e">👤 ${esc(p)}</div>`).join('')}
     </div>` : '';
 
-  const propHtml = `
+  return `
     <div id="proposta-print" style="font-family:Nunito,sans-serif;color:#0f2d4e;background:#fff;max-width:760px">
 
       <!-- CABEÇALHO -->
@@ -10464,7 +10489,14 @@ function viewOrcamento(id){
         </div>
         <div style="text-align:center;font-size:9px;color:rgba(255,255,255,.35)">${BRAND.empresa.cnpj} · ${BRAND.empresa.razao}</div>
       </div>
-    </div>`
+    </div>`;
+}
+
+function viewOrcamento(id){
+  const o = (DB.orcamentos||[]).find(x=>x.id===id); if(!o) return;
+  _orcEditId = id; // para printOrcamento / exportarOrcamentoPDF
+  const propHtml = _buildPropostaHTML(o);
+  
 
   const ex=g('_m-view-orc'); if(ex) ex.remove();
   const m=document.createElement('div'); m.id='_m-view-orc';
@@ -10529,6 +10561,11 @@ function exportarOrcamentoPDF(){
 function deleteOrcamento(id){
   openConfirm('Excluir este orçamento?',function(){
     DB.orcamentos=(DB.orcamentos||[]).filter(function(o){return o.id!==id;});
+    // Remover do Firebase (senão reaparece no próximo login)
+    if(_fbDb){
+      _fbDb.ref('desenrola_v3/orcamentos/o_'+id).remove().catch(function(e){console.warn('FB del orc:',e);});
+      _fbDb.ref('desenrola_v3/orc_views/'+id).remove().catch(function(){});
+    }
     saveToStorage(); renderOrcamentos(); toast('Orçamento excluído.','error');
   });
 }
@@ -10567,6 +10604,7 @@ function renderOrcamentos(){
 
 function abrirModalOrcamento(opts){
   _orcEditId=(opts&&opts.id)||null; _orcItemCount=0;
+  _popularHotelDatalist();
   var il=g('orc-itens-list'); if(il) il.innerHTML='';
   ['orc-total','orc-total-pax','orc-com-pct','orc-com-valor','orc-data-ida','orc-data-volta','orc-num-adultos','orc-num-criancas','orc-idades-criancas','orc-dias-viagem','orc-obs'].forEach(function(fid){var el=g(fid);if(el) el.value='';});
   var numEl=g('orc-num-adultos'); if(numEl) numEl.value='1';
@@ -10643,14 +10681,14 @@ function orcAddItem(dados){
     '<div id="orc-ingresso-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Ingressos'?'':'display:none')+'">'+
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
         '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Ingresso</label>'+
-          '<select class="form-select" id="orc-ingresso-'+i+'">'+
+          '<select class="form-select" id="orc-ingresso-'+i+'" onchange="orcIngressoChange('+i+')">'+
             '<option value="">Selecione...</option>'+
             (DB.config.tiposIngresso||[]).map(function(t){ var nm=t.nome||t; return '<option value="'+escapeHtml(nm)+'"'+(dados&&dados.tipoIngresso===nm?' selected':'')+'>'+escapeHtml(nm)+'</option>'; }).join('')+
           '</select></div>'+
         '<div class="form-group" style="margin:0"><label class="form-label">Foto (URL Drive)</label>'+
           '<div style="display:flex;gap:6px;align-items:center">'+
             '<input type="text" class="form-input" id="orc-ing-foto-'+i+'" value="'+escapeHtml((dados&&dados.fotoUrl)||'')+'" placeholder="URL da imagem..." style="font-size:11px"/>'+
-            '<button class="btn btn-ghost btn-sm" onclick="_selFoto(\'orc-ing-foto-\',i,\'\')" title="Selecionar do Drive" style="flex-shrink:0">📁</button>'+
+            '<button class="btn btn-ghost btn-sm" onclick="_selFoto(\'orc-ing-foto-\','+i+',\'\')" title="Selecionar do Drive" style="flex-shrink:0">📁</button>'+
           '</div></div>'+
       '</div>'+
     '</div>'+
@@ -10744,7 +10782,7 @@ function orcAddItem(dados){
             ORC_CRUZEIRO_COMPANHIAS.map(function(c){return '<option value="'+c+'"'+(dados&&dados.companhiaCruzeiro===c?' selected':'')+'>'+c+'</option>';}).join('')+
           '</select></div>'+
         '<div class="form-group" style="margin:0"><label class="form-label">Nome do Navio</label>'+
-          '<input type="text" class="form-input" id="orc-cruz-navio-'+i+'" list="navio-list" onchange="orcNavioChange('+i+')" "'+escapeHtml((dados&&dados.cruzNavio)||'')+'" style="font-size:11px"/></div>'+
+          '<input type="text" class="form-input" id="orc-cruz-navio-'+i+'" list="navio-list" onchange="orcNavioChange('+i+')" value="'+escapeHtml((dados&&dados.cruzNavio)||'')+'" style="font-size:11px"/></div>'+
         '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Cabine</label>'+
           '<select class="form-select" id="orc-cruz-cabine-'+i+'" style="font-size:11px">'+
             ['Interior','Oceanview','Varanda','Suite','Suite Concierge','Suite de Luxo'].map(function(c){
@@ -10781,8 +10819,14 @@ function orcAddItem(dados){
       '<div style="display:grid;grid-template-columns:80px 1fr;gap:8px;margin-bottom:6px">'+
         '<div class="form-group" style="margin:0"><label class="form-label">Dias</label>'+
           '<input type="number" class="form-input" id="orc-guia-dias-'+i+'" value="'+(dados&&dados.guiaDias||1)+'" min="1"/></div>'+
-        '<div class="form-group" style="margin:0"><label class="form-label">Parques inclusos</label>'+
-          '<input type="text" class="form-input" id="orc-guia-parques-'+i+'" value="'+escapeHtml((dados&&dados.guiaParques)||'')+'" placeholder="Ex: Magic Kingdom, EPCOT, Hollywood Studios..." style="font-size:11px"/></div>'+
+        '<div class="form-group" style="margin:0;grid-column:1/-1"><label class="form-label">Parques inclusos</label>'+
+          '<div id="orc-guia-parques-wrap-'+i+'" style="display:flex;flex-wrap:wrap;gap:5px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px">'+
+            PARQUES_GUIAMENTO.map(function(p){
+              var chk=(dados&&dados.guiaParques||'').indexOf(p)>=0?' checked':'';
+              return '<label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;background:#fff;border:1px solid var(--border);border-radius:6px;padding:3px 8px">'+
+                '<input type="checkbox" class="orc-guia-pk-'+i+'" value="'+escapeHtml(p)+'"'+chk+' style="width:13px;height:13px"/> '+escapeHtml(p)+'</label>';
+            }).join('')+
+          '</div></div>'+
       '</div>'+
       '<div class="form-group" style="margin:0"><label class="form-label">Descrição <button class="btn btn-ghost btn-sm" style="font-size:10px;margin-left:6px" onclick="orcAutoPreencheGuia('+i+')">↻ Auto-preencher</button></label>'+
         '<textarea class="form-input" id="orc-guia-desc-'+i+'" rows="3" style="font-size:11px;resize:vertical">'+escapeHtml((dados&&dados.guiaDescricao)||(DB.conteudo&&DB.conteudo.guiamentoVirtual)||'')+'</textarea></div>'+
@@ -10812,70 +10856,141 @@ function orcAddItem(dados){
 
 // ══ ORÇAMENTO — helper functions para autocomplete ══
 
+
+function orcAutoPreencheGuia(i){
+  var descEl=g('orc-guia-desc-'+i); if(!descEl) return;
+  var texto=(DB.conteudo&&DB.conteudo.guiamentoVirtual)||
+    'Acompanhamento exclusivo em tempo real durante sua visita aos parques. Nosso guia envia orientações personalizadas via WhatsApp — melhores horários, estratégias de filas, Lightning Lane, atrações imperdíveis e dicas exclusivas para aproveitar cada minuto.';
+  descEl.value=texto;
+  toast('✅ Descrição preenchida');
+}
 function orcIngressoChange(i){
   var sel=g('orc-ingresso-'+i); if(!sel||!sel.value) return;
   var nm=sel.value;
   var tipos=DB.config&&DB.config.tiposIngresso||[];
-  var tipo=tipos.find(function(t){return(t.nome||t)===nm;});
+  var tipo=tipos.find(function(t){return(t&&t.nome?t.nome:t)===nm;});
   if(!tipo||typeof tipo==='string') return;
+  // Preencher descrição automaticamente (campo 'desc' do registro)
   var descEl=g('orc-desc-'+i);
-  if(descEl&&!descEl.value&&tipo.descricao) descEl.value=tipo.descricao;
+  if(descEl&&tipo.desc) descEl.value=tipo.desc;
+  // Preencher foto do registro
   var fotoEl=g('orc-ing-foto-'+i);
-  if(fotoEl&&!fotoEl.value&&tipo.foto) fotoEl.value=tipo.foto;
+  if(fotoEl&&tipo.foto) fotoEl.value=tipo.foto;
 }
 
-function orcHotelSuggest(i){
-  // Populate datalist with KB + Custom hotels
+// ── Base embutida de hotéis (Disney + Universal Orlando) ──
+const HOTEIS_KB = [
+  {nome:"Disney's Grand Floridian Resort & Spa",cat:'⭐⭐⭐⭐⭐',desc:'O resort mais icônico da Disney, estilo vitoriano à beira do Seven Seas Lagoon, acesso ao monorail e vista para o Magic Kingdom.'},
+  {nome:"Disney's Polynesian Village Resort",cat:'⭐⭐⭐⭐⭐',desc:'Paraíso tropical polinésio no monorail, praia com vista para os fogos do Magic Kingdom e o famoso Dole Whip.'},
+  {nome:"Disney's Contemporary Resort",cat:'⭐⭐⭐⭐⭐',desc:'Design moderno icônico com o monorail passando por dentro do hotel, a poucos passos do Magic Kingdom.'},
+  {nome:"Disney's Beach Club Resort",cat:'⭐⭐⭐⭐⭐',desc:'Clima de praia de Nova Inglaterra, com a melhor piscina da Disney (Stormalong Bay) e entrada a pé para o EPCOT.'},
+  {nome:"Disney's Yacht Club Resort",cat:'⭐⭐⭐⭐⭐',desc:'Elegância náutica, piscina Stormalong Bay compartilhada e caminhada para EPCOT e Hollywood Studios.'},
+  {nome:"Disney's BoardWalk Inn",cat:'⭐⭐⭐⭐⭐',desc:'Charme de calçadão à beira-mar dos anos 1930, entretenimento noturno e acesso a pé ao EPCOT.'},
+  {nome:"Disney's Wilderness Lodge",cat:'⭐⭐⭐⭐⭐',desc:'Majestosa lodge inspirada nos parques nacionais americanos, com gêiser próprio e barco para o Magic Kingdom.'},
+  {nome:"Disney's Animal Kingdom Lodge",cat:'⭐⭐⭐⭐⭐',desc:'Savana africana autêntica com girafas e zebras vistas da varanda do quarto, culinária africana premiada.'},
+  {nome:"Disney's Riviera Resort",cat:'⭐⭐⭐⭐⭐',desc:'Elegância da Riviera europeia, no Skyliner com acesso direto a EPCOT e Hollywood Studios.'},
+  {nome:"Disney's Caribbean Beach Resort",cat:'⭐⭐⭐⭐',desc:'Ilhas caribenhas coloridas ao redor de um lago, estação central do Skyliner.'},
+  {nome:"Disney's Coronado Springs Resort",cat:'⭐⭐⭐⭐',desc:'Inspiração mexicana/espanhola com a moderna torre Gran Destino e o restaurante Toledo no rooftop.'},
+  {nome:"Disney's Port Orleans Resort - French Quarter",cat:'⭐⭐⭐⭐',desc:'Charme de Nova Orleans compacto e romântico, com beignets famosos e barco para Disney Springs.'},
+  {nome:"Disney's Port Orleans Resort - Riverside",cat:'⭐⭐⭐⭐',desc:'Sul americano à beira do rio, mansões e bayous, barco pitoresco para Disney Springs.'},
+  {nome:"Disney's Art of Animation Resort",cat:'⭐⭐⭐',desc:'Imersão total em Carros, Procurando Nemo, Rei Leão e Pequena Sereia — suítes familiares temáticas.'},
+  {nome:"Disney's Pop Century Resort",cat:'⭐⭐⭐',desc:'Celebração das décadas de 50 a 90 com ícones gigantes, no Skyliner, ótimo custo-benefício.'},
+  {nome:"Disney's All-Star Movies Resort",cat:'⭐⭐⭐',desc:'Tema de filmes Disney com ícones gigantes, opção econômica para famílias.'},
+  {nome:"Disney's All-Star Music Resort",cat:'⭐⭐⭐',desc:'Tema musical com suítes familiares, opção econômica.'},
+  {nome:"Disney's All-Star Sports Resort",cat:'⭐⭐⭐',desc:'Tema esportivo, o mais econômico da Disney.'},
+  {nome:"Universal's Portofino Bay Hotel",cat:'⭐⭐⭐⭐⭐',desc:'Vila italiana à beira-mar com Express Pass ilimitado grátis e barco para os parques.'},
+  {nome:"Universal's Hard Rock Hotel",cat:'⭐⭐⭐⭐⭐',desc:'Rock star lifestyle a passos do Universal Studios, com Express Pass ilimitado grátis.'},
+  {nome:"Universal's Loews Royal Pacific Resort",cat:'⭐⭐⭐⭐⭐',desc:'Paraíso tropical do Pacífico Sul com Express Pass ilimitado grátis e barco para os parques.'},
+  {nome:"Universal's Loews Sapphire Falls Resort",cat:'⭐⭐⭐⭐',desc:'Caribe elegante com cachoeiras, barco para os parques.'},
+  {nome:"Universal's Cabana Bay Beach Resort",cat:'⭐⭐⭐',desc:'Retrô anos 50/60 com piscina lazy river, ótimo para famílias, entrada para Volcano Bay.'},
+  {nome:"Universal's Aventura Hotel",cat:'⭐⭐⭐',desc:'Torre moderna com rooftop bar e vista para Volcano Bay.'},
+  {nome:"Universal's Endless Summer Resort - Surfside Inn",cat:'⭐⭐⭐',desc:'Tema surf econômico com suítes para até 6 pessoas.'},
+  {nome:"Universal's Endless Summer Resort - Dockside Inn",cat:'⭐⭐⭐',desc:'Tema praia econômico, o maior da Universal.'},
+  {nome:"Universal Helios Grand Hotel",cat:'⭐⭐⭐⭐⭐',desc:'Hotel com entrada exclusiva para o Epic Universe, o mais novo parque da Universal.'},
+  {nome:"Universal Stella Nova Resort",cat:'⭐⭐⭐',desc:'Tema espacial moderno, próximo ao Epic Universe.'},
+  {nome:"Universal Terra Luna Resort",cat:'⭐⭐⭐',desc:'Tema lunar futurista, próximo ao Epic Universe.'},
+];
+
+function _popularHotelDatalist(){
   var dl=document.getElementById('hotel-list'); if(!dl) return;
   var opts=[];
-  // Custom hotels from registros
-  (DB.hoteisCustom||[]).forEach(function(h){ opts.push(h.nome); });
-  // KB hotels — scan conhecimento
-  (DB.conhecimento||[]).forEach(function(item){
-    var n=item.nome||'';
-    if(item.tipo==='hotel'||n.toLowerCase().includes('resort')||n.toLowerCase().includes('hotel')||n.toLowerCase().includes('inn')){
-      opts.push(n);
-    }
-  });
-  // Deduplicate
+  HOTEIS_KB.forEach(function(h){ opts.push(h.nome); });
+  (DB.hoteisCustom||[]).forEach(function(h){ if(h.nome) opts.push(h.nome); });
   var seen={};
-  dl.innerHTML=opts.filter(function(n){ if(!n||seen[n]) return false; seen[n]=true; return true; })
-    .map(function(n){return '<option value="'+n+'"/>';}).join('');
+  dl.innerHTML=opts.filter(function(n){ if(!n||seen[n])return false; seen[n]=true; return true; })
+    .map(function(n){ return '<option value="'+escapeHtml(n)+'"/>'; }).join('');
 }
+
+function orcHotelSuggest(i){ _popularHotelDatalist(); }
 
 function orcHotelNomeChange(i){
   var el=g('orc-hotel-nome-'+i); if(!el||!el.value) return;
-  var nm=el.value;
-  var hotel=(DB.hoteisCustom||[]).find(function(h){return h.nome===nm;});
-  if(!hotel) return;
-  var descEl=g('orc-hotel-desc-'+i);
-  var catEl=g('orc-hotel-cat-'+i);
-  if(descEl&&hotel.descricao&&!descEl.value) descEl.value=hotel.descricao;
-  if(catEl&&hotel.categoria) catEl.value=hotel.categoria;
-  (hotel.fotos||[]).slice(0,3).forEach(function(f,n){
-    var fEl=g('orc-hotel-foto'+(n+1)+'-'+i); if(fEl&&!fEl.value) fEl.value=f;
-  });
-  toast('Hotel preenchido: '+hotel.nome);
+  var nm=el.value.trim();
+  // 1) Hotéis custom do registro (têm fotos)
+  var hc=(DB.hoteisCustom||[]).find(function(h){ return h.nome===nm; });
+  if(hc){
+    var d1=g('orc-hotel-desc-'+i); if(d1&&hc.descricao) d1.value=hc.descricao;
+    var c1=g('orc-hotel-cat-'+i); if(c1&&hc.categoria) c1.value=hc.categoria;
+    (hc.fotos||[]).slice(0,3).forEach(function(f,n){
+      var fe=g('orc-hotel-foto'+(n+1)+'-'+i); if(fe&&!fe.value) fe.value=f;
+    });
+    toast('✅ Hotel preenchido do Registro: '+hc.nome); return;
+  }
+  // 2) Base embutida (Disney/Universal)
+  var kb=HOTEIS_KB.find(function(h){ return h.nome===nm; });
+  if(kb){
+    var d2=g('orc-hotel-desc-'+i); if(d2) d2.value=kb.desc;
+    var c2=g('orc-hotel-cat-'+i); if(c2) c2.value=kb.cat;
+    toast('✅ Hotel preenchido: '+kb.nome);
+  }
 }
+
+// ── Parques para Guiamento Virtual (com descrições para o PDF) ──
+const PARQUES_GUIAMENTO = ['Magic Kingdom','EPCOT','Hollywood Studios','Animal Kingdom',
+  'Universal Studios Florida','Islands of Adventure','Epic Universe','Volcano Bay',
+  'SeaWorld Orlando','Busch Gardens Tampa','Typhoon Lagoon','Blizzard Beach',
+  'Disneyland Park (CA)','Disney California Adventure','Disneyland Paris','Walt Disney Studios Paris'];
+const PARQUES_INFO = {
+  'Magic Kingdom':'O parque mais mágico do mundo — castelo da Cinderela, montanhas clássicas e desfiles inesquecíveis.',
+  'EPCOT':'Celebração da tecnologia e culturas do mundo — festivais gastronômicos e o World Showcase com 11 países.',
+  'Hollywood Studios':'O cinema ganha vida — Star Wars Galaxy\'s Edge, Toy Story Land e a Torre do Terror.',
+  'Animal Kingdom':'Natureza e aventura — safári africano autêntico, Avatar Flight of Passage e o Tree of Life.',
+  'Universal Studios Florida':'Por trás das câmeras — Harry Potter Diagon Alley, Minions e os Simpsons.',
+  'Islands of Adventure':'Ilhas de pura adrenalina — Hogwarts, Jurassic World VelociCoaster e Marvel Super Hero Island.',
+  'Epic Universe':'O novo universo Universal (2025) — Super Nintendo World, How to Train Your Dragon e Dark Universe.',
+  'Volcano Bay':'Paraíso aquático tropical com o vulcão Krakatau e toboáguas radicais.',
+  'SeaWorld Orlando':'Vida marinha e montanhas-russas intensas — Mako, Manta e encontros com orcas.',
+  'Busch Gardens Tampa':'Safári africano e as montanhas-russas mais radicais da Flórida — Iron Gwazi e SheiKra.',
+  'Typhoon Lagoon':'Parque aquático Disney com a maior piscina de ondas da América.',
+  'Blizzard Beach':'Estação de esqui derretida — o toboágua Summit Plummet de 36 metros.',
+  'Disneyland Park (CA)':'O parque original de Walt Disney (1955) — o único que Walt caminhou.',
+  'Disney California Adventure':'Califórnia dos sonhos — Avengers Campus, Cars Land e o World of Color.',
+  'Disneyland Paris':'A magia Disney com toque europeu — o castelo mais bonito de todos.',
+  'Walt Disney Studios Paris':'Cinema e animação em Paris — Ratatouille e o novo Mundo de Frozen.',
+};
+
+// ── Navios Disney Cruise Line (base embutida) ──
+const NAVIOS_INFO = {
+  'Disney Magic':{cia:'Disney Cruise Line',desc:'O navio original da DCL (1998), clássico e elegante, com o AquaDunk e shows da Broadway. Roteiros pelo Caribe e Europa.'},
+  'Disney Wonder':{cia:'Disney Cruise Line',desc:'Irmão gêmeo do Magic com o restaurante Tiana\'s Place e roteiros pelo Alasca, Caribe e Canal do Panamá.'},
+  'Disney Dream':{cia:'Disney Cruise Line',desc:'Navio com o AquaDuck (montanha-russa aquática) e o restaurante Animator\'s Palate. Roteiros curtos às Bahamas.'},
+  'Disney Fantasy':{cia:'Disney Cruise Line',desc:'Irmão do Dream focado em roteiros de 7 noites pelo Caribe, com AquaDuck e área adulta Satellite Falls.'},
+  'Disney Wish':{cia:'Disney Cruise Line',desc:'Navio de 2022 com o AquaMouse, primeiro cinema Star Wars no mar (Hyperspace Lounge) e restaurante Frozen (Arendelle).'},
+  'Disney Treasure':{cia:'Disney Cruise Line',desc:'Lançado em dez/2024, tema aventura com Haunted Mansion Parlor e restaurante Plaza de Coco. Roteiros pelo Caribe.'},
+  'Disney Adventure':{cia:'Disney Cruise Line',desc:'O maior navio da Disney (2025), baseado em Singapura, com montanha-russa Ironcycle Test Run e 7 zonas temáticas.'},
+};
 
 function orcNavioChange(i){
   var el=g('orc-cruz-navio-'+i); if(!el) return;
-  var dcl=['Disney Magic','Disney Wonder','Disney Dream','Disney Fantasy','Disney Wish','Disney Treasure','Disney Adventure'];
-  if(dcl.indexOf(el.value)>=0){
-    var ciaEl=g('orc-cruز-cia-'+i);
-    if(ciaEl) ciaEl.value='Disney Cruise Line';
-  }
-}
-
-// _saveOrcamento: also save hotelNome from text field
-function orcAutoPreencheGuia(i){
-  var el = g('orc-guia-desc-'+i);
-  if(el && DB.conteudo && DB.conteudo.guiamentoVirtual){
-    el.value = DB.conteudo.guiamentoVirtual;
-    toast('✅ Descrição preenchida do Registros → Conteúdo');
-  } else {
-    toast('Configure o texto em Registros → Conteúdo → Guiamento Virtual','warn');
-  }
+  var info=NAVIOS_INFO[el.value];
+  if(!info) return;
+  // Companhia automática
+  var ciaEl=g('orc-cruز-cia-'+i);
+  if(ciaEl) ciaEl.value=info.cia;
+  // Descrição do navio no roteiro (se vazio)
+  var rotEl=g('orc-cruz-roteiro-'+i);
+  if(rotEl&&!rotEl.value) rotEl.value=info.desc;
+  toast('✅ '+el.value+' — dados preenchidos');
 }
 
 function orcHotelChange(i){
@@ -10960,6 +11075,7 @@ function _abrirPicker(){
   var picker=new google.picker.PickerBuilder()
     .addView(google.picker.ViewId.DOCS_IMAGES)
     .addView(google.picker.ViewId.DOCS)
+    .setOrigin(window.location.protocol+'//'+window.location.host)
     .setOAuthToken(_driveToken)
     .setCallback(function(data){
       if(data.action===google.picker.Action.PICKED&&data.docs&&data.docs[0]){
@@ -10970,7 +11086,8 @@ function _abrirPicker(){
         var m=g('_m-sel-foto'); if(m) m.remove();
       }
     }).build();
-  picker.setVisible(true);
+  try { picker.setVisible(true); }
+  catch(e){ console.warn('Picker error:',e); toast('Picker indisponível — cole a URL do Drive','warn'); _selecionarUrlDrive(); }
 }
 
 function _selecionarUrlDrive(){
@@ -11200,7 +11317,7 @@ function _saveOrcamento(){
       cruzFotoCabine:(g('orc-cruz-foto1-'+i)||{value:''}).value.trim(),
       // Guiamento Virtual
       guiaDias:parseInt((g('orc-guia-dias-'+i)||{value:1}).value)||1,
-      guiaParques:(g('orc-guia-parques-'+i)||{value:''}).value.trim(),
+      guiaParques:Array.prototype.slice.call(document.querySelectorAll('.orc-guia-pk-'+i+':checked')).map(function(c){return c.value;}).join(' · '),
       guiaDescricao:(g('orc-guia-desc-'+i)||{value:''}).value.trim(),
     };
     // Trechos de voo (novo formato com escalas)
@@ -11398,6 +11515,11 @@ function exportarOrcamentoPDF(){
 function deleteOrcamento(id){
   openConfirm('Excluir este orçamento?',function(){
     DB.orcamentos=(DB.orcamentos||[]).filter(function(o){return o.id!==id;});
+    // Remover do Firebase (senão reaparece no próximo login)
+    if(_fbDb){
+      _fbDb.ref('desenrola_v3/orcamentos/o_'+id).remove().catch(function(e){console.warn('FB del orc:',e);});
+      _fbDb.ref('desenrola_v3/orc_views/'+id).remove().catch(function(){});
+    }
     saveToStorage(); renderOrcamentos(); toast('Orçamento excluído.','error');
   });
 }
@@ -11663,60 +11785,66 @@ function _checkOrcamentoLink(){
   var params=new URLSearchParams(window.location.search);
   var orcId=parseInt(params.get('orc')); if(!orcId) return;
   history.replaceState({},'',window.location.pathname);
-  // Register in Firebase (no login needed - public read)
-  if(_fbDb){
-    _fbDb.ref('desenrola_v3/orc_views/'+orcId).push({
-      abertoEm:new Date().toISOString(),ts:Date.now(),ua:navigator.userAgent.slice(0,100)
-    });
+  window._publicOrcMode = true;
+
+  function _overlay(html){
+    var ov=document.createElement('div');
+    ov.id='_public-orc-overlay';
+    ov.style.cssText='position:fixed;inset:0;background:#eef2f7;z-index:2147483000;overflow-y:auto;padding:20px 12px';
+    ov.innerHTML='<div style="max-width:800px;margin:0 auto">'+html+'</div>';
+    document.body.appendChild(ov);
+    var lo=g('loading-overlay'); if(lo) lo.remove();
   }
+
+  function _showExpired(){
+    _overlay('<div style="max-width:480px;margin:60px auto;background:#fff;border-radius:16px;padding:40px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.1)">'+
+      '<div style="font-size:48px;margin-bottom:14px">⏰</div>'+
+      '<div style="font-family:Anton,sans-serif;font-size:20px;color:#0f2d4e;margin-bottom:8px">Link Expirado</div>'+
+      '<div style="font-size:13px;color:#64748b;line-height:1.6;margin-bottom:18px">Este link expirou após 48 horas. Entre em contato conosco para receber uma nova proposta atualizada.</div>'+
+      '<div style="font-size:12px;color:#2A69A5;font-weight:700">📱 +55 19 9 9988-5575</div>'+
+      '<div style="font-size:12px;color:#2A69A5">✉️ voucher@desenrolaturismo.com.br</div>'+
+      '<div style="font-family:Anton,sans-serif;font-size:13px;color:#2A69A5;margin-top:18px;letter-spacing:1px">DESENROLA TURISMO</div>'+
+    '</div>');
+  }
+
   function _showOrc(orc){
-    // Check 48h expiry
-    var linkTime = orc.linkGeradoEm || orc.criadoEm || 0;
-    if(Date.now()-linkTime > 48*60*60*1000){
-      // Expired — show message
-      var overlay=document.createElement('div');
-      overlay.style.cssText='position:fixed;inset:0;background:#f1f5f9;z-index:99999;display:flex;align-items:center;justify-content:center';
-      overlay.innerHTML='<div style="max-width:480px;background:#fff;border-radius:16px;padding:40px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.1)">'+
-        '<div style="font-size:48px;margin-bottom:16px">⏰</div>'+
-        '<div style="font-family:Anton,sans-serif;font-size:20px;color:#0f2d4e;margin-bottom:8px">Link Expirado</div>'+
-        '<div style="font-size:13px;color:#64748b;line-height:1.6;margin-bottom:20px">Este link expirou após 48 horas. Entre em contato para uma nova proposta.</div>'+
-        '<div style="font-size:12px;color:#2A69A5;font-weight:700">📱 +55 19 9 9988-5575</div>'+
-        '<div style="font-size:12px;color:#2A69A5">✉️ voucher@desenrolaturismo.com.br</div>'+
-        '<div style="font-family:Anton,sans-serif;font-size:13px;color:#2A69A5;margin-top:20px">DESENROLA TURISMO</div>'+
-      '</div>';
-      document.body.appendChild(overlay); return;
+    var linkTime=orc.linkGeradoEm||orc.criadoEm||0;
+    if(typeof linkTime!=='number') linkTime=0;
+    if(linkTime && (Date.now()-linkTime > 48*60*60*1000)){ _showExpired(); return; }
+    // Registrar abertura
+    if(_fbDb){
+      _fbDb.ref('desenrola_v3/orc_views/'+orcId).push({
+        abertoEm:new Date().toISOString(),ts:Date.now(),ua:navigator.userAgent.slice(0,100)
+      }).catch(function(){});
     }
-    // Valid — ensure orc is in DB and open
-    if(!DB.orcamentos) DB.orcamentos=[];
-    if(!(DB.orcamentos.find(function(o){return o.id===orc.id;})))
-      DB.orcamentos.push(orc);
-    if(!orc.aberturas) orc.aberturas=[];
-    orc.aberturas.push({abertoEm:new Date().toISOString(),ts:Date.now()});
-    orc.ultimaAbertura=Date.now();
-    saveToStorage();
-    viewOrcamento(orc.id||orcId);
-    toast('Orçamento aberto — equipe notificada!','success');
+    var html='';
+    try { html=_buildPropostaHTML(orc); }
+    catch(e){ console.error('[Link] erro ao renderizar:',e); _showExpired(); return; }
+    _overlay(
+      '<div style="text-align:center;padding:10px 0;font-size:12px;color:#64748b">Sua proposta personalizada da Desenrola Turismo</div>'+
+      '<div style="border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12)">'+html+'</div>'+
+      '<div style="text-align:center;padding:20px 0;font-size:12px;color:#2A69A5;font-weight:700">📱 +55 19 9 9988-5575 · ✉️ voucher@desenrolaturismo.com.br</div>'
+    );
   }
-  // Try Firebase first (public), then local DB
-  if(_fbDb){
-    _fbDb.ref('desenrola_v3/orcamentos/o_'+orcId).once('value').then(function(snap){
-      if(snap&&snap.exists()) _showOrc(snap.val());
-      else setTimeout(function(){
+
+  // Retry até Firebase estar pronto (anon auth), depois busca o orçamento
+  var tent=0;
+  (function _try(){
+    tent++;
+    if(_fbDb){
+      _fbDb.ref('desenrola_v3/orcamentos/o_'+orcId).once('value').then(function(snap){
+        if(snap&&snap.exists()){ _showOrc(snap.val()); }
+        else {
+          var loc=(DB.orcamentos||[]).find(function(o){return o.id===orcId;});
+          if(loc) _showOrc(loc); else if(tent<8) setTimeout(_try,800); else _showExpired();
+        }
+      }).catch(function(){
         var loc=(DB.orcamentos||[]).find(function(o){return o.id===orcId;});
-        if(loc) _showOrc(loc);
-      },2500);
-    }).catch(function(){
-      setTimeout(function(){
-        var loc=(DB.orcamentos||[]).find(function(o){return o.id===orcId;});
-        if(loc) _showOrc(loc);
-      },2500);
-    });
-  } else {
-    setTimeout(function(){
-      var loc=(DB.orcamentos||[]).find(function(o){return o.id===orcId;});
-      if(loc) _showOrc(loc);
-    },3000);
-  }
+        if(loc) _showOrc(loc); else if(tent<8) setTimeout(_try,800); else _showExpired();
+      });
+    } else if(tent<12){ setTimeout(_try,500); }
+    else { _showExpired(); }
+  })();
 }
 
 function _mostrarModalAberturas(id, orc, fbViews){
@@ -11803,9 +11931,11 @@ function addTipoIngresso(){
   var v=el.value.trim(); if(!v) return;
   var desc=(elDesc&&elDesc.value.trim())||'';
   if(!DB.config.tiposIngresso) DB.config.tiposIngresso=[];
-  // Salvar como objeto {nome,desc} ou string (retrocompatibilidade)
-  DB.config.tiposIngresso.push(desc ? {nome:v,desc:desc} : v);
-  el.value=''; if(elDesc) elDesc.value='';
+  var elFoto=g('new-tipo-ingresso-foto');
+  var foto=(elFoto&&elFoto.value.trim())||'';
+  // Salvar como objeto {nome,desc,foto}
+  DB.config.tiposIngresso.push((desc||foto) ? {nome:v,desc:desc,foto:foto} : v);
+  el.value=''; if(elDesc) elDesc.value=''; if(elFoto) elFoto.value='';
   saveToStorage(); renderIngressosTab();
 }
 function removeTipoIngresso(idx){
@@ -12860,7 +12990,7 @@ window.addEventListener('load', init);
 
 <!-- ════════════════════════════════════════════════════════════
      MODAL DRE — Demonstrativo de Resultado do Exercício
-     v3.32 · Desenrola Turismo · uso interno
+     v3.33 · Desenrola Turismo · uso interno
      ════════════════════════════════════════════════════════════ -->
 <div id="modal-dre" class="modal-overlay">
   <div class="modal" style="max-width:900px;width:100%;padding:0;border-radius:16px;overflow:hidden">
