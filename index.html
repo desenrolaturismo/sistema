@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v3.31</title>
+<title>Desenrola Turismo — Sistema de Gestão v3.32</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -211,6 +211,7 @@ tbody tr:hover{background:var(--surface2)}
 </style>
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async></script>
+<script src="https://apis.google.com/js/api.js" async onload="setTimeout(function(){if(window.gapi)gapi.load('picker',function(){window._pickerReady=true;});},500)"></script>
 </head>
 <body>
 
@@ -323,7 +324,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v3.31
+    ✦ Desenrola Turismo · v3.32
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -1349,11 +1350,7 @@ tbody tr:hover{background:var(--surface2)}
             <option value="">— Preencher manualmente —</option>
           </select>
         </div>
-        <div class="form-group" style="margin:0"><label class="form-label">Ou Puxar Cliente</label>
-          <select class="form-select" id="v-cli-ref" onchange="vendaPuxarCliente()">
-            <option value="">— Selecionar cliente —</option>
-          </select>
-        </div>
+
       </div>
     </div>
     <div class="form-row three">
@@ -1365,7 +1362,7 @@ tbody tr:hover{background:var(--surface2)}
         </select>
         <div style="font-size:10px;color:var(--text3);margin-top:3px">Selecione um cliente cadastrado. <a href="#" onclick="switchClientesSubTab('clientes',g('cli-sub-btn-clientes'));showPage('clientes');return false" style="color:var(--primary)">Cadastrar cliente →</a></div>
       </div>
-      <div class="form-group"><label class="form-label">Passageiro *</label><input type="text" class="form-input" id="v-passageiro" placeholder="Nome completo" required/></div>
+
       <div class="form-group"><label class="form-label">Destino *</label>
         <select class="form-select" id="v-destino">
           <option value="Orlando Disney">Orlando / Disney</option>
@@ -1815,7 +1812,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.31</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.32</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -1839,7 +1836,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.31</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.32</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -2576,11 +2573,11 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 
 
 // ══════════════════════════════════════════════════════════════
-// BACKUP AUTOMÁTICO — DesenrolaSistema v3.31
+// BACKUP AUTOMÁTICO — DesenrolaSistema v3.32
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v3.31',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v3.32',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_db')||'{}');
   if (_fbDb && _fbOnline) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -3150,7 +3147,9 @@ function getNextId(counterKey, callback){
 
 function _saveVenda(){ invalidateCommCache();
   const data = g('v-data').value;
-  const passageiro = g('v-passageiro').value.trim();
+  const _cliIdSV2=parseInt((g('v-cliente-sel')||{value:0}).value)||0;
+  const _cliSV2=(DB.clientes||[]).find(function(c){return c.id===_cliIdSV2;});
+  passageiro=_cliSV2?(_cliSV2.nome+' '+(_cliSV2.sobrenome||'')).trim():'';
   const operadora = g('v-operadora').value;
   const valor = parseFloat(g('v-valor').value)||0;
   if(!data||!passageiro||!operadora||!valor){ toast('Preencha todos os campos obrigatórios (*)','error'); return; }
@@ -8005,7 +8004,7 @@ function _atualizarBadgesCRM(){
 }
 
 // ──────────────────────────────────────────────────────────────
-// SISTEMA DE TAREFAS — v3.31
+// SISTEMA DE TAREFAS — v3.32
 // Tarefas vinculadas a cards do Pipeline CRM
 // Integração: Calendário + Notificações Pop-up
 // ──────────────────────────────────────────────────────────────
@@ -8018,7 +8017,7 @@ const TAREFA_PRIORIDADES = {
 
 
 // ══════════════════════════════════════════════════════════════
-// SISTEMA v3.31 — Novas funcionalidades
+// SISTEMA v3.32 — Novas funcionalidades
 // 1. Viagens: sub-tab Arquivados (auto-arquivo 30d após retorno)
 // 2. Clientes: link Drive
 // 3. Venda: vinculação obrigatória a Cliente
@@ -8182,7 +8181,7 @@ function _populateTarefaVendFilter(){
 }
 
 // ══════════════════════════════════════════════════════════════
-// TAREFAS — redesign completo v3.31
+// TAREFAS — redesign completo v3.32
 // Inspirado em Pipedrive / HubSpot best practices
 // Tipos de atividade, resultado ao concluir, dashboard, view modes
 // ══════════════════════════════════════════════════════════════
@@ -8604,7 +8603,7 @@ function _extrairDataViagem(venda){
   return '';
 }
 
-// FIX v3.31: corrige etapas de cards existentes que foram criados com nome errado
+// FIX v3.32: corrige etapas de cards existentes que foram criados com nome errado
 function _corrigirEtapasExistentes(){
   if(!DB.posVendas || !DB.posVendas.length) return;
   var _rePassageiro = /^passageiro(\s*#?\d+)?$/i;
@@ -8627,7 +8626,7 @@ function _corrigirEtapasExistentes(){
       changed++;
     }
   });
-  if(changed > 0){ saveToStorage(); console.log('[v3.31] Corrigidas ' + changed + ' etapas de viagem.'); }
+  if(changed > 0){ saveToStorage(); console.log('[v3.32] Corrigidas ' + changed + ' etapas de viagem.'); }
 }
 
 
@@ -9079,14 +9078,19 @@ function exportarDayByDayPDF(){
   var pv=pvId?(DB.posVendas||[]).find(function(x){return x.id===pvId;}):null;
   var dias=pv?(pv.dayByDay||[]):[];
   if(!dias.length){toast('Nenhum dia cadastrado','warn');return;}
-  var fmtBR=function(s2){if(!s2)return'\u2014';var p=s2.split('-');return(p[2]||'')+'/'+(p[1]||'')+'/'+(p[0]||'');};
-  var nomeCliente=pv?escapeHtml(pv.cliente||'Cliente'):'Day by Day';
+  var fmtBR=function(sv){if(!sv)return'\u2014';var p=sv.split('-');return(p[2]||'')+'/'+(p[1]||'')+'/'+(p[0]||'');};
+  var nomeCliente=pv?escapeHtml(pv.cliente||'Cliente'):'';
   var dxdHTML=dias.map(function(d,i){
-    return '<div style="border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px;break-inside:avoid">'+
-      '<div style="font-family:Anton,sans-serif;font-size:14px;color:#1a4570;margin-bottom:4px">DIA '+(i+1)+(d.titulo?' \u2014 '+escapeHtml(d.titulo):'')+'</div>'+
-      (d.data?'<div style="font-size:11px;color:#64748b;margin-bottom:8px">\ud83d\udcc5 '+fmtBR(d.data)+'</div>':'')+
-      '<pre style="white-space:pre-wrap;font-family:Nunito,sans-serif;font-size:12px;color:#334155;margin:0;line-height:1.6">'+escapeHtml(d.atividades||'\u2014')+'</pre>'+
-      (d.obs?'<div style="font-size:11px;color:#64748b;margin-top:8px;border-top:1px dashed #e2e8f0;padding-top:8px;font-style:italic">\ud83d\udcdd '+escapeHtml(d.obs)+'</div>':'')+
+    return '<div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:12px;break-inside:avoid">'+
+      '<div style="background:#2A69A5;color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px">'+
+        '<div style="background:rgba(255,255,255,.15);border-radius:6px;padding:3px 10px;font-family:Anton,sans-serif;font-size:13px;letter-spacing:1px">DIA '+(i+1)+'</div>'+
+        (d.titulo?'<div style="font-weight:700;font-size:13px">'+escapeHtml(d.titulo)+'</div>':'')+
+        (d.data?'<div style="margin-left:auto;font-size:11px;opacity:.7">📅 '+fmtBR(d.data)+'</div>':'')+
+      '</div>'+
+      '<div style="padding:14px 16px;background:#fff">'+
+        '<pre style="white-space:pre-wrap;font-family:Nunito,sans-serif;font-size:12px;color:#334155;margin:0;line-height:1.7">'+escapeHtml(d.atividades||'\u2014')+'</pre>'+
+        (d.obs?'<div style="font-size:11px;color:#64748b;margin-top:8px;border-top:1px dashed #e2e8f0;padding-top:8px">📝 '+escapeHtml(d.obs)+'</div>':'')+
+      '</div>'+
     '</div>';
   }).join('');
   var win=window.open('','_blank','width=900,height=800');
@@ -9096,14 +9100,11 @@ function exportarDayByDayPDF(){
     '<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Anton&display=swap" rel="stylesheet">'+
     _pdfStyles()+
   '</head><body>'+
-    _pdfHeader('Day by Day \u2014 '+nomeCliente)+
-    '<div style="padding:20px 24px">'+
-      '<div class="sec">\ud83d\udcc5 Planejamento Day by Day</div>'+
-      dxdHTML+
-      _pdfFooter('')+
-    '</div>'+
-    '<div class="no-print" style="text-align:center;margin-top:16px">'+
-      '<button onclick="window.print()" style="padding:12px 28px;background:#2A69A5;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700">\ud83d\udda8\ufe0f Imprimir / Salvar PDF</button>'+
+    _pdfHeader('Planejamento Day by Day \u2014 '+nomeCliente)+
+    '<div style="padding:20px 24px">'+dxdHTML+'</div>'+
+    _pdfFooter('')+
+    '<div class="no-print" style="text-align:center;padding:16px">'+
+      '<button onclick="window.print()" style="padding:12px 28px;background:#2A69A5;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700">\ud83d\udda8\ufe0f Imprimir</button>'+
     '</div>'+
   '</body></html>');
   win.document.close();
@@ -9317,22 +9318,64 @@ var _driveToken = null;
 var _driveTokenExpiry = 0;
 var _driveTokenClient = null; // Google Identity Services token client
 
-const BRAND={corPrimaria:'#2A69A5',slogan:'Desenrola, sua viagem dos sonhos',
+const BRAND={
+  corPrimaria:'#2A69A5', corEscura:'#0d2d4a', corMeio:'#1a4a7a',
+  corAcento:'#A4B56E', slogan:'Desenrola, sua viagem dos sonhos',
   logo:'data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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',
   empresa:{nome:'Desenrola Turismo',razao:'Camila Pascholati Gusmão Righetti MEI',
     cnpj:'56.004.414/0001-43',endereco:'Rua Limoeiro, nº 955, Jardim Limoeiro, Arujá/SP',
-    site:'desenrolaturismo.com.br',email:'',telefone:''}};
+    site:'desenrolaturismo.com.br',email:'voucher@desenrolaturismo.com.br',
+    telefone:'+55 19 9 9988-5575'},
+  social:{instagram:'@desenrolaturismo',tiktok:'@desenrolaturismo',
+    instagramUrl:'https://instagram.com/desenrolaturismo',
+    tiktokUrl:'https://tiktok.com/@desenrolaturismo'},
+  cores:{
+    voo:{bg:'#EBF4FF',borda:'#2A69A5',texto:'#0d2d4a'},
+    hotel:{bg:'#F0F7EE',borda:'#5a9e4f',texto:'#2d5a27'},
+    transfer:{bg:'#FFF8E7',borda:'#d97706',texto:'#92400e'},
+    seguro:{bg:'#F5F0FF',borda:'#7c3aed',texto:'#4c1d95'},
+    cruzeiro:{bg:'#EEF2FF',borda:'#4f46e5',texto:'#312e81'},
+    guiamento:{bg:'#EDFCF9',borda:'#0d9488',texto:'#0f766e'},
+    ingressos:{bg:'#FFF0F5',borda:'#db2777',texto:'#9d174d'},
+    pacote:{bg:'#FFF7ED',borda:'#ea580c',texto:'#9a3412'},
+    outros:{bg:'#F8FAFC',borda:'#64748b',texto:'#334155'},
+  },
+};
 function _pdfHeader(sub){
-  return '<div style="background:linear-gradient(135deg,#1a4a7a,#2A69A5);padding:20px 28px;display:flex;align-items:center;gap:16px;border-radius:12px 12px 0 0">'+
-    '<img src="'+BRAND.logo+'" style="width:48px;height:48px;border-radius:8px;flex-shrink:0"/>'+
-    '<div><div style="font-family:Anton,sans-serif;font-size:22px;letter-spacing:2px;color:#fff;text-transform:uppercase;line-height:1">DESENROLA <span style=\'color:#A4B56E\'>TURISMO</span></div>'+
-    (sub?'<div style="font-size:11px;color:rgba(255,255,255,.65);margin-top:2px">'+sub+'</div>':'')+
-    '</div><div style="margin-left:auto;text-align:right;font-size:10px;color:rgba(255,255,255,.55)">'+BRAND.empresa.cnpj+'<br>'+BRAND.empresa.endereco+'</div></div>';
+  return '<div style="background:linear-gradient(135deg,#0d2d4a 0%,#1a4a7a 40%,#2A69A5 100%);'+
+    'padding:22px 28px;display:flex;align-items:center;gap:16px">'+
+    '<img src="'+BRAND.logo+'" style="width:50px;height:50px;border-radius:10px;flex-shrink:0" onerror="this.style.display=\'none\'"/>'+
+    '<div style="flex:1">'+
+      '<div style="font-family:Anton,sans-serif;font-size:24px;letter-spacing:3px;color:#fff;text-transform:uppercase;line-height:1">DESENROLA TURISMO</div>'+
+      (sub?'<div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:3px">'+sub+'</div>':'')+
+    '</div>'+
+    '<div style="text-align:right;font-size:9.5px;color:rgba(255,255,255,.45);line-height:1.6">'+
+      BRAND.empresa.cnpj+'<br>'+BRAND.empresa.endereco+
+    '</div>'+
+  '</div>';
 }
+
 function _pdfFooter(extra){
   var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-  return '<div style="text-align:center;font-size:10px;color:#94a3b8;margin-top:24px;padding-top:12px;border-top:1px solid #e2e8f0">Desenrola Turismo · '+BRAND.slogan+' ✦ · '+BRAND.empresa.cnpj+'<br>'+BRAND.empresa.endereco+(extra?'<br>'+extra:'')+'<br>Gerado em '+hoje+'</div>';
+  return '<div style="background:linear-gradient(135deg,#0d2d4a 0%,#1a4a7a 40%,#2A69A5 100%);padding:18px 28px;margin-top:24px">'+
+    '<div style="text-align:center;margin-bottom:10px">'+
+      '<span style="font-family:Anton,sans-serif;font-size:13px;letter-spacing:2px;color:#fff;text-transform:uppercase">'+
+        'Desenrola, sua viagem dos sonhos ✦</span>'+
+    '</div>'+
+    '<div style="display:flex;justify-content:center;gap:16px;margin-bottom:8px;flex-wrap:wrap">'+
+      '<span style="color:rgba(255,255,255,.65);font-size:10px">📸 '+BRAND.social.instagram+'</span>'+
+      '<span style="color:rgba(255,255,255,.65);font-size:10px">🎵 '+BRAND.social.tiktok+'</span>'+
+      '<span style="color:rgba(255,255,255,.65);font-size:10px">🌐 '+BRAND.empresa.site+'</span>'+
+      '<span style="color:rgba(255,255,255,.65);font-size:10px">📱 '+BRAND.empresa.telefone+'</span>'+
+      '<span style="color:rgba(255,255,255,.65);font-size:10px">✉️ '+BRAND.empresa.email+'</span>'+
+    '</div>'+
+    '<div style="text-align:center;font-size:9px;color:rgba(255,255,255,.35)">'+
+      BRAND.empresa.cnpj+' · '+BRAND.empresa.razao+'<br>Gerado em '+hoje+
+      (extra?'<br>'+extra:'')+
+    '</div>'+
+  '</div>';
 }
+
 function _pdfStyles(extra){
   return '<style>*{box-sizing:border-box}body{margin:0;padding:20px;background:#fff;font-family:Nunito,sans-serif;color:#0f2d4e;font-size:13px}pre{white-space:pre-wrap;font-family:Nunito,sans-serif}img{max-width:100%;height:auto}.sec{font-family:Anton,sans-serif;font-size:14px;letter-spacing:1px;text-transform:uppercase;color:#fff;background:#2A69A5;padding:9px 16px;border-radius:8px;margin:20px 0 12px}@page{size:A4;margin:10mm}@media print{body{padding:0}.no-print{display:none!important}}'+(extra||'')+'</style>';
 }
@@ -9652,88 +9695,104 @@ async function exportarPDFConsolidado(){
   var dias=pv.dayByDay||[], vouchers=pv.vouchers||[];
   if(!dias.length&&!vouchers.length){toast('Adicione Day-by-Day ou Vouchers primeiro','warn');return;}
   toast('\u23f3 Gerando PDF...','warn');
-  var fmtBR=function(s){if(!s)return'\u2014';var p=s.split('-');return(p[2]||'')+'/'+(p[1]||'')+'/'+(p[0]||'');};
-  var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  var fmtBR=function(sv){if(!sv)return'\u2014';var p=sv.split('-');return(p[2]||'')+'/'+(p[1]||'')+'/'+(p[0]||'');};
 
-  // Day-by-Day
   var dxdHTML=dias.map(function(d,i){
-    return '<div style="border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px;break-inside:avoid">'+
-      '<div style="font-family:Anton,sans-serif;font-size:14px;color:#1a4570;margin-bottom:4px">DIA '+(i+1)+(d.titulo?' \u2014 '+escapeHtml(d.titulo):'')+'</div>'+
-      (d.data?'<div style="font-size:11px;color:#64748b;margin-bottom:8px">\ud83d\udcc5 '+fmtBR(d.data)+'</div>':'')+
-      '<pre style="white-space:pre-wrap;font-family:Nunito,sans-serif;font-size:12px;color:#334155;margin:0;line-height:1.6">'+escapeHtml(d.atividades||'\u2014')+'</pre>'+
-      (d.obs?'<div style="font-size:11px;color:#64748b;margin-top:8px;border-top:1px dashed #e2e8f0;padding-top:8px;font-style:italic">\ud83d\udcdd '+escapeHtml(d.obs)+'</div>':'')+
-    '</div>';
+    return '<div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:12px;break-inside:avoid">'+
+      '<div style="background:#2A69A5;color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px">'+
+        '<div style="background:rgba(255,255,255,.15);border-radius:5px;padding:2px 10px;font-family:Anton,sans-serif;letter-spacing:1px">DIA '+(i+1)+'</div>'+
+        (d.titulo?'<div style="font-weight:700;font-size:12px">'+escapeHtml(d.titulo)+'</div>':'')+
+        (d.data?'<div style="margin-left:auto;font-size:10px;opacity:.7">📅 '+fmtBR(d.data)+'</div>':'')+
+      '</div>'+
+      '<div style="padding:12px 16px"><pre style="white-space:pre-wrap;font-family:Nunito,sans-serif;font-size:12px;color:#334155;margin:0;line-height:1.6">'+escapeHtml(d.atividades||'\u2014')+'</pre>'+
+      (d.obs?'<div style="font-size:11px;color:#64748b;margin-top:6px;border-top:1px dashed #e2e8f0;padding-top:6px">📝 '+escapeHtml(d.obs)+'</div>':'')+
+      '</div></div>';
   }).join('');
 
-  // Vouchers como imagens inline
+  // Vouchers: images inline, PDFs via pdf.js canvas
   var voucherHTML='';
-  for(var i=0;i<vouchers.length;i++){
-    var v=vouchers[i];
-    var cabecalho='<div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:#fff;background:#2C6AA3;padding:8px 16px;border-radius:8px 8px 0 0;margin-top:20px">'+
+  var pdfDataMap={};
+  for(var vi=0;vi<vouchers.length;vi++){
+    var v=vouchers[vi];
+    var cab='<div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:#fff;background:#2A69A5;padding:8px 16px;border-radius:8px 8px 0 0;margin-top:18px">'+
       '\ud83c\udfab '+escapeHtml(v.tipo||'Voucher')+(v.nome?' \u2014 <span style="font-size:10px;opacity:.7">'+escapeHtml(v.nome)+'</span>':'')+
     '</div>';
     var corpo='';
     if(v.dataUrl){
-      var isImg=/^data:image\//i.test(v.dataUrl);
-      var isPDF=/^data:application\/pdf/i.test(v.dataUrl);
-      if(isImg){
-        corpo='<div style="border:1px solid #2C6AA3;border-top:none;border-radius:0 0 8px 8px;overflow:hidden;break-inside:avoid;page-break-inside:avoid">'+
-          '<img src="'+v.dataUrl+'" style="width:100%;display:block" onerror="this.style.display=\'none\'"/>'+
+      if(/^data:image\//i.test(v.dataUrl)){
+        corpo='<div style="border:1px solid #2A69A5;border-top:none;border-radius:0 0 8px 8px;overflow:hidden">'+
+          '<img src="'+v.dataUrl+'" style="width:100%;display:block" onerror="this.style.display=\'none\'"/></div>';
+      } else if(/^data:application\/pdf/i.test(v.dataUrl)){
+        pdfDataMap[vi]=v.dataUrl;
+        corpo='<div style="border:1px solid #2A69A5;border-top:none;border-radius:0 0 8px 8px;overflow:hidden;min-height:200px" id="pdfWrap_'+vi+'">'+
+          '<canvas id="pdfCanvas_'+vi+'" style="width:100%;display:block"></canvas>'+
+          '<div id="pdfMsg_'+vi+'" style="text-align:center;padding:12px;font-size:11px;color:#64748b">Renderizando PDF...</div>'+
         '</div>';
-      } else if(isPDF){
-        corpo='<div style="border:1px solid #2C6AA3;border-top:none;border-radius:0 0 8px 8px;overflow:hidden;break-inside:avoid;page-break-before:always">'+
-          '<embed src="'+v.dataUrl+'" type="application/pdf" width="100%" height="1000px" style="display:block"/>'+
-        '</div>';
-      } else {
-        corpo='<div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;padding:16px;text-align:center;color:#64748b">\ud83d\udcce '+escapeHtml(v.nome||'\u2014')+'</div>';
       }
     } else if(v.driveLink||v.driveId){
       var url=v.driveLink||('https://drive.google.com/file/d/'+v.driveId+'/view');
-      corpo='<div style="border:1px solid #2C6AA3;border-top:none;border-radius:0 0 8px 8px;padding:24px;text-align:center;background:#f0f9ff">'+
-        '<div style="font-size:32px;margin-bottom:8px">\ud83d\udcc1</div>'+
-        '<div style="font-size:12px;color:#0369a1;font-weight:700;margin-bottom:4px">Arquivo no Google Drive</div>'+
-        '<div style="font-size:11px;color:#64748b;margin-bottom:10px">'+escapeHtml(v.nome||url)+'</div>'+
-        '<a href="'+url+'" style="background:#2C6AA3;color:#fff;padding:7px 20px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:700" target="_blank">\ud83d\udcc1 Abrir no Drive</a>'+
-        '<div style="font-size:10px;color:#94a3b8;margin-top:10px">Para incluir a imagem no PDF, reimporte o arquivo de voucher.</div>'+
+      corpo='<div style="border:1px solid #2A69A5;border-top:none;border-radius:0 0 8px 8px;padding:20px;text-align:center;background:#f0f9ff">'+
+        '<div style="font-size:26px;margin-bottom:6px">\ud83d\udcc1</div>'+
+        '<div style="font-size:12px;color:#0369a1;font-weight:700">Arquivo no Google Drive</div>'+
+        '<div style="font-size:11px;color:#64748b;margin:3px 0 8px">'+escapeHtml(v.nome||'')+'</div>'+
+        '<a href="'+url+'" style="background:#2A69A5;color:#fff;padding:6px 18px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:700" target="_blank">\ud83d\udcc1 Abrir</a>'+
+        '<div style="font-size:10px;color:#94a3b8;margin-top:8px">Reimporte para ver a imagem no PDF</div>'+
       '</div>';
     } else {
       corpo='<div style="border:1px solid #e2e8f0;border-top:none;border-radius:0 0 8px 8px;padding:16px;text-align:center;color:#94a3b8">Sem conteúdo</div>';
     }
-    voucherHTML+=cabecalho+corpo;
+    voucherHTML+=cab+corpo;
   }
 
   var html='<!DOCTYPE html><html lang="pt-BR"><head>'+
     '<meta charset="UTF-8">'+
     '<title>'+escapeHtml(pv.cliente)+' \u2014 Desenrola Turismo</title>'+
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"><\/script>'+
     '<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Anton&display=swap" rel="stylesheet">'+
-    '<style>'+
-      '*{box-sizing:border-box}'+
-      'body{margin:0;padding:20px;background:#fff;font-family:Nunito,sans-serif;color:#0f2d4e;font-size:13px}'+
-      'pre{white-space:pre-wrap;font-family:Nunito,sans-serif}'+
-      'img{max-width:100%;height:auto}'+
-      '.hdr{background:linear-gradient(135deg,#0f2d4e,#2C6AA3);color:#fff;border-radius:12px;padding:20px 24px;margin-bottom:20px}'+
-      '.hdr h1{font-family:Anton,sans-serif;font-size:22px;letter-spacing:2px;text-transform:uppercase;margin:0 0 4px;color:#A4B56E}'+
-      '.sec{font-family:Anton,sans-serif;font-size:14px;letter-spacing:1px;text-transform:uppercase;color:#fff;background:#2C6AA3;padding:10px 16px;border-radius:8px;margin:24px 0 14px}'+
-      '.rodape{text-align:center;font-size:10px;color:#94a3b8;margin-top:24px;padding-top:12px;border-top:1px solid #e2e8f0}'+
-      '@page{size:A4;margin:10mm}'+
-      '@media print{body{padding:0}.no-print{display:none!important}embed{page-break-before:always}img{page-break-inside:avoid}}'+
-    '</style>'+
+    _pdfStyles('@media print{.no-print{display:none!important}canvas,img{page-break-inside:avoid}}')+
   '</head><body>'+
-    '<div style="border-radius:12px;overflow:hidden;">'+_pdfHeader(escapeHtml(pv.destino||'Viagem'))+'</div><div style="padding:0 4px"><h1 style="font-family:Anton,sans-serif;font-size:20px;color:#1a4570;margin:16px 0 4px">'+escapeHtml(pv.cliente)+'</h1>'+
-    '<div style="font-size:12px;opacity:.7">\u2708\ufe0f '+escapeHtml(pv.destino||'\u2014')+
-      (pv.dataViagem?' \u00b7 Embarque: '+fmtBR(pv.dataViagem):'')+
-      (pv.dataVolta?' \u00b7 Retorno: '+fmtBR(pv.dataVolta):'')+
-      ' \u00b7 '+hoje+'</div></div>'+
-    (dxdHTML?'<div class="sec">\ud83d\udcc5 Planejamento Day by Day</div>'+dxdHTML:'')+
-    (voucherHTML?'<div class="sec">\ud83c\udfab Vouchers</div>'+voucherHTML:'')+
-    '<div class="rodape">Desenrola Turismo \u00b7 Sua viagem dos sonhos \u2756</div>'+
-    '<div class="no-print" style="text-align:center;margin-top:20px">'+
-      '<button onclick="window.print()" style="padding:12px 28px;background:#2C6AA3;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700">\ud83d\udda8\ufe0f Imprimir / Salvar como PDF</button>'+
+    _pdfHeader('Documentos de Viagem \u2014 '+escapeHtml(pv.cliente))+
+    '<div style="padding:20px 24px">'+
+      '<div style="background:#f0f5fa;border:1px solid #dbeafe;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px">'+
+        '\u2708\ufe0f '+escapeHtml(pv.destino||'\u2014')+
+        (pv.dataViagem?' \u00b7 Embarque: '+fmtBR(pv.dataViagem):'')+
+        (pv.dataVolta?' \u00b7 Retorno: '+fmtBR(pv.dataVolta):'')+
+      '</div>'+
+      (dxdHTML?'<div style="font-family:Anton,sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:#2A69A5;margin-bottom:12px;padding-bottom:5px;border-bottom:2px solid #2A69A5">\ud83d\udcc5 Planejamento Day by Day</div>'+dxdHTML:'')+
+      (voucherHTML?'<div style="font-family:Anton,sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:#2A69A5;margin:18px 0 10px;padding-bottom:5px;border-bottom:2px solid #2A69A5">\ud83c\udfab Vouchers</div>'+voucherHTML:'')+
     '</div>'+
-  '</body></html>';
+    _pdfFooter('')+
+    '<div class="no-print" style="text-align:center;padding:16px">'+
+      '<button onclick="window.print()" style="padding:12px 28px;background:#2A69A5;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700">\ud83d\udda8\ufe0f Imprimir / PDF</button>'+
+    '</div>';
+
+  // Inject PDF data for pdf.js rendering
+  var pdfScript='<script>var _pdfMap='+JSON.stringify(Object.keys(pdfDataMap).reduce(function(acc,k){acc[k]=1;return acc;},{}))+';'+
+    'if(typeof pdfjsLib!=="undefined"){'+
+      'pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";'+
+      'Object.keys(_pdfMap).forEach(function(k){'+
+        'var data=window["_pdf_"+k];if(!data)return;'+
+        'pdfjsLib.getDocument(data).promise.then(function(pdf){return pdf.getPage(1);}).then(function(page){'+
+          'var canvas=document.getElementById("pdfCanvas_"+k);if(!canvas)return;'+
+          'var vp=page.getViewport({scale:2});canvas.height=vp.height;canvas.width=vp.width;'+
+          'page.render({canvasContext:canvas.getContext("2d"),viewport:vp}).promise.then(function(){'+
+            'var msg=document.getElementById("pdfMsg_"+k);if(msg)msg.remove();'+
+          '});'+
+        '});'+
+      '});'+
+    '}<\/script>';
+
+  html+=pdfScript+'</body></html>';
+
+  // Inject individual PDF data as window vars
+  var extraScripts='';
+  Object.keys(pdfDataMap).forEach(function(k){
+    extraScripts+='<script>window["_pdf_'+k+'"]='+JSON.stringify(pdfDataMap[k])+';<\/script>\n';
+  });
+  html=html.replace(pdfScript, extraScripts+pdfScript);
 
   var win=window.open('','_blank','width=900,height=800');
-  if(!win){toast('\u26a0\ufe0f Permita pop-ups para gerar o PDF','warn');return;}
+  if(!win){toast('\u26a0\ufe0f Permita pop-ups','warn');return;}
   win.document.write(html);
   win.document.close();
 }
@@ -10201,141 +10260,121 @@ function viewOrcamento(id){
   const ORC_EMOJI2 = {Voo:'✈️',Hotel:'🏨',Resort:'🏖️',Ingressos:'🎢',Parque:'🎡',Cruzeiro:'🛳️',Transfer:'🚐',Seguro:'🛡️',Outros:'📦',Extras:'✨'};
   const secaoItens = Object.entries(gruposItens).map(([tipo,items])=>{
     const emoji = ORC_TIPO_EMOJI[tipo]||'📦';
+    const _cKey = tipo==='Guiamento Virtual'?'guiamento':tipo.toLowerCase();
+    const cor = BRAND.cores[_cKey] || BRAND.cores.outros;
     const rows = items.map(item=>{
       const tot = (item.valor||0)*(item.qtd||1);
       let corpo = '';
 
-      // ── VOO ────────────────────────────────────────────────────
       if(tipo==='Voo' && item.trechos&&item.trechos.length){
-        const vooRows = item.trechos.map(t=>{
+        corpo = item.trechos.map(t=>{
           const hasEscala = t.escala && t.escalaAero;
-          return `<div style="margin-bottom:${hasEscala?'14':'8'}px">
-            <div style="display:flex;align-items:center;gap:8px;padding:8px;background:#f8fafc;border-radius:8px">
+          return `<div style="margin-bottom:${hasEscala?'12':'6'}px">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.7);border-radius:8px">
               <div style="text-align:center;min-width:50px">
-                <div style="font-weight:800;font-size:15px;color:#0f2d4e">${esc(t.origem||'?')}</div>
-                ${t.hora?`<div style="font-size:10px;color:#2A69A5;font-weight:700">${t.hora}</div>`:''}
-                <div style="font-size:9px;color:#94a3b8">Partida</div>
+                <div style="font-family:Anton,sans-serif;font-size:16px">${esc(t.origem||'?')}</div>
+                ${t.hora?`<div style="font-size:10px;font-weight:800;color:#2A69A5">${t.hora}</div>`:''}
+                <div style="font-size:9px;color:#64748b">Partida</div>
               </div>
-              <div style="flex:1;text-align:center;position:relative;padding:0 8px">
+              <div style="flex:1;text-align:center;position:relative;padding:0 6px">
                 <div style="height:2px;background:linear-gradient(90deg,#2A69A5,#79ACD9);border-radius:1px"></div>
                 <span style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:16px">✈️</span>
                 ${t.cia?`<div style="font-size:9px;color:#64748b;margin-top:6px">${esc(t.cia)}</div>`:''}
                 ${t.data?`<div style="font-size:9px;color:#64748b">${t.data.split('-').reverse().join('/')}</div>`:''}
               </div>
               <div style="text-align:center;min-width:50px">
-                <div style="font-weight:800;font-size:15px;color:#0f2d4e">${esc(t.destino||'?')}</div>
-                ${t.chegada?`<div style="font-size:10px;color:#2A69A5;font-weight:700">${t.chegada}</div>`:''}
-                <div style="font-size:9px;color:#94a3b8">Chegada</div>
+                <div style="font-family:Anton,sans-serif;font-size:16px">${esc(t.destino||'?')}</div>
+                ${t.chegada?`<div style="font-size:10px;font-weight:800;color:#2A69A5">${t.chegada}</div>`:''}
+                <div style="font-size:9px;color:#64748b">Chegada</div>
               </div>
             </div>
-            ${hasEscala?`<div style="background:#fdf4ff;border:1px dashed #d8b4fe;border-radius:6px;padding:5px 10px;margin-top:4px;font-size:10px;color:#7c3aed">
+            ${hasEscala?`<div style="background:#fdf4ff;border:1px dashed #d8b4fe;border-radius:6px;padding:4px 10px;margin-top:4px;font-size:10px;color:#7c3aed">
               ⇄ Escala: <b>${esc(t.escalaAero)}</b>${t.escalaChegada?' · Chega '+t.escalaChegada:''}${t.escalaPartida?' · Parte '+t.escalaPartida:''}${t.escalaCia?' · '+esc(t.escalaCia):''}
             </div>`:''}
           </div>`;
         }).join('');
-        corpo = vooRows;
       }
-
-      // ── TRANSFER ───────────────────────────────────────────────
       else if(tipo==='Transfer'){
-        corpo = `<div style="display:flex;align-items:center;gap:10px;padding:8px 0">
-          <div style="flex:1;background:#f0f5fa;border-radius:8px;padding:10px 14px;text-align:center">
-            <div style="font-size:9px;font-weight:700;color:#2A69A5;text-transform:uppercase;letter-spacing:.5px">DE</div>
-            <div style="font-weight:700;font-size:12px;margin-top:2px">${esc(item.transferDe||'—')}</div>
+        corpo = `<div style="display:flex;align-items:center;gap:8px;padding:6px 0">
+          <div style="flex:1;background:rgba(255,255,255,.8);border-radius:8px;padding:8px 12px;text-align:center">
+            <div style="font-size:9px;font-weight:700;color:${cor.borda};text-transform:uppercase">DE</div>
+            <div style="font-weight:800;font-size:12px">${esc(item.transferDe||'—')}</div>
           </div>
-          <div style="font-size:26px;flex-shrink:0">🚐</div>
-          <div style="flex:1;background:#f0f5fa;border-radius:8px;padding:10px 14px;text-align:center">
-            <div style="font-size:9px;font-weight:700;color:#2A69A5;text-transform:uppercase;letter-spacing:.5px">PARA</div>
-            <div style="font-weight:700;font-size:12px;margin-top:2px">${esc(item.transferPara||'—')}</div>
+          <span style="font-size:22px">🚐</span>
+          <div style="flex:1;background:rgba(255,255,255,.8);border-radius:8px;padding:8px 12px;text-align:center">
+            <div style="font-size:9px;font-weight:700;color:${cor.borda};text-transform:uppercase">PARA</div>
+            <div style="font-weight:800;font-size:12px">${esc(item.transferPara||'—')}</div>
           </div>
         </div>
-        <div style="display:flex;gap:12px;font-size:10px;color:#64748b;margin-top:4px">
+        <div style="display:flex;gap:10px;font-size:10px;color:#64748b;margin-top:4px">
           ${item.transferData?`<span>📅 ${item.transferData.split('-').reverse().join('/')}</span>`:''}
           ${item.transferHora?`<span>🕐 ${item.transferHora}</span>`:''}
           ${item.transferVolta?'<span style="color:#16a34a">✅ Inclui retorno</span>':''}
         </div>`;
       }
-
-      // ── SEGURO ─────────────────────────────────────────────────
       else if(tipo==='Seguro'){
-        const seg = item.seguradoraId ? (DB.seguradoras||[]).find(s=>s.id==item.seguradoraId) : null;
-        corpo = `<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
-          ${seg&&seg.logo?`<img src="${seg.logo}" style="height:36px;object-fit:contain;border-radius:4px;border:1px solid #e2e8f0"/>`:'<span style="font-size:26px">🛡️</span>'}
+        const seg=item.seguradoraId?(DB.seguradoras||[]).find(x=>x.id==item.seguradoraId):null;
+        corpo=`<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+          ${seg&&seg.logo?`<img src="${seg.logo}" style="height:34px;object-fit:contain;border-radius:4px;border:1px solid #e2e8f0"/>`:'<span style="font-size:22px">🛡️</span>'}
           <div>
-            <div style="font-weight:700;font-size:13px">${esc(seg?seg.nome:item.descricao||'Seguro Viagem')}</div>
-            ${item.seguroDias?`<div style="font-size:10px;color:#64748b">${item.seguroDias} dias de cobertura</div>`:''}
+            <div style="font-weight:800;font-size:13px;color:${cor.texto}">${esc(seg?seg.nome:item.descricao||'Seguro Viagem')}</div>
+            ${item.seguroDias?`<div style="font-size:10px;color:${cor.borda}">${item.seguroDias} dias de cobertura</div>`:''}
           </div>
-        </div>
-        ${item.seguroDescricao?`<div style="font-size:11px;color:#334155;line-height:1.5">${esc(item.seguroDescricao)}</div>`:''}`;
+        </div>${item.seguroDescricao?`<div style="font-size:11px;color:#334155;line-height:1.5">${esc(item.seguroDescricao)}</div>`:''}`;
       }
-
-      // ── CRUZEIRO ───────────────────────────────────────────────
       else if(tipo==='Cruzeiro'){
-        const fotos = [item.cruzFotoNavio,item.cruzFotoCabine].filter(Boolean);
-        corpo = `<div style="display:grid;grid-template-columns:${fotos.length?'1fr 140px':'1fr'};gap:10px">
+        const fts=[item.cruzFotoNavio,item.cruzFotoCabine].filter(Boolean);
+        corpo=`<div style="display:grid;grid-template-columns:${fts.length?'1fr 120px':'1fr'};gap:10px">
           <div>
-            <div style="font-weight:700;font-size:13px;margin-bottom:3px">${esc(item.companhiaCruzeiro||'')}${item.cruzNavio?' — '+esc(item.cruzNavio):''}</div>
-            ${item.cruzCabine?`<div style="font-size:10px;color:#64748b">Cabine: ${esc(item.cruzCabine)}</div>`:''}
+            <div style="font-weight:800;font-size:13px;color:${cor.texto}">${esc(item.companhiaCruzeiro||'')}${item.cruzNavio?' — '+esc(item.cruzNavio):''}</div>
+            ${item.cruzCabine?`<div style="font-size:10px;color:${cor.borda}">Cabine: ${esc(item.cruzCabine)}</div>`:''}
             ${item.cruzPortoSaida||item.cruzPortoChegada?`<div style="font-size:10px;color:#64748b">⚓ ${esc(item.cruzPortoSaida||'?')} → ${esc(item.cruzPortoChegada||'?')}</div>`:''}
-            ${item.cruzRoteiro?`<div style="font-size:11px;color:#334155;margin-top:5px;line-height:1.4">${esc(item.cruzRoteiro)}</div>`:''}
+            ${item.cruzRoteiro?`<div style="font-size:11px;color:#334155;margin-top:4px;line-height:1.4">${esc(item.cruzRoteiro)}</div>`:''}
           </div>
-          ${fotos.length?`<div style="display:flex;flex-direction:column;gap:4px">
-            ${fotos.map(f=>`<img src="${f}" style="width:100%;height:60px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>`).join('')}
-          </div>`:''}
+          ${fts.length?`<div style="display:flex;flex-direction:column;gap:4px">${fts.map(f=>`<img src="${f}" style="width:100%;height:55px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>`).join('')}</div>`:''}
         </div>`;
       }
-
-      // ── HOTEL ──────────────────────────────────────────────────
       else if(tipo==='Hotel'){
-        const fotos = (item.hotelFotos||[]).filter(Boolean);
-        corpo = `<div style="display:grid;grid-template-columns:${fotos.length?'1fr 160px':'1fr'};gap:10px">
+        const fts=(item.hotelFotos||[]).filter(Boolean);
+        corpo=`<div style="display:grid;grid-template-columns:${fts.length?'1fr 140px':'1fr'};gap:10px">
           <div>
-            ${item.hotelCategoria?`<div style="font-size:12px;margin-bottom:3px">${item.hotelCategoria}</div>`:''}
+            ${item.hotelCategoria?`<div style="font-size:12px;margin-bottom:2px">${item.hotelCategoria}</div>`:''}
+            <div style="font-weight:800;font-size:13px;color:${cor.texto}">${esc(item.hotelNome||item.descricao||'')}</div>
             ${item.hotelDiarias?`<div style="font-size:10px;color:#64748b">${item.hotelDiarias} diária${item.hotelDiarias>1?'s':''}${item.hotelQuartos?' · '+item.hotelQuartos+' quarto'+(item.hotelQuartos>1?'s':''):''}</div>`:''}
-            ${item.hotelDescricao?`<div style="font-size:11px;color:#334155;margin-top:6px;line-height:1.5">${esc(item.hotelDescricao)}</div>`:''}
+            ${item.hotelDescricao?`<div style="font-size:11px;color:#334155;margin-top:4px;line-height:1.5">${esc(item.hotelDescricao)}</div>`:''}
           </div>
-          ${fotos.length?`<div style="display:flex;flex-direction:column;gap:4px">
-            ${fotos.slice(0,3).map(f=>`<img src="${f}" style="width:100%;height:55px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>`).join('')}
-          </div>`:''}
+          ${fts.length?`<div style="display:flex;flex-direction:column;gap:4px">${fts.slice(0,3).map(f=>`<img src="${f}" style="width:100%;height:52px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>`).join('')}</div>`:''}
         </div>`;
       }
-
-      // ── GUIAMENTO VIRTUAL ──────────────────────────────────────
       else if(tipo==='Guiamento Virtual'){
-        corpo = `<div style="font-size:11px;color:#334155;line-height:1.5">${esc(item.guiaDescricao||item.descricao||'')}</div>
-        ${item.guiaParques?`<div style="font-size:10px;color:#2A69A5;margin-top:4px;font-weight:700">🎡 ${esc(item.guiaParques)}</div>`:''}
-        ${item.guiaDias?`<div style="font-size:10px;color:#64748b">${item.guiaDias} dia${item.guiaDias>1?'s':''} de guiamento</div>`:''}`;
+        corpo=`<div style="font-weight:800;font-size:13px;color:${cor.texto};margin-bottom:4px">Guiamento Virtual Desenrola${item.guiaDias?' — '+item.guiaDias+' dia'+(item.guiaDias>1?'s':''):''}</div>
+        ${item.guiaParques?`<div style="font-size:10px;color:${cor.borda};font-weight:700;margin-bottom:4px">🎡 ${esc(item.guiaParques)}</div>`:''}
+        <div style="font-size:11px;color:#334155;line-height:1.5">${esc(item.guiaDescricao||item.descricao||'')}</div>`;
       }
-
-      // ── INGRESSOS ──────────────────────────────────────────────
       else if(tipo==='Ingressos'){
-        corpo = `<div style="display:grid;grid-template-columns:${item.fotoUrl?'1fr 100px':'1fr'};gap:10px">
+        corpo=`<div style="display:grid;grid-template-columns:${item.fotoUrl?'1fr 90px':'1fr'};gap:10px;align-items:center">
           <div>
-            ${item.tipoIngresso?`<div style="background:#dbeafe;color:#1d4ed8;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;display:inline-block;margin-bottom:4px">${esc(item.tipoIngresso)}</div>`:''}
-            ${item.descricao?`<div style="font-size:11px;color:#334155">${esc(item.descricao)}</div>`:''}
+            ${item.tipoIngresso?`<div style="background:${cor.borda};color:#fff;border-radius:4px;padding:2px 10px;font-size:10px;font-weight:700;display:inline-block;margin-bottom:4px">${esc(item.tipoIngresso)}</div>`:''}
+            ${item.descricao?`<div style="font-size:11px;color:#334155;line-height:1.5">${esc(item.descricao)}</div>`:''}
           </div>
-          ${item.fotoUrl?`<img src="${item.fotoUrl}" style="width:100%;height:70px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>`:''}
+          ${item.fotoUrl?`<img src="${item.fotoUrl}" style="width:100%;height:65px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>`:''}
         </div>`;
       }
+      else { corpo=item.descricao?`<div style="font-size:11px;color:#334155">${esc(item.descricao)}</div>`:''; }
 
-      // ── OUTROS ─────────────────────────────────────────────────
-      else {
-        corpo = item.descricao ? `<div style="font-size:11px;color:#334155">${esc(item.descricao)}</div>` : '';
-      }
-
-      return `<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9">
+      return `<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)">
         <div style="flex:1;min-width:0;padding-right:12px">${corpo}</div>
         <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:15px;font-weight:800;color:#2A69A5">${fmtR(tot)}</div>
-          ${pax>1?'<div style="font-size:10px;color:#94a3b8">'+fmtR(tot/pax)+' p/ pax</div>':''}
+          <div style="font-size:14px;font-weight:800;color:${cor.borda}">${fmtR(tot)}</div>
+          ${pax>1?'<div style="font-size:10px;color:#94a3b8">'+fmtR(tot/pax)+'/pax</div>':''}
         </div>
       </div>`;
     }).join('');
 
-    return `<div style="margin-bottom:20px;break-inside:avoid">
-      <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:linear-gradient(135deg,#e8f0f8,#f0f5fa);border-radius:10px;margin-bottom:8px;border-left:3px solid #2A69A5">
+    return `<div style="background:${cor.bg};border-left:3px solid ${cor.borda};border-radius:0 12px 12px 0;padding:14px 16px;margin-bottom:10px;break-inside:avoid">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:18px">${emoji}</span>
-        <span style="font-family:'Anton',sans-serif;font-size:12px;letter-spacing:0.8px;text-transform:uppercase;color:#1a4570">${esc(tipo)}</span>
+        <span style="font-family:'Anton',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:${cor.texto}">${esc(tipo)}</span>
       </div>
       ${rows}
     </div>`;
@@ -10351,110 +10390,81 @@ function viewOrcamento(id){
     </div>` : '';
 
   const propHtml = `
-    <div id="proposta-print" style="font-family:'Montserrat','Nunito',sans-serif;color:#0f2d4e;background:#fff;max-width:760px">
+    <div id="proposta-print" style="font-family:Nunito,sans-serif;color:#0f2d4e;background:#fff;max-width:760px">
 
       <!-- CABEÇALHO -->
-      <div style="background:linear-gradient(135deg,#0f2d4e 0%,#2C6AA3 60%,#79ACD9 100%);border-radius:16px 16px 0 0;padding:28px 32px;margin-bottom:0;position:relative;overflow:hidden">
-        <div style="position:absolute;top:-20px;right:-20px;width:160px;height:160px;background:rgba(164,181,110,0.12);border-radius:50%"></div>
-        <div style="position:absolute;bottom:-40px;right:60px;width:100px;height:100px;background:rgba(121,172,217,0.12);border-radius:50%"></div>
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;position:relative">
-          <div>
-            <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase;line-height:1">DESENROLA</div>
-            <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#A4B56E;text-transform:uppercase;line-height:1">TURISMO</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;letter-spacing:0.5px">✦ Sua viagem dos sonhos</div>
-          </div>
-          <div style="text-align:right">
-            <div style="background:rgba(164,181,110,0.25);border:1px solid rgba(164,181,110,0.4);border-radius:10px;padding:8px 16px;display:inline-block">
-              <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1px">PROPOSTA</div>
-              <div style="font-family:'Anton',sans-serif;font-size:22px;color:#A4B56E;letter-spacing:1px">#${o.id}</div>
+      <div style="background:linear-gradient(135deg,#0d2d4a 0%,#1a4a7a 40%,#2A69A5 100%);padding:22px 28px;display:flex;align-items:center;gap:16px">
+        <img src="${BRAND.logo}" style="width:50px;height:50px;border-radius:10px;flex-shrink:0" onerror="this.style.display='none'"/>
+        <div style="flex:1">
+          <div style="font-family:Anton,sans-serif;font-size:24px;letter-spacing:3px;color:#fff;text-transform:uppercase;line-height:1">DESENROLA TURISMO</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:3px">Proposta de Viagem #${o.id} · ${hoje}</div>
+        </div>
+        <div style="text-align:right;font-size:9.5px;color:rgba(255,255,255,.45);line-height:1.6">${BRAND.empresa.cnpj}<br>${BRAND.empresa.endereco}</div>
+      </div>
+
+      <!-- CLIENTE + RESUMO -->
+      <div style="padding:20px 28px 0">
+        <div style="background:#f0f5fa;border:1px solid #dbeafe;border-radius:12px;padding:16px 20px;margin-bottom:16px;display:flex;gap:20px;align-items:flex-start">
+          <div style="flex:1">
+            <div style="font-size:9px;font-weight:700;color:#2A69A5;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Proposta Personalizada para</div>
+            <div style="font-family:Anton,sans-serif;font-size:20px;letter-spacing:1px;color:#0f2d4e">${esc(cliNome)}</div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px">
+              ✈️ ${esc(destStr)}${o.dataIda?' · Embarque: '+fmtBR(o.dataIda):''}${o.dataVolta?' · Retorno: '+fmtBR(o.dataVolta):''}
             </div>
-            <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:6px">Emitida em ${hoje}</div>
+            <div style="font-size:11px;color:#64748b">👥 ${esc(paxStr)}</div>
           </div>
-        </div>
-      </div>
-
-      <!-- FAIXA VERDE (destino) -->
-      <div style="background:#A4B56E;padding:10px 32px;display:flex;align-items:center;gap:12px">
-        <span style="font-size:16px">✈️</span>
-        <span style="font-family:'Anton',sans-serif;font-size:14px;letter-spacing:1.5px;color:#fff;text-transform:uppercase">
-          ${esc((o.itens||[]).map(i=>i.tipo).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(' · '))||'Proposta de Viagem'}
-        </span>
-        ${o.dataIda?`<span style="margin-left:auto;font-size:12px;color:rgba(255,255,255,0.85)">${fmtBR(o.dataIda)}${o.dataVolta?' → '+fmtBR(o.dataVolta):''}${noites?' · '+noites+' noite'+(noites>1?'s':''):''}</span>`:''}
-      </div>
-
-      <!-- CORPO -->
-      <div style="padding:28px 32px;background:#fff">
-
-        <!-- INFO BOXES -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
-            <div style="font-size:10px;font-weight:700;color:#2C6AA3;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">👤 Cliente</div>
-            <div style="font-size:16px;font-weight:800;color:#0f2d4e">${esc(cliNome)}</div>
-            ${cli&&cli.telefone?`<div style="font-size:12px;color:#64748b;margin-top:4px">📱 ${esc(cli.telefone)}</div>`:''}
-            ${cli&&cli.email?`<div style="font-size:12px;color:#64748b">✉️ ${esc(cli.email)}</div>`:''}
-            ${cli&&cli.endereco?`<div style="font-size:11px;color:#94a3b8;margin-top:2px">📍 ${esc(cli.endereco)}</div>`:''}
-          </div>
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
-            <div style="font-size:10px;font-weight:700;color:#2C6AA3;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">✈️ Detalhes da Viagem</div>
-            ${o.dataIda?`<div style="font-size:13px;font-weight:700;color:#0f2d4e">📅 ${fmtBR(o.dataIda)} → ${o.dataVolta?fmtBR(o.dataVolta):'?'}</div>`:''}
-            ${noites?`<div style="font-size:12px;color:#64748b">${noites} noite${noites>1?'s':''}</div>`:''}
-            <div style="font-size:13px;color:#0f2d4e;margin-top:4px">👥 ${esc(paxStr)}</div>
-            
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.5px">Total</div>
+            <div style="font-family:Anton,sans-serif;font-size:26px;color:#2A69A5;line-height:1.1">${fmtR(o.total||0)}</div>
+            ${pax>1?`<div style="font-size:10px;color:#94a3b8">${fmtR((o.total||0)/pax)}/pessoa</div>`:''}
+            <div style="font-size:10px;color:#f59e0b;margin-top:4px">⏳ Válido 48h</div>
           </div>
         </div>
 
-        <!-- ITENS DA PROPOSTA -->
-        <div style="font-family:'Anton',sans-serif;font-size:14px;letter-spacing:1px;text-transform:uppercase;color:#2C6AA3;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #2C6AA3">
-          O QUE ESTÁ INCLUÍDO
-        </div>
+        <!-- PASSAGEIROS -->
+        ${passageirosList.length>1?`<div style="background:#f0f5fa;border-left:3px solid #2A69A5;border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:16px">
+          <div style="font-family:Anton,sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#1a4a7a;margin-bottom:8px">👥 Passageiros</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px">
+            ${passageirosList.map(p=>`<div style="background:#fff;border:1px solid #dbeafe;border-radius:8px;padding:7px 12px">
+              <div style="font-weight:700;font-size:12px">${esc(typeof p==='object'?(p.nome+' '+(p.sobrenome||'')).trim():p)}</div>
+              ${typeof p==='object'&&p.idade?`<div style="font-size:10px;color:#64748b">${p.idade} anos</div>`:''}
+            </div>`).join('')}
+          </div>
+        </div>`:''}
+
+        <!-- QUEM SOMOS -->
+        ${DB.conteudo&&DB.conteudo.quemSomos?`<div style="background:#f8fafc;border-radius:10px;padding:12px 16px;margin-bottom:16px;border-left:3px solid #cbd5e1">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#94a3b8;margin-bottom:4px">Sobre a Desenrola Turismo</div>
+          <div style="font-size:11px;color:#475569;line-height:1.6">${esc(DB.conteudo.quemSomos)}</div>
+        </div>`:''}
+
+        <!-- SERVIÇOS -->
+        <div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#2A69A5;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #2A69A5">O que está incluído</div>
         ${secaoItens}
 
-        ${paxSection}
-
-        <!-- TOTAL -->
-        <div style="background:linear-gradient(135deg,#0f2d4e,#2C6AA3);border-radius:14px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;margin-top:20px;margin-bottom:20px">
+        <!-- TOTAL BOX -->
+        <div style="background:linear-gradient(135deg,#0d2d4a,#2A69A5);border-radius:12px;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;margin:20px 0">
           <div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1px">Investimento Total</div>
-            ${pax>1?`<div style="font-size:11px;color:rgba(255,255,255,0.5)">~ ${fmtR((o.total||0)/pax)} por pessoa</div>`:''}
+            <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px">Investimento Total</div>
+            ${pax>1?`<div style="font-size:10px;color:rgba(255,255,255,.45)">~ ${fmtR((o.total||0)/pax)} por pessoa</div>`:''}
           </div>
-          <div style="text-align:right">
-            <div style="font-family:'Anton',sans-serif;font-size:32px;color:#A4B56E;letter-spacing:-0.5px">${fmtR(o.total||0)}</div>
-          </div>
+          <div style="font-family:Anton,sans-serif;font-size:30px;color:#fff;letter-spacing:2px">${fmtR(o.total||0)}</div>
         </div>
-
-        <!-- PAGAMENTO -->
-        ${o.formaPagamento?`
-        <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
-          <span style="font-size:20px">💳</span>
-          <div>
-            <div style="font-size:10px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:0.8px">Forma de Pagamento</div>
-            <div style="font-size:13px;font-weight:700;color:#0f2d4e">${esc(o.formaPagamento)}</div>
-          </div>
-        </div>`:''}
-
-        <!-- OBSERVAÇÕES -->
-        ${o.obs?`
-        <div style="background:#fefce8;border:1px solid #fef08a;border-radius:10px;padding:14px 18px;margin-bottom:20px">
-          <div style="font-size:10px;font-weight:700;color:#854d0e;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">📌 Observações</div>
-          <div style="font-size:12px;color:#713f12">${esc(o.obs)}</div>
-        </div>`:''}
-
-        <!-- VALIDADE -->
-        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px 18px;margin-bottom:24px;display:flex;align-items:center;gap:8px">
-          <span style="font-size:18px">⏰</span>
-          <div style="font-size:12px;color:#9a3412">Esta proposta é válida por <strong>48 horas</strong> a partir do envio. Os valores podem sofrer alterações após este prazo.</div>
-        </div>
-
-        <!-- RODAPÉ -->
-        <div style="border-top:2px solid #e2e8f0;padding-top:16px;text-align:center">
-          <div style="font-family:'Anton',sans-serif;font-size:16px;letter-spacing:1.5px;color:#2C6AA3">DESENROLA TURISMO</div>
-          <div style="font-size:11px;color:#94a3b8;margin-top:4px">✦ Sua viagem dos sonhos</div>
-          <div style="font-size:10px;color:#cbd5e1;margin-top:6px">CNPJ: 56.004.414/0001-43 · Rua Limoeiro, 955 — Arujá/SP</div>
-          <div style="font-size:10px;color:#cbd5e1">Proposta #${o.id} · Gerada em ${hoje}</div>
-        </div>
-
       </div>
-    </div>`;
+
+      <!-- RODAPÉ -->
+      <div style="background:linear-gradient(135deg,#0d2d4a 0%,#1a4a7a 40%,#2A69A5 100%);padding:18px 28px;margin-top:8px">
+        <div style="text-align:center;margin-bottom:8px"><span style="font-family:Anton,sans-serif;font-size:13px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola, sua viagem dos sonhos ✦</span></div>
+        <div style="display:flex;justify-content:center;gap:14px;margin-bottom:6px;flex-wrap:wrap">
+          <span style="color:rgba(255,255,255,.65);font-size:10px">📸 @desenrolaturismo</span>
+          <span style="color:rgba(255,255,255,.65);font-size:10px">🎵 @desenrolaturismo</span>
+          <span style="color:rgba(255,255,255,.65);font-size:10px">🌐 desenrolaturismo.com.br</span>
+          <span style="color:rgba(255,255,255,.65);font-size:10px">📱 +55 19 9 9988-5575</span>
+          <span style="color:rgba(255,255,255,.65);font-size:10px">✉️ voucher@desenrolaturismo.com.br</span>
+        </div>
+        <div style="text-align:center;font-size:9px;color:rgba(255,255,255,.35)">${BRAND.empresa.cnpj} · ${BRAND.empresa.razao}</div>
+      </div>
+    </div>`
 
   const ex=g('_m-view-orc'); if(ex) ex.remove();
   const m=document.createElement('div'); m.id='_m-view-orc';
@@ -10649,10 +10659,7 @@ function orcAddItem(dados){
     '<div id="orc-hotel-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Hotel'?'':'display:none')+'">'+
       '<div style="display:grid;grid-template-columns:1fr 1fr 80px 80px;gap:8px;margin-bottom:8px">'+
         '<div class="form-group" style="margin:0"><label class="form-label">Nome do Hotel</label>'+
-          '<select class="form-select" id="orc-hotel-sel-'+i+'" onchange="orcHotelChange('+i+')" style="font-size:11px">'+
-            '<option value="">— Selecione ou descreva —</option>'+
-            (DB.hoteisCustom||[]).map(function(h){ return '<option value="'+h.id+'"'+(dados&&dados.hotelId==h.id?' selected':'')+'>'+escapeHtml(h.nome)+'</option>'; }).join('')+
-          '</select></div>'+
+          '<input type="text" class="form-input" id="orc-hotel-nome-'+i+'" value="'+escapeHtml(dados&&dados.hotelNome||'')+'" list="hotel-list" onchange="orcHotelNomeChange('+i+')" oninput="orcHotelSuggest('+i+')" placeholder="Digite o nome do hotel..." style="font-size:11px"/></div>'+
         '<div class="form-group" style="margin:0"><label class="form-label">Categoria</label>'+
           '<select class="form-select" id="orc-hotel-cat-'+i+'" style="font-size:11px">'+
             ['⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'].map(function(s){return '<option value="'+s+'"'+(dados&&dados.hotelCategoria===s?' selected':'')+'>'+s+'</option>';}).join('')+
@@ -10693,10 +10700,10 @@ function orcAddItem(dados){
     '<div id="orc-transfer-row-'+i+'" style="margin-bottom:8px;'+(tipo==='Transfer'?'':'display:none')+'">'+
       '<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center">'+
         '<div class="form-group" style="margin:0"><label class="form-label">De (Aeroporto / Hotel)</label>'+
-          '<input type="text" class="form-input" id="orc-transf-de-'+i+'" value="'+escapeHtml((dados&&dados.transferDe)||'')+'" placeholder="Ex: MCO — Orlando Intl." style="font-size:11px"/></div>'+
+          '<input type="text" class="form-input" id="orc-transf-de-'+i+'" list="transf-list" value="'+escapeHtml((dados&&dados.transferDe)||'')+'" placeholder="Ex: MCO — Orlando Intl." style="font-size:11px"/></div>'+
         '<div style="text-align:center;font-size:24px;margin-top:16px">🚐</div>'+
         '<div class="form-group" style="margin:0"><label class="form-label">Para (Hotel / Aeroporto)</label>'+
-          '<input type="text" class="form-input" id="orc-transf-para-'+i+'" value="'+escapeHtml((dados&&dados.transferPara)||'')+'" placeholder="Ex: Disney Grand Floridian" style="font-size:11px"/></div>'+
+          '<input type="text" class="form-input" id="orc-transf-para-'+i+'" list="transf-list" value="'+escapeHtml((dados&&dados.transferPara)||'')+'" placeholder="Ex: Disney Grand Floridian" style="font-size:11px"/></div>'+
       '</div>'+
       '<div style="display:flex;gap:8px;margin-top:6px">'+
         '<div class="form-group" style="margin:0;flex:1"><label class="form-label">Data</label>'+
@@ -10737,7 +10744,7 @@ function orcAddItem(dados){
             ORC_CRUZEIRO_COMPANHIAS.map(function(c){return '<option value="'+c+'"'+(dados&&dados.companhiaCruzeiro===c?' selected':'')+'>'+c+'</option>';}).join('')+
           '</select></div>'+
         '<div class="form-group" style="margin:0"><label class="form-label">Nome do Navio</label>'+
-          '<input type="text" class="form-input" id="orc-cruz-navio-'+i+'" value="'+escapeHtml((dados&&dados.cruzNavio)||'')+'" style="font-size:11px"/></div>'+
+          '<input type="text" class="form-input" id="orc-cruz-navio-'+i+'" list="navio-list" onchange="orcNavioChange('+i+')" "'+escapeHtml((dados&&dados.cruzNavio)||'')+'" style="font-size:11px"/></div>'+
         '<div class="form-group" style="margin:0"><label class="form-label">Tipo de Cabine</label>'+
           '<select class="form-select" id="orc-cruz-cabine-'+i+'" style="font-size:11px">'+
             ['Interior','Oceanview','Varanda','Suite','Suite Concierge','Suite de Luxo'].map(function(c){
@@ -10802,6 +10809,65 @@ function orcAddItem(dados){
   if(tipo==='Seguro' && dados&&dados.seguradoraId) orcSeguroChange(i);
 }
 
+
+// ══ ORÇAMENTO — helper functions para autocomplete ══
+
+function orcIngressoChange(i){
+  var sel=g('orc-ingresso-'+i); if(!sel||!sel.value) return;
+  var nm=sel.value;
+  var tipos=DB.config&&DB.config.tiposIngresso||[];
+  var tipo=tipos.find(function(t){return(t.nome||t)===nm;});
+  if(!tipo||typeof tipo==='string') return;
+  var descEl=g('orc-desc-'+i);
+  if(descEl&&!descEl.value&&tipo.descricao) descEl.value=tipo.descricao;
+  var fotoEl=g('orc-ing-foto-'+i);
+  if(fotoEl&&!fotoEl.value&&tipo.foto) fotoEl.value=tipo.foto;
+}
+
+function orcHotelSuggest(i){
+  // Populate datalist with KB + Custom hotels
+  var dl=document.getElementById('hotel-list'); if(!dl) return;
+  var opts=[];
+  // Custom hotels from registros
+  (DB.hoteisCustom||[]).forEach(function(h){ opts.push(h.nome); });
+  // KB hotels — scan conhecimento
+  (DB.conhecimento||[]).forEach(function(item){
+    var n=item.nome||'';
+    if(item.tipo==='hotel'||n.toLowerCase().includes('resort')||n.toLowerCase().includes('hotel')||n.toLowerCase().includes('inn')){
+      opts.push(n);
+    }
+  });
+  // Deduplicate
+  var seen={};
+  dl.innerHTML=opts.filter(function(n){ if(!n||seen[n]) return false; seen[n]=true; return true; })
+    .map(function(n){return '<option value="'+n+'"/>';}).join('');
+}
+
+function orcHotelNomeChange(i){
+  var el=g('orc-hotel-nome-'+i); if(!el||!el.value) return;
+  var nm=el.value;
+  var hotel=(DB.hoteisCustom||[]).find(function(h){return h.nome===nm;});
+  if(!hotel) return;
+  var descEl=g('orc-hotel-desc-'+i);
+  var catEl=g('orc-hotel-cat-'+i);
+  if(descEl&&hotel.descricao&&!descEl.value) descEl.value=hotel.descricao;
+  if(catEl&&hotel.categoria) catEl.value=hotel.categoria;
+  (hotel.fotos||[]).slice(0,3).forEach(function(f,n){
+    var fEl=g('orc-hotel-foto'+(n+1)+'-'+i); if(fEl&&!fEl.value) fEl.value=f;
+  });
+  toast('Hotel preenchido: '+hotel.nome);
+}
+
+function orcNavioChange(i){
+  var el=g('orc-cruz-navio-'+i); if(!el) return;
+  var dcl=['Disney Magic','Disney Wonder','Disney Dream','Disney Fantasy','Disney Wish','Disney Treasure','Disney Adventure'];
+  if(dcl.indexOf(el.value)>=0){
+    var ciaEl=g('orc-cruز-cia-'+i);
+    if(ciaEl) ciaEl.value='Disney Cruise Line';
+  }
+}
+
+// _saveOrcamento: also save hotelNome from text field
 function orcAutoPreencheGuia(i){
   var el = g('orc-guia-desc-'+i);
   if(el && DB.conteudo && DB.conteudo.guiamentoVirtual){
@@ -10853,47 +10919,69 @@ function _selFoto(prefix, idx, suffix){
 function _selecionarFotoDrive(fieldId){
   window._currentFotoFieldId = fieldId;
   var driveOk = _driveToken && Date.now() < _driveTokenExpiry;
-  var ex = g('_m-sel-foto'); if(ex) ex.remove();
-  var m = document.createElement('div');
-  m.id = '_m-sel-foto';
-  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
-  m.innerHTML =
-    '<div style="background:#fff;border-radius:14px;padding:24px;max-width:440px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2)">'+
-      '<div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:.8px;color:var(--primary);margin-bottom:14px;text-transform:uppercase">\ud83d\udcf7 Selecionar Imagem</div>'+
-      '<div style="display:flex;flex-direction:column;gap:10px">'+
-        // Option 1: Upload local
-        '<div style="border:1px solid var(--border);border-radius:8px;padding:12px">'+
-          '<div style="font-size:11px;font-weight:700;margin-bottom:6px">\ud83d\udcc1 Upload de arquivo local</div>'+
-          '<input type="file" id="_foto-file-input" accept="image/*" style="font-size:11px;width:100%" onchange="_uploadFotoOrcamento(this)"/>'+
+  var pickerOk = driveOk && window._pickerReady && window.google && window.google.picker;
+  var ex=g('_m-sel-foto'); if(ex) ex.remove();
+  var m=document.createElement('div'); m.id='_m-sel-foto';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
+  var driveBtn = driveOk
+    ? '<div style="border:1px solid #86efac;background:#f0fdf4;border-radius:8px;padding:12px">'+
+        '<div style="font-size:11px;font-weight:700;margin-bottom:6px;color:#16a34a">\u2705 Google Drive</div>'+
+        (pickerOk
+          ? '<button class="btn btn-primary btn-sm" style="width:100%" onclick="_abrirPicker()">📁 Abrir Google Drive</button>'
+          : '<button class="btn btn-primary btn-sm" style="width:100%" onclick="_selecionarUrlDrive()">🔗 Colar URL do Drive</button>'+
+            '<div style="font-size:10px;color:var(--text3);margin-top:3px">Picker ainda carregando — cole a URL da imagem</div>')+
+      '</div>'
+    : '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px;font-size:11px;color:#9a3412">'+
+        '📁 <button onclick="g(\'_m-sel-foto\').remove();_iniciarConexaoDrive();setTimeout(_orcAtualizarDriveBanner,1500)" '+
+        'style="background:none;border:none;color:#9a3412;font-weight:700;cursor:pointer;padding:0">Conectar Drive</button> para selecionar imagens</div>';
+  m.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;max-width:420px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2)">'+
+    '<div style="font-family:Anton,sans-serif;font-size:12px;letter-spacing:.8px;color:var(--primary);margin-bottom:14px;text-transform:uppercase">📷 Selecionar Imagem</div>'+
+    '<div style="display:flex;flex-direction:column;gap:10px">'+driveBtn+
+      '<div style="border:1px solid var(--border);border-radius:8px;padding:12px">'+
+        '<div style="font-size:11px;font-weight:700;margin-bottom:6px">🔗 URL de imagem</div>'+
+        '<div style="display:flex;gap:6px">'+
+          '<input type="text" class="form-input" id="_foto-url-input" placeholder="https://..." style="font-size:11px"/>'+
+          '<button class="btn btn-primary btn-sm" onclick="_aplicarFotoUrl()">OK</button>'+
         '</div>'+
-        // Option 2: URL manual
-        '<div style="border:1px solid var(--border);border-radius:8px;padding:12px">'+
-          '<div style="font-size:11px;font-weight:700;margin-bottom:6px">\ud83d\udd17 URL de imagem ou Google Drive</div>'+
-          '<div style="display:flex;gap:6px">'+
-            '<input type="text" class="form-input" id="_foto-url-input" placeholder="https://drive.google.com/file/d/..." style="font-size:11px"/>'+
-            '<button class="btn btn-primary btn-sm" onclick="_aplicarFotoUrl()">OK</button>'+
-          '</div>'+
-          '<div style="font-size:10px;color:var(--text3);margin-top:4px">IDs do Drive s\u00e3o convertidos automaticamente</div>'+
-        '</div>'+
-        // Option 3: Drive upload (if connected)
-        (driveOk?
-          '<div style="border:1px solid #86efac;background:#f0fdf4;border-radius:8px;padding:12px">'+
-            '<div style="font-size:11px;font-weight:700;margin-bottom:6px;color:#16a34a">\u2705 Drive conectado \u2014 enviar para Banco de Imagens</div>'+
-            '<input type="file" id="_foto-drive-input" accept="image/*" style="font-size:11px;width:100%" onchange="_uploadFotoParaDrive(this)"/>'+
-          '</div>':
-          '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px;font-size:11px;color:#9a3412">'+
-            '\ud83d\udcc1 <button onclick="g(\'_m-sel-foto\').remove();_iniciarConexaoDrive();setTimeout(_orcAtualizarDriveBanner,1500)" style="background:none;border:none;color:#9a3412;font-weight:700;cursor:pointer;padding:0">Conectar Drive</button> para salvar fotos no banco de imagens'+
-          '</div>'
-        )+
       '</div>'+
-      '<div style="text-align:right;margin-top:12px">'+
-        '<button class="btn btn-ghost btn-sm" onclick="g(\'_m-sel-foto\').remove()">Fechar</button>'+
+      '<div style="border:1px solid var(--border);border-radius:8px;padding:12px">'+
+        '<div style="font-size:11px;font-weight:700;margin-bottom:6px">📁 Upload local</div>'+
+        '<input type="file" id="_foto-file-input" accept="image/*" style="font-size:11px;width:100%" onchange="_uploadFotoOrcamento(this)"/>'+
       '</div>'+
-    '</div>';
-  m.addEventListener('click', function(e){ if(e.target===m) m.remove(); });
+    '</div>'+
+    '<div style="text-align:right;margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="g(\'_m-sel-foto\').remove()">Fechar</button></div>'+
+  '</div>';
+  m.addEventListener('click',function(e){if(e.target===m)m.remove();});
   document.body.appendChild(m);
 }
 
+function _abrirPicker(){
+  if(!_driveToken||!window.google||!window.google.picker){toast('Google Picker não disponível','warn');return;}
+  var picker=new google.picker.PickerBuilder()
+    .addView(google.picker.ViewId.DOCS_IMAGES)
+    .addView(google.picker.ViewId.DOCS)
+    .setOAuthToken(_driveToken)
+    .setCallback(function(data){
+      if(data.action===google.picker.Action.PICKED&&data.docs&&data.docs[0]){
+        var doc=data.docs[0];
+        var url='https://drive.google.com/thumbnail?id='+doc.id+'&sz=w800';
+        var el=g(window._currentFotoFieldId); if(el){el.value=url;el.dispatchEvent(new Event('input'));}
+        toast('✅ '+doc.name+' selecionado');
+        var m=g('_m-sel-foto'); if(m) m.remove();
+      }
+    }).build();
+  picker.setVisible(true);
+}
+
+function _selecionarUrlDrive(){
+  var url=prompt('Cole a URL do arquivo no Drive:');
+  if(!url) return;
+  var match=url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if(match) url='https://drive.google.com/thumbnail?id='+match[1]+'&sz=w800';
+  var el=g(window._currentFotoFieldId); if(el) el.value=url;
+  var m=g('_m-sel-foto'); if(m) m.remove();
+  toast('✅ URL aplicada');
+}
 
 function _aplicarFotoUrl(fieldId){
   if(!fieldId) fieldId = window._currentFotoFieldId;
@@ -11005,16 +11093,16 @@ function orcVooAddTrecho(i, comEscala, dados){
     '<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:6px">'+
       '<div>'+
         '<label class="form-label" style="font-size:10px">Origem</label>'+
-        '<input type="text" class="form-input" id="orc-voo-orig-'+i+'-'+n+'" value="'+escapeHtml(dados&&dados.origem||'')+'" placeholder="GRU" style="font-size:11px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"/>'+
+        '<input type="text" class="form-input" id="orc-voo-orig-'+i+'-'+n+'" list="aero-list" value="'+escapeHtml(dados&&dados.origem||'')+'" placeholder="GRU" style="font-size:11px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"/>'+
       '</div>'+
       '<div style="text-align:center;font-size:20px;padding-top:16px">✈️</div>'+
       '<div>'+
         '<label class="form-label" style="font-size:10px">Destino</label>'+
-        '<input type="text" class="form-input" id="orc-voo-dest-'+i+'-'+n+'" value="'+escapeHtml(dados&&dados.destino||'')+'" placeholder="MCO" style="font-size:11px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"/>'+
+        '<input type="text" class="form-input" id="orc-voo-dest-'+i+'-'+n+'" list="aero-list" value="'+escapeHtml(dados&&dados.destino||'')+'" placeholder="MCO" style="font-size:11px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"/>'+
       '</div>'+
     '</div>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">'+
-      '<div><label class="form-label" style="font-size:10px">Companhia Aérea</label><input type="text" class="form-input" id="orc-voo-cia-'+i+'-'+n+'" value="'+escapeHtml(dados&&dados.cia||'')+'" placeholder="Ex: LATAM, Azul" style="font-size:11px"/></div>'+
+      '<div><label class="form-label" style="font-size:10px">Companhia Aérea</label><input type="text" class="form-input" id="orc-voo-cia-'+i+'-'+n+'" list="cia-list" value="'+escapeHtml(dados&&dados.cia||'')+'" placeholder="Ex: LATAM, Azul" style="font-size:11px"/></div>'+
       '<div><label class="form-label" style="font-size:10px">Data</label><input type="date" class="form-input" id="orc-voo-data-'+i+'-'+n+'" value="'+(dados&&dados.data||'')+'"/></div>'+
       '<div><label class="form-label" style="font-size:10px">Horário Partida</label><input type="time" class="form-input" id="orc-voo-hora-'+i+'-'+n+'" value="'+(dados&&dados.hora||'')+'" style="font-size:11px"/></div>'+
     '</div>'+
@@ -11023,7 +11111,7 @@ function orcVooAddTrecho(i, comEscala, dados){
       '<div style="background:#fdf4ff;border:1px dashed #d8b4fe;border-radius:6px;padding:8px;margin-bottom:6px">'+
         '<div style="font-size:10px;font-weight:700;color:#7c3aed;margin-bottom:6px">⇄ Aeroporto de Escala</div>'+
         '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">'+
-          '<div><label class="form-label" style="font-size:10px">Aeroporto Escala</label><input type="text" class="form-input" id="orc-voo-esc-'+i+'-'+n+'" value="'+escapeHtml(dados&&dados.escalaAero||'')+'" placeholder="Ex: GIG" style="font-size:11px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"/></div>'+
+          '<div><label class="form-label" style="font-size:10px">Aeroporto Escala</label><input type="text" class="form-input" id="orc-voo-esc-'+i+'-'+n+'" list="aero-list" value="'+escapeHtml(dados&&dados.escalaAero||'')+'" placeholder="Ex: GIG" style="font-size:11px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"/></div>'+
           '<div><label class="form-label" style="font-size:10px">Chegada Escala</label><input type="time" class="form-input" id="orc-voo-esc-chg-'+i+'-'+n+'" value="'+(dados&&dados.escalaChegada||'')+'" style="font-size:11px"/></div>'+
           '<div><label class="form-label" style="font-size:10px">Partida Escala</label><input type="time" class="form-input" id="orc-voo-esc-par-'+i+'-'+n+'" value="'+(dados&&dados.escalaPartida||'')+'" style="font-size:11px"/></div>'+
           '<div><label class="form-label" style="font-size:10px">Cia Pós-Escala</label><input type="text" class="form-input" id="orc-voo-esc-cia-'+i+'-'+n+'" value="'+escapeHtml(dados&&dados.escalaCia||'')+'" style="font-size:11px"/></div>'+
@@ -11084,7 +11172,8 @@ function _saveOrcamento(){
       tipoIngresso:(g('orc-ingresso-'+i)||{value:''}).value,
       fotoUrl:(g('orc-ing-foto-'+i)||{value:''}).value.trim(),
       // Hotel
-      hotelId:parseInt((g('orc-hotel-sel-'+i)||{value:0}).value)||null,
+      hotelNome:(g('orc-hotel-nome-'+i)||{value:''}).value.trim(),
+      hotelId:null,
       hotelCategoria:(g('orc-hotel-cat-'+i)||{value:''}).value,
       hotelDiarias:parseInt((g('orc-hotel-diarias-'+i)||{value:1}).value)||1,
       hotelQuartos:parseInt((g('orc-hotel-quartos-'+i)||{value:1}).value)||1,
@@ -11167,9 +11256,11 @@ function _saveOrcamento(){
     obj.id=DB.nextOrcamentoId++; obj.criadoEm=(_fbDb&&_fbOnline)?firebase.database.ServerValue.TIMESTAMP:Date.now();
     DB.orcamentos.push(obj); toast('Orçamento #'+obj.id+' criado!');
   }
+  // Capture sync target BEFORE closeModal resets _orcEditId to null
+  var _syncedOrc = _orcEditId
+    ? (DB.orcamentos||[]).find(function(x){return x.id===_orcEditId;})
+    : (DB.orcamentos||[])[DB.orcamentos.length-1];
   saveToStorage(); closeModal('modal-orcamento'); renderOrcamentos();
-  // Sync granular Firebase
-  var _syncedOrc = _orcEditId ? (DB.orcamentos||[]).find(function(x){return x.id===_orcEditId;}) : (DB.orcamentos||[])[DB.orcamentos.length-1];
   if(_syncedOrc) syncOrcamentoFirebase(_syncedOrc);
 }
 
@@ -11553,6 +11644,8 @@ function compartilharLinkOrcamento(id){
   // Save link in orc
   orc.linkCompartilhado = link;
   orc.linkGeradoEm = Date.now();
+  orc.linkExpiraEm = Date.now() + 48*60*60*1000;
+  orc.linkDeleteEm = Date.now() + 7*24*60*60*1000;
   if(!orc.aberturas) orc.aberturas = [];
   saveToStorage();
   // Copy to clipboard
@@ -11567,55 +11660,62 @@ function compartilharLinkOrcamento(id){
 
 // Called on page load — check if URL has ?orc= param
 function _checkOrcamentoLink(){
-  var params = new URLSearchParams(window.location.search);
-  var orcId = parseInt(params.get('orc'));
-  if(!orcId) return;
-  // Register this opening in Firebase
+  var params=new URLSearchParams(window.location.search);
+  var orcId=parseInt(params.get('orc')); if(!orcId) return;
+  history.replaceState({},'',window.location.pathname);
+  // Register in Firebase (no login needed - public read)
   if(_fbDb){
-    var ref = _fbDb.ref('desenrola_v3/orc_views/' + orcId);
-    ref.push({
-      abertoEm: new Date().toISOString(),
-      ts: Date.now(),
-      ua: navigator.userAgent.slice(0,100),
+    _fbDb.ref('desenrola_v3/orc_views/'+orcId).push({
+      abertoEm:new Date().toISOString(),ts:Date.now(),ua:navigator.userAgent.slice(0,100)
     });
   }
-  // After data loads, show the orcamento
-  setTimeout(function(){
-    var orc = (DB.orcamentos||[]).find(function(o){ return o.id===orcId; });
-    if(orc){
-      // Register locally too
-      if(!orc.aberturas) orc.aberturas = [];
-      orc.aberturas.push({abertoEm: new Date().toISOString(), ts: Date.now()});
-      orc.ultimaAbertura = Date.now();
-      saveToStorage();
-      // Show the orcamento view
-      viewOrcamento(orcId);
-      toast('📄 Orçamento #'+orcId+' aberto — a equipe foi notificada!');
+  function _showOrc(orc){
+    // Check 48h expiry
+    var linkTime = orc.linkGeradoEm || orc.criadoEm || 0;
+    if(Date.now()-linkTime > 48*60*60*1000){
+      // Expired — show message
+      var overlay=document.createElement('div');
+      overlay.style.cssText='position:fixed;inset:0;background:#f1f5f9;z-index:99999;display:flex;align-items:center;justify-content:center';
+      overlay.innerHTML='<div style="max-width:480px;background:#fff;border-radius:16px;padding:40px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.1)">'+
+        '<div style="font-size:48px;margin-bottom:16px">⏰</div>'+
+        '<div style="font-family:Anton,sans-serif;font-size:20px;color:#0f2d4e;margin-bottom:8px">Link Expirado</div>'+
+        '<div style="font-size:13px;color:#64748b;line-height:1.6;margin-bottom:20px">Este link expirou após 48 horas. Entre em contato para uma nova proposta.</div>'+
+        '<div style="font-size:12px;color:#2A69A5;font-weight:700">📱 +55 19 9 9988-5575</div>'+
+        '<div style="font-size:12px;color:#2A69A5">✉️ voucher@desenrolaturismo.com.br</div>'+
+        '<div style="font-family:Anton,sans-serif;font-size:13px;color:#2A69A5;margin-top:20px">DESENROLA TURISMO</div>'+
+      '</div>';
+      document.body.appendChild(overlay); return;
     }
-  }, 2000);
-  // Clean URL
-  history.replaceState({}, '', window.location.pathname);
-}
-
-// Check viewing history for an orcamento
-function verAberturasOrcamento(id){
-  var orc = (DB.orcamentos||[]).find(function(o){ return o.id===id; });
-  if(!orc){ toast('Orçamento não encontrado','error'); return; }
-  var aberturas = orc.aberturas || [];
-  // Also check Firebase for real-time data
+    // Valid — ensure orc is in DB and open
+    if(!DB.orcamentos) DB.orcamentos=[];
+    if(!(DB.orcamentos.find(function(o){return o.id===orc.id;})))
+      DB.orcamentos.push(orc);
+    if(!orc.aberturas) orc.aberturas=[];
+    orc.aberturas.push({abertoEm:new Date().toISOString(),ts:Date.now()});
+    orc.ultimaAbertura=Date.now();
+    saveToStorage();
+    viewOrcamento(orc.id||orcId);
+    toast('Orçamento aberto — equipe notificada!','success');
+  }
+  // Try Firebase first (public), then local DB
   if(_fbDb){
-    _fbDb.ref('desenrola_v3/orc_views/' + id).once('value').then(function(snap){
-      var fbViews = [];
-      if(snap.exists()){
-        var raw = snap.val();
-        fbViews = Array.isArray(raw) ? raw : Object.values(raw);
-      }
-      _mostrarModalAberturas(id, orc, fbViews);
+    _fbDb.ref('desenrola_v3/orcamentos/o_'+orcId).once('value').then(function(snap){
+      if(snap&&snap.exists()) _showOrc(snap.val());
+      else setTimeout(function(){
+        var loc=(DB.orcamentos||[]).find(function(o){return o.id===orcId;});
+        if(loc) _showOrc(loc);
+      },2500);
     }).catch(function(){
-      _mostrarModalAberturas(id, orc, []);
+      setTimeout(function(){
+        var loc=(DB.orcamentos||[]).find(function(o){return o.id===orcId;});
+        if(loc) _showOrc(loc);
+      },2500);
     });
   } else {
-    _mostrarModalAberturas(id, orc, []);
+    setTimeout(function(){
+      var loc=(DB.orcamentos||[]).find(function(o){return o.id===orcId;});
+      if(loc) _showOrc(loc);
+    },3000);
   }
 }
 
@@ -12760,7 +12860,7 @@ window.addEventListener('load', init);
 
 <!-- ════════════════════════════════════════════════════════════
      MODAL DRE — Demonstrativo de Resultado do Exercício
-     v3.31 · Desenrola Turismo · uso interno
+     v3.32 · Desenrola Turismo · uso interno
      ════════════════════════════════════════════════════════════ -->
 <div id="modal-dre" class="modal-overlay">
   <div class="modal" style="max-width:900px;width:100%;padding:0;border-radius:16px;overflow:hidden">
@@ -13106,5 +13206,46 @@ function imprimirDRE() {
 }
 </script>
 
+
+<!-- AUTOCOMPLETE DATALISTS -->
+<datalist id="aero-list">
+  <option value="GRU — Guarulhos, São Paulo"/><option value="GIG — Galeão, Rio de Janeiro"/>
+  <option value="BSB — Brasília"/><option value="FOR — Fortaleza"/><option value="SSA — Salvador"/>
+  <option value="REC — Recife"/><option value="CWB — Curitiba"/><option value="POA — Porto Alegre"/>
+  <option value="MCO — Orlando International"/><option value="MIA — Miami International"/>
+  <option value="JFK — Nova York JFK"/><option value="EWR — Nova York Newark"/>
+  <option value="LAX — Los Angeles"/><option value="SFO — São Francisco"/>
+  <option value="ORD — Chicago O'Hare"/><option value="PHL — Philadelphia"/>
+  <option value="ATL — Atlanta"/><option value="DFW — Dallas Fort Worth"/>
+  <option value="CDG — Paris Charles de Gaulle"/><option value="LHR — Londres Heathrow"/>
+  <option value="FCO — Roma Fiumicino"/><option value="MAD — Madrid Barajas"/>
+  <option value="LIS — Lisboa"/><option value="AMS — Amsterdã Schiphol"/>
+  <option value="NRT — Tóquio Narita"/><option value="HND — Tóquio Haneda"/>
+  <option value="SIN — Cingapura"/><option value="DXB — Dubai"/>
+</datalist>
+<datalist id="cia-list">
+  <option value="LATAM"/><option value="Gol"/><option value="Azul"/>
+  <option value="American Airlines"/><option value="Delta"/><option value="United"/>
+  <option value="Air France"/><option value="Iberia"/><option value="TAP Portugal"/>
+  <option value="British Airways"/><option value="Emirates"/><option value="Copa Airlines"/>
+  <option value="Avianca"/><option value="KLM"/>
+</datalist>
+<datalist id="hotel-list"><option value=""/></datalist>
+<datalist id="navio-list">
+  <option value="Disney Magic"/><option value="Disney Wonder"/><option value="Disney Dream"/>
+  <option value="Disney Fantasy"/><option value="Disney Wish"/><option value="Disney Treasure"/>
+  <option value="Disney Adventure"/><option value="Navigator of the Seas"/>
+  <option value="Wonder of the Seas"/><option value="Symphony of the Seas"/>
+  <option value="MSC Seashore"/><option value="Norwegian Bliss"/>
+</datalist>
+<datalist id="transf-list">
+  <option value="MCO — Orlando International"/><option value="MIA — Miami International"/>
+  <option value="Disney Grand Floridian Resort"/><option value="Disney Polynesian Village"/>
+  <option value="Disney Contemporary Resort"/><option value="Disney BoardWalk Resort"/>
+  <option value="Disney Beach Club Resort"/><option value="Disney Animal Kingdom Lodge"/>
+  <option value="Universal Hard Rock Hotel"/><option value="Universal Cabana Bay"/>
+  <option value="Universal Royal Pacific Resort"/><option value="Port Canaveral"/>
+  <option value="Port of Miami"/>
+</datalist>
 </body>
 </html>
