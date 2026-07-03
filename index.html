@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v3.41</title>
+<title>Desenrola Turismo — Sistema de Gestão v3.42</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -31,7 +31,7 @@
   /* ── Text ── */
   --text:#0f2d4e;
   --text2:#4a6280;
-  --text3:#8aa0b8;
+  --text3:#64748b; /* v3.42 (QA-10): contraste AA — antes #8aa0b8 (2,97:1) */
   /* ── Misc ── */
   --border:#c8daea;
   --radius:10px;
@@ -321,7 +321,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v3.41
+    ✦ Desenrola Turismo · v3.42
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -1300,7 +1300,7 @@ tbody tr:hover{background:var(--surface2)}
         <option value="">Carregando...</option>
       </select>
       <input type="text" class="form-input" id="enc-search-f" placeholder="🔍 Buscar..." oninput="debounceCall('enciclopedia',renderEnciclopedia)" style="width:180px"/>
-      <button class="btn btn-acc btn-sm" onclick="openEncAddForTabSis()">+ Adicionar</button>
+      <button class="btn btn-accent btn-sm" onclick="openEncAddForTabSis()">+ Adicionar</button>
     </div>
   </div>
   <div id="enc-grid-f" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px"></div>
@@ -1820,7 +1820,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.41</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.42</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -1844,7 +1844,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.41</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.42</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -2570,6 +2570,22 @@ const NON_SERIALIZABLE = new Set([
 
 // ── Save lock: previne duplo clique ───────────────────────────────────
 const _saveLocks = new Set();
+// Wrappers v3.42 (QA-09) — nomes públicos preservados; internos _v342_*
+function saveDivisao(){ withSaveLock('saveDivisao', function(){ return _v342_saveDivisao(); }); }
+function saveEditRecebimento(){ withSaveLock('saveEditRecebimento', function(){ return _v342_saveEditRecebimento(); }); }
+function saveMeta(){ withSaveLock('saveMeta', function(){ return _v342_saveMeta(); }); }
+function saveVendedor(){ withSaveLock('saveVendedor', function(){ return _v342_saveVendedor(); }); }
+function saveOperadora(){ withSaveLock('saveOperadora', function(){ return _v342_saveOperadora(); }); }
+function salvarSenhaMestre(){ withSaveLock('salvarSenhaMestre', function(){ return _v342_salvarSenhaMestre(); }); }
+function salvarCorteComissoes(){ withSaveLock('salvarCorteComissoes', function(){ return _v342_salvarCorteComissoes(); }); }
+function saveTarefa(){ withSaveLock('saveTarefa', function(){ return _v342_saveTarefa(); }); }
+function salvarDayByDay(){ withSaveLock('salvarDayByDay', function(){ return _v342_salvarDayByDay(); }); }
+function salvarVouchers(){ withSaveLock('salvarVouchers', function(){ return _v342_salvarVouchers(); }); }
+function salvarConteudoEmpresa(){ withSaveLock('salvarConteudoEmpresa', function(){ return _v342_salvarConteudoEmpresa(); }); }
+function salvarDataPV(pvId, data){ withSaveLock('salvarDataPV', function(){ return _v342_salvarDataPV(pvId, data); }); }
+function saveDivEdit(key, label){ withSaveLock('saveDivEdit', function(){ return _v342_saveDivEdit(key, label); }); }
+function salvarCampoConteudo(campo,elId){ withSaveLock('salvarCampoConteudo', function(){ return _v342_salvarCampoConteudo(campo,elId); }); }
+function salvarTemplateCustom(idOriginal){ withSaveLock('salvarTemplateCustom', function(){ return _v342_salvarTemplateCustom(idOriginal); }); }
 function withSaveLock(key, fn){
   if(_saveLocks.has(key)) return;
   _saveLocks.add(key);
@@ -2590,11 +2606,11 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 
 
 // ══════════════════════════════════════════════════════════════
-// BACKUP AUTOMÁTICO — DesenrolaSistema v3.41
+// BACKUP AUTOMÁTICO — DesenrolaSistema v3.42
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v3.41',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v3.42',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_db')||'{}');
   if (_fbDb && _fbOnline) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -2896,7 +2912,7 @@ function promptDivEdit(key, label){
   document.body.appendChild(popup);
   setTimeout(()=>{const inp=g('div-edit-val');if(inp){inp.focus();inp.select();}},50);
 }
-function saveDivEdit(key, label){
+function _v342_saveDivEdit(key, label){
   const inp = g('div-edit-val'); if(!inp) return;
   const n = parseFloat(inp.value);
   if(isNaN(n)||n<0||n>100){ toast('Valor inválido (0-100)','error'); return; }
@@ -3327,7 +3343,7 @@ function openDivisaoModal(id){
   openModal('modal-divisao');
 }
 
-function saveDivisao(){
+function _v342_saveDivisao(){
   const id = DB.editingDivisaoId;
   const v = DB.vendas.find(x=>x.id===id);
   if(!v) return;
@@ -3853,7 +3869,7 @@ function kbApplyOverrides(dataObj, overrides, incluirOcultos) {
 }
 
 // ═══ BLOCO ESPELHADO: BIBLIOTECA KB (Sistema ⇄ GuiD) ═══════════════════
-// Sincronizado em 03/07/2026 — Sistema v3.40 ⇄ GuiD v2.22
+// Sincronizado em 03/07/2026 — Sistema v3.42 ⇄ GuiD v2.23
 // REGRA: qualquer alteração nas funções kb* deve ser replicada no arquivo irmão.
 // ── Busca uma categoria+destino específicos, com cache local versionado ──
 // category: 'attraction'|'hotel'|'restaurant'|'shop'|'character_meet'|'show'|'water_attraction'|'park'|'utility'
@@ -3897,9 +3913,11 @@ async function kbFetch(category, destinoSlug, opts) {
 // ── Ocultar / reexibir um item (não apaga nada, é reversível) ──
 async function kbSetHidden(uuid, hidden, userName) {
   if (!_kbDb) return;
-  await _kbDb.ref('desenrola_kb/overrides/' + uuid).update({
-    hidden: !!hidden, editedBy: userName || 'desconhecido', editedAt: Date.now()
-  });
+  try{
+    await _kbDb.ref('desenrola_kb/overrides/' + uuid).update({
+      hidden: !!hidden, editedBy: userName || 'desconhecido', editedAt: Date.now()
+    });
+  }catch(e){ toast('❌ Falha ao gravar no KB: '+(e.message||e),'warn'); return; }
   kbInvalidateCache();
 }
 
@@ -3910,7 +3928,8 @@ async function kbEditFields(uuid, fieldsObj, userName) {
   Object.keys(fieldsObj).forEach(function (k) { updates['desenrola_kb/overrides/' + uuid + '/fields/' + k] = fieldsObj[k]; });
   updates['desenrola_kb/overrides/' + uuid + '/editedBy'] = userName || 'desconhecido';
   updates['desenrola_kb/overrides/' + uuid + '/editedAt'] = Date.now();
-  await _kbDb.ref().update(updates);
+  try{ await _kbDb.ref().update(updates); }
+  catch(e){ toast('❌ Falha ao gravar no KB: '+(e.message||e),'warn'); return; }
   kbInvalidateCache();
 }
 
@@ -3922,7 +3941,8 @@ async function kbAddCustom(category, destinoSlug, recordData, userName) {
     uuid: uuid, category: category, destino_slug: destinoSlug,
     isCustom: true, addedBy: userName || 'desconhecido', addedAt: Date.now()
   });
-  await _kbDb.ref('desenrola_kb/custom/' + uuid).set(record);
+  try{ await _kbDb.ref('desenrola_kb/custom/' + uuid).set(record); }
+  catch(e){ toast('❌ Falha ao gravar no KB: '+(e.message||e),'warn'); return null; }
   kbInvalidateCache();
   return uuid;
 }
@@ -4236,7 +4256,8 @@ function _kbCopyInfoSis(uuid){
 async function _kbDeleteCustomSis(uuid, tab){
   if(!confirm('Excluir este item personalizado? Itens do Knowledge Base oficial não podem ser excluídos, apenas ocultados.')) return;
   if(!_fbDb) return;
-  await _fbDb.ref('desenrola_kb/custom/'+uuid).remove();
+  try{ await _fbDb.ref('desenrola_kb/custom/'+uuid).remove(); }
+  catch(e){ toast('❌ Falha ao excluir do KB: '+(e.message||e),'warn'); return; }
   kbInvalidateCache();
   toast('Item excluído');
   renderEnciclopedia();
@@ -4482,7 +4503,7 @@ function editarTemplate(id){
   setTimeout(()=>{ const el=g('tpl-edit-titulo'); if(el) el.focus(); },100);
 }
 
-function salvarTemplateCustom(idOriginal){
+function _v342_salvarTemplateCustom(idOriginal){
   const titulo = (g('tpl-edit-titulo')?.value||'').trim();
   const cat    = g('tpl-edit-cat')?.value||'captacao';
   const emoji  = g('tpl-edit-emoji')?.value||'💬';
@@ -5049,7 +5070,7 @@ function editRecebimento(id){
   openModal('modal-edit-recebimento');
 }
 
-function saveEditRecebimento(){
+function _v342_saveEditRecebimento(){
   const id = DB.editingRecebimento;
   const r = DB.recebimentos.find(x=>x.id===id); if(!r) return;
   const valor = parseFloat(g('edit-rec-valor').value)||0;
@@ -5224,7 +5245,7 @@ function openMetaModal(type, key){
   openModal('modal-meta');
 }
 
-function saveMeta(){
+function _v342_saveMeta(){
   const val = parseFloat(g('meta-valor').value)||0;
   if(!val){ toast('Insira um valor válido','error'); return; }
   DB.metas[DB.editingMetaType+'_'+DB.editingMetaKey] = val;
@@ -5472,7 +5493,7 @@ function rebuildFormaSelects(){
   ['v-forma','cx-forma'].forEach(id=>{ const el=g(id); if(el){ const c=el.value; el.innerHTML=opts; if(c) el.value=c; } });
 }
 
-function saveVendedor(){
+function _v342_saveVendedor(){
   const nome = g('vd-nome').value.trim();
   if(!nome){ toast('Nome é obrigatório','error'); return; }
   if(DB.editingVendedor){
@@ -5522,7 +5543,7 @@ function deleteVendedor(id){
   });
 }
 
-function saveOperadora(){
+function _v342_saveOperadora(){
   const nome = g('op-nome').value.trim();
   if(!nome){ toast('Nome é obrigatório','error'); return; }
   if(DB.editingOperadora){
@@ -5582,7 +5603,7 @@ function deleteOperadora(id){
   });
 }
 
-function salvarSenhaMestre(){
+function _v342_salvarSenhaMestre(){
   var u = DB.currentUser;
   if(!u || u.vendedorRef !== 'Thomaz'){ toast('Apenas Thomaz pode alterar a senha mestre','error'); return; }
   var nova = g('cfg-nova-senha-mestre').value.trim();
@@ -5596,7 +5617,7 @@ function salvarSenhaMestre(){
   });
 }
 
-function salvarCorteComissoes(){
+function _v342_salvarCorteComissoes(){
   var el = g('cfg-data-corte');
   if(!el||!el.value){ toast('Selecione um mês válido','error'); return; }
   DB.config.dataCorteComissoes = el.value;
@@ -6653,6 +6674,9 @@ document.addEventListener('keydown', function(e){
     const cdp=g('cal-day-popup');
     const cdb=g('cal-day-backdrop');
     if(cdp) cdp.remove(); if(cdb) cdb.remove();
+    // v3.42 (QA-08): Esc fecha o modal aberto (equivale ao Cancelar)
+    const om=document.querySelector('.modal-overlay.open');
+    if(om && om.id) closeModal(om.id);
   }
 });
 document.addEventListener('click', function(e){
@@ -7047,7 +7071,8 @@ function deleteUsuario(id){
   var nome = u ? u.nome : 'este usuário';
   openConfirm('Excluir '+escapeHtml(nome)+'? Esta ação não pode ser desfeita.',function(){
     DB.usuarios = DB.usuarios.filter(function(x){ return x.id!==id; });
-    if(_fbDb) _fbDb.ref('desenrola_v3/usuarios/u_'+id).remove();
+    if(_fbDb) _fbDb.ref('desenrola_v3/usuarios/u_'+id).remove()
+      .catch(function(e){ toast('⚠️ Falha ao remover no Firebase — o usuário pode reaparecer ao recarregar: '+(e.message||e),'warn'); });
     saveToStorage(); renderUsuarios(); toast('Usuário excluído.','error');
   });
 }
@@ -8504,7 +8529,7 @@ function _injectTarefaModal(){
   g('modal-tarefa').addEventListener('click', function(e){ if(e.target===this) closeModal('modal-tarefa'); });
 }
 
-function saveTarefa(){
+function _v342_saveTarefa(){
   var titulo = (g('tf-titulo')||{}).value.trim();
   var venc   = (g('tf-vencimento')||{}).value;
   if(!titulo) { toast('Título é obrigatório','error'); return; }
@@ -8856,7 +8881,7 @@ function _renderPvCard(pv, today){
 }
 
 // Salvar data de viagem inline no card
-function salvarDataPV(pvId, data){
+function _v342_salvarDataPV(pvId, data){
   var pv = (DB.posVendas||[]).find(function(x){ return x.id===pvId; });
   if(!pv || !data) return;
   pv.dataViagem = data;
@@ -9123,7 +9148,7 @@ function _coletarDxDDias(){
   return dias;
 }
 
-function salvarDayByDay(){
+function _v342_salvarDayByDay(){
   var pv=(DB.posVendas||[]).find(function(x){return x.id===_dxdPvId;});
   if(!pv){toast('Erro: viagem não encontrada','error');return;}
   pv.dayByDay=_coletarDxDDias();
@@ -9454,7 +9479,7 @@ function removerVoucher(idx){
   _renderVouchersList();
 }
 
-async function salvarVouchers(){
+async function _v342_salvarVouchers(){
   var pv=(DB.posVendas||[]).find(function(x){return x.id===_voucherPvId;});
   if(!pv){toast('Erro: viagem não encontrada','error');return;}
 
@@ -10540,6 +10565,17 @@ function _orcClientePick(id, fonte){
 // 'fechado' — orçamento é proposta, não venda concluída; o funil segue vivo.
 function _promoverLeadParaClienteSilencioso(lead){
   if(!DB.clientes) DB.clientes=[];
+  // v3.42 (QA-03): dedupe por telefone normalizado — mesma regra do saveLead
+  var _tel=(lead.telefone||'').replace(/\D/g,'');
+  if(_tel){
+    var _ex=(DB.clientes||[]).find(function(c){ return (c.telefone||'').replace(/\D/g,'')===_tel; });
+    if(_ex){
+      lead.clienteId=_ex.id;
+      saveToStorage();
+      toast('📇 Contato vinculado ao cliente já existente "'+(_ex.nome||_ex.telefone)+'" (mesmo telefone).');
+      return _ex.id;
+    }
+  }
   var partes=((lead.nome||'').trim()).split(' ');
   var obj={
     id: DB.nextClienteId++,
@@ -11489,12 +11525,12 @@ function renderConteudoTab(){
   var qs=g('cnt-quem-somos');if(qs)qs.value=cnt.quemSomos||'';
   var gv=g('cnt-guiamento');if(gv)gv.value=cnt.guiamentoVirtual||'';
 }
-function salvarCampoConteudo(campo,elId){
+function _v342_salvarCampoConteudo(campo,elId){
   if(!DB.conteudo)DB.conteudo={};
   DB.conteudo[campo]=(g(elId)||{}).value||'';
   saveToStorage();toast('✅ Salvo!');
 }
-function salvarConteudoEmpresa(){
+function _v342_salvarConteudoEmpresa(){
   if(!DB.conteudo)DB.conteudo={};if(!DB.conteudo.empresa)DB.conteudo.empresa={};
   var e=DB.conteudo.empresa;
   e.nome=(g('cnt-emp-nome')||{}).value||'';e.razao=(g('cnt-emp-razao')||{}).value||'';
@@ -13051,7 +13087,7 @@ window.addEventListener('load', init);
 
 <!-- ════════════════════════════════════════════════════════════
      MODAL DRE — Demonstrativo de Resultado do Exercício
-     v3.41 · Desenrola Turismo · uso interno
+     v3.42 · Desenrola Turismo · uso interno
      ════════════════════════════════════════════════════════════ -->
 <div id="modal-dre" class="modal-overlay">
   <div class="modal" style="max-width:900px;width:100%;padding:0;border-radius:16px;overflow:hidden">
@@ -13413,13 +13449,6 @@ function imprimirDRE() {
   <option value="LIS — Lisboa"/><option value="AMS — Amsterdã Schiphol"/>
   <option value="NRT — Tóquio Narita"/><option value="HND — Tóquio Haneda"/>
   <option value="SIN — Cingapura"/><option value="DXB — Dubai"/>
-</datalist>
-<datalist id="cia-list">
-  <option value="LATAM"/><option value="Gol"/><option value="Azul"/>
-  <option value="American Airlines"/><option value="Delta"/><option value="United"/>
-  <option value="Air France"/><option value="Iberia"/><option value="TAP Portugal"/>
-  <option value="British Airways"/><option value="Emirates"/><option value="Copa Airlines"/>
-  <option value="Avianca"/><option value="KLM"/>
 </datalist>
 <datalist id="hotel-list"><option value=""/></datalist>
 <datalist id="navio-list">
