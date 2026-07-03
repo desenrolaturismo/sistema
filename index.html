@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v3.36</title>
+<title>Desenrola Turismo — Sistema de Gestão v3.37</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -323,7 +323,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v3.36
+    ✦ Desenrola Turismo · v3.37
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -729,6 +729,14 @@ tbody tr:hover{background:var(--surface2)}
   <div id="reg-tab-ingressos" class="tab-panel" style="display:none">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
       <div class="card"><div class="card-title">🎟️ Tipos de Ingresso</div><div id="tipos-ingresso-list" style="margin-bottom:10px"></div><div style="display:flex;gap:8px"><div style="display:flex;flex-direction:column;gap:4px;flex:1"><input type="text" class="form-input" id="new-tipo-ingresso" placeholder="Nome do tipo (ex: Disney Park Hopper)"/><input type="text" class="form-input" id="new-tipo-ingresso-desc" placeholder="Descrição (ex: Acesso a todos os parques Disney...)" style="font-size:12px"/><div style="display:flex;gap:6px"><input type="text" class="form-input" id="new-tipo-ingresso-foto" placeholder="URL da foto (opcional)" style="font-size:12px"/><button class="btn btn-ghost btn-sm" onclick="_selecionarFotoDrive('new-tipo-ingresso-foto')" title="Selecionar do Drive" style="flex-shrink:0">📁</button></div></div><button class="btn btn-primary btn-sm" onclick="addTipoIngresso()">+</button></div></div>
+      <div class="card"><div class="card-title">🏷️ Tags do Pipeline (CRM)</div>
+        <div id="tags-crm-list" style="margin-bottom:10px;display:flex;flex-wrap:wrap;gap:6px"></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" class="form-input" id="new-tag-nome" placeholder="Nome da tag (ex: VIP, Urgente...)" style="flex:1"/>
+          <input type="color" id="new-tag-cor" value="#2C6AA3" style="width:44px;height:36px;border:1px solid var(--border);border-radius:8px;padding:2px;cursor:pointer"/>
+          <button class="btn btn-primary btn-sm" onclick="addTagCRM()">+</button>
+        </div>
+      </div>
       <div class="card"><div class="card-title">💳 Pagamento por Operadora</div><div id="formas-op-list" style="margin-bottom:10px"></div><div style="display:flex;flex-direction:column;gap:6px"><select class="form-select" id="new-forma-op-sel"><option value="">Operadora...</option></select><input type="text" class="form-input" id="new-forma-op-val" placeholder="Ex: 10x sem juros"/><button class="btn btn-primary btn-sm" onclick="addFormaPagOperadora()">+ Adicionar</button></div></div>
     </div>
   </div>
@@ -1811,7 +1819,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.36</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.37</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -1835,7 +1843,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.36</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.37</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -2557,7 +2565,9 @@ const _saveLocks = new Set();
 function withSaveLock(key, fn){
   if(_saveLocks.has(key)) return;
   _saveLocks.add(key);
-  try { fn(); } finally { setTimeout(function(){ _saveLocks.delete(key); }, 800); }
+  try { fn(); }
+  catch(err){ console.error('[save:'+key+']', err); toast('❌ Erro ao salvar: '+(err&&err.message||err),'error'); }
+  finally { setTimeout(function(){ _saveLocks.delete(key); }, 800); }
 }
 
 // ── Modal de confirmação customizado (substitui confirm() nativo) ─────
@@ -2572,11 +2582,11 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 
 
 // ══════════════════════════════════════════════════════════════
-// BACKUP AUTOMÁTICO — DesenrolaSistema v3.36
+// BACKUP AUTOMÁTICO — DesenrolaSistema v3.37
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v3.36',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v3.37',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_db')||'{}');
   if (_fbDb && _fbOnline) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -3133,7 +3143,7 @@ function _saveVenda(){ invalidateCommCache();
   const venda = {
     id: DB.editingVenda ? DB.editingVenda.id : DB.nextVendaId++,
     data, passageiro,
-    clienteId: clienteId || null,
+    clienteId: _cliIdSV2 || null,
     destino: g('v-destino').value,
     servicos,
     pax: parseInt(g('v-pax').value)||1,
@@ -5321,6 +5331,7 @@ function switchRegTab(tab, btn){
 // ═══════════════════════ CONFIG ═══════════════════════
 function renderConfig(){
   const cfg = DB.config;
+  renderTagsCRM();
   renderConfigList('destinos', cfg.destinos, '🗺️');
   renderConfigList('servicos', cfg.servicos, '🎟');
   renderConfigList('categorias', cfg.categorias, '💰');
@@ -7045,11 +7056,122 @@ const CRM_STAGES = [
 
 let dragLeadId = null;
 
+// ══ CRM: automações de etapas, aging visual, arquivo e alertas ══════════════
+function _leadTouch(lead){ lead.atualizadoEm=new Date().toISOString(); }
+function _leadIdadeDias(lead){
+  var ref=lead.atualizadoEm||lead.stageChangedAt||lead.criadoEm;
+  if(!ref) return 0;
+  return Math.floor((Date.now()-new Date(ref).getTime())/86400000);
+}
+function _leadAgingStyle(lead){
+  if(lead.stage==='pos_venda'||lead.stage==='perdido') return '';
+  var d=_leadIdadeDias(lead);
+  if(d>=6) return 'background:#fee2e2;border-left:3px solid #dc2626;';
+  if(d>=4) return 'background:#ffedd5;border-left:3px solid #ea580c;';
+  if(d>=2) return 'background:#fef3c7;border-left:3px solid #f59e0b;';
+  return '';
+}
+function _leadDeveArquivar(lead){
+  if(lead.stage!=='pos_venda'&&lead.stage!=='perdido') return false;
+  var ref=lead.stageChangedAt||lead.atualizadoEm||lead.criadoEm;
+  return ref && (Date.now()-new Date(ref).getTime())>30*86400000;
+}
+
+function _criarTarefaAuto(titulo, vencDate, tipoKey, lead){
+  if(!DB.tarefas) DB.tarefas=[];
+  var venc = vencDate.toISOString().split('T')[0];
+  // dedupe: mesma tarefa aberta p/ mesmo lead
+  if(DB.tarefas.some(function(t){ return t.leadId===lead.id && t.titulo===titulo && t.status!=='concluida'; })) return;
+  var obj={ id:DB.nextTarefaId++, titulo:titulo, descricao:'Gerada automaticamente pelo Pipeline',
+    vencimento:venc, tipo:tipoKey, prioridade:'media',
+    responsavel:lead.vendedor||'', leadId:lead.id, status:'pendente', criadoEm:Date.now() };
+  DB.tarefas.push(obj);
+  if(!DB.calendario) DB.calendario=[];
+  DB.calendario.push({ id:DB.nextCalId++, data:venc, hora:'',
+    titulo:(TAREFA_TIPOS[tipoKey]||TAREFA_TIPOS.outro).emoji+' [Tarefa] '+titulo,
+    tipo:'lembrete', desc:'Responsável: '+(lead.vendedor||'—'), leadId:lead.id, tarefaId:obj.id });
+}
+
+function _crmDataViagemDoLead(lead){
+  var hoje=new Date().toISOString().split('T')[0];
+  var pv=(DB.posVendas||[]).filter(function(p){ return p.clienteId===lead.clienteId && p.dataViagem && p.dataViagem>=hoje; })
+    .sort(function(a,b){ return a.dataViagem>b.dataViagem?1:-1; })[0];
+  if(pv) return pv.dataViagem;
+  var vd=(DB.vendas||[]).filter(function(v){ return (v.clienteId===lead.clienteId||v.leadId===lead.id) && v.dataViagem && v.dataViagem>=hoje; })
+    .sort(function(a,b){ return a.dataViagem>b.dataViagem?1:-1; })[0];
+  return vd?vd.dataViagem:null;
+}
+
+function _crmAutomacoes(lead, stage){
+  var nome=(lead.nome||lead.telefone||'').trim();
+  function em(dias){ var d=new Date(); d.setDate(d.getDate()+dias); return d; }
+  if(stage==='qualificado'){
+    _criarTarefaAuto('Montar cotação ('+nome+')', em(1), 'proposta', lead);
+    toast('📋 Tarefa criada: Montar cotação — amanhã');
+  } else if(stage==='proposta'){
+    _criarTarefaAuto('Follow up ('+nome+')', em(2), 'followup', lead);
+    toast('🎯 Tarefa criada: Follow up — em 2 dias');
+  } else if(stage==='fechado'){
+    _criarTarefaAuto('Envio de vouchers ('+nome+')', em(1), 'outro', lead);
+    toast('📝 Tarefa criada: Envio de vouchers — amanhã');
+  } else if(stage==='pos_venda'){
+    _criarTarefaAuto('Up-sell ('+nome+')', em(7), 'posvenda', lead);
+    _criarTarefaAuto('Envio de Brindes ('+nome+')', em(15), 'posvenda', lead);
+    _criarTarefaAuto('Marcar reunião de pré-embarque e dúvidas ('+nome+')', em(30), 'posvenda', lead);
+    var dv=_crmDataViagemDoLead(lead);
+    if(dv){
+      var base=new Date(dv+'T12:00:00');
+      function antes(n){ var d=new Date(base); d.setDate(d.getDate()-n); return d; }
+      var hoje=new Date(); hoje.setHours(0,0,0,0);
+      if(antes(10)>=hoje) _criarTarefaAuto('Reunião de Pré-embarque ('+nome+')', antes(10), 'posvenda', lead);
+      if(antes(2) >=hoje) _criarTarefaAuto('Últimos Lembretes ('+nome+')', antes(2), 'posvenda', lead);
+      if(antes(1) >=hoje) _criarTarefaAuto('Enviar Boa Viagem ('+nome+')', antes(1), 'posvenda', lead);
+      toast('⭐ 6 tarefas de pós-venda criadas (série + datas da viagem)');
+    } else {
+      toast('⭐ 3 tarefas de pós-venda criadas · vincule a viagem p/ tarefas D-10/D-2/D-1','warn');
+    }
+  }
+}
+
+function _crmAlertasAtraso(){
+  var hoje=new Date().toISOString().split('T')[0];
+  var atrasados=(DB.crm||[]).filter(function(l){
+    return l.stage!=='pos_venda'&&l.stage!=='perdido'&&!_leadDeveArquivar(l)&&_leadIdadeDias(l)>=6;
+  });
+  var el=g('crm-alertas-banner'); if(!el) return;
+  if(!atrasados.length){ el.innerHTML=''; return; }
+  var porVend={};
+  atrasados.forEach(function(l){ var v=l.vendedor||'(sem vendedor)'; porVend[v]=(porVend[v]||0)+1; });
+  var eu=DB.currentUser&&(DB.currentUser.vendedorRef||DB.currentUser.nome)||'';
+  var html='';
+  if(isVendedor()){
+    var meus=porVend[eu]||0;
+    if(meus) html='<div style="background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;margin-bottom:10px">🔔 Você tem '+meus+' card(s) parado(s) há 6+ dias no pipeline — atualize-os!</div>';
+  } else {
+    var lista=Object.keys(porVend).map(function(v){ return v+' ('+porVend[v]+')'; }).join(' · ');
+    html='<div style="background:#fef3c7;border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;margin-bottom:10px">🚨 Vendedores com cards em atraso (6+ dias): '+escapeHtml(lista)+'</div>';
+  }
+  el.innerHTML=html;
+  // Aviso 1×/dia via toast
+  var k='crmAlerta_'+hoje+'_'+eu;
+  try{ if(html && !localStorage.getItem(k)){ localStorage.setItem(k,'1'); toast(isVendedor()?'🔔 Cards em atraso no seu pipeline':'🚨 Há vendedores com cards em atraso','warn'); } }catch(e){}
+}
+
+function crmRestaurarLead(id){
+  var l=(DB.crm||[]).find(function(x){return x.id===id;}); if(!l) return;
+  _leadTouch(l); l.stageChangedAt=new Date().toISOString();
+  saveToStorage(); toast('↩️ Card restaurado ao pipeline'); renderCRM();
+}
+
+var _crmViewArquivo=false;
+function crmToggleArquivo(){ _crmViewArquivo=!_crmViewArquivo; renderCRM(); }
+
 function getLeadsFiltrados(){
   const u = DB.currentUser;
   const search = (g('crm-search')||{}).value||'';
   const filterVend = (g('crm-filter-vendedor')||{}).value||'all';
   return DB.crm.filter(lead=>{
+    if(!_crmViewArquivo && _leadDeveArquivar(lead)) return false;
     if(isVendedor() && lead.vendedor !== u.vendedorRef) return false;
     if(filterVend!=='all' && lead.vendedor!==filterVend) return false;
     if(search && !((lead.nome||'')+(lead.telefone||'')).toLowerCase().includes(search.toLowerCase())) return false;
@@ -7060,8 +7182,49 @@ function getLeadsFiltrados(){
 function renderCRM(){
   populateCrmVendedorFilter();
   const board = g('crm-board'); if(!board) return;
+  // Banner de alertas (slot dinâmico acima do board)
+  var _bn=g('crm-alertas-banner');
+  if(!_bn){ _bn=document.createElement('div'); _bn.id='crm-alertas-banner'; board.parentNode.insertBefore(_bn, board); }
+  _crmAlertasAtraso();
+  // Botão Arquivo (slot ao lado do banner)
+  var _arqN=(DB.crm||[]).filter(_leadDeveArquivar).length;
+  var _ab=g('crm-arquivo-btn');
+  if(!_ab){ _ab=document.createElement('div'); _ab.id='crm-arquivo-btn'; _ab.style.cssText='margin-bottom:8px'; board.parentNode.insertBefore(_ab, board); }
+  _ab.innerHTML='<button class="btn btn-ghost btn-sm" onclick="crmToggleArquivo()" style="font-size:12px">'+
+    (_crmViewArquivo?'⬅️ Voltar ao Pipeline':'🗄️ Arquivo ('+_arqN+')')+'</button>';
   const leads = getLeadsFiltrados();
   board.innerHTML='';
+  // ── VIEW ARQUIVO: lista com label da etapa original ──
+  if(_crmViewArquivo){
+    var arq=(DB.crm||[]).filter(_leadDeveArquivar).filter(function(l){
+      return !(isVendedor() && l.vendedor!==DB.currentUser.vendedorRef);
+    });
+    var oldBar=document.getElementById('crm-summary-bar'); if(oldBar) oldBar.remove();
+    if(!arq.length){
+      board.innerHTML='<div class="card" style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text3)">'+
+        '<div style="font-size:48px;margin-bottom:12px">🗄️</div>'+
+        '<div style="font-size:15px;font-weight:700;margin-bottom:8px">Arquivo vazio</div>'+
+        '<p>Cards em Pós-Venda ou Perdido são arquivados automaticamente após 30 dias.</p></div>';
+      return;
+    }
+    board.innerHTML='<div style="grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">'+
+      arq.map(function(l){
+        var st=CRM_STAGES.find(function(x){return x.id===l.stage;})||{label:l.stage,color:'#64748b',emoji:'📦'};
+        return '<div class="card" style="padding:12px;border-left:3px solid '+st.color+'">'+
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'+
+            '<span style="font-weight:800;font-size:13px">'+escapeHtml(l.nome||l.telefone||'—')+'</span>'+
+            '<span style="background:'+st.color+'22;color:'+st.color+';border-radius:8px;padding:1px 8px;font-size:10px;font-weight:800">'+st.emoji+' '+st.label+'</span>'+
+          '</div>'+
+          '<div style="font-size:11px;color:var(--text3)">📱 '+escapeHtml(l.telefone||'—')+(l.vendedor?' · 👤 '+escapeHtml(l.vendedor):'')+'</div>'+
+          '<div style="font-size:10px;color:var(--text3);margin-top:2px">Arquivado — '+_leadIdadeDias(l)+'d desde a etapa final</div>'+
+          '<div style="margin-top:8px;display:flex;gap:6px">'+
+            '<button class="btn btn-ghost btn-sm" onclick="editLead('+l.id+')">✏️</button>'+
+            '<button class="btn btn-ghost btn-sm" onclick="crmRestaurarLead('+l.id+')" title="Restaurar ao pipeline">↩️ Restaurar</button>'+
+          '</div>'+
+        '</div>';
+      }).join('')+'</div>';
+    return;
+  }
   const totalLeads = leads.length;
   const badge = g('crm-total-badge');
   if(badge){
@@ -7134,7 +7297,11 @@ function renderLeadCard(lead){
   const nextStage = CRM_STAGES[curStageIdx+1];
   const nextLabel = nextStage ? `➡️ ${nextStage.emoji} ${nextStage.label}` : '✅ Finalizado';
   const origem = lead.origem ? `<span style="font-size:9px;background:var(--surface2);border-radius:4px;padding:1px 5px;color:var(--text3);margin-left:4px">${lead.origem}</span>` : '';
-  return `<div class="kanban-card" draggable="true" title="Arraste para mover entre etapas"
+  const agingStyle=_leadAgingStyle(lead);
+  const tagsCfg=(DB.config&&DB.config.tagsCRM)||[];
+  const tagsHtml=(lead.tags||[]).map(n=>{const t=tagsCfg.find(x=>x.nome===n);const c=t?t.cor:'#64748b';
+    return `<span style="background:${c}22;color:${c};border:1px solid ${c}55;border-radius:10px;padding:0 7px;font-size:9px;font-weight:800">${escapeHtml(n)}</span>`;}).join('');
+  return `<div class="kanban-card" draggable="true" title="Arraste para mover entre etapas" style="${agingStyle}"
     ondragstart="dragLeadId=${lead.id};this.classList.add('dragging')"
     ondragend="this.classList.remove('dragging')">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
@@ -7142,6 +7309,7 @@ function renderLeadCard(lead){
       <span style="font-size:11px;opacity:0.35;cursor:grab" title="Arraste para mover">⠿</span>
     </div>
     <div class="card-phone">📱 ${escapeHtml(lead.telefone)||'—'} ${origem}</div>
+    ${tagsHtml?`<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px">${tagsHtml}</div>`:''}
     ${lead.vendedor?`<div class="card-vendedor">👤 ${lead.vendedor}</div>`:''}
     ${lead.destino?`<div style="font-size:10px;color:var(--text2);margin-top:2px">🗺️ ${lead.destino}${lead.pax&&lead.pax>1?' · '+lead.pax+' pax':''}${lead.criancas?'+'+lead.criancas+'cri':''}</div>`:''}
     ${lead.budget?`<div style="font-size:10px;color:var(--success);margin-top:1px">💰 ${escapeHtml(lead.budget)}</div>`:''}
@@ -7259,9 +7427,7 @@ function updateMoveExtraFields(id){
         '<select class="form-select mf-orc-id-sel"><option value="">Selecione...</option>'+orcOpts3+'</select></div>';
 
   } else if(target==='pos_venda'){
-    extra='<div class="form-group"><label class="form-label">Pós-Venda</label>'+
-      '<p style="font-size:12px;color:var(--text3)">Um lembrete de pós-venda será criado na agenda para daqui a 15 dias com checklist de contato.</p></div>';
-
+    // Série de tarefas de pós-venda criada via _crmAutomacoes (moveLeadToStage)
   } else if(target==='perdido'){
     var motivos=['Preço','Comprou com concorrente','Sem retorno','Cliente desistiu','Orçamento acima do esperado','Outro'];
     extra='<div class="form-group"><label class="form-label">Motivo da perda *</label>'+
@@ -7314,6 +7480,7 @@ function confirmMoveLead(){
     // Avançar lead para fechado e abrir formulário de venda pré-preenchido
     // BUGFIX: usar lead.stage (campo que renderCRM usa), não lead.etapa
     lead.stage='fechado'; lead.stageChangedAt=new Date().toISOString(); lead.fechadoEm=new Date().toISOString();
+    _leadTouch(lead); _crmAutomacoes(lead,'fechado');
     saveToStorage(); closeModal('modal-move-lead'); renderCRM();
     _crmLeadId = id; // guardar contexto para vincular venda ao lead
     _abrirVendaDoCRM(cli, orc, lead);
@@ -7321,26 +7488,7 @@ function confirmMoveLead(){
     // Venda aberta via modal (ver _abrirVendaDoCRM)
 
   } else if(target==='pos_venda'){
-    var d=new Date(); d.setDate(d.getDate()+15);
-    if(!DB.calendario) DB.calendario=[];
-    // Verificar se já existe lembrete de pós-venda para este lead
-    var existente=DB.calendario.find(function(e){ return e.leadId===lead.id && e.tipo==='pesquisa'; });
-    if(existente){
-      // Atualizar data do existente em vez de criar duplicata
-      existente.data=d.toISOString().split('T')[0];
-      toast('📅 Lembrete de pós-venda atualizado para 15 dias!');
-    } else {
-    DB.calendario.push({
-      id:DB.nextCalId++,
-      data:d.toISOString().split('T')[0],
-      hora:'10:00',
-      titulo:'⭐ Pós-Venda — '+escapeHtml(lead.nome||lead.telefone),
-      tipo:'pesquisa', leadId:lead.id,
-      desc:'□ Tentativa de upsell\n□ Tirou dúvidas do cliente\n□ Confirmou recebimento dos vouchers\n□ Enviou os brindes',
-      vendedor:lead.vendedor||''
-    });
-    toast('📅 Lembrete de pós-venda agendado para 15 dias!');
-    } // end else (existente)
+    // Tarefas de pós-venda criadas via _crmAutomacoes
 
   } else if(target==='perdido'){
     var motivo=gv('mf-motivo');
@@ -7355,6 +7503,8 @@ function confirmMoveLead(){
 function moveLeadToStage(lead, targetStage){
   lead.stage=targetStage;
   lead.stageChangedAt=new Date().toISOString();
+  _leadTouch(lead);
+  _crmAutomacoes(lead, targetStage);
   saveToStorage();
   renderCRM();
   if(targetStage==='fechado') renderVendas();
@@ -7446,7 +7596,11 @@ function buildLeadForm(lead, stage){
       </div>
     </div>
 
-    <div class="form-group"><label class="form-label">OBS / Notas / Restrições</label><textarea class="form-textarea" id="lf-obs" rows="2">${lead?escapeHtml(lead.obs||""):""}</textarea></div>
+    <div class="form-group"><label class="form-label">🏷️ Tags</label>
+        <div id="lf-tags-wrap" style="display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;min-height:38px">
+          ${((DB.config&&DB.config.tagsCRM)||[]).map(t=>`<label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;background:${(lead&&lead.tags||[]).includes(t.nome)?t.cor:'#fff'};color:${(lead&&lead.tags||[]).includes(t.nome)?'#fff':t.cor};border:1px solid ${t.cor};border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700"><input type="checkbox" class="lf-tag" value="${escapeHtml(t.nome)}" ${(lead&&lead.tags||[]).includes(t.nome)?'checked':''} style="display:none" onchange="var on=this.checked;this.parentNode.style.background=on?'${t.cor}':'#fff';this.parentNode.style.color=on?'#fff':'${t.cor}'">${escapeHtml(t.nome)}</label>`).join('')||'<span style=\'color:var(--text3);font-size:11px\'>Crie tags em Registros → Tags do Pipeline</span>'}
+        </div></div>
+      <div class="form-group"><label class="form-label">OBS / Notas / Restrições</label><textarea class="form-textarea" id="lf-obs" rows="2">${lead?escapeHtml(lead.obs||""):""}</textarea></div>
     <input type="hidden" id="lf-stage" value="${stage||'lead'}"/>`;
   g('lead-form-fields').innerHTML=html;
   if(isVendedor()){
@@ -7477,16 +7631,32 @@ function _saveLead(){
       lead.origem=_gv('lf-origem'); lead.destino=_gv('lf-destino');
       lead.pax=parseInt(_gv('lf-pax'))||1; lead.obs=_gv('lf-obs');
       Object.assign(lead, perfil);
+      lead.tags=[].slice.call(document.querySelectorAll('.lf-tag:checked')).map(function(c){return c.value;});
       lead.atualizadoEm=new Date().toISOString();
     }
     toast('Lead atualizado!');
   } else {
+    var _novoLeadId = DB.nextCrmId++;
+    // Todo novo lead cria um Contato (cliente tipo 'contato'), reutilizando por telefone
+    var _telNorm = telefone.replace(/\D/g,'');
+    var _cliExist = (DB.clientes||[]).find(function(c){ return (c.telefone||'').replace(/\D/g,'')===_telNorm && _telNorm; });
+    var _contatoId;
+    if(_cliExist){ _contatoId=_cliExist.id; }
+    else {
+      if(!DB.clientes) DB.clientes=[];
+      _contatoId = DB.nextClienteId ? DB.nextClienteId++ : Date.now();
+      DB.clientes.push({ id:_contatoId, tipo:'contato', origem:'CRM',
+        nome:_gv('lf-nome')||telefone, sobrenome:'', telefone:telefone,
+        criadoEm:new Date().toISOString() });
+      _atualizarSelectsClientes();
+    }
     DB.crm.push({
-      id:DB.nextCrmId++, telefone, nome:_gv('lf-nome'),
+      id:_novoLeadId, clienteId:_contatoId, telefone, nome:_gv('lf-nome'),
       vendedor:isVendedor()?(DB.currentUser.vendedorRef||''):vendedor,
       origem:_gv('lf-origem'), destino:_gv('lf-destino'),
       pax:parseInt(_gv('lf-pax'))||1, obs:_gv('lf-obs'),
       ...perfil,
+      tags:[].slice.call(document.querySelectorAll('.lf-tag:checked')).map(function(c){return c.value;}),
       stage, stageChangedAt:new Date().toISOString(),
       criadoEm:new Date().toISOString(), atualizadoEm:new Date().toISOString()
     });
@@ -7812,7 +7982,7 @@ function _atualizarBadgesCRM(){
 }
 
 // ──────────────────────────────────────────────────────────────
-// SISTEMA DE TAREFAS — v3.36
+// SISTEMA DE TAREFAS — v3.37
 // Tarefas vinculadas a cards do Pipeline CRM
 // Integração: Calendário + Notificações Pop-up
 // ──────────────────────────────────────────────────────────────
@@ -7825,7 +7995,7 @@ const TAREFA_PRIORIDADES = {
 
 
 // ══════════════════════════════════════════════════════════════
-// SISTEMA v3.36 — Novas funcionalidades
+// SISTEMA v3.37 — Novas funcionalidades
 // 1. Viagens: sub-tab Arquivados (auto-arquivo 30d após retorno)
 // 2. Clientes: link Drive
 // 3. Venda: vinculação obrigatória a Cliente
@@ -7989,7 +8159,7 @@ function _populateTarefaVendFilter(){
 }
 
 // ══════════════════════════════════════════════════════════════
-// TAREFAS — redesign completo v3.36
+// TAREFAS — redesign completo v3.37
 // Inspirado em Pipedrive / HubSpot best practices
 // Tipos de atividade, resultado ao concluir, dashboard, view modes
 // ══════════════════════════════════════════════════════════════
@@ -8001,6 +8171,7 @@ var TAREFA_TIPOS = {
   reuniao:  { emoji:'🤝', label:'Reunião',   cor:'#d97706' },
   proposta: { emoji:'📋', label:'Proposta',  cor:'#0891b2' },
   followup: { emoji:'🎯', label:'Follow-up', cor:'#c0392b' },
+  posvenda: { emoji:'⭐', label:'Pós-Venda', cor:'#6c4ba0' },
   outro:    { emoji:'📝', label:'Outro',     cor:'#64748b' },
 };
 
@@ -8408,7 +8579,7 @@ function _extrairDataViagem(venda){
   return '';
 }
 
-// FIX v3.36: corrige etapas de cards existentes que foram criados com nome errado
+// FIX v3.37: corrige etapas de cards existentes que foram criados com nome errado
 function _corrigirEtapasExistentes(){
   if(!DB.posVendas || !DB.posVendas.length) return;
   var _rePassageiro = /^passageiro(\s*#?\d+)?$/i;
@@ -8431,7 +8602,7 @@ function _corrigirEtapasExistentes(){
       changed++;
     }
   });
-  if(changed > 0){ saveToStorage(); console.log('[v3.36] Corrigidas ' + changed + ' etapas de viagem.'); }
+  if(changed > 0){ saveToStorage(); console.log('[v3.37] Corrigidas ' + changed + ' etapas de viagem.'); }
 }
 
 
@@ -9264,6 +9435,21 @@ async function exportarPDFConsolidado(){
   var dias=pv.dayByDay||[], vouchers=pv.vouchers||[];
   if(!dias.length&&!vouchers.length){toast('Adicione Day-by-Day ou Vouchers primeiro','warn');return;}
   toast('\u23f3 Gerando PDF...','warn');
+  // Pré-carregar vouchers PDF do Drive → dataURL (para renderizar TODAS as páginas via pdf.js)
+  if(_driveToken && Date.now()<_driveTokenExpiry){
+    var _pend=[];
+    vouchers.forEach(function(v){
+      if(v.dataUrl) return;
+      var did=v.driveId||(v.driveLink&&((v.driveLink.match(/\/d\/([a-zA-Z0-9_-]+)/)||v.driveLink.match(/[?&]id=([a-zA-Z0-9_-]+)/)||[])[1]))||'';
+      var isPdf=/\.pdf$/i.test(v.nome||'')||v.mime==='application/pdf';
+      if(!did||!isPdf) return;
+      _pend.push(fetch('https://www.googleapis.com/drive/v3/files/'+did+'?alt=media',{headers:{Authorization:'Bearer '+_driveToken}})
+        .then(function(r){ if(!r.ok) throw 0; return r.blob(); })
+        .then(function(b){ if(b.size>15*1024*1024) throw 0; return new Promise(function(res){ var fr=new FileReader(); fr.onload=function(){ v._tmpDataUrl=fr.result; res(); }; fr.onerror=function(){res();}; fr.readAsDataURL(b); }); })
+        .catch(function(){}));
+    });
+    if(_pend.length){ await Promise.all(_pend); }
+  }
   var fmtBR=function(sv){if(!sv)return'\u2014';var p=sv.split('-');return(p[2]||'')+'/'+(p[1]||'')+'/'+(p[0]||'');};
 
   var dxdHTML=dias.map(function(d,i){
@@ -9287,6 +9473,8 @@ async function exportarPDFConsolidado(){
       '\ud83c\udfab '+escapeHtml(v.tipo||'Voucher')+(v.nome?' \u2014 <span style="font-size:10px;opacity:.7">'+escapeHtml(v.nome)+'</span>':'')+
     '</div>';
     var corpo='';
+    var _du=v.dataUrl||v._tmpDataUrl;
+    if(_du){ v={...v, dataUrl:_du}; }
     if(v.dataUrl){
       if(/^data:image\//i.test(v.dataUrl)){
         corpo='<div style="border:1px solid #2A69A5;border-top:none;border-radius:0 0 8px 8px;overflow:hidden">'+
@@ -9352,12 +9540,20 @@ async function exportarPDFConsolidado(){
       'pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";'+
       'Object.keys(_pdfMap).forEach(function(k){'+
         'var data=window["_pdf_"+k];if(!data)return;'+
-        'pdfjsLib.getDocument(data).promise.then(function(pdf){return pdf.getPage(1);}).then(function(page){'+
-          'var canvas=document.getElementById("pdfCanvas_"+k);if(!canvas)return;'+
-          'var vp=page.getViewport({scale:2});canvas.height=vp.height;canvas.width=vp.width;'+
-          'page.render({canvasContext:canvas.getContext("2d"),viewport:vp}).promise.then(function(){'+
-            'var msg=document.getElementById("pdfMsg_"+k);if(msg)msg.remove();'+
-          '});'+
+        'pdfjsLib.getDocument(data).promise.then(function(pdf){'+
+          'var wrap=document.getElementById("pdfWrap_"+k);'+
+          'var first=document.getElementById("pdfCanvas_"+k);'+
+          'function rp(n){'+
+            'return pdf.getPage(n).then(function(page){'+
+              'var canvas=(n===1&&first)?first:document.createElement("canvas");'+
+              'if(n>1){canvas.style.cssText="width:100%;display:block;border-top:1px dashed #cbd5e1";if(wrap)wrap.appendChild(canvas);}'+
+              'var vp=page.getViewport({scale:2});canvas.height=vp.height;canvas.width=vp.width;'+
+              'return page.render({canvasContext:canvas.getContext("2d"),viewport:vp}).promise;'+
+            '});'+
+          '}'+
+          'var chain=Promise.resolve();'+
+          'for(var n=1;n<=pdf.numPages;n++){(function(nn){chain=chain.then(function(){return rp(nn);});})(n);}'+
+          'chain.then(function(){var msg=document.getElementById("pdfMsg_"+k);if(msg)msg.remove();});'+
         '});'+
       '});'+
     '}<\/script>';
@@ -9776,10 +9972,12 @@ function deleteCliente(id){
 function _atualizarSelectsClientes(){
   document.querySelectorAll('#orc-cliente').forEach(function(sel){
     var cur=sel.value;
-    sel.innerHTML='<option value="">Selecione o cliente...</option>'+
-      (DB.clientes||[]).map(function(cli){
-        return '<option value="'+cli.id+'">'+escapeHtml(cli.nome+' '+cli.sobrenome)+'</option>';
-      }).join('');
+    var contatos=(DB.clientes||[]).filter(function(c){return c.tipo==='contato';});
+    var clientes=(DB.clientes||[]).filter(function(c){return c.tipo!=='contato';});
+    function opt(c){ return '<option value="'+c.id+'">'+escapeHtml((c.nome+' '+(c.sobrenome||'')).trim())+(c.telefone?' · '+escapeHtml(c.telefone):'')+'</option>'; }
+    sel.innerHTML='<option value="">Selecionar contato ou cliente...</option>'+
+      (contatos.length?'<optgroup label="📇 Contatos (CRM)">'+contatos.map(opt).join('')+'</optgroup>':'')+
+      '<optgroup label="👤 Clientes">'+clientes.map(opt).join('')+'</optgroup>';
     if(cur) sel.value=cur;
   });
 }
@@ -10570,8 +10768,20 @@ function _selFotoN(btn){
 function _selFoto(prefix, idx, suffix){
   _selecionarFotoDrive(prefix + idx + suffix);
 }
+function _dvContextoDoCampo(fieldId){
+  var m;
+  if((m=/^orc-ing-foto-\d+$/.exec(fieldId))||fieldId==='new-tipo-ingresso-foto')
+    return {parts:['Servi\u00e7os','Ingressos'], label:'Servi\u00e7os / Ingressos'};
+  if(/^orc-hotel-foto[1-3]-\d+$/.test(fieldId)||/^hc-foto/.test(fieldId))
+    return {parts:['Servi\u00e7os','Hotel'], label:'Servi\u00e7os / Hotel'};
+  if(/^orc-cruz-foto[01]-\d+$/.test(fieldId))
+    return {parts:['Servi\u00e7os','Cruzeiro'], label:'Servi\u00e7os / Cruzeiro'};
+  return {parts:[], label:''}; // raiz Desenrola Turismo
+}
+
 function _selecionarFotoDrive(fieldId){
   window._currentFotoFieldId = fieldId;
+  window._dvCtx = _dvContextoDoCampo(fieldId);
   var driveOk = _driveToken && Date.now() < _driveTokenExpiry;
   var ex=g('_m-sel-foto'); if(ex) ex.remove();
   var m=document.createElement('div'); m.id='_m-sel-foto';
@@ -10622,32 +10832,52 @@ var _dvParents = null;      // [idRaiz, ...idsSubpastas nível 1]
 var _dvFolderLabel = '';
 
 function _dvResolverPasta(){
-  if(_dvParents) return Promise.resolve(_dvParents);
+  var ctx=window._dvCtx||{parts:[],label:''};
+  var key=(ctx.parts||[]).join('/')||'__root__';
+  window._dvCache=window._dvCache||{};
+  if(window._dvCache[key]) return Promise.resolve(window._dvCache[key]);
   var H={headers:{Authorization:'Bearer '+_driveToken}};
-  var qRoot="name='"+DRIVE_ROOT_FOLDER+"' and mimeType='application/vnd.google-apps.folder' and trashed=false";
-  return fetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(qRoot)+'&fields=files(id,name)&pageSize=1',H)
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var root=(d.files||[])[0];
-      if(!root){ _dvParents=[]; _dvFolderLabel=''; return _dvParents; }
-      _dvFolderLabel=root.name;
-      var qSub="'"+root.id+"' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false";
+  function achar(nome,parent){
+    var q="name='"+nome.replace(/'/g,"\\'")+"' and mimeType='application/vnd.google-apps.folder' and trashed=false"+(parent?" and '"+parent+"' in parents":"");
+    return fetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id,name)&pageSize=1',H)
+      .then(function(r){return r.json();}).then(function(d){return (d.files||[])[0]||null;});
+  }
+  function criar(nome,parent){
+    return fetch('https://www.googleapis.com/drive/v3/files?fields=id',{method:'POST',
+      headers:{Authorization:'Bearer '+_driveToken,'Content-Type':'application/json'},
+      body:JSON.stringify({name:nome,mimeType:'application/vnd.google-apps.folder',parents:parent?[parent]:undefined})
+    }).then(function(r){return r.json();}).then(function(d){return {id:d.id,name:nome};});
+  }
+  function garantir(nome,parent){
+    return achar(nome,parent).then(function(f){ return f||criar(nome,parent); });
+  }
+  return achar('Desenrola Turismo',null).then(function(root){
+    if(!root){ var out={parents:[],label:''}; window._dvCache[key]=out; return out; }
+    var chain=Promise.resolve(root);
+    (ctx.parts||[]).forEach(function(p){
+      chain=chain.then(function(cur){ return garantir(p,cur.id); });
+    });
+    return chain.then(function(final){
+      var qSub="'"+final.id+"' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false";
       return fetch('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(qSub)+'&fields=files(id)&pageSize=100',H)
         .then(function(r){return r.json();})
         .then(function(d2){
-          _dvParents=[root.id].concat((d2.files||[]).map(function(x){return x.id;}));
-          return _dvParents;
+          var out={parents:[final.id].concat((d2.files||[]).map(function(x){return x.id;})),
+                   label:'Desenrola Turismo'+((ctx.parts||[]).length?' / '+ctx.parts.join(' / '):'')};
+          window._dvCache[key]=out; return out;
         });
-    }).catch(function(){ _dvParents=[]; return _dvParents; });
+    });
+  }).catch(function(){ return {parents:[],label:''}; });
 }
 
 function _driveBrowserSearch(reset){
   var grid=g('_dv-grid'); if(!grid) return;
   if(reset){ _dvPageToken=null; grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#94a3b8;font-size:11px;padding:14px">Buscando...</div>'; }
   var q=(g('_dv-q')||{value:''}).value.trim();
-  _dvResolverPasta().then(function(parents){
+  _dvResolverPasta().then(function(res){
+    var parents=res.parents||[];
     var lb=g('_dv-folder-label');
-    if(lb) lb.textContent = _dvFolderLabel ? ('📁 '+_dvFolderLabel+' (e subpastas)') : '📁 Meu Drive — pasta "'+DRIVE_ROOT_FOLDER+'" não encontrada';
+    if(lb) lb.textContent = res.label ? ('📁 '+res.label) : '📁 Meu Drive — pasta "'+DRIVE_ROOT_FOLDER+'" não encontrada';
     var query="trashed=false and (mimeType contains 'image/' or mimeType='application/pdf')";
     if(parents&&parents.length)
       query+=' and ('+parents.map(function(p){return "'"+p+"' in parents";}).join(' or ')+')';
@@ -11509,6 +11739,34 @@ function renderIngressosTab(){
   if(opSel) opSel.innerHTML='<option value="">Selecione operadora...</option>'+
     DB.operadoras.filter(function(o){return o.status==='ativo';}).map(function(o){return '<option>'+escapeHtml(o.nome)+'</option>';}).join('');
 }
+// ── Tags do Pipeline (CRM) ──
+function renderTagsCRM(){
+  var el=g('tags-crm-list'); if(!el) return;
+  var tags=(DB.config&&DB.config.tagsCRM)||[];
+  el.innerHTML = tags.length ? tags.map(function(t,i){
+    return '<span style="display:inline-flex;align-items:center;gap:6px;background:'+t.cor+'22;color:'+t.cor+';border:1px solid '+t.cor+'66;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700">'+
+      escapeHtml(t.nome)+'<button onclick="delTagCRM('+i+')" style="background:none;border:none;color:'+t.cor+';cursor:pointer;font-size:13px;padding:0">×</button></span>';
+  }).join('') : '<span style="color:var(--text3);font-size:12px">Nenhuma tag criada.</span>';
+}
+function addTagCRM(){
+  var nome=(g('new-tag-nome')||{value:''}).value.trim(); if(!nome){toast('Informe o nome da tag','warn');return;}
+  var cor=(g('new-tag-cor')||{value:'#2C6AA3'}).value;
+  if(!DB.config) DB.config={};
+  if(!DB.config.tagsCRM) DB.config.tagsCRM=[];
+  if(DB.config.tagsCRM.some(function(t){return t.nome.toLowerCase()===nome.toLowerCase();})){toast('Tag já existe','warn');return;}
+  DB.config.tagsCRM.push({id:Date.now(),nome:nome,cor:cor});
+  g('new-tag-nome').value='';
+  saveToStorage(); renderTagsCRM(); toast('🏷️ Tag criada');
+}
+function delTagCRM(i){
+  var t=(DB.config.tagsCRM||[])[i]; if(!t) return;
+  openConfirm('Excluir a tag "'+t.nome+'"? Ela será removida dos cards.',function(){
+    DB.config.tagsCRM.splice(i,1);
+    (DB.crm||[]).forEach(function(l){ if(l.tags) l.tags=l.tags.filter(function(n){return n!==t.nome;}); });
+    saveToStorage(); renderTagsCRM(); renderCRM(); toast('Tag excluída','error');
+  });
+}
+
 function addTipoIngresso(){
   var el=g('new-tipo-ingresso');
   var elDesc=g('new-tipo-ingresso-desc');
@@ -12253,7 +12511,7 @@ window.addEventListener('load', init);
     <div class="modal-header"><div class="modal-title" id="modal-orc-title">Novo Orçamento</div><button class="modal-close" onclick="closeModal('modal-orcamento')">✕</button></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
       <div class="form-group"><label class="form-label">Operadora *</label><select class="form-select" id="orc-operadora" onchange="orcOnOperadoraChange()"><option value="">Selecione...</option></select></div>
-      <div class="form-group"><label class="form-label">Cliente *</label><select class="form-select" id="orc-cliente" onchange="orcOnClienteChange()"><option value="">Selecione...</option></select></div>
+      <div class="form-group"><label class="form-label">Contato / Cliente *</label><select class="form-select" id="orc-cliente" onchange="orcOnClienteChange()"><option value="">Selecione...</option></select></div>
     </div>
     <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px">
       <!-- Drive connect for photo uploads in items -->
@@ -12295,7 +12553,7 @@ window.addEventListener('load', init);
     <div class="modal-footer" style="margin-top:12px">
       <button class="btn btn-ghost" onclick="closeModal('modal-orcamento')">Cancelar</button>
       <button class="btn btn-ghost" onclick="exportarOrcamentoPDF()" style="color:var(--primary)">📄 Exportar PDF</button>
-      <button class="btn btn-primary" onclick="_saveOrcamento()">Salvar Orçamento</button>
+      <button class="btn btn-primary" onclick="withSaveLock('orcamento', _saveOrcamento)">Salvar Orçamento</button>
     </div>
   </div>
 </div>
@@ -12573,7 +12831,7 @@ window.addEventListener('load', init);
 
 <!-- ════════════════════════════════════════════════════════════
      MODAL DRE — Demonstrativo de Resultado do Exercício
-     v3.36 · Desenrola Turismo · uso interno
+     v3.37 · Desenrola Turismo · uso interno
      ════════════════════════════════════════════════════════════ -->
 <div id="modal-dre" class="modal-overlay">
   <div class="modal" style="max-width:900px;width:100%;padding:0;border-radius:16px;overflow:hidden">
