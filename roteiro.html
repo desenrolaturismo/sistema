@@ -58,7 +58,7 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--txt);m
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
-/* Config injetada automaticamente pelo build do GuiD · viewer v1.2 (roteiro · proposta · relatório) */
+/* Config injetada automaticamente pelo build do GuiD · viewer v1.3 (roteiro · proposta · relatório + voto NPS do cliente) */
 const firebaseConfig = {
   apiKey:      "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
   authDomain:  "desenrola-sistema-a7a56.firebaseapp.com",
@@ -95,6 +95,16 @@ const PARQUES_PUB = {
 const pkL = c => (PARQUES_PUB[c]||{});
 const qs = new URLSearchParams(location.search);
 const tRot = qs.get('t'), tProp = qs.get('p'), tRel = qs.get('r');
+let _npsSel=null;
+window.npsSel=function(i){ _npsSel=i;
+  for(let k=0;k<11;k++){ const b=document.getElementById('npsb'+k); if(b){ b.style.background=(k===i)?'var(--azul)':'#fff'; b.style.color=(k===i)?'#fff':'inherit'; } } };
+window.npsEnviar=function(){
+  const msg=document.getElementById('nps-msg');
+  if(_npsSel==null){ if(msg) msg.textContent='Escolha uma nota de 0 a 10 🙂'; return; }
+  const coment=(document.getElementById('nps-coment')||{value:''}).value.slice(0,300);
+  db.ref('desenrola_publico/relatorios/'+tRel+'/votoCliente').set({nota:_npsSel, coment:coment, em:Date.now()})
+    .catch(function(){ if(msg) msg.textContent='Falha ao enviar — verifique a conexão e tente de novo.'; });
+};
 
 function boot(){
   if(tRot) db.ref('desenrola_publico/roteiros/'+tRot).on('value', s=>renderRoteiro(s.val()), ()=>show('off'));
@@ -149,10 +159,20 @@ function renderRelatorio(d){
       '<div class="pk">'+esc(p.emoji||'🎢')+' '+esc(p.nome||di.pk)+'</div></div>'+
       (ms||'<div class="it"><span>Um dia inteiro de magia ✨</span></div>')+'</div>';
   });
-  if(d.nps && d.nps.nota!=null){
+  const notaFinal = (d.votoCliente&&d.votoCliente.nota!=null)? d.votoCliente : (d.nps&&d.nps.nota!=null? d.nps : null);
+  if(notaFinal){
     html+='<div class="card" style="text-align:center"><div style="font-size:12px;color:var(--mut)">Sua avaliação da experiência</div>'+
-      '<div style="font-size:38px;font-weight:800;color:var(--azul)">⭐ '+esc(d.nps.nota)+'<span style="font-size:16px;color:var(--mut)">/10</span></div>'+
-      (d.nps.coment?'<div style="font-size:12px;font-style:italic;color:var(--mut)">“'+esc(d.nps.coment)+'”</div>':'')+'</div>';
+      '<div style="font-size:38px;font-weight:800;color:var(--azul)">⭐ '+esc(notaFinal.nota)+'<span style="font-size:16px;color:var(--mut)">/10</span></div>'+
+      ((notaFinal.coment)?'<div style="font-size:12px;font-style:italic;color:var(--mut)">“'+esc(notaFinal.coment)+'”</div>':'')+'</div>';
+  } else {
+    // v1.3: voto direto do CLIENTE — gravado no próprio nó do relatório (à prova de edição interna)
+    html+='<div class="card" style="text-align:center"><div style="font-weight:800;margin-bottom:6px">Como foi sua experiência?</div>'+
+      '<div style="font-size:11px;color:var(--mut);margin-bottom:10px">De 0 a 10, o quanto você recomendaria a Desenrola?</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px">'+
+      Array.from({length:11},(_,i)=>'<button onclick="npsSel('+i+')" id="npsb'+i+'" style="width:34px;height:34px;border-radius:10px;border:1px solid var(--magic);background:#fff;font-weight:800;cursor:pointer">'+i+'</button>').join('')+'</div>'+
+      '<textarea id="nps-coment" placeholder="Quer deixar um comentário? (opcional)" style="width:100%;border:1px solid #dbe6f2;border-radius:10px;padding:10px;font-family:inherit;font-size:12px;min-height:60px"></textarea>'+
+      '<div id="nps-msg" style="font-size:11px;color:#c0392b;min-height:14px;margin-top:4px"></div>'+
+      '<button class="btn-wa" style="background:var(--azul)" onclick="npsEnviar()">Enviar avaliação 💙</button></div>';
   }
   const wa=((d.contato&&d.contato.wa)||'').replace(/\D/g,'');
   html+='<div class="card" style="text-align:center"><div style="font-weight:800;margin-bottom:4px">Conhece alguém sonhando com essa viagem?</div>'+
