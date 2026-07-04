@@ -58,7 +58,7 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--txt);m
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
-/* Config injetada automaticamente pelo build do GuiD (v2.26) */
+/* Config injetada automaticamente pelo build do GuiD · viewer v1.2 (roteiro · proposta · relatório) */
 const firebaseConfig = {
   apiKey:      "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
   authDomain:  "desenrola-sistema-a7a56.firebaseapp.com",
@@ -76,12 +76,30 @@ const fBRfull = d => { if(!d) return ''; const p=String(d).slice(0,10).split('-'
 const fR = v => 'R$ '+(Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
 function show(id){ ['loading','off','exp','app'].forEach(x=>document.getElementById(x).classList.toggle('hid',x!==id)); }
 
+const PARQUES_PUB = {
+  MK:   { nome:'Magic Kingdom',          emoji:'🏰', cor:'bg-blu', tipo:'disney' },
+  EPCOT:{ nome:'EPCOT',                  emoji:'🌍', cor:'bg-grn', tipo:'disney' },
+  HS:   { nome:'Hollywood Studios',      emoji:'🎬', cor:'bg-red', tipo:'disney' },
+  AK:   { nome:'Animal Kingdom',         emoji:'🦁', cor:'bg-amb', tipo:'disney' },
+  BB:   { nome:'Blizzard Beach',         emoji:'❄️', cor:'bg-blu', tipo:'disney' },
+  TL:   { nome:'Typhoon Lagoon',         emoji:'🌊', cor:'bg-tel', tipo:'disney' },
+  USO:  { nome:'Universal Studios',      emoji:'🎥', cor:'bg-pur', tipo:'universal' },
+  IOA:  { nome:'Islands of Adventure',   emoji:'🏝️', cor:'bg-tel', tipo:'universal' },
+  EU:   { nome:'Epic Universe',          emoji:'🌌', cor:'bg-pnk', tipo:'universal' },
+  KSC:  { nome:'Kennedy Space Center',   emoji:'🚀', cor:'bg-gry', tipo:'outro' },
+  SEA:  { nome:'SeaWorld Orlando',       emoji:'🐬', cor:'bg-blu', tipo:'outro' },
+  BGT:  { nome:'Busch Gardens Tampa',    emoji:'🦁', cor:'bg-grn', tipo:'outro' },
+  DL:   { nome:'Disneyland Park',        emoji:'🏰', cor:'bg-blu', tipo:'disney' },
+  DCA:  { nome:'Disney California Adventure', emoji:'🌟', cor:'bg-amb', tipo:'disney' }
+};
+const pkL = c => (PARQUES_PUB[c]||{});
 const qs = new URLSearchParams(location.search);
-const tRot = qs.get('t'), tProp = qs.get('p');
+const tRot = qs.get('t'), tProp = qs.get('p'), tRel = qs.get('r');
 
 function boot(){
   if(tRot) db.ref('desenrola_publico/roteiros/'+tRot).on('value', s=>renderRoteiro(s.val()), ()=>show('off'));
   else if(tProp) db.ref('desenrola_publico/propostas/'+tProp).on('value', s=>renderProposta(s.val()), ()=>show('off'));
+  else if(tRel) db.ref('desenrola_publico/relatorios/'+tRel).on('value', s=>renderRelatorio(s.val()), ()=>show('off'));
   else show('off');
 }
 if(!db){
@@ -115,6 +133,33 @@ function renderRoteiro(d){
       (wa?'<a class="btn-wa" href="https://wa.me/'+(wa.length<=11?'55'+wa:wa)+'" target="_blank">💬 Falar com o guia</a>':'')+'</div></div>';
   }
   document.getElementById('conteudo').innerHTML=html||'<div class="card">Roteiro em preparação ✨</div>';
+  show('app');
+}
+
+
+function renderRelatorio(d){
+  if(!d){ show('off'); return; }
+  document.getElementById('h-titulo').textContent='Que viagem, '+(d.cliente||'viajante')+'! ✨';
+  document.getElementById('h-sub').textContent=(d.grupo?d.grupo+' · ':'')+(d.periodo&&d.periodo.ini?('🗓️ '+fBR(d.periodo.ini)+(d.periodo.fim?' a '+fBR(d.periodo.fim):'')):'');
+  let html='';
+  (d.dias||[]).forEach(di=>{
+    const p=pkL(di.pk);
+    const ms=(di.momentos||[]).map(m=>'<div class="it"><span class="hr">'+esc(m.h)+'</span><span>'+esc(m.t)+'</span></div>').join('');
+    html+='<div class="card"><div class="dia-h"><div class="dt">'+fBR(di.data).replace('/','<br>')+'</div>'+
+      '<div class="pk">'+esc(p.emoji||'🎢')+' '+esc(p.nome||di.pk)+'</div></div>'+
+      (ms||'<div class="it"><span>Um dia inteiro de magia ✨</span></div>')+'</div>';
+  });
+  if(d.nps && d.nps.nota!=null){
+    html+='<div class="card" style="text-align:center"><div style="font-size:12px;color:var(--mut)">Sua avaliação da experiência</div>'+
+      '<div style="font-size:38px;font-weight:800;color:var(--azul)">⭐ '+esc(d.nps.nota)+'<span style="font-size:16px;color:var(--mut)">/10</span></div>'+
+      (d.nps.coment?'<div style="font-size:12px;font-style:italic;color:var(--mut)">“'+esc(d.nps.coment)+'”</div>':'')+'</div>';
+  }
+  const wa=((d.contato&&d.contato.wa)||'').replace(/\D/g,'');
+  html+='<div class="card" style="text-align:center"><div style="font-weight:800;margin-bottom:4px">Conhece alguém sonhando com essa viagem?</div>'+
+    '<div style="font-size:12px;color:var(--mut)">Indicação de cliente Desenrola tem carinho dobrado 💙'+(d.guia&&d.guia.nome?'<br>Seu guia: '+esc(d.guia.nome):'')+'</div>'+
+    (wa?'<a class="btn-wa" href="https://wa.me/'+(wa.length<=11?'55'+wa:wa)+'?text='+encodeURIComponent('Quero indicar um amigo para a Desenrola! ✨')+'" target="_blank">💙 Indicar a Desenrola</a>'
+       :'<div class="btn-wa" style="background:var(--azul)">💬 Fale com seu consultor Desenrola</div>')+'</div>';
+  document.getElementById('conteudo').innerHTML=html;
   show('app');
 }
 
