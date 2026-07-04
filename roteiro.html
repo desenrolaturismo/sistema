@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Desenrola Turismo ✦ Sua viagem</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2C6AA3;--magic:#79ACD9;--verde:#A4B56E;--txt:#1e2a3a;--mut:#64748b;--bg:#f4f7fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+.hero{background:linear-gradient(135deg,var(--azul),#1e4f7d);color:#fff;padding:34px 20px 26px;text-align:center}
+.hero .brand{font-size:12px;font-weight:800;letter-spacing:.18em;opacity:.85}
+.hero h1{font-size:24px;font-weight:800;margin:10px 0 4px}
+.hero .sub{font-size:13px;color:#cfe3f5}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 60px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 14px rgba(30,60,100,.08);padding:16px 18px;margin-bottom:14px}
+.dia-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dia-h .dt{background:var(--azul);color:#fff;border-radius:10px;padding:6px 10px;font-weight:800;font-size:13px;min-width:52px;text-align:center;line-height:1.15}
+.dia-h .pk{font-weight:800;font-size:16px}
+.dia-h .st{margin-left:auto;font-size:10px;font-weight:800;border-radius:8px;padding:2px 8px;background:#eef4fb;color:var(--azul)}
+.it{display:flex;gap:10px;padding:7px 0;border-top:1px solid #eef2f7;font-size:13px}
+.it .hr{color:var(--azul);font-weight:800;min-width:46px}
+.dica{background:#f2f7ee;border-left:4px solid var(--verde);border-radius:8px;padding:10px 12px;font-size:12px;margin-top:8px}
+.guia{display:flex;align-items:center;gap:12px}
+.guia .av{width:44px;height:44px;border-radius:50%;background:var(--magic);display:flex;align-items:center;justify-content:center;font-size:22px}
+.btn-wa{display:inline-block;background:#22c15e;color:#fff;text-decoration:none;font-weight:800;font-size:14px;border-radius:12px;padding:12px 22px;margin-top:6px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl td{padding:8px 4px;border-top:1px solid #eef2f7;vertical-align:top}
+.tbl .vl{text-align:right;font-weight:700;white-space:nowrap}
+.tot{display:flex;justify-content:space-between;font-size:16px;font-weight:800;border-top:2px solid var(--azul);padding-top:10px;margin-top:6px}
+.foto{width:56px;height:56px;object-fit:cover;border-radius:10px;background:#eef2f7}
+.state{max-width:520px;margin:12vh auto;text-align:center;padding:0 20px}
+.state .em{font-size:52px}
+.state h2{font-size:19px;margin:12px 0 6px}
+.state p{font-size:13px;color:var(--mut)}
+.foot{text-align:center;font-size:11px;color:var(--mut);padding:26px 0}
+.foot b{color:var(--azul)}
+.hid{display:none}
+</style>
+</head>
+<body>
+<div id="loading" class="state"><div class="em">✨</div><h2>Preparando a magia…</h2><p>Carregando sua viagem.</p></div>
+<div id="off" class="state hid"><div class="em">🏰</div><h2>Conteúdo indisponível</h2><p>Este link foi desativado ou não existe.<br>Fale com a equipe Desenrola Turismo. 💙</p></div>
+<div id="exp" class="state hid"><div class="em">⏳</div><h2>Proposta expirada</h2><p>O prazo desta proposta terminou — mas a viagem ainda pode acontecer!<br>Chame seu consultor no WhatsApp. 💬</p></div>
+<div id="app" class="hid">
+  <div class="hero">
+    <div class="brand">✦ DESENROLA TURISMO</div>
+    <h1 id="h-titulo">—</h1>
+    <div class="sub" id="h-sub"></div>
+  </div>
+  <div class="wrap" id="conteudo"></div>
+  <div class="foot">Feito com ✨ por <b>Desenrola Turismo</b> · atualizado automaticamente</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script>
+/* Config injetada automaticamente pelo build do GuiD (v2.26) */
+const firebaseConfig = {
+  apiKey:      "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
+  authDomain:  "desenrola-sistema-a7a56.firebaseapp.com",
+  databaseURL: "https://desenrola-sistema-a7a56-default-rtdb.firebaseio.com",
+  projectId:   "desenrola-sistema-a7a56"
+};
+let db = null;
+try{
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+}catch(e){ /* SDK não carregou (offline/bloqueado) — tratado no boot */ }
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fBR = d => { if(!d) return ''; const p=String(d).slice(0,10).split('-'); return p.length===3? p[2]+'/'+p[1] : d; };
+const fBRfull = d => { if(!d) return ''; const p=String(d).slice(0,10).split('-'); return p.length===3? p[2]+'/'+p[1]+'/'+p[0] : d; };
+const fR = v => 'R$ '+(Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
+function show(id){ ['loading','off','exp','app'].forEach(x=>document.getElementById(x).classList.toggle('hid',x!==id)); }
+
+const qs = new URLSearchParams(location.search);
+const tRot = qs.get('t'), tProp = qs.get('p');
+
+function boot(){
+  if(tRot) db.ref('desenrola_publico/roteiros/'+tRot).on('value', s=>renderRoteiro(s.val()), ()=>show('off'));
+  else if(tProp) db.ref('desenrola_publico/propostas/'+tProp).on('value', s=>renderProposta(s.val()), ()=>show('off'));
+  else show('off');
+}
+if(!db){
+  const o=document.getElementById('off');
+  o.querySelector('h2').textContent='Não foi possível carregar';
+  o.querySelector('p').innerHTML='Verifique sua conexão com a internet e recarregue a página.<br>Se persistir, avise a equipe Desenrola Turismo. 💙';
+  show('off');
+} else if(firebase.auth){ firebase.auth().signInAnonymously().then(boot).catch(boot); }
+else boot();
+
+function renderRoteiro(d){
+  if(!d){ show('off'); return; }
+  document.getElementById('h-titulo').textContent = d.nome||'Sua viagem';
+  const dias = d.dias||[];
+  const dts = dias.map(x=>x.data).filter(Boolean).sort();
+  document.getElementById('h-sub').textContent = dts.length? '🗓️ '+fBR(dts[0])+' a '+fBR(dts[dts.length-1]) : '';
+  let html='';
+  dias.forEach(di=>{
+    const itens=(di.itens||[]).map(it=>'<div class="it"><span class="hr">'+esc(it.hora||'—')+'</span><span>'+esc(it.titulo)+'</span></div>').join('');
+    html+='<div class="card"><div class="dia-h"><div class="dt">'+fBR(di.data).replace('/','<br>')+'</div>'+
+      '<div class="pk">'+esc((di.parque&&di.parque.emoji)||'🎢')+' '+esc((di.parque&&di.parque.nome)||'')+'</div>'+
+      (di.status?'<div class="st">'+esc(di.status)+'</div>':'')+'</div>'+ (itens||'<div class="it"><span>Roteiro do dia com seu guia ✨</span></div>')+'</div>';
+  });
+  (d.dicas||[]).forEach(dc=>{
+    if(dc.txt&&dc.txt.length) html+='<div class="card"><b style="font-size:13px">💡 Dicas — '+esc(dc.parque)+'</b><div class="dica">'+dc.txt.map(esc).join('<br>')+'</div></div>';
+  });
+  if(d.guia&&d.guia.nome){
+    const wa=(d.guia.wa||'').replace(/\D/g,'');
+    html+='<div class="card guia"><div class="av">🧭</div><div><div style="font-weight:800">'+esc(d.guia.nome)+'</div>'+
+      '<div style="font-size:11px;color:var(--mut)">Seu guia Desenrola</div>'+
+      (wa?'<a class="btn-wa" href="https://wa.me/'+(wa.length<=11?'55'+wa:wa)+'" target="_blank">💬 Falar com o guia</a>':'')+'</div></div>';
+  }
+  document.getElementById('conteudo').innerHTML=html||'<div class="card">Roteiro em preparação ✨</div>';
+  show('app');
+}
+
+function renderProposta(d){
+  if(!d){ show('off'); return; }
+  if(d.expiraEm && Date.now()>d.expiraEm){ show('exp'); return; }
+  document.getElementById('h-titulo').textContent='Olá, '+(d.cliente||'viajante')+'! ✨';
+  document.getElementById('h-sub').textContent='Sua proposta de viagem'+((d.periodo&&d.periodo.ida)?' · 🗓️ '+fBRfull(d.periodo.ida)+(d.periodo.volta?' a '+fBRfull(d.periodo.volta):''):'');
+  let rows=(d.itens||[]).map(it=>'<tr>'+
+    '<td style="width:60px">'+(it.fotoUrl?'<img class="foto" src="'+esc(it.fotoUrl)+'" onerror="this.style.display=\'none\'">':'')+'</td>'+
+    '<td><b>'+esc(it.descricao||it.tipo||'')+'</b><div style="font-size:11px;color:var(--mut)">'+esc(it.tipo||'')+(it.qtd>1?' · '+it.qtd+'×':'')+'</div></td>'+
+    '<td class="vl">'+fR((it.valor||0)*(it.qtd||1))+'</td></tr>').join('');
+  let html='<div class="card"><table class="tbl">'+ (rows||'<tr><td>Detalhes com seu consultor 💙</td></tr>') +'</table>'+
+    '<div class="tot"><span>Total</span><span>'+fR(d.total||0)+'</span></div>'+
+    (d.expiraEm?'<div style="font-size:11px;color:var(--mut);margin-top:8px">Proposta válida até '+fBRfull(new Date(d.expiraEm).toISOString())+'</div>':'')+'</div>';
+  const wa=((d.contato&&d.contato.wa)||'').replace(/\D/g,'');
+  html+='<div class="card" style="text-align:center"><div style="font-weight:800;margin-bottom:4px">Pronto para viver essa magia?</div>'+
+    '<div style="font-size:12px;color:var(--mut)">'+esc((d.contato&&d.contato.nome)||'Equipe Desenrola')+' está esperando você 💙</div>'+
+    (wa?'<a class="btn-wa" href="https://wa.me/'+(wa.length<=11?'55'+wa:wa)+'?text='+encodeURIComponent('Oi! Vi a proposta e quero fechar! ✨')+'" target="_blank">🏰 Quero fechar!</a>'
+       :'<div class="btn-wa" style="background:var(--azul)">💬 Responda seu consultor no WhatsApp</div>')+'</div>';
+  document.getElementById('conteudo').innerHTML=html;
+  show('app');
+}
+</script>
+</body>
+</html>
