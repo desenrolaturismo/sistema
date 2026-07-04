@@ -22,6 +22,7 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--txt);m
 .dia-h .st{margin-left:auto;font-size:10px;font-weight:800;border-radius:8px;padding:2px 8px;background:#eef4fb;color:var(--azul)}
 .it{display:flex;gap:10px;padding:7px 0;border-top:1px solid #eef2f7;font-size:13px}
 .it .hr{color:var(--azul);font-weight:800;min-width:46px}
+.dfoto{width:100%;height:130px;object-fit:cover;border-radius:12px;margin-top:10px;background:#eef2f7}
 .dica{background:#f2f7ee;border-left:4px solid var(--verde);border-radius:8px;padding:10px 12px;font-size:12px;margin-top:8px}
 .guia{display:flex;align-items:center;gap:12px}
 .guia .av{width:44px;height:44px;border-radius:50%;background:var(--magic);display:flex;align-items:center;justify-content:center;font-size:22px}
@@ -58,7 +59,7 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--txt);m
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
-/* Config injetada automaticamente pelo build do GuiD · viewer v1.3 (roteiro · proposta · relatório + voto NPS do cliente) */
+/* Config injetada automaticamente pelo build do GuiD · viewer v1.5 (roteiro · proposta · relatório + voto NPS do cliente) */
 const firebaseConfig = {
   apiKey:      "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
   authDomain:  "desenrola-sistema-a7a56.firebaseapp.com",
@@ -152,12 +153,18 @@ function renderRelatorio(d){
   document.getElementById('h-titulo').textContent='Que viagem, '+(d.cliente||'viajante')+'! ✨';
   document.getElementById('h-sub').textContent=(d.grupo?d.grupo+' · ':'')+(d.periodo&&d.periodo.ini?('🗓️ '+fBR(d.periodo.ini)+(d.periodo.fim?' a '+fBR(d.periodo.fim):'')):'');
   let html='';
+  if(!(d.dias||[]).length){
+    html+='<div class="card" style="text-align:center"><div style="font-size:26px">✈️</div>'+
+      '<div style="font-weight:800;font-size:16px;margin:6px 0">'+esc(d.destino||'Sua viagem')+'</div>'+
+      '<div style="font-size:12px;color:var(--mut)">Obrigado por viajar com a Desenrola Turismo 💙</div></div>';
+  }
   (d.dias||[]).forEach(di=>{
     const p=pkL(di.pk);
     const ms=(di.momentos||[]).map(m=>'<div class="it"><span class="hr">'+esc(m.h)+'</span><span>'+esc(m.t)+'</span></div>').join('');
     html+='<div class="card"><div class="dia-h"><div class="dt">'+fBR(di.data).replace('/','<br>')+'</div>'+
       '<div class="pk">'+esc(p.emoji||'🎢')+' '+esc(p.nome||di.pk)+'</div></div>'+
-      (ms||'<div class="it"><span>Um dia inteiro de magia ✨</span></div>')+'</div>';
+      (ms||'<div class="it"><span>Um dia inteiro de magia ✨</span></div>')+
+      (di.foto?'<img class="dfoto" src="'+esc(di.foto)+'" onerror="this.style.display=\'none\'">':'')+'</div>';
   });
   const notaFinal = (d.votoCliente&&d.votoCliente.nota!=null)? d.votoCliente : (d.nps&&d.nps.nota!=null? d.nps : null);
   if(notaFinal){
