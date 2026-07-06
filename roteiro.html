@@ -59,7 +59,7 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--txt);m
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
-/* Config injetada automaticamente pelo build do GuiD · viewer v1.5 (roteiro · proposta · relatório + voto NPS do cliente) */
+/* Config injetada automaticamente pelo build do GuiD · viewer v1.6 (roteiro · proposta · relatório + voto NPS do cliente) */
 const firebaseConfig = {
   apiKey:      "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
   authDomain:  "desenrola-sistema-a7a56.firebaseapp.com",
@@ -193,6 +193,9 @@ function renderRelatorio(d){
 function renderProposta(d){
   if(!d){ show('off'); return; }
   if(d.expiraEm && Date.now()>d.expiraEm){ show('exp'); return; }
+  if(d.html){ // v1.6: template OFICIAL aprovado servido intocado (payload v2)
+    document.open(); document.write(d.html); document.close(); return;
+  }
   document.getElementById('h-titulo').textContent='Olá, '+(d.cliente||'viajante')+'! ✨';
   document.getElementById('h-sub').textContent='Sua proposta de viagem'+((d.periodo&&d.periodo.ida)?' · 🗓️ '+fBRfull(d.periodo.ida)+(d.periodo.volta?' a '+fBRfull(d.periodo.volta):''):'');
   let rows=(d.itens||[]).map(it=>'<tr>'+
