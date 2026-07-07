@@ -59,7 +59,7 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--txt);m
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
-/* Config injetada automaticamente pelo build do GuiD · viewer v1.8 (roteiro · proposta · relatório + voto NPS do cliente) */
+/* Config injetada automaticamente pelo build do GuiD · viewer v1.9 (roteiro · proposta · relatório + voto NPS do cliente) */
 const firebaseConfig = {
   apiKey:      "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
   authDomain:  "desenrola-sistema-a7a56.firebaseapp.com",
@@ -141,6 +141,35 @@ function renderRoteiro(d){
       '<div class="pk">'+esc((di.parque&&di.parque.emoji)||'🎢')+' '+esc((di.parque&&di.parque.nome)||'')+'</div>'+
       (di.status?'<div class="st">'+esc(di.status)+'</div>':'')+'</div>'+ (itens||'<div class="it"><span>Roteiro do dia com seu guia ✨</span></div>')+'</div>';
   });
+  // v1.9: Day by Day da viagem (planejamento do Sistema)
+  if(d.dayByDay && d.dayByDay.length){
+    html+='<div class="card"><div style="font-weight:800;margin-bottom:8px">📘 Day by Day da viagem</div>';
+    d.dayByDay.forEach(dd=>{
+      const tit = dd.data? fBR(dd.data) : '';
+      const tx  = dd.titulo||dd.texto||dd.descricao||'';
+      html+='<div style="padding:7px 0;border-bottom:1px solid #eef2f7">'+
+        (tit?'<div style="font-size:11px;font-weight:800;color:var(--azul)">'+esc(tit)+'</div>':'')+
+        (tx?'<div style="font-size:12.5px">'+esc(tx)+'</div>':'');
+      (dd.itens||[]).forEach(it=>{
+        const l=(it.hora?it.hora+' · ':'')+(it.titulo||it.descricao||it.nome||it.texto||'');
+        if(l.trim()) html+='<div style="font-size:12px;color:var(--mut);padding-left:10px">• '+esc(l)+'</div>';
+      });
+      html+='</div>';
+    });
+    html+='</div>';
+  }
+  // v1.9: Vouchers da viagem (visualizar + baixar)
+  if(d.vouchers && d.vouchers.length){
+    html+='<div class="card"><div style="font-weight:800;margin-bottom:8px">🎫 Seus vouchers</div>';
+    d.vouchers.forEach((vc,ix)=>{
+      const img=/^data:image|\.(png|jpe?g|webp)(\?|$)/i.test(vc.url||'');
+      html+='<div style="padding:8px 0;border-bottom:1px solid #eef2f7">'+
+        '<div style="font-size:12.5px;font-weight:700;margin-bottom:6px">'+esc(vc.nome||('Voucher '+(ix+1)))+'</div>'+
+        (img?'<img src="'+esc(vc.url)+'" style="width:100%;max-height:180px;object-fit:contain;border-radius:10px;background:#f3f6fa;margin-bottom:6px" onerror="this.style.display=\'none\'">':'')+
+        '<a class="btn-wa" style="background:var(--azul);display:inline-block;width:auto;padding:9px 16px;font-size:12px" href="'+esc(vc.url)+'" '+(String(vc.url).startsWith('data:')?('download="'+esc((vc.nome||'voucher').replace(/[^\w\-]+/g,'_'))+'"'):'target="_blank"')+'>⬇️ Baixar / abrir</a></div>';
+    });
+    html+='</div>';
+  }
   (d.dicas||[]).forEach(dc=>{
     if(dc.txt&&dc.txt.length) html+='<div class="card"><b style="font-size:13px">💡 Dicas — '+esc(dc.parque)+'</b><div class="dica">'+dc.txt.map(esc).join('<br>')+'</div></div>';
   });
