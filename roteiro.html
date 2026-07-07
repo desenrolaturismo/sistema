@@ -59,7 +59,7 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--txt);m
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
-/* Config injetada automaticamente pelo build do GuiD · viewer v1.9 (roteiro · proposta · relatório + voto NPS do cliente) */
+/* Config injetada automaticamente pelo build do GuiD · viewer v2.0 (roteiro · proposta · relatório + voto NPS do cliente) */
 const firebaseConfig = {
   apiKey:      "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
   authDomain:  "desenrola-sistema-a7a56.firebaseapp.com",
@@ -232,7 +232,7 @@ function renderProposta(d){
   if(d.expiraEm && Date.now()>d.expiraEm){ show('exp'); return; }
   if(d.html){ // v1.7: oficial intocado + viewport/responsivo + CTA "Quero fechar"
     const wa=((d.contato&&d.contato.wa)||'').replace(/\D/g,'');
-    const cta = wa? '<a href="https://wa.me/'+(wa.length<=11?'55'+wa:wa)+'?text='+encodeURIComponent('Oi! Vi a proposta e quero fechar! ✨')+'" target="_blank" style="position:fixed;left:0;right:0;bottom:0;z-index:9999;display:block;text-align:center;background:#22c15e;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;text-decoration:none;padding:15px 12px;box-shadow:0 -4px 16px rgba(0,0,0,.18)">🏰 Quero fechar!</a>' : '';
+    const cta = wa? '<a href="https://wa.me/'+(wa.length<=11?'55'+wa:wa)+'?text='+encodeURIComponent('Ola! Vi a proposta e quero fechar!')+'" target="_blank" style="position:fixed;left:0;right:0;bottom:0;z-index:9999;display:block;text-align:center;background:#22c15e;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;text-decoration:none;padding:15px 12px;box-shadow:0 -4px 16px rgba(0,0,0,.18)">🏰 Quero fechar!</a>' : '';
     document.open();
     document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Proposta ✦ Desenrola Turismo</title>'+
       '<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Nunito:wght@400;600;700;800&family=Anton&display=swap" rel="stylesheet">'+
@@ -252,7 +252,7 @@ function renderProposta(d){
   const wa=((d.contato&&d.contato.wa)||'').replace(/\D/g,'');
   html+='<div class="card" style="text-align:center"><div style="font-weight:800;margin-bottom:4px">Pronto para viver essa magia?</div>'+
     '<div style="font-size:12px;color:var(--mut)">'+esc((d.contato&&d.contato.nome)||'Equipe Desenrola')+' está esperando você 💙</div>'+
-    (wa?'<a class="btn-wa" href="https://wa.me/'+(wa.length<=11?'55'+wa:wa)+'?text='+encodeURIComponent('Oi! Vi a proposta e quero fechar! ✨')+'" target="_blank">🏰 Quero fechar!</a>'
+    (wa?'<a class="btn-wa" href="https://wa.me/'+(wa.length<=11?'55'+wa:wa)+'?text='+encodeURIComponent('Ola! Vi a proposta e quero fechar!')+'" target="_blank">🏰 Quero fechar!</a>'
        :'<div class="btn-wa" style="background:var(--azul)">💬 Responda seu consultor no WhatsApp</div>')+'</div>';
   document.getElementById('conteudo').innerHTML=html;
   show('app');
