@@ -59,7 +59,7 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--txt);m
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
-/* Config injetada automaticamente pelo build do GuiD · viewer v2.0 (roteiro · proposta · relatório + voto NPS do cliente) */
+/* Config injetada automaticamente pelo build do GuiD · viewer v2.1 (roteiro · proposta · relatório + voto NPS do cliente) */
 const firebaseConfig = {
   apiKey:      "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
   authDomain:  "desenrola-sistema-a7a56.firebaseapp.com",
@@ -135,7 +135,14 @@ function renderRoteiro(d){
   const dts = dias.map(x=>x.data).filter(Boolean).sort();
   document.getElementById('h-sub').textContent = dts.length? '🗓️ '+fBR(dts[0])+' a '+fBR(dts[dts.length-1]) : '';
   let html='';
-  dias.forEach(di=>{
+  if(!dias.length && (d.destino||d.periodo)){
+    const pTxt=(d.periodo&&d.periodo.ini)?(fBR(d.periodo.ini)+((d.periodo.fim&&d.periodo.fim!==d.periodo.ini)?' a '+fBR(d.periodo.fim):'')):'';
+    html+='<div class="card" style="text-align:center"><div style="font-size:26px">✈️</div>'+
+      '<div style="font-weight:800;font-size:16px;margin:6px 0">'+esc(d.destino||'Sua viagem')+'</div>'+
+      (pTxt?'<div style="font-size:12px;color:var(--mut)">'+pTxt+'</div>':'')+
+      '<div style="font-size:12px;color:var(--mut);margin-top:4px">Boa viagem com a Desenrola Turismo 💙</div></div>';
+  }
+    dias.forEach(di=>{
     const itens=(di.itens||[]).map(it=>'<div class="it"><span class="hr">'+esc(it.hora||'—')+'</span><span>'+esc(it.titulo)+'</span></div>').join('');
     html+='<div class="card"><div class="dia-h"><div class="dt">'+fBR(di.data).replace('/','<br>')+'</div>'+
       '<div class="pk">'+esc((di.parque&&di.parque.emoji)||'🎢')+' '+esc((di.parque&&di.parque.nome)||'')+'</div>'+
@@ -162,10 +169,12 @@ function renderRoteiro(d){
   if(d.vouchers && d.vouchers.length){
     html+='<div class="card"><div style="font-weight:800;margin-bottom:8px">🎫 Seus vouchers</div>';
     d.vouchers.forEach((vc,ix)=>{
-      const img=/^data:image|\.(png|jpe?g|webp)(\?|$)/i.test(vc.url||'');
+      const _drv=(String(vc.url||'').match(/drive\.google\.com\/(?:file\/d\/|.*[?&]id=)([\w-]+)/)||[])[1];
+      const imgSrc=_drv? ('https://drive.google.com/thumbnail?id='+_drv+'&sz=w1200') : (vc.url||'');
+      const img=!!imgSrc; // v2.1: tenta imagem sempre; onerror esconde
       html+='<div style="padding:8px 0;border-bottom:1px solid #eef2f7">'+
         '<div style="font-size:12.5px;font-weight:700;margin-bottom:6px">'+esc(vc.nome||('Voucher '+(ix+1)))+'</div>'+
-        (img?'<img src="'+esc(vc.url)+'" style="width:100%;max-height:180px;object-fit:contain;border-radius:10px;background:#f3f6fa;margin-bottom:6px" onerror="this.style.display=\'none\'">':'')+
+        (img?'<img src="'+esc(imgSrc)+'" style="width:100%;max-height:220px;object-fit:contain;border-radius:10px;background:#f3f6fa;margin-bottom:6px" onerror="this.style.display=\'none\'">':'')+
         '<a class="btn-wa" style="background:var(--azul);display:inline-block;width:auto;padding:9px 16px;font-size:12px" href="'+esc(vc.url)+'" '+(String(vc.url).startsWith('data:')?('download="'+esc((vc.nome||'voucher').replace(/[^\w\-]+/g,'_'))+'"'):'target="_blank"')+'>⬇️ Baixar / abrir</a></div>';
     });
     html+='</div>';
