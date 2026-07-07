@@ -59,7 +59,7 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--txt);m
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
-/* Config injetada automaticamente pelo build do GuiD · viewer v1.6 (roteiro · proposta · relatório + voto NPS do cliente) */
+/* Config injetada automaticamente pelo build do GuiD · viewer v1.8 (roteiro · proposta · relatório + voto NPS do cliente) */
 const firebaseConfig = {
   apiKey:      "AIzaSyBz0IMWH-nwm8ZgaduLC2UMRhrlKwFYGeE",
   authDomain:  "desenrola-sistema-a7a56.firebaseapp.com",
@@ -96,7 +96,14 @@ const PARQUES_PUB = {
 const pkL = c => (PARQUES_PUB[c]||{});
 const qs = new URLSearchParams(location.search);
 const tRot = qs.get('t'), tProp = qs.get('p'), tRel = qs.get('r');
-let _npsSel=null;
+let _npsSel=null, _statsSent=false;
+function _registrarAbertura(){
+  if(_statsSent || !tProp || !db) return; _statsSent=true;
+  try{
+    db.ref('desenrola_publico/propostas/'+tProp+'/stats/ultimaAbertura').set(Date.now());
+    db.ref('desenrola_publico/propostas/'+tProp+'/stats/aberturas').transaction(function(v){ return (v||0)+1; });
+  }catch(e){}
+}
 window.npsSel=function(i){ _npsSel=i;
   for(let k=0;k<11;k++){ const b=document.getElementById('npsb'+k); if(b){ b.style.background=(k===i)?'var(--azul)':'#fff'; b.style.color=(k===i)?'#fff':'inherit'; } } };
 window.npsEnviar=function(){
@@ -192,9 +199,17 @@ function renderRelatorio(d){
 
 function renderProposta(d){
   if(!d){ show('off'); return; }
+  _registrarAbertura(); // v1.8 (melhoria 1)
   if(d.expiraEm && Date.now()>d.expiraEm){ show('exp'); return; }
-  if(d.html){ // v1.6: template OFICIAL aprovado servido intocado (payload v2)
-    document.open(); document.write(d.html); document.close(); return;
+  if(d.html){ // v1.7: oficial intocado + viewport/responsivo + CTA "Quero fechar"
+    const wa=((d.contato&&d.contato.wa)||'').replace(/\D/g,'');
+    const cta = wa? '<a href="https://wa.me/'+(wa.length<=11?'55'+wa:wa)+'?text='+encodeURIComponent('Oi! Vi a proposta e quero fechar! ✨')+'" target="_blank" style="position:fixed;left:0;right:0;bottom:0;z-index:9999;display:block;text-align:center;background:#22c15e;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;text-decoration:none;padding:15px 12px;box-shadow:0 -4px 16px rgba(0,0,0,.18)">🏰 Quero fechar!</a>' : '';
+    document.open();
+    document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Proposta ✦ Desenrola Turismo</title>'+
+      '<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Nunito:wght@400;600;700;800&family=Anton&display=swap" rel="stylesheet">'+
+      '<style>body{margin:0;background:#f4f7fb;padding:14px 10px '+(wa?'86px':'20px')+'}#proposta-print{max-width:840px;margin:0 auto}#proposta-print img{max-width:100%;height:auto}@media(max-width:640px){body{padding:8px 6px '+(wa?'84px':'14px')+'}}</style>'+
+      '</head><body>'+d.html+cta+'</body></html>');
+    document.close(); return;
   }
   document.getElementById('h-titulo').textContent='Olá, '+(d.cliente||'viajante')+'! ✨';
   document.getElementById('h-sub').textContent='Sua proposta de viagem'+((d.periodo&&d.periodo.ida)?' · 🗓️ '+fBRfull(d.periodo.ida)+(d.periodo.volta?' a '+fBRfull(d.periodo.volta):''):'');
