@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v3.76</title>
+<title>Desenrola Turismo — Sistema de Gestão v3.77</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -269,6 +269,11 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <div class="nav-section">
       <div class="nav-label">CRM</div>
+      <div class="nav-item" onclick="showPage('atendimento')" title="Conversas do WhatsApp">
+        <span class="nav-icon">💬</span>
+        <span>Atendimento</span>
+        <span id="at-badge" style="display:none;margin-left:auto;background:#c0392b;color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700"></span>
+      </div>
       <div class="nav-item" onclick="showPage('crm')" title="Pipeline de Leads">
         <span class="nav-icon">🎯</span>
         <span>Pipeline</span>
@@ -322,7 +327,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v3.76
+    ✦ Desenrola Turismo · v3.77
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -894,6 +899,47 @@ tbody tr:hover{background:var(--surface2)}
 
 
 <!-- ════════════ PAGE: CRM ════════════ -->
+<!-- ═══════ PAGE: ATENDIMENTO ════════════ -->
+<div id="page-atendimento" class="page">
+  <div class="page-header">
+    <h1>Atendimento</h1>
+    <p>✦ Conversas do WhatsApp — recebidas pela ponte, respondidas por você</p>
+  </div>
+  <div style="display:flex;gap:16px;height:calc(100vh - 220px);min-height:420px">
+
+    <div style="width:320px;flex-shrink:0;background:#fff;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+      <div style="padding:10px 12px;border-bottom:1px solid #eee">
+        <input id="at-busca" placeholder="Buscar por nome ou número" oninput="renderAtConversas()"
+               style="width:100%;border:1px solid #ddd;border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px">
+      </div>
+      <div id="at-lista" style="flex:1;overflow-y:auto"></div>
+    </div>
+
+    <div style="flex:1;background:#fff;border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+      <div id="at-cabecalho" style="padding:12px 16px;border-bottom:1px solid #eee;display:none">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="flex:1">
+            <div id="at-nome" style="font-weight:800;font-size:15px"></div>
+            <div id="at-sub" style="font-size:12px;color:#777"></div>
+          </div>
+          <div id="at-janela" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px"></div>
+        </div>
+      </div>
+      <div id="at-thread" style="flex:1;overflow-y:auto;padding:16px;background:#f6f7f9">
+        <div style="text-align:center;color:#999;margin-top:60px;font-size:14px">Escolha uma conversa à esquerda</div>
+      </div>
+      <div id="at-composer" style="padding:12px;border-top:1px solid #eee;display:none">
+        <div id="at-aviso" style="display:none;font-size:12px;color:#b9770e;margin-bottom:8px;font-weight:700"></div>
+        <div style="display:flex;gap:8px">
+          <textarea id="at-texto" rows="2" placeholder="Escreva sua resposta…" maxlength="4000"
+            style="flex:1;border:1px solid #ddd;border-radius:8px;padding:10px;resize:none;font-family:Nunito,sans-serif;font-size:14px"></textarea>
+          <button id="at-enviar" class="btn btn-primary" onclick="atEnviar()" style="align-self:stretch;padding:0 20px">Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="page-crm" class="page">
   <div class="page-header">
     <h1>Pipeline CRM</h1>
@@ -1823,7 +1869,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.76</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v3.77</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -1847,7 +1893,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.76</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v3.77</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -2483,7 +2529,7 @@ function _snapshotDiario(){
       Object.keys(DB).forEach(function(k){ if(!NON_SERIALIZABLE.has(k)) pay[k]=DB[k]; });
       pay=JSON.parse(JSON.stringify(pay)); pay._snapshotEm=Date.now();
       ref.child(hoje).set(pay).then(function(){
-        console.log('[v3.76] Snapshot diário gravado:', hoje);
+        console.log('[v3.77] Snapshot diário gravado:', hoje);
         ref.once('value').then(function(all){
           var ks=Object.keys(all.val()||{}).sort();
           while(ks.length>10){ ref.child(ks.shift()).remove(); }
@@ -2780,11 +2826,11 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 
 
 // ══════════════════════════════════════════════════════════════
-// BACKUP AUTOMÁTICO — DesenrolaSistema v3.76
+// BACKUP AUTOMÁTICO — DesenrolaSistema v3.77
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v3.76',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v3.77',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_turismo_v3')||'{}'); // v3.57: chave correta
   if (_fbDb) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); else payload.dados.firebaseVazio = true; } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -2923,6 +2969,189 @@ function toast(msg, type='success'){
 }
 
 // ═══════════════════════ NAVIGATION ═══════════════════════
+
+// ══════════════════════════════════════════════════════════════════════════
+// ATENDIMENTO · caixa de entrada do WhatsApp
+//
+// A ponte (Cloud Functions) grava em `desenrola_wa` pelo Admin SDK.
+// Esta tela apenas LÊ, e para responder ENFILEIRA um job em `outbox`.
+// Nunca fala com a Meta. Se a ponte cair, nada aqui quebra o Sistema.
+// ══════════════════════════════════════════════════════════════════════════
+var AT = { conversas: {}, atual: null, msgs: {}, refMsgs: null, ligado: false };
+
+function _atFmtHora(ts){
+  if(!ts) return '';
+  var d = new Date(ts), hoje = new Date();
+  var mesmoDia = d.toDateString() === hoje.toDateString();
+  var hh = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  return mesmoDia ? hh : (String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + ' ' + hh);
+}
+
+// Nome do contato: o CRM manda, o perfil do WhatsApp é reserva.
+function _atNome(c){
+  if(c.crmId){
+    var lead = (DB.crm||[]).find(function(x){ return String(x.id) === String(c.crmId); });
+    if(lead && lead.nome) return lead.nome;
+  }
+  return c.nome || ('+' + c.waId);
+}
+
+function _atJanelaAberta(c){
+  return !!(c && c.janelaAte && Date.now() < c.janelaAte);
+}
+
+function _atRestante(c){
+  var ms = (c.janelaAte||0) - Date.now();
+  if(ms <= 0) return '';
+  var h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000);
+  return h > 0 ? (h + 'h' + m + 'min') : (m + 'min');
+}
+
+function initAtendimento(){
+  if(AT.ligado || !_fbDb || !_autenticado()) return;
+  AT.ligado = true;
+  _fbDb.ref('desenrola_wa/conversations').on('value', function(sn){
+    AT.conversas = sn.val() || {};
+    renderAtConversas();
+    _atBadge();
+  }, function(e){ console.warn('[ATENDIMENTO] leitura negada:', e && e.message); });
+}
+
+function _atBadge(){
+  var n = 0;
+  Object.keys(AT.conversas).forEach(function(k){ n += (AT.conversas[k].naoLidas || 0); });
+  var b = g('at-badge');
+  if(!b) return;
+  b.style.display = n ? 'inline-block' : 'none';
+  b.textContent = n > 99 ? '99+' : String(n);
+}
+
+function renderAtendimento(){
+  initAtendimento();
+  renderAtConversas();
+}
+
+function renderAtConversas(){
+  var el = g('at-lista'); if(!el) return;
+  var termo = (g('at-busca') && g('at-busca').value || '').trim().toLowerCase();
+
+  var lista = Object.keys(AT.conversas).map(function(k){
+    var c = Object.assign({}, AT.conversas[k]); c._k = k; return c;
+  }).filter(function(c){
+    if(!termo) return true;
+    return _atNome(c).toLowerCase().indexOf(termo) >= 0 || String(c.waId||'').indexOf(termo) >= 0;
+  }).sort(function(a,b){ return (b.ultimaEntrada||0) - (a.ultimaEntrada||0); });
+
+  if(!lista.length){
+    el.innerHTML = '<div style="padding:24px;text-align:center;color:#999;font-size:13px">Nenhuma conversa ainda.</div>';
+    return;
+  }
+
+  el.innerHTML = lista.map(function(c){
+    var sel = (AT.atual === c._k) ? 'background:#eef4fb' : '';
+    var nao = c.naoLidas ? '<span style="background:#c0392b;color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700">' + c.naoLidas + '</span>' : '';
+    var rev = c.revisarContato ? '<span title="Sem cadastro no CRM" style="color:#b9770e;font-size:11px">● novo</span>' : '';
+    var jan = _atJanelaAberta(c) ? '' : '<span title="Fora da janela de 24h" style="color:#999;font-size:11px">🔒</span>';
+    return '<div onclick="atAbrir(\'' + c._k + '\')" style="padding:12px;border-bottom:1px solid #f0f0f0;cursor:pointer;' + sel + '">' +
+      '<div style="display:flex;align-items:center;gap:6px">' +
+        '<div style="font-weight:700;font-size:14px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(_atNome(c)) + '</div>' +
+        nao +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:6px;margin-top:2px">' +
+        '<div style="font-size:11px;color:#888;flex:1">' + _atFmtHora(c.ultimaEntrada) + '</div>' + rev + jan +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function atAbrir(k){
+  AT.atual = k;
+  var c = AT.conversas[k]; if(!c) return;
+
+  // Marcar como lida. É a ÚNICA escrita que as Rules permitem em conversations.
+  if(c.naoLidas){
+    _fbDb.ref('desenrola_wa/conversations/' + k + '/naoLidas').set(0)
+      .catch(function(e){ console.warn('[ATENDIMENTO] naoLidas:', e && e.message); });
+  }
+
+  g('at-cabecalho').style.display = 'block';
+  g('at-composer').style.display  = 'block';
+  g('at-nome').textContent = _atNome(c);
+  g('at-sub').textContent  = '+' + (c.waId || '') + (c.crmId ? ' · CRM #' + c.crmId : ' · sem cadastro');
+
+  var aberta = _atJanelaAberta(c);
+  var jl = g('at-janela');
+  jl.textContent   = aberta ? ('Janela aberta · ' + _atRestante(c)) : 'Janela fechada';
+  jl.style.background = aberta ? '#e8f5e9' : '#fdecea';
+  jl.style.color      = aberta ? '#1e7e34' : '#c0392b';
+
+  g('at-texto').disabled  = !aberta;
+  g('at-enviar').disabled = !aberta;
+  g('at-aviso').style.display = aberta ? 'none' : 'block';
+  g('at-aviso').textContent = aberta ? '' :
+    'Passaram-se mais de 24h desde a última mensagem do cliente. A Meta só aceita template fora dessa janela — e template é cobrado. Aguarde o cliente escrever.';
+
+  if(AT.refMsgs){ AT.refMsgs.off(); }
+  AT.refMsgs = _fbDb.ref('desenrola_wa/messages/' + k).limitToLast(100);
+  AT.refMsgs.on('value', function(sn){
+    AT.msgs[k] = sn.val() || {};
+    renderAtThread();
+  }, function(e){ console.warn('[ATENDIMENTO] mensagens:', e && e.message); });
+
+  renderAtConversas();
+}
+
+function renderAtThread(){
+  var el = g('at-thread'); if(!el || !AT.atual) return;
+  var msgs = AT.msgs[AT.atual] || {};
+  var arr = Object.keys(msgs).map(function(k){ var m = msgs[k]; m._k = k; return m; })
+                  .sort(function(a,b){ return (a.ts||0) - (b.ts||0); });
+
+  if(!arr.length){ el.innerHTML = '<div style="text-align:center;color:#999;margin-top:40px">Sem mensagens.</div>'; return; }
+
+  el.innerHTML = arr.map(function(m){
+    var meu = m.dir === 'out';
+    var bolha = meu ? 'background:#dcf8c6;margin-left:auto' : 'background:#fff';
+    var corpo = m.texto ? esc(m.texto) : ('<i style="color:#777">[' + (m.tipo||'mídia') + ']</i>');
+    var st = '';
+    if(meu){
+      if(m.status === 'read') st = '✓✓';
+      else if(m.status === 'delivered') st = '✓✓';
+      else if(m.status === 'sent' || m.status === 'enviada') st = '✓';
+      if(m.erro) st = '⚠';
+    }
+    return '<div style="max-width:70%;' + bolha + ';padding:8px 12px;border-radius:10px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.08)">' +
+      '<div style="font-size:14px;white-space:pre-wrap;word-break:break-word">' + corpo + '</div>' +
+      '<div style="font-size:10px;color:#888;text-align:right;margin-top:2px">' + _atFmtHora(m.ts) + ' ' + st + '</div>' +
+    '</div>';
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function atEnviar(){
+  var c = AT.conversas[AT.atual]; if(!c) return;
+  var txt = (g('at-texto').value || '').trim();
+  if(!txt) return;
+  if(!_atJanelaAberta(c)){ toast('Janela de 24h fechada. A Meta recusaria esta mensagem.', 'error'); return; }
+  if(txt.length > 4000){ toast('Mensagem longa demais.', 'error'); return; }
+
+  var btn = g('at-enviar'); btn.disabled = true;
+
+  // Enfileira. Quem fala com a Meta é a ponte, nunca o navegador.
+  _fbDb.ref('desenrola_wa/outbox').push({
+    para:       c.waId,
+    tipo:       'text',
+    texto:      txt,
+    criadoEm:   Date.now(),
+    porUsuario: (DB.currentUser && DB.currentUser.login) || null
+  }).then(function(){
+    g('at-texto').value = '';
+    toast('Enviando…');
+  }).catch(function(e){
+    toast('Falha ao enfileirar: ' + (e.message || e), 'error');
+  }).finally(function(){ btn.disabled = false; });
+}
+
 function showPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item,.nav-child').forEach(n=>n.classList.remove('active'));
@@ -2943,6 +3172,7 @@ function showPage(page){
   if(page==='orcamentos') renderOrcamentos();
   if(page==='enciclopedia') renderEnciclopediaInit();
   if(page==='ranking') renderRanking();
+  if(page==='atendimento') renderAtendimento();
   if(page==='registros'){
     renderRegistros();
     // Inicializa a aba ativa (vendedores) ao abrir a página
@@ -7012,6 +7242,8 @@ const PERFIL_LABELS = {adm:'Administrador',mkt:'Marketing',vendedor:'Vendedor',g
     // AUTH-01: o agendamento do boot roda antes do login e é recusado.
     // Reagenda agora que existe identidade.
     setTimeout(_snapshotDiario, 9000);
+    // Atendimento: as Rules exigem identidade para ler `desenrola_wa`.
+    try { initAtendimento(); } catch(e){ console.warn('[ATENDIMENTO]', e && e.message); }
     var pPrimary = getPrimaryPerfil(user);
     document.body.setAttribute('data-perfil', pPrimary);
     var mktB=g('mkt-readonly-banner');
@@ -8600,7 +8832,7 @@ function _relMesRef(){
   return { y:year, m:month, ref: year+'-'+String(month).padStart(2,'0') };
 }
 function _relColeta(ref){
-  const vendas=(DB.vendas||[]).filter(v=>v && String(v.data||'').startsWith(ref)); // v3.76: paridade exata com a aba
+  const vendas=(DB.vendas||[]).filter(v=>v && String(v.data||'').startsWith(ref)); // v3.77: paridade exata com a aba
   const ativos=(DB.vendedores||[]).filter(v=>v.status==='ativo').map(v=>v.nome);
   const dp=DB.divisaoPadrao||{vendedor:40,mkt:20,thomaz:10,camila:10,empresa:20};
   const porV={};
@@ -8613,7 +8845,7 @@ function _relColeta(ref){
     cam+=com*((v.divCamila||dp.camila)/100);
     emp+=com*((v.divEmpresa||dp.empresa)/100);
     const b=porV[v.vendedor]; if(!b) return;
-    b.n++; b.total+=(v.valor||0); b.com+=com; // v3.76: campo real é v.valor
+    b.n++; b.total+=(v.valor||0); b.com+=com; // v3.77: campo real é v.valor
     b.valor+=com*((v.divVendedor||dp.vendedor)/100);
   });
   const rank=Object.keys(porV).sort((a,b)=>porV[b].total-porV[a].total);
@@ -14439,7 +14671,7 @@ window.addEventListener('load', init);
 
 <!-- ════════════════════════════════════════════════════════════
      MODAL DRE — Demonstrativo de Resultado do Exercício
-     v3.76 · Desenrola Turismo · uso interno
+     v3.77 · Desenrola Turismo · uso interno
      ════════════════════════════════════════════════════════════ -->
 <div id="modal-dre" class="modal-overlay">
   <div class="modal" style="max-width:900px;width:100%;padding:0;border-radius:16px;overflow:hidden">
