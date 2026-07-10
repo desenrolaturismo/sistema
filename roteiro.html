@@ -276,7 +276,7 @@ function renderProposta(d){
     document.open();
     document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Proposta ✦ Desenrola Turismo</title>'+
       '<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Nunito:wght@400;600;700;800&family=Anton&display=swap" rel="stylesheet">'+
-      '<style>body{margin:0;background:#f4f7fb;padding:14px 10px '+(wa?'86px':'20px')+'}#proposta-print{max-width:840px;margin:0 auto}#proposta-print img{max-width:100%;height:auto}@media(max-width:640px){body{padding:8px 6px '+(wa?'84px':'14px')+'}}</style>'+
+      '<style>body{margin:0;background:#f4f7fb;padding:14px 10px '+(wa?'86px':'20px')+'}#proposta-print{max-width:840px;margin:0 auto}#proposta-print img{max-width:100%;height:auto}@media(max-width:640px){body{padding:8px 6px '+(wa?'84px':'14px')+'}.dia-h .st{font-size:12px}.foot{font-size:12px}}</style>'+
       '</head><body>'+d.html+cta+'</body></html>');
     document.close(); return;
   }
