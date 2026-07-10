@@ -97,6 +97,32 @@ const pkL = c => (PARQUES_PUB[c]||{});
 const qs = new URLSearchParams(location.search);
 const tRot = qs.get('t'), tProp = qs.get('p'), tRel = qs.get('r');
 let _npsSel=null, _statsSent=false;
+
+  // ── Aceite estruturado (v1.9) ─────────────────────────────────────────
+  // Gravamos ANTES de mandar o cliente para o WhatsApp. Se o app não abrir,
+  // ou ele desistir no meio, o vendedor já sabe da decisão.
+  let _aceiteEnviado = false;
+  window._aceitar = function(escolha){
+    const wa = ((_propostaAtual && _propostaAtual.contato && _propostaAtual.contato.wa) || '').replace(/\D/g,'');
+    const texto = escolha === 'aceito'
+      ? 'Olá! Vi a proposta e quero fechar!'
+      : 'Olá! Vi a proposta e tenho algumas dúvidas.';
+
+    const irParaWhats = function(){
+      if(!wa) return;
+      const num = wa.length <= 11 ? '55' + wa : wa;
+      window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(texto), '_blank');
+    };
+
+    if(_aceiteEnviado || !tProp || !db){ irParaWhats(); return; }
+    _aceiteEnviado = true;
+
+    db.ref('desenrola_publico/propostas/' + tProp + '/stats/aceite')
+      .set({ escolha: escolha, em: Date.now() })
+      .then(irParaWhats)
+      .catch(function(e){ console.warn('aceite:', e && e.message); irParaWhats(); });
+  };
+
 function _registrarAbertura(){
   if(_statsSent || !tProp || !db) return; _statsSent=true;
   try{
@@ -235,13 +261,18 @@ function renderRelatorio(d){
   show('app');
 }
 
+let _propostaAtual = null;
 function renderProposta(d){
   if(!d){ show('off'); return; }
-  _registrarAbertura(); // v1.8 (melhoria 1)
+  _propostaAtual = d;
+  _registrarAbertura(); // v1.9 (aceite estruturado)
   if(d.expiraEm && Date.now()>d.expiraEm){ show('exp'); return; }
   if(d.html){ // v1.7: oficial intocado + viewport/responsivo + CTA "Quero fechar"
     const wa=((d.contato&&d.contato.wa)||'').replace(/\D/g,'');
-    const cta = wa? '<a href="https://wa.me/'+(wa.length<=11?'55'+wa:wa)+'?text='+encodeURIComponent('Ola! Vi a proposta e quero fechar!')+'" target="_blank" style="position:fixed;left:0;right:0;bottom:0;z-index:9999;display:block;text-align:center;background:#22c15e;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;text-decoration:none;padding:15px 12px;box-shadow:0 -4px 16px rgba(0,0,0,.18)">🏰 Quero fechar!</a>' : '';
+    const cta = wa? '<div style="position:fixed;left:0;right:0;bottom:0;z-index:9999;display:flex;box-shadow:0 -4px 16px rgba(0,0,0,.18)">' +
+      '<button onclick="_aceitar(\'aceito\')" style="flex:2;border:0;cursor:pointer;background:#22c15e;color:#fff;font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;padding:15px 8px">🏰 Aceitar proposta</button>' +
+      '<button onclick="_aceitar(\'atendente\')" style="flex:1;border:0;cursor:pointer;background:#2C6AA3;color:#fff;font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;padding:15px 8px">💬 Tenho dúvidas</button>' +
+    '</div>' : '';
     document.open();
     document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Proposta ✦ Desenrola Turismo</title>'+
       '<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Nunito:wght@400;600;700;800&family=Anton&display=swap" rel="stylesheet">'+
