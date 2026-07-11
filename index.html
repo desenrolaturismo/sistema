@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v5.4.0</title>
+<title>Desenrola Turismo — Sistema de Gestão v5.4.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -201,7 +201,7 @@ tbody tr:hover{background:var(--surface2)}
 /* ══════════════ RESPONSIVE ══════════════ */
 
 /* ══════════════════════════════════════════════════════════════════════════
-   RESPONSIVIDADE MOBILE  (v5.4.0 · D-68)
+   RESPONSIVIDADE MOBILE  (v5.4.2 · D-68)
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* barra superior e overlay: invisíveis no desktop */
@@ -249,7 +249,7 @@ tbody tr:hover{background:var(--surface2)}
   /* tabelas largas rolam em vez de estourar a tela */
   .table-wrap,.tabela-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
 
-  /* ===== v5.4.0 - ATENDIMENTO estilo WhatsApp no celular ===== */
+  /* ===== v5.4.2 - ATENDIMENTO estilo WhatsApp no celular ===== */
   .at-wrap{ height:calc(100vh - 116px) !important; gap:0 !important; position:relative; }
   .at-wrap .at-col-lista{ width:100% !important; border-radius:12px !important; }
   .at-wrap .at-col-conversa{ display:none !important; }
@@ -391,7 +391,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v5.4.0
+    ✦ Desenrola Turismo · v5.4.2
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -399,7 +399,7 @@ tbody tr:hover{background:var(--surface2)}
 <!-- MAIN AREA -->
 <main class="main" id="main-content" style="display:none">
 
-<!-- v5.4.0 · D-68 · barra e escurecido só aparecem no celular (CSS) -->
+<!-- v5.4.2 · D-68 · barra e escurecido só aparecem no celular (CSS) -->
 <div class="mobile-topbar">
   <button class="mt-burger" onclick="_mobToggleMenu()" aria-label="Menu">☰</button>
   <span class="mt-title" id="mt-title"></span>
@@ -412,7 +412,7 @@ tbody tr:hover{background:var(--surface2)}
   <div class="page-header">
     <h1>Dashboard</h1>
     <p>✦ Sua viagem dos sonhos começa com números claros — visão geral financeira e comercial</p>
-    <!-- v5.4.0 · widgets de sistema movidos para Registros -> Sistema -->
+    <!-- v5.4.2 · widgets de sistema movidos para Registros -> Sistema -->
 
     <div class="header-actions" style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
       <select class="form-select" id="dash-year" onchange="this.dataset.userSet=1;updateDashboard()" style="width:100px">
@@ -483,7 +483,7 @@ tbody tr:hover{background:var(--surface2)}
       </table>
     </div>
   </div>
-  <!-- v5.4.0 · âncora dos painéis operacionais (Hoje, Re-encantar).
+  <!-- v5.4.2 · âncora dos painéis operacionais (Hoje, Re-encantar).
        Vêm DEPOIS dos índices: os números primeiro, a operação do dia depois. -->
   <div id="dash-sistemico"></div>
 </div>
@@ -1063,7 +1063,7 @@ tbody tr:hover{background:var(--surface2)}
 <!-- ════════════ PAGE: CRM ════════════ -->
 <!-- ═══════ PAGE: ATENDIMENTO ════════════ -->
 <div id="page-atendimento" class="page">
-  <!-- v5.4.0 · D-75 · Conversas e Templates na mesma casa -->
+  <!-- v5.4.2 · D-75 · Conversas e Templates na mesma casa -->
   <div style="display:flex;gap:6px;padding:0 4px 8px 4px">
     <button id="at-subaba-conversas" class="btn btn-primary btn-sm" onclick="atSubAba('conversas')">💬 Conversas</button>
     <button id="at-subaba-templates" class="btn btn-ghost btn-sm" onclick="atSubAba('templates')">📝 Templates</button>
@@ -1092,7 +1092,7 @@ tbody tr:hover{background:var(--surface2)}
     <div id="at-lista" style="flex:1;overflow-y:auto"></div>
     </div>
 
-    <!-- v5.4.0 · o card do lead, ao lado da conversa -->
+    <!-- v5.4.2 · o card do lead, ao lado da conversa -->
     <div id="at-lead" class="at-col-lead" style="width:300px;flex-shrink:0;background:#fff;border-radius:12px;overflow-y:auto;display:none;box-shadow:0 2px 8px rgba(0,0,0,.06)">
       <div style="padding:12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
         <strong style="font-size:13px">📇 Card do lead</strong>
@@ -1157,7 +1157,7 @@ tbody tr:hover{background:var(--surface2)}
           <button id="at-descer" onclick="_atRolarFim()" style="display:none;background:#2C6AA3;color:#fff;border:0;border-radius:14px;padding:4px 11px;font-size:11px;cursor:pointer">↓ novas</button>
         </div>
 
-        <!-- v5.4.0 · "/" abre os templates que já existem na aba Templates -->
+        <!-- v5.4.2 · "/" abre os templates que já existem na aba Templates -->
         <div id="at-slash" style="display:none;max-height:230px;overflow-y:auto;border:1px solid #dde3ea;border-radius:9px;margin-bottom:6px;background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.06)"></div>
 
         <div style="display:flex;gap:8px">
@@ -2104,7 +2104,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v5.4.0</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v5.4.2</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -2128,7 +2128,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v5.4.0</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v5.4.2</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -2618,11 +2618,9 @@ function _retomarSessao(){
         Object.keys(remoteData).forEach(function(k){
           if(!NON_SERIALIZABLE.has(k)) DB[k] = remoteData[k];
         });
-        ['usuarios','clientes','orcamentos','crm'].forEach(function(k){
-          if(DB[k] && !Array.isArray(DB[k])) DB[k] = Object.values(DB[k]);
-        });
+        _garantirListas();
         try { _indexarTodas(remoteData); } catch(e){}
-    try { _crmIndexar(remoteData.crm); } catch(e){ console.warn('[v5.4.0] espelho:', e); }
+    try { _crmIndexar(remoteData.crm); } catch(e){ console.warn('[v5.4.2] espelho:', e); }
         if(typeof _normalizarUsuariosMem === 'function') _normalizarUsuariosMem();
       }
       var alvo = String(u.email||'').toLowerCase();
@@ -2734,7 +2732,7 @@ const STORAGE_BALDES = [
 let _fbApp=null, _fbDb=null, _fbOnline=false, _fbListener=null, _pendingSync=false, _fbConnectedListener=null;
 const _sessionId = Math.random().toString(36).slice(2)+Date.now().toString(36);
 
-// v5.4.0 - Reserva de crmId a prova de colisao com a ponte.
+// v5.4.2 - Reserva de crmId a prova de colisao com a ponte.
 // A ponte (webhook) reserva ids com transacao atomica em desenrola_v3/nextCrmId.
 // Se o Sistema usa contador LOCAL (DB.nextCrmId++), os dois colidem: varios
 // numeros da ponte e um lead do Sistema recebem o MESMO id. Foi a raiz do bug
@@ -2812,7 +2810,7 @@ function _snapshotDiario(){
       Object.keys(DB).forEach(function(k){ if(!NON_SERIALIZABLE.has(k)) pay[k]=DB[k]; });
       pay=JSON.parse(JSON.stringify(pay)); pay._snapshotEm=Date.now();
       ref.child(hoje).set(pay).then(function(){
-        console.log('[v5.4.0] Snapshot diário gravado:', hoje);
+        console.log('[v5.4.2] Snapshot diário gravado:', hoje);
         ref.once('value').then(function(all){
           var ks=Object.keys(all.val()||{}).sort();
           while(ks.length>10){ ref.child(ks.shift()).remove(); }
@@ -2860,7 +2858,7 @@ function _aplicarSnapshot(dia){
   }, 'Restaurar');
 }
 // ══ v3.57 — BLINDAGEM: banco local vazio NUNCA sobrescreve a nuvem ══════
-// v5.4.0 · A nuvem já respondeu nesta sessão? Enquanto não, a memória local
+// v5.4.2 · A nuvem já respondeu nesta sessão? Enquanto não, a memória local
 // não é autoridade sobre o que existe ou deixa de existir.
 var _remotoCarregado = false;
 
@@ -2870,7 +2868,7 @@ function _dbVazioCritico(d){
   return !n('vendas') && !n('crm') && !n('recebimentos') && !n('caixa') && !n('posVendas') && !n('orcamentos');
 }
 // ══════════════════════════════════════════════════════════════════════════
-// CRM · SINCRONIZAÇÃO POR REGISTRO  (v5.4.0)
+// CRM · SINCRONIZAÇÃO POR REGISTRO  (v5.4.2)
 //
 // `update({crm: [...]})` substitui o array inteiro. Duas abas gravando ao
 // mesmo tempo se anulam. Foi assim que o posVendas foi destruído.
@@ -2897,7 +2895,7 @@ function _crmIndexar(bruto){
   // leads". Deixamos o espelho em null: nada será gravado até sabermos.
   if(bruto === undefined || bruto === null){
     _crmEspelho = null;
-    console.warn('[v5.4.0] a nuvem não trouxe `crm`; sincronização suspensa.');
+    console.warn('[v5.4.2] a nuvem não trouxe `crm`; sincronização suspensa.');
     return;
   }
   var esp = {};
@@ -2924,11 +2922,11 @@ function _crmRecuperarEspelho(){
   _fbDb.ref('desenrola_v3/crm').once('value')
     .then(function(sn){
       _crmIndexar(sn.val());
-      console.info('[v5.4.0] espelho do crm reconstruído; sincronizando.');
+      console.info('[v5.4.2] espelho do crm reconstruído; sincronizando.');
       _crmSincronizarDelta();
     })
     .catch(function(err){
-      console.warn('[v5.4.0] não consegui reconstruir o espelho:', err && err.message);
+      console.warn('[v5.4.2] não consegui reconstruir o espelho:', err && err.message);
     })
     .finally(function(){ _crmBuscando = false; });
 }
@@ -2937,7 +2935,7 @@ function _crmSincronizarDelta(){
   if(!_fbDb || !_fbOnline) return 0;
   if(_crmEspelho === null){
     // Não gravamos por ignorância — mas também não desistimos.
-    console.warn('[v5.4.0] espelho do crm ausente; buscando antes de gravar.');
+    console.warn('[v5.4.2] espelho do crm ausente; buscando antes de gravar.');
     _crmRecuperarEspelho();
     return 0;
   }
@@ -2955,7 +2953,7 @@ function _crmSincronizarDelta(){
     tocados++;
     _fbDb.ref('desenrola_v3/crm/' + chave).set(lead)
       .then(function(){ _crmEspelho[lead.id] = { chave: chave, hash: atual }; })
-      .catch(function(e){ console.warn('[v5.4.0] crm/' + chave + ':', e && e.message); });
+      .catch(function(e){ console.warn('[v5.4.2] crm/' + chave + ':', e && e.message); });
   });
 
   // Removidos: estavam no espelho e sumiram da memória.
@@ -2965,7 +2963,7 @@ function _crmSincronizarDelta(){
     tocados++;
     _fbDb.ref('desenrola_v3/crm/' + chave).remove()
       .then(function(){ delete _crmEspelho[id]; })
-      .catch(function(e){ console.warn('[v5.4.0] remover crm/' + chave + ':', e && e.message); });
+      .catch(function(e){ console.warn('[v5.4.2] remover crm/' + chave + ':', e && e.message); });
   });
 
   return tocados;
@@ -2986,11 +2984,11 @@ function saveToFirebase(payload){
     delete fbPayload.usuarios;
     delete fbPayload.clientes;
     delete fbPayload.orcamentos;
-    // v5.4.0 · `update({crm})` substituía o array inteiro. Agora vai por registro.
+    // v5.4.2 · `update({crm})` substituía o array inteiro. Agora vai por registro.
     delete fbPayload.crm;
     _crmSincronizarDelta();
 
-    // v5.4.0 · D-69 · as coleções pesadas vão por REGISTRO, não em bloco.
+    // v5.4.2 · D-69 · as coleções pesadas vão por REGISTRO, não em bloco.
     // `update({posVendas: [...]})` substituía o array inteiro: dois vendedores
     // editando cards diferentes, e o último apagava o trabalho do primeiro.
     _COLECOES_DELTA.forEach(function(c){ delete fbPayload[c.nome]; });
@@ -3005,6 +3003,20 @@ function saveToFirebase(payload){
 }
 
 // Carrega do Firebase (chamado na inicialização)
+// v5.4.2 - lista central de TODAS as chaves do DB que sao arrays.
+// O Firebase as vezes devolve arrays como objetos {0:..,1:..}; esta funcao
+// garante que voltem a ser arrays. Chamada apos todo carregamento remoto.
+var _CHAVES_LISTA_DB = ['usuarios','clientes','orcamentos','crm','posVendas',
+  'vendas','tarefas','recebimentos','caixa','vendedores','operadoras',
+  'seguradoras','hoteis','hoteisCustom','locadoras','ingressos','calendario',
+  'templatesCustom','templatesExcluidos','commPagamentos','orcFavoritos',
+  'importLog','comissoes'];
+function _garantirListas(){
+  _CHAVES_LISTA_DB.forEach(function(k){
+    if(DB[k] && !Array.isArray(DB[k])) DB[k] = Object.values(DB[k]);
+  });
+}
+
 function loadFromFirebase(callback){
   if(!_fbDb){
     callback(null);
@@ -3070,12 +3082,10 @@ function subscribeFirebaseUpdates(){
       });
       if(DB._precisaResave){ DB._precisaResave=false; setTimeout(function(){ saveToStorage(); }, 400); }
       // BUG-CRIT-02: mesma normalização objeto->array do boot inicial — ver init()
-      ['usuarios','clientes','orcamentos','crm'].forEach(function(k){
-        if(DB[k] && !Array.isArray(DB[k])) DB[k] = Object.values(DB[k]);
-      });
+      _garantirListas();
       // `remote` é o BRUTO da nuvem. `DB.crm` já virou array e perdeu as chaves.
       try { _indexarTodas(remote); } catch(e){}
-    try { _crmIndexar(remote.crm); } catch(e){ console.warn('[v5.4.0] espelho:', e); }
+    try { _crmIndexar(remote.crm); } catch(e){ console.warn('[v5.4.2] espelho:', e); }
       _normalizarUsuariosMem();
       // CORR-04: verificar se conta atual foi desativada remotamente
       if(DB.currentUser){
@@ -3227,11 +3237,11 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 
 
 // ══════════════════════════════════════════════════════════════
-// BACKUP AUTOMÁTICO — DesenrolaSistema v5.4.0
+// BACKUP AUTOMÁTICO — DesenrolaSistema v5.4.2
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v5.4.0',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v5.4.2',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_turismo_v3')||'{}'); // v3.57: chave correta
   if (_fbDb) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); else payload.dados.firebaseVazio = true; } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -3316,7 +3326,7 @@ function saveToStorage(){
   // ── 2. Cache local: melhor esforço. Pode falhar sem levar o resto junto. ──
   var localOk = false;
   try {
-    // v5.4.0 · o cache é conveniência; a nuvem é a verdade. Base64 que já está
+    // v5.4.2 · o cache é conveniência; a nuvem é a verdade. Base64 que já está
     // no Drive não precisa ocupar os 5 MB do navegador.
     const data = JSON.stringify(_semBase64(payload));
     localStorage.setItem(STORAGE_KEY, data);
@@ -3329,7 +3339,7 @@ function saveToStorage(){
       try {
         const leve = Object.assign({}, payload);
         delete leve.posVendas;
-        leve._parcial = true;   // v5.4.0: quem ler este cache precisa saber
+        leve._parcial = true;   // v5.4.2: quem ler este cache precisa saber
         localStorage.setItem(STORAGE_KEY, JSON.stringify(leve));
         localOk = true;
         _avisoQuota('<b>Cache local cheio.</b><br>Seus dados <b>foram salvos na nuvem</b>. O histórico de pós-venda deixa de ficar disponível offline.', '#b9770e');
@@ -3363,7 +3373,7 @@ function loadFromStorage(){
       if(saved._parcial){
         // Este cache foi salvo sem `posVendas` porque a cota estourou.
         // Ele NÃO é autoridade sobre pós-vendas. A nuvem é.
-        console.warn('[v5.4.0] cache parcial: posVendas virá da nuvem.');
+        console.warn('[v5.4.2] cache parcial: posVendas virá da nuvem.');
         DB.posVendas = [];
       }
     }
@@ -3450,7 +3460,7 @@ function initAtendimento(){
     AT.conversas = sn.val() || {};
     try { _atIndexarPorCrm(); } catch(e){}
     try { _crmGarantirContatos(); } catch(e){}   // lead automático vira contato
-    try { _reconciliarProximasAcoes(); } catch(e){}   // v5.4.0 · selos órfãos
+    try { _reconciliarProximasAcoes(); } catch(e){}   // v5.4.2 · selos órfãos
     renderAtConversas();
     _atBadge();
   }, function(e){ console.warn('[ATENDIMENTO] leitura negada:', e && e.message); });
@@ -3472,7 +3482,7 @@ function renderAtendimento(){
 
 
 // ══════════════════════════════════════════════════════════════════════════
-// CONVERSAS POR VENDEDOR (v5.4.0)
+// CONVERSAS POR VENDEDOR (v5.4.2)
 // O gestor (Thomaz, id:1) vê todas e atribui. Vendedor vê as dele + sem dono.
 // A Camila é adm, mas nas conversas é tratada como vendedora — por isso o teste
 // é por id === 1, não por isAdm().
@@ -3550,7 +3560,7 @@ async function atAtribuirVendedor(nome){
     return '<div style="font-size:11px;color:#b9770e;margin-bottom:8px">👤 Conversa sem dono</div>';
   }
 
-// v5.4.0 - popula o filtro de vendedor com a lista de vendedores ativos.
+// v5.4.2 - popula o filtro de vendedor com a lista de vendedores ativos.
 // So o gestor (Thomaz) ve o filtro; preserva a selecao atual ao repopular.
 function _atMontarFiltroVendedor(){
   var wrap = g('at-filtro-vendedor-wrap');
@@ -3573,14 +3583,14 @@ function _atMontarFiltroVendedor(){
 function renderAtConversas(){
   var el = g('at-lista'); if(!el) return;
   var _leg = g('at-legenda-vendedor'); if(_leg) _leg.style.display = _atGestor() ? 'flex' : 'none';
-  _atContarCrm();   // v5.4.0 - recalcula vinculos p/ detectar lead super-vinculado
+  _atContarCrm();   // v5.4.2 - recalcula vinculos p/ detectar lead super-vinculado
   var termo = (g('at-busca') && g('at-busca').value || '').trim().toLowerCase();
 
   var lista = Object.keys(AT.conversas).map(function(k){
     var c = Object.assign({}, AT.conversas[k]); c._k = k; return c;
   }).filter(function(c){
-    if(!_atConversaVisivel(c)) return false;   // v5.4.0 · vendedor so ve as dele + sem dono
-    // v5.4.0 - filtro de vendedor (so o gestor tem o seletor)
+    if(!_atConversaVisivel(c)) return false;   // v5.4.2 · vendedor so ve as dele + sem dono
+    // v5.4.2 - filtro de vendedor (so o gestor tem o seletor)
     var _fv = g('at-filtro-vendedor');
     if(_fv && _fv.value){
       var _donoF = _atVendedorDaConversa(c);
@@ -3590,7 +3600,7 @@ function renderAtConversas(){
     if(!termo) return true;
     return _atNome(c).toLowerCase().indexOf(termo) >= 0 || String(c.waId||'').indexOf(termo) >= 0;
   }).sort(function(a,b){
-    // v5.4.0 - Ordem do WhatsApp: conversa com a mensagem MAIS RECENTE no topo,
+    // v5.4.2 - Ordem do WhatsApp: conversa com a mensagem MAIS RECENTE no topo,
     // as mais antigas descem. Usa o maior carimbo de tempo de cada conversa.
     var ta = a.ultimaEntrada || a.ultimaAtividade || a.aguardandoDesde || 0;
     var tb = b.ultimaEntrada || b.ultimaAtividade || b.aguardandoDesde || 0;
@@ -3622,7 +3632,7 @@ function renderAtConversas(){
   }).join('');
 }
 
-// v5.4.0 - navegacao mobile estilo WhatsApp (lista <-> conversa em tela cheia)
+// v5.4.2 - navegacao mobile estilo WhatsApp (lista <-> conversa em tela cheia)
 function _atWrap(){ return document.getElementById('at-wrap'); }
 function atVoltarLista(){
   var w = _atWrap(); if(!w) return;
@@ -3637,7 +3647,7 @@ function _atEntrarConversaMobile(){
 function atAbrir(k){
   AT.atual = k;
   var c = AT.conversas[k]; if(!c) return;
-  _atEntrarConversaMobile();   // v5.4.0 - no celular, abre a conversa em tela cheia
+  _atEntrarConversaMobile();   // v5.4.2 - no celular, abre a conversa em tela cheia
   _atNoFim = true; _atNovas = 0;
   var _av = g('at-avatar');
   if(_av) _av.innerHTML = _atAvatar(c.nome || c.waId, 40);
@@ -3652,7 +3662,7 @@ function atAbrir(k){
     if(ta && _atJanelaAberta(c)){ ta.focus(); }
     _atAjustarAltura();
   }, 60);
-  try { renderAtLead(); } catch(e){ console.warn('[v5.4.0] painel do lead:', e); }
+  try { renderAtLead(); } catch(e){ console.warn('[v5.4.2] painel do lead:', e); }
 
   // Marcar como lida. É a ÚNICA escrita que as Rules permitem em conversations.
   if(c.naoLidas){
@@ -3736,7 +3746,7 @@ function _atCorpo(m){
   if(md.status !== 'ok' || !md.caminho){
     return '<i style="color:#777">[' + esc(m.tipo || 'mídia') + ' — baixando…]</i>';
   }
-  // v5.4.0 · slot DETERMINÍSTICO. Com Math.random() a mídia era buscada de novo
+  // v5.4.2 · slot DETERMINÍSTICO. Com Math.random() a mídia era buscada de novo
   // a cada render — era metade do "tilt".
   var slot = 'md_' + String(m._k || m.waMessageId || m.ts).replace(/[^a-zA-Z0-9]/g, '');
   setTimeout(function(){ _atPreencherMidia(slot, md, m.texto); }, 0);
@@ -4057,7 +4067,7 @@ async function atCriarLead(){
   var c = AT.conversas[AT.atual]; if(!c) return;
   var nome = (g('at-vinc-busca').value||'').trim() || c.nome || c.waId;
 
-  // v5.4.0 - id reservado por transacao no servidor (nao colide com a ponte)
+  // v5.4.2 - id reservado por transacao no servidor (nao colide com a ponte)
   var id = await new Promise(function(resolve){ _reservarCrmId(resolve); });
   var agora = new Date().toISOString();
 
@@ -4079,12 +4089,12 @@ async function atCriarLead(){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// CARD DO LEAD AO LADO DA CONVERSA  (v5.4.0)
+// CARD DO LEAD AO LADO DA CONVERSA  (v5.4.2)
 // O vendedor anota enquanto conversa. Sem trocar de tela, sem perder o fio.
 // ══════════════════════════════════════════════════════════════════════════
 
 // ══════════════════════════════════════════════════════════════════════════
-// LEAD AUTOMÁTICO VIRA CONTATO  (v5.4.0)
+// LEAD AUTOMÁTICO VIRA CONTATO  (v5.4.2)
 //
 // A ponte cria o lead mas não mexe em `clientes` — aquilo ainda é um array
 // gravado em bloco, e dois escritores nele é a receita que apagou o posVendas.
@@ -4131,10 +4141,10 @@ function _crmGarantirContatos(){
     if(criados || ligados){
       saveToStorage();
       try { _atualizarSelectsClientes(); } catch(e){}
-      console.info('[v5.4.0] contatos: ' + criados + ' criados, ' + ligados + ' religados');
+      console.info('[v5.4.2] contatos: ' + criados + ' criados, ' + ligados + ' religados');
     }
   } catch(e){
-    console.warn('[v5.4.0] reconciliação de contatos:', e);
+    console.warn('[v5.4.2] reconciliação de contatos:', e);
   } finally {
     _contatosReconciliando = false;
   }
@@ -4248,7 +4258,7 @@ function _slashTeclou(){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// ESPELHO DE ESTADO DOS TEMPLATES DA META  (v5.4.0)
+// ESPELHO DE ESTADO DOS TEMPLATES DA META  (v5.4.2)
 // A ponte escreve; nós lemos. O selo muda sozinho quando a Meta aprova.
 // ══════════════════════════════════════════════════════════════════════════
 var TPL_META = {};
@@ -4258,7 +4268,7 @@ function initTemplatesMeta(){
   _fbDb.ref('desenrola_wa/templates').on('value', function(sn){
     TPL_META = sn.val() || {};
     try { if(g('page-templates') && !g('page-templates').classList.contains('hid')) renderTemplates(); } catch(e){}
-  }, function(e){ console.warn('[v5.4.0] espelho de templates:', e && e.message); });
+  }, function(e){ console.warn('[v5.4.2] espelho de templates:', e && e.message); });
 }
 
 // O nome que a Meta conhece, derivado do template interno. Mesma regra do
@@ -4342,7 +4352,7 @@ async function sincronizarTemplatesMeta(){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// ORÇAMENTO EM 1 CLIQUE  (v5.4.0)
+// ORÇAMENTO EM 1 CLIQUE  (v5.4.2)
 // ══════════════════════════════════════════════════════════════════════════
 
 // Acha a conversa pelo telefone, com e sem o 9º dígito. Fixo não recebe 9.
@@ -4422,7 +4432,7 @@ async function _dispararOrcamento(o, waId, t26, vals){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// FUNIL DE ENTREGA DO ORÇAMENTO  (v5.4.0)
+// FUNIL DE ENTREGA DO ORÇAMENTO  (v5.4.2)
 // enviado → entregue → lido → visualizado
 // ══════════════════════════════════════════════════════════════════════════
 var ORC_STATUS = {};   // orcId -> {enviadoEm, entregueEm, lidoEm, falhouEm}
@@ -4433,18 +4443,18 @@ function initFunilOrcamentos(){
 
   _fbDb.ref('desenrola_wa/orc_status').on('value', function(sn){
     ORC_STATUS = sn.val() || {};
-    try { _tratarAceites(); } catch(e){ console.warn('[v5.4.0] aceites:', e); }
+    try { _tratarAceites(); } catch(e){ console.warn('[v5.4.2] aceites:', e); }
     _repintarOrcamentos();
-  }, function(e){ console.warn('[v5.4.0] orc_status:', e && e.message); });
+  }, function(e){ console.warn('[v5.4.2] orc_status:', e && e.message); });
 
   _fbDb.ref('desenrola_v3/orc_views').on('value', function(sn){
     ORC_VIEWS = sn.val() || {};
     _repintarOrcamentos();
-  }, function(e){ console.warn('[v5.4.0] orc_views:', e && e.message); });
+  }, function(e){ console.warn('[v5.4.2] orc_views:', e && e.message); });
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// O CLIENTE ACEITOU. E AGORA?  (v5.4.0)
+// O CLIENTE ACEITOU. E AGORA?  (v5.4.2)
 //
 // O plano pedia: grava evento, muda etapa, notifica o vendedor.
 //
@@ -4514,7 +4524,7 @@ function _repintarOrcamentos(){
   } catch(e){}
 }
 
-// v5.4.0 · o degrau "visualizado" vem do espelho da ponte (aberturas reais da
+// v5.4.2 · o degrau "visualizado" vem do espelho da ponte (aberturas reais da
 // proposta pública). `orc_views` ficou como legado: as regras exigem senha
 // para escrever nele, então o visitante anônimo nunca escreveu ali.
 function _primeiraVisualizacao(orcId){
@@ -4583,7 +4593,7 @@ function _seloFunil(o){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// TAREFA E PRÓXIMA AÇÃO: UM FATO SÓ  (v5.4.0)
+// TAREFA E PRÓXIMA AÇÃO: UM FATO SÓ  (v5.4.2)
 //
 // O card lia `lead.proximaAcaoData`; a aba Tarefas lia `DB.tarefas`. Concluir
 // uma nunca limpava a outra. Agora limpa.
@@ -4616,7 +4626,7 @@ function _restaurarAcaoDoLead(t){
 
 /**
  * Selos órfãos: leads com próxima ação vencida e NENHUMA tarefa pendente.
- * São resíduo de tarefas concluídas antes da v5.4.0. Roda uma vez, na carga.
+ * São resíduo de tarefas concluídas antes da v5.4.2. Roda uma vez, na carga.
  *
  * Não mexe em lead cuja ação foi marcada à mão e ainda não venceu — pode ser
  * um lembrete legítimo que nunca virou tarefa.
@@ -4652,12 +4662,12 @@ function _reconciliarProximasAcoes(){
 
   if(limpos){
     saveToStorage();
-    console.info('[v5.4.0] ' + limpos + ' selo(s) de ação órfão(s) limpos');
+    console.info('[v5.4.2] ' + limpos + ' selo(s) de ação órfão(s) limpos');
   }
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// O WHATSAPP MORA AQUI DENTRO  (v5.4.0)
+// O WHATSAPP MORA AQUI DENTRO  (v5.4.2)
 // Antes: window.open('wa.me/...') — saía do sistema, não registrava nada.
 // Agora: abre o Atendimento com o texto pronto. Enviar continua sendo seu.
 // ══════════════════════════════════════════════════════════════════════════
@@ -4679,12 +4689,12 @@ function abrirNoAtendimento(tel, texto){
       var ta = g('at-texto');
       if(ta && texto){ ta.value = texto; _atAjustarAltura(); ta.focus(); }
       toast('Revise e aperte Enter para enviar.');
-    } catch(e){ console.warn('[v5.4.0] abrirNoAtendimento:', e); }
+    } catch(e){ console.warn('[v5.4.2] abrirNoAtendimento:', e); }
   }, 150);
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// FILA E TEMPO DE PRIMEIRA RESPOSTA  (v5.4.0)
+// FILA E TEMPO DE PRIMEIRA RESPOSTA  (v5.4.2)
 // A ponte marca `aguardandoDesde` quando o cliente escreve e ninguém devia
 // resposta. Aqui, isso vira uma fila visível.
 // ══════════════════════════════════════════════════════════════════════════
@@ -4696,7 +4706,7 @@ function initMetricasSLA(){
   _fbDb.ref('desenrola_wa/metricas/' + hoje).on('value', function(sn){
     SLA_METRICAS = sn.val() || {};
     try { if(g('page-dashboard') && !g('page-dashboard').classList.contains('hid')) renderSlaWidget(); } catch(e){}
-  }, function(e){ console.warn('[v5.4.0] metricas:', e && e.message); });
+  }, function(e){ console.warn('[v5.4.2] metricas:', e && e.message); });
 }
 
 function _esperaMs(c){
@@ -4745,7 +4755,7 @@ function renderSlaWidget(){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// AUTOMAÇÕES  (v5.4.0)
+// AUTOMAÇÕES  (v5.4.2)
 // Uma mensagem que sai sozinha erra em escala, de madrugada, sem ninguém
 // olhando. Este painel existe para que sempre haja alguém olhando.
 // ══════════════════════════════════════════════════════════════════════════
@@ -4767,7 +4777,7 @@ function initAutomacoes(){
   if(!_fbDb || !_autenticado()) return;
   _fbDb.ref('desenrola_wa/automacoes/config').on('value', function(sn){
     AUTO_CFG = sn.val() || {}; _repintarAutomacoes();
-  }, function(e){ console.warn('[v5.4.0] auto/config:', e && e.message); });
+  }, function(e){ console.warn('[v5.4.2] auto/config:', e && e.message); });
 
   var dia = new Date().toISOString().split('T')[0];
   _fbDb.ref('desenrola_wa/automacoes/metricas/' + dia).on('value', function(sn){
@@ -4885,7 +4895,7 @@ function initOptins(){
   _fbDb.ref('desenrola_wa/optins').on('value', function(sn){
     OPTINS = sn.val() || {};
     try { if(AT.atual) renderAtLead(); } catch(e){}
-  }, function(e){ console.warn('[v5.4.0] optins:', e && e.message); });
+  }, function(e){ console.warn('[v5.4.2] optins:', e && e.message); });
 }
 
 function _optinDe(waId){
@@ -4920,7 +4930,7 @@ function _seloOptin(waId){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// SIMULAR: quem receberia, agora?  (v5.4.0)
+// SIMULAR: quem receberia, agora?  (v5.4.2)
 // Toda automação deveria responder a esta pergunta antes de existir um botão
 // que responde "envie".
 // ══════════════════════════════════════════════════════════════════════════
@@ -4979,7 +4989,7 @@ function _autoMostrarSimulacao(d){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// IDENTIDADE DO PÓS-VENDA  (v5.4.0 · D-52)
+// IDENTIDADE DO PÓS-VENDA  (v5.4.2 · D-52)
 // Sem `clienteId`, nenhuma automação alcança a pessoa.
 // ══════════════════════════════════════════════════════════════════════════
 var _pvReconciliado = false;
@@ -5026,7 +5036,7 @@ function _pvGarantirClienteId(){
 
   if(viaVenda || viaNome){
     saveToStorage();
-    console.info('[v5.4.0] pós-vendas vinculados: ' + viaVenda + ' pela venda, ' + viaNome + ' pelo nome');
+    console.info('[v5.4.2] pós-vendas vinculados: ' + viaVenda + ' pela venda, ' + viaNome + ' pelo nome');
   }
 }
 
@@ -5037,7 +5047,7 @@ function _publicarUrlBase(){
   _fbDb.ref('desenrola_wa/config/urlPublica').once('value').then(function(sn){
     if(sn.val() === base) return;           // já está certo, não escrevemos à toa
     return _fbDb.ref('desenrola_wa/config/urlPublica').set(base);
-  }).catch(function(e){ console.warn('[v5.4.0] urlPublica:', e && e.message); });
+  }).catch(function(e){ console.warn('[v5.4.2] urlPublica:', e && e.message); });
 }
 
 // Um pós-venda sem contato é invisível para as automações. O card avisa.
@@ -5058,7 +5068,7 @@ function _seloSemData(pv){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// PESO DO BANCO  (v5.4.0 · D-59 / D-61)
+// PESO DO BANCO  (v5.4.2 · D-59 / D-61)
 // 71% do banco eram PDFs em base64 que já viviam no Google Drive.
 // ══════════════════════════════════════════════════════════════════════════
 
@@ -5128,14 +5138,14 @@ async function _enxugarAuto(){
         if(!a.v.driveLink) a.v.driveLink = 'https://drive.google.com/file/d/' + a.v.driveId + '/view';
         ok++;
       } catch(e){
-        console.warn('[v5.4.0] voucher mantido (' + (a.v.nome || '?') + '):', e.message);
+        console.warn('[v5.4.2] voucher mantido (' + (a.v.nome || '?') + '):', e.message);
       }
     }
     if(ok){
       saveToStorage();
-      console.info('[v5.4.0] ' + ok + ' voucher(s) enxugado(s) · ' + Math.round(p.bytes/1024) + ' KB liberados');
+      console.info('[v5.4.2] ' + ok + ' voucher(s) enxugado(s) · ' + Math.round(p.bytes/1024) + ' KB liberados');
     }
-  } catch(e){ console.warn('[v5.4.0] enxugue automático:', e && e.message); }
+  } catch(e){ console.warn('[v5.4.2] enxugue automático:', e && e.message); }
 }
 
 /** Aviso discreto quando há peso preso e o Drive não está conectado. */
@@ -5152,7 +5162,7 @@ function renderPesoWidget(){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// ESCRITA POR REGISTRO  (v5.4.0 · D-69)
+// ESCRITA POR REGISTRO  (v5.4.2 · D-69)
 //
 // `update({posVendas: [...]})` substitui o array inteiro. Dois vendedores
 // editando cards diferentes ao mesmo tempo: o último apaga o primeiro.
@@ -5190,7 +5200,7 @@ function _regHash(reg){
 function _indexarCol(nome, bruto){
   if(bruto === undefined || bruto === null){
     _ESPELHOS[nome] = null;
-    console.warn('[v5.4.0] a nuvem não trouxe `' + nome + '`; sincronização suspensa.');
+    console.warn('[v5.4.2] a nuvem não trouxe `' + nome + '`; sincronização suspensa.');
     return;
   }
   var esp = {};
@@ -5210,7 +5220,7 @@ function _indexarTodas(remoto){
   if(!remoto) return;
   _COLECOES_DELTA.forEach(function(c){
     try { _indexarCol(c.nome, remoto[c.nome]); }
-    catch(e){ console.warn('[v5.4.0] espelho de ' + c.nome + ':', e && e.message); }
+    catch(e){ console.warn('[v5.4.2] espelho de ' + c.nome + ':', e && e.message); }
   });
 }
 
@@ -5220,9 +5230,9 @@ function _recuperarEspelho(nome){
   _fbDb.ref('desenrola_v3/' + nome).once('value')
     .then(function(sn){
       _indexarCol(nome, sn.val());
-      console.info('[v5.4.0] espelho de ' + nome + ' reconstruído.');
+      console.info('[v5.4.2] espelho de ' + nome + ' reconstruído.');
     })
-    .catch(function(e){ console.warn('[v5.4.0] espelho de ' + nome + ':', e && e.message); })
+    .catch(function(e){ console.warn('[v5.4.2] espelho de ' + nome + ':', e && e.message); })
     .finally(function(){ _BUSCANDO[nome] = false; });
 }
 
@@ -5244,14 +5254,14 @@ function _sincronizarDelta(nome, prefixo){
   // apagou tudo": é uma carga que falhou. Sem isto, um `DB.tarefas` ausente
   // apagaria as 107 tarefas da nuvem, uma a uma, sem aviso.
   if(naNuvem > 0 && itens.length === 0){
-    console.warn('[v5.4.0] ' + nome + ': memória vazia, ' + naNuvem + ' na nuvem. Sincronização recusada.');
+    console.warn('[v5.4.2] ' + nome + ': memória vazia, ' + naNuvem + ' na nuvem. Sincronização recusada.');
     return 0;
   }
 
   // Perda em massa: mais de 30% dos registros sumiram de uma vez. Pode ser
   // legítimo (expurgo), mas nunca é rotina. Exigimos consentimento explícito.
   if(naNuvem >= 10 && itens.length < naNuvem * 0.7 && !window._permitirExpurgo){
-    console.warn('[v5.4.0] ' + nome + ': ' + itens.length + ' na memória vs ' + naNuvem +
+    console.warn('[v5.4.2] ' + nome + ': ' + itens.length + ' na memória vs ' + naNuvem +
                  ' na nuvem. Recusado. Para expurgar: window._permitirExpurgo = true');
     if(!window['_aviso_' + nome]){
       window['_aviso_' + nome] = true;
@@ -5275,7 +5285,7 @@ function _sincronizarDelta(nome, prefixo){
     tocados++;
     _fbDb.ref('desenrola_v3/' + nome + '/' + chave).set(reg)
       .then(function(){ esp[reg.id] = { chave: chave, hash: atual }; })
-      .catch(function(e){ console.warn('[v5.4.0] ' + nome + '/' + chave + ':', e && e.message); });
+      .catch(function(e){ console.warn('[v5.4.2] ' + nome + '/' + chave + ':', e && e.message); });
   });
 
   // Removidos: estavam no espelho e sumiram da memória.
@@ -5285,7 +5295,7 @@ function _sincronizarDelta(nome, prefixo){
     tocados++;
     _fbDb.ref('desenrola_v3/' + nome + '/' + chave).remove()
       .then(function(){ delete esp[id]; })
-      .catch(function(e){ console.warn('[v5.4.0] remover ' + nome + '/' + chave + ':', e && e.message); });
+      .catch(function(e){ console.warn('[v5.4.2] remover ' + nome + '/' + chave + ':', e && e.message); });
   });
 
   return tocados;
@@ -5295,13 +5305,13 @@ function _sincronizarTodas(){
   var total = 0;
   _COLECOES_DELTA.forEach(function(c){
     try { total += _sincronizarDelta(c.nome, c.prefixo); }
-    catch(e){ console.warn('[v5.4.0] delta de ' + c.nome + ':', e && e.message); }
+    catch(e){ console.warn('[v5.4.2] delta de ' + c.nome + ':', e && e.message); }
   });
   return total;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// HIGIENE DE TAREFAS  (v5.4.0 · D-62)
+// HIGIENE DE TAREFAS  (v5.4.2 · D-62)
 // 57 das 107 tarefas estão concluídas. Mais da metade da lista era ruído.
 // ══════════════════════════════════════════════════════════════════════════
 var _tarefasExpurgadas = false;
@@ -5383,24 +5393,24 @@ function _expurgarTarefasAntigas(){
 
   var quantos = Object.keys(apagar).length;
   if(!quantos){
-    if(semDestino) console.info('[v5.4.0] ' + semDestino + ' tarefa(s) antiga(s) mantida(s): sem card de destino.');
+    if(semDestino) console.info('[v5.4.2] ' + semDestino + ' tarefa(s) antiga(s) mantida(s): sem card de destino.');
     return;
   }
 
   DB.tarefas = DB.tarefas.filter(function(t){ return !(t && apagar[t.id]); });
 
-  // A trava de queda brusca (v5.4.0) barra remoções em massa acidentais.
+  // A trava de queda brusca (v5.4.2) barra remoções em massa acidentais.
   // Este expurgo é intencional, e se identifica como tal.
   window._permitirExpurgo = true;
   try { saveToStorage(); } finally { window._permitirExpurgo = false; }
 
-  console.info('[v5.4.0] ' + quantos + ' tarefa(s) arquivada(s) no card' +
+  console.info('[v5.4.2] ' + quantos + ' tarefa(s) arquivada(s) no card' +
                (semDestino ? ' · ' + semDestino + ' mantida(s) sem destino' : ''));
   try { toast(quantos + ' tarefa(s) antiga(s) arquivada(s) no card.'); } catch(e){}
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// CONTATO → CLIENTE  (v5.4.0 · D-63)
+// CONTATO → CLIENTE  (v5.4.2 · D-63)
 // Quem tem venda fechada é cliente. Uma pessoa, um registro, um estado.
 // ══════════════════════════════════════════════════════════════════════════
 var _promovidos = false;
@@ -5425,11 +5435,11 @@ function _promoverClientes(){
 
   if(n){
     saveToStorage();
-    console.info('[v5.4.0] ' + n + ' contato(s) promovido(s) a cliente.');
+    console.info('[v5.4.2] ' + n + ' contato(s) promovido(s) a cliente.');
   }
 }
 
-// v5.4.0 · D-73 · o botão só aparece quando a conversa tem um cliente por trás.
+// v5.4.2 · D-73 · o botão só aparece quando a conversa tem um cliente por trás.
 function _atBotaoHistorico(){
   if(!AT.atual) return '';
   var lead = _atLeadDe(AT.atual);
@@ -5441,7 +5451,7 @@ function _atBotaoHistorico(){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// TRILHA DO FUNIL no painel de lead  (v5.4.0 · D-75)
+// TRILHA DO FUNIL no painel de lead  (v5.4.2 · D-75)
 // A coluna em que o lead está, visível ao abrir a conversa.
 // ══════════════════════════════════════════════════════════════════════════
 function _atTrilhaFunil(lead){
@@ -5491,7 +5501,7 @@ function _atMoverStage(stageId){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// TEMPLATES como sub-aba do Atendimento  (v5.4.0 · D-75)
+// TEMPLATES como sub-aba do Atendimento  (v5.4.2 · D-75)
 // ══════════════════════════════════════════════════════════════════════════
 function atSubAba(qual){
   var pAt = g('page-atendimento'), pTpl = g('page-templates');
@@ -5512,7 +5522,7 @@ function atSubAba(qual){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// MENU SANDUÍCHE  (v5.4.0 · D-68)
+// MENU SANDUÍCHE  (v5.4.2 · D-68)
 // A MESMA sidebar; muda só como aparece no celular.
 // ══════════════════════════════════════════════════════════════════════════
 function _mobToggleMenu(forcar){
@@ -5587,9 +5597,9 @@ function renderAtLead(){
     '<button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="atSalvarLead()">Salvar</button>' +
     '<div style="font-size:10px;color:#aaa;margin-top:6px;text-align:center">Atualizado ' +
       (lead.atualizadoEm ? esc(String(lead.atualizadoEm).slice(0,10).split('-').reverse().join('/')) : '—') + '</div>' +
-    // v5.4.0 · o consentimento mora ao lado de quem conversa com a pessoa
+    // v5.4.2 · o consentimento mora ao lado de quem conversa com a pessoa
     (AT.atual ? _seloOptin(AT.atual) : '') +
-    _atBotaoHistorico();   // v5.4.0 · D-73 · histórico 360° se vinculado
+    _atBotaoHistorico();   // v5.4.2 · D-73 · histórico 360° se vinculado
 }
 
 // Altera o lead em memória e deixa o delta da v3.86 gravar só este registro.
@@ -5790,7 +5800,7 @@ async function _atEnviarImagem(c, legenda){
 
 
 // ══════════════════════════════════════════════════════════════════════════
-// ENVIO OTIMISTA  (v5.4.0)
+// ENVIO OTIMISTA  (v5.4.2)
 // A bolha aparece antes da rede responder. A espera fica invisível.
 // ══════════════════════════════════════════════════════════════════════════
 var AT_PEND = {};       // waId -> [ {tmpId, texto, ts, estado, erro} ]
@@ -5805,7 +5815,7 @@ function _atFuncoes(){
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// v5.4.0 · IA no Atendimento (Fase B) — sugestão de resposta + resumo
+// v5.4.2 · IA no Atendimento (Fase B) — sugestão de resposta + resumo
 // A ponte tem a função iaGerar (Gemini). Aqui montamos o histórico da conversa,
 // pedimos um rascunho, e mostramos para o vendedor editar. A IA NUNCA envia:
 // o rascunho cai na caixa de digitar e o humano decide.
@@ -5906,7 +5916,7 @@ async function iaSugerir(){
 
   if(!r.ok){
     var _msg = _iaMotivoTexto(r.motivo);
-    if(r.detalhe) _msg += ' [' + r.detalhe + ']';   // v5.4.0 diagnostico: mostra o erro real
+    if(r.detalhe) _msg += ' [' + r.detalhe + ']';   // v5.4.2 diagnostico: mostra o erro real
     console.error('[IA sugerir]', r);
     toast('🤖 ' + _msg, 'error');
     return;
@@ -6134,7 +6144,7 @@ async function _atDespachar(waId, tmpId, txt){
     setTimeout(function(){ _atLimparPendentes(waId); }, 4000);
 
   } catch(e){
-    console.warn('[v5.4.0] envio direto:', e && e.code, e && e.message);
+    console.warn('[v5.4.2] envio direto:', e && e.code, e && e.message);
     // Ponte antiga, offline, ou erro de rede: a fila resolve.
     try {
       await _atEnfileirar(waId, txt);
@@ -6287,11 +6297,11 @@ async function atAbrirTemplates(){
   }).join('');
 }
 
-// v5.4.0 · D-30 · Escolher um template abre o formulário das variáveis.
+// v5.4.2 · D-30 · Escolher um template abre o formulário das variáveis.
 // A Meta recusa parâmetro vazio, com quebra de linha, tabulação, ou 4+ espaços
 // seguidos. Validamos ANTES de gastar uma chamada.
 // ══════════════════════════════════════════════════════════════════════════
-// QUAL VARIÁVEL É {{2}}?  (v5.4.0)
+// QUAL VARIÁVEL É {{2}}?  (v5.4.2)
 //
 // O template `t05_envio_do_orcamento` tem cliente→destino→vendedor.
 // O `t01_resposta_inicial` tem cliente→vendedor.
@@ -6441,14 +6451,14 @@ function _atEnviarComImagem(c, txt){
 
 
 function _atResetSubAba(pg){
-  // v5.4.0 · Templates não tem mais item de menu; ao abrir o Atendimento,
+  // v5.4.2 · Templates não tem mais item de menu; ao abrir o Atendimento,
   // começamos em Conversas e escondemos a página de Templates.
   if(pg === 'atendimento'){ try { atSubAba('conversas'); } catch(e){} }
 }
 function showPage(page){
   try { _atResetSubAba(page); } catch(e){}
-  try { _mobToggleMenu(false); } catch(e){}   // v5.4.0 · fecha o menu ao navegar
-  try { _mobSyncTitulo(page); } catch(e){}     // v5.4.0 · título na barra mobile
+  try { _mobToggleMenu(false); } catch(e){}   // v5.4.2 · fecha o menu ao navegar
+  try { _mobSyncTitulo(page); } catch(e){}     // v5.4.2 · título na barra mobile
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item,.nav-child').forEach(n=>n.classList.remove('active'));
   // MKT: bloquear acesso às abas Caixa e Recebimentos
@@ -6866,7 +6876,7 @@ function prepareVendaModal(){
     g('v-sit-pgto').value=v.sitPgto;
     g('v-sit-com').value=v.sitCom;
     g('v-obs').value=v.obs||'';
-    // v5.4.0 · D-65 · `0 || padrão` devolvia o padrão: zero é falso em JS.
+    // v5.4.2 · D-65 · `0 || padrão` devolvia o padrão: zero é falso em JS.
     // Uma venda com 0% para o marketing reabria com os 20% do padrão — e salvar
     // gravava os 20%. Duas vendas suas (#174, #175) estavam assim.
     var _dp = DB.divisaoPadrao || {};
@@ -6907,7 +6917,7 @@ function _saveVenda(){ invalidateCommCache();
   const divM = isVendedor() ? DB.divisaoPadrao.mkt      : (parseFloat(g('div-mkt').value)||0);
   const divT = isVendedor() ? DB.divisaoPadrao.thomaz   : (parseFloat(g('div-thomaz').value)||0);
   const divC = isVendedor() ? DB.divisaoPadrao.camila   : (parseFloat(g('div-camila').value)||0);
-  // v5.4.0 · `Math.max(0, ...)` escondia o erro: com soma acima de 100, a parte
+  // v5.4.2 · `Math.max(0, ...)` escondia o erro: com soma acima de 100, a parte
   // da empresa virava zero e ninguém percebia que a conta não fechava.
   const _somaDiv = divV + divM + divT + divC;
   if(_somaDiv > 100){
@@ -6935,7 +6945,7 @@ function _saveVenda(){ invalidateCommCache();
       return (typeof s==='string'?s:(s.nome||'')).toLowerCase().includes('guiamento');
     }) ? 'pendente' : null
   };
-  // v5.4.0 · carimbo do pagamento. Editar a venda substitui o objeto inteiro;
+  // v5.4.2 · carimbo do pagamento. Editar a venda substitui o objeto inteiro;
   // sem preservar o carimbo antigo, cada edição mentiria a data do pagamento.
   var _vendaAntiga = DB.editingVenda
     ? (DB.vendas||[]).find(function(v){ return v.id === DB.editingVenda.id; })
@@ -7544,7 +7554,7 @@ const TEMPLATES_WA = [
   {id:'t25', cat:'posvenda', emoji:'⭐', titulo:'Aniversário de viagem',
    texto:`Olá, {cliente}! 🎂🌟\n\nFaz exatamente 1 ano hoje desde que vocês viveram a magia de {destino}! 🏰✨\n\nEsses momentos ficam para sempre na memória, não é? 💛\n\nEstou aqui para quando bater aquela saudade e quiserem *repetir a dose* — ou quem sabe explorar um novo destino mágico? 😊\n\n*Tenho uma condição especial exclusiva para clientes fidelizados!* Me chama para saber mais! 🌟\n\n*{vendedor} — Desenrola Turismo*\n✨ Sua viagem dos sonhos`}
 ,
-  // ── ORÇAMENTO COM LINK (v5.4.0) ──────────────────────────────────────────
+  // ── ORÇAMENTO COM LINK (v5.4.2) ──────────────────────────────────────────
   // O único template que carrega o link da proposta. Sem ele, o envio em
   // 1 clique manda uma mensagem sem a proposta dentro.
   {id:'t26', cat:'orcamento', emoji:'📲', titulo:'Envio do orçamento com link',
@@ -7562,7 +7572,7 @@ Qualquer dúvida, é só me chamar por aqui. 😊
 *Desenrola Turismo*
 ✨ Sua viagem dos sonhos`}
 ,
-  // ── AUTOMAÇÕES (v5.4.0) ──────────────────────────────────────────────────
+  // ── AUTOMAÇÕES (v5.4.2) ──────────────────────────────────────────────────
   {id:'t27', cat:'posvenda', emoji:'✨', titulo:'Relatório de Encantamento',
    texto:`Olá, {cliente}! ✨
 
@@ -9540,9 +9550,9 @@ function renderRegistros(){
 
 // ═══════════════════════ DASHBOARD ═══════════════════════
 function updateDashboard(){
-  try { renderPesoWidget(); } catch(e){}  // v5.4.0 · D-59
-  try { renderSlaWidget(); } catch(e){}   // v5.4.0
-  try { renderAutomacoes(); } catch(e){}  // v5.4.0
+  try { renderPesoWidget(); } catch(e){}  // v5.4.2 · D-59
+  try { renderSlaWidget(); } catch(e){}   // v5.4.2
+  try { renderAutomacoes(); } catch(e){}  // v5.4.2
   const year = g('dash-year').value;
   const month = g('dash-month').value;
   const filtradas = DB.vendas.filter(v=>matchesFilter(v.data, year, month));
@@ -10489,11 +10499,9 @@ function init(){
         // array — e DB.usuarios/.clientes/.orcamentos são usados como array em
         // todo o sistema (.find/.filter/.map). Sem isso, .find() quebra com
         // TypeError assim que o Firebase tiver dados nesses 3 caminhos.
-        ['usuarios','clientes','orcamentos','crm'].forEach(function(k){
-          if(DB[k] && !Array.isArray(DB[k])) DB[k] = Object.values(DB[k]);
-        });
+        _garantirListas();
         try { _indexarTodas(remoteData); } catch(e){}
-    try { _crmIndexar(remoteData.crm); } catch(e){ console.warn('[v5.4.0] espelho:', e); }
+    try { _crmIndexar(remoteData.crm); } catch(e){ console.warn('[v5.4.2] espelho:', e); }
         _normalizarUsuariosMem();
       } else {
         // localStorage mais recente que Firebase — carrega local
@@ -10616,11 +10624,11 @@ const PERFIL_LABELS = {adm:'Administrador',mkt:'Marketing',vendedor:'Vendedor',g
     try { initTemplatesMeta(); } catch(e){}
     try { initFunilOrcamentos(); } catch(e){}
     try { initMetricasSLA(); } catch(e){}
-    try { _expurgarTarefasAntigas(); } catch(e){}   // v5.4.0 · D-62
-    try { _promoverClientes(); } catch(e){}         // v5.4.0 · D-63
-    try { _pvGarantirClienteId(); } catch(e){}   // v5.4.0 · D-52
+    try { _expurgarTarefasAntigas(); } catch(e){}   // v5.4.2 · D-62
+    try { _promoverClientes(); } catch(e){}         // v5.4.2 · D-63
+    try { _pvGarantirClienteId(); } catch(e){}   // v5.4.2 · D-52
     try { _publicarUrlBase(); } catch(e){}
-    try { _enxugarAuto(); } catch(e){}          // v5.4.0 · D-61
+    try { _enxugarAuto(); } catch(e){}          // v5.4.2 · D-61
     try { initAutomacoes(); } catch(e){}
     try { initOptins(); } catch(e){}
     try { initAtendimento(); } catch(e){ console.warn('[ATENDIMENTO]', e && e.message); }
@@ -10718,11 +10726,9 @@ function doLogin(){
         Object.keys(remoteData).forEach(function(k){
           if(!NON_SERIALIZABLE.has(k)) DB[k] = remoteData[k];
         });
-        ['usuarios','clientes','orcamentos','crm'].forEach(function(k){
-          if(DB[k] && !Array.isArray(DB[k])) DB[k] = Object.values(DB[k]);
-        });
+        _garantirListas();
         try { _indexarTodas(remoteData); } catch(e){}
-    try { _crmIndexar(remoteData.crm); } catch(e){ console.warn('[v5.4.0] espelho:', e); }
+    try { _crmIndexar(remoteData.crm); } catch(e){ console.warn('[v5.4.2] espelho:', e); }
         if(typeof _normalizarUsuariosMem === 'function') _normalizarUsuariosMem();
       }
       // Aceita tanto o login histórico ('Thbignotto') quanto o e-mail.
@@ -11371,7 +11377,7 @@ function renderCRM(){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// PONTE ENTRE O PIPELINE E O ATENDIMENTO  (v5.4.0)
+// PONTE ENTRE O PIPELINE E O ATENDIMENTO  (v5.4.2)
 //
 // As conversas sabem quem é o lead (`crmId`). O lead não sabe onde está a
 // conversa. Este índice inverso fecha o circuito, e é reconstruído sempre
@@ -11398,20 +11404,20 @@ function abrirConversaDoLead(id){
   if(!waId){ toast('Este lead ainda não tem conversa no WhatsApp.', 'error'); return; }
   showPage('atendimento');
   setTimeout(function(){
-    try { atAbrir(waId); } catch(e){ console.warn('[v5.4.0] atAbrir:', e); }
+    try { atAbrir(waId); } catch(e){ console.warn('[v5.4.2] atAbrir:', e); }
   }, 120);
 }
 
 function renderLeadCard(lead){
   const since = lead.stageChangedAt ? timeSince(lead.stageChangedAt) : '';
-  const eventos = DB.calendario.filter(e=>e.leadId===lead.id && e.data >= new Date().toISOString().split('T')[0]);
+  const eventos = (Array.isArray(DB.calendario)?DB.calendario:[]).filter(e=>e.leadId===lead.id && e.data >= new Date().toISOString().split('T')[0]);
   const nextEv = eventos.sort((a,b)=>a.data>b.data?1:-1)[0];
   const canChangeVendedor = isAdm();
   const curStageIdx = CRM_STAGES.findIndex(s=>s.id===lead.stage);
   const nextStage = CRM_STAGES[curStageIdx+1];
   const nextLabel = nextStage ? `➡️ ${nextStage.emoji} ${nextStage.label}` : '✅ Finalizado';
   const origem = lead.origem ? `<span style="font-size:9px;background:var(--surface2);border-radius:4px;padding:1px 5px;color:var(--text3);margin-left:4px">${lead.origem}</span>` : '';
-    // v5.4.0 · atalho para a conversa. Só aparece se a conversa existir:
+    // v5.4.2 · atalho para a conversa. Só aparece se a conversa existir:
     // um botão que não faz nada é pior que botão nenhum.
     const btnConversa = _leadTemConversa(lead.id)
       ? `<span onclick="event.stopPropagation();abrirConversaDoLead(${lead.id})" title="Abrir conversa no Atendimento" style="cursor:pointer;font-size:11px;margin-left:4px">💬</span>`
@@ -11487,7 +11493,7 @@ const TPL_REENCANTO_RETORNO = 'Olá {nome}! Já faz quase um ano da sua viagem c
 function _radarWa(tel,tpl,nome){
   var t=(tel||'').replace(/\D/g,''); if(!t){ toast('Cliente sem telefone','error'); return; }
   if(t.length<=11) t='55'+t;
-  abrirNoAtendimento(t, tpl.replace('{nome}',(nome||'').split(' ')[0]));   // v5.4.0 · por dentro
+  abrirNoAtendimento(t, tpl.replace('{nome}',(nome||'').split(' ')[0]));   // v5.4.2 · por dentro
 }
 function renderRadarWidget(){
   var pg=g('page-dashboard'); if(!pg) return;
@@ -11554,7 +11560,7 @@ function _abrirTimelineCliente(id){
   (DB.posVendas||[]).filter(function(p){return p.clienteId===id;}).forEach(function(p){
     evs.push(_tlEvento(p.dataViagem,'⭐','Pós-venda · etapa '+escapeHtml(p.etapa||''),'viagem '+(p.dataViagem?p.dataViagem.split('-').reverse().join('/'):'')));
   });
-  // v5.4.0 · D-73 · tarefas concluídas deste cliente. O vínculo é o mesmo que o
+  // v5.4.2 · D-73 · tarefas concluídas deste cliente. O vínculo é o mesmo que o
   // expurgo (v4.5.0) usa: clienteId direto, ou o sufixo do autoKey que aponta o
   // pós-venda cujo clienteId é este.
   var _pvIds = (DB.posVendas||[]).filter(function(p){return p.clienteId===id;}).map(function(p){return p.id;});
@@ -11666,7 +11672,7 @@ function renderHojeWidget(){
   var host=g('dash-hoje');
   if(!host){
     host=document.createElement('div'); host.id='dash-hoje';
-    // v5.4.0 · abaixo dos índices. O marcador #dash-sistemico fica no fim da
+    // v5.4.2 · abaixo dos índices. O marcador #dash-sistemico fica no fim da
     // página; se ainda não existir, caímos para o comportamento antigo.
     var alvo=g('dash-sistemico');
     if(alvo) alvo.appendChild(host);
@@ -12007,7 +12013,7 @@ function _saveLead(){
     }
     toast('Contato atualizado!');
   } else {
-    // v5.4.0 - id reservado por transacao no servidor (nao colide com a ponte)
+    // v5.4.2 - id reservado por transacao no servidor (nao colide com a ponte)
     var _telNorm = telefone.replace(/\D/g,'');
     var _cliExist = (DB.clientes||[]).find(function(c){ return (c.telefone||'').replace(/\D/g,'')===_telNorm && _telNorm; });
     var _contatoId;
@@ -12088,7 +12094,7 @@ function renderCalendario(){
   for(let i=0;i<firstDay;i++) _calCells.push('<div class="cal-day other-month"></div>');
   for(let d=1;d<=daysInMonth;d++){
     const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const evs=DB.calendario.filter(e=>e.data===dateStr);
+    const evs=(Array.isArray(DB.calendario)?DB.calendario:[]).filter(e=>e.data===dateStr);
     const isToday=dateStr===today;
     _calCells.push(`<div class="cal-day ${isToday?'today':''}" onclick="addEventoOnDate('${dateStr}')">
       <div class="cal-day-num" style="${isToday?'color:var(--primary);font-weight:900':''}">${d}</div>
@@ -12098,7 +12104,7 @@ function renderCalendario(){
   }
   grid.innerHTML = _calCells.join('');
   // Upcoming events list
-  const upcoming=DB.calendario.filter(e=>e.data>=today).sort((a,b)=>a.data>b.data?1:-1).slice(0,8);
+  const upcoming=(Array.isArray(DB.calendario)?DB.calendario:[]).filter(e=>e.data>=today).sort((a,b)=>a.data>b.data?1:-1).slice(0,8);
   const upEl=g('cal-upcoming');
   if(upEl){
     upEl.innerHTML=`<div class="card"><div class="card-title">Próximos eventos</div>
@@ -12292,7 +12298,7 @@ function _relMesRef(){
   return { y:year, m:month, ref: year+'-'+String(month).padStart(2,'0') };
 }
 function _relColeta(ref){
-  const vendas=(DB.vendas||[]).filter(v=>v && String(v.data||'').startsWith(ref)); // v5.4.0: paridade exata com a aba
+  const vendas=(DB.vendas||[]).filter(v=>v && String(v.data||'').startsWith(ref)); // v5.4.2: paridade exata com a aba
   const ativos=(DB.vendedores||[]).filter(v=>v.status==='ativo').map(v=>v.nome);
   const dp=DB.divisaoPadrao||{vendedor:40,mkt:20,thomaz:10,camila:10,empresa:20};
   const porV={};
@@ -12305,7 +12311,7 @@ function _relColeta(ref){
     cam+=com*((v.divCamila||dp.camila)/100);
     emp+=com*((v.divEmpresa||dp.empresa)/100);
     const b=porV[v.vendedor]; if(!b) return;
-    b.n++; b.total+=(v.valor||0); b.com+=com; // v5.4.0: campo real é v.valor
+    b.n++; b.total+=(v.valor||0); b.com+=com; // v5.4.2: campo real é v.valor
     b.valor+=com*((v.divVendedor||dp.vendedor)/100);
   });
   const rank=Object.keys(porV).sort((a,b)=>porV[b].total-porV[a].total);
@@ -12572,7 +12578,7 @@ function _notifMontar(){
   el.onclick=function(ev){ ev.stopPropagation(); var l=g('_ntf-list'); l.style.display=(l.style.display==='none')?'block':'none'; };
   document.addEventListener('click', function(){ var l=g('_ntf-list'); if(l) l.style.display='none'; });
   document.body.appendChild(el);
-  // v5.4.0 (corrigido v5.4.0) · o clique DENTRO da lista morre aqui. Só agora,
+  // v5.4.2 (corrigido v5.4.2) · o clique DENTRO da lista morre aqui. Só agora,
   // DEPOIS do appendChild: `getElementById` só enxerga o que está no documento.
   g('_ntf-list').addEventListener('click', function(ev){ ev.stopPropagation(); });
   _notifAtualizar();
@@ -13127,7 +13133,7 @@ function renderTarefas(){
   var nomeUser = DB.currentUser ? (DB.currentUser.vendedorRef || DB.currentUser.nome || '') : '';
 
   var lista = (DB.tarefas||[]).filter(function(t){
-    // v5.4.0 · D-62 · "Todas" passa a significar "todas as pendentes".
+    // v5.4.2 · D-62 · "Todas" passa a significar "todas as pendentes".
     // Concluídas só aparecem quando pedidas: elas eram metade da lista.
     if(filterStatus === 'all' && t.status === 'concluida') return false;
     if(isVendedor() && t.responsavel !== nomeUser) return false;
@@ -13356,7 +13362,7 @@ function toggleTarefaConcluida(id, checked){
   if(!t) return;
   if(!checked){
     t.status = 'pendente'; t.concluidoEm = null; t.resultado = null; t.nota = null;
-    try { _restaurarAcaoDoLead(t); } catch(e){}   // v5.4.0 · o selo volta com ela
+    try { _restaurarAcaoDoLead(t); } catch(e){}   // v5.4.2 · o selo volta com ela
     saveToStorage(); renderTarefas(); toast('Tarefa reaberta');
     return;
   }
@@ -13389,7 +13395,7 @@ function _salvarResultadoTarefa(id, resultado){
   var t = (DB.tarefas||[]).find(function(x){ return x.id===id; });
   if(!t) return;
   t.status = 'concluida'; t.concluidoEm = Date.now();
-  // v5.4.0 · o selo vermelho do card morre junto com a tarefa.
+  // v5.4.2 · o selo vermelho do card morre junto com a tarefa.
   try { _limparAcaoDoLead(t); } catch(e){}
   if(resultado) t.resultado = resultado;
   var notaEl = g('_res-nota');
@@ -13420,7 +13426,7 @@ function _sincronizarPosVendas(){
   if(!DB.vendas || !DB.vendas.length) return;
 
   // ══════════════════════════════════════════════════════════════════════
-  // v5.4.0 · GUARDA CONTRA RECRIAÇÃO EM MASSA
+  // v5.4.2 · GUARDA CONTRA RECRIAÇÃO EM MASSA
   //
   // Foi assim que os vouchers de 4 clientes se perderam: com o cache local
   // sem `posVendas` (a cota estourou e o fallback o removeu), esta função
@@ -13432,7 +13438,7 @@ function _sincronizarPosVendas(){
   // ══════════════════════════════════════════════════════════════════════
   var nPos = (DB.posVendas||[]).length;
   if(nPos === 0 && !_remotoCarregado){
-    console.warn('[v5.4.0] _sincronizarPosVendas abortado: posVendas vazio e nuvem não carregada.');
+    console.warn('[v5.4.2] _sincronizarPosVendas abortado: posVendas vazio e nuvem não carregada.');
     return;
   }
 
@@ -13442,7 +13448,7 @@ function _sincronizarPosVendas(){
   }).length;
 
   if(nPos === 0 && aCriar > 5){
-    console.error('[v5.4.0] BLOQUEADO: criaria ' + aCriar + ' pós-vendas com a lista vazia.');
+    console.error('[v5.4.2] BLOQUEADO: criaria ' + aCriar + ' pós-vendas com a lista vazia.');
     if(!window._avisoRecriacao){
       window._avisoRecriacao = true;
       toast('🛡️ Proteção: o histórico de pós-venda não carregou. Recarregue a página antes de continuar.', 'error');
@@ -13468,7 +13474,7 @@ function _sincronizarPosVendas(){
       DB.posVendas.push({
         id: DB.nextPosVendaId++,
         vendaId: v.id,
-        // v5.4.0 · D-52: a venda já sabia quem era. Era só não jogar fora.
+        // v5.4.2 · D-52: a venda já sabia quem era. Era só não jogar fora.
         clienteId: v.clienteId != null ? v.clienteId : null,
         etapa: etapaInicial,
         cliente: nome || '(Sem nome)',
@@ -13541,7 +13547,11 @@ function renderPosVendas(){
   var filterMes  = (g('pv-filter-mes')||{}).value  || 'all';
   var filterEtapa= (g('pv-filter-etapa')||{}).value || 'all';
 
-  var lista = (DB.posVendas||[]).filter(function(pv){
+  // v5.4.2 - blindagem: o Firebase as vezes devolve posVendas como OBJETO
+  // (chaves->itens) em vez de array. Objeto nao tem .filter(). Normalizamos aqui.
+  if(DB.posVendas && !Array.isArray(DB.posVendas)) DB.posVendas = Object.values(DB.posVendas);
+
+  var lista = (Array.isArray(DB.posVendas) ? DB.posVendas : []).filter(function(pv){
     // Permissões: vendedor só vê suas próprias viagens; MKT só observa
     if(!isAdm() && !_isMKT){
       var venda = (DB.vendas||[]).find(function(v){ return v.id === pv.vendaId; });
@@ -13833,7 +13843,7 @@ function avancarEtapaPV(pvId){
           if(cli2 && cli2.telefone) tel = cli2.telefone.replace(/\D/g,'');
         }
       }
-      if(tel) setTimeout(function(){ abrirNoAtendimento(tel, decodeURIComponent(waTxt)); }, 300);   // v5.4.0 · por dentro
+      if(tel) setTimeout(function(){ abrirNoAtendimento(tel, decodeURIComponent(waTxt)); }, 300);   // v5.4.2 · por dentro
     }
     saveToStorage();
     renderPosVendas();
@@ -14166,7 +14176,7 @@ async function _uploadComToken(token){
           pv.vouchers.push({
             tipo: tipo, nome: f.name,
             driveId: uploaded.id, driveLink: uploaded.webViewLink,
-            compartilhado: true,          // v5.4.0 · a prova de que o link abre
+            compartilhado: true,          // v5.4.2 · a prova de que o link abre
             uploadEm: new Date().toISOString(),
           });
         } else {
@@ -14284,7 +14294,7 @@ async function enxugarVouchers(){
     toast('Enxugando ' + (i+1) + '/' + alvos.length + '…');
     try {
       await _compartilharDrive(_driveToken, a.v.driveId);
-      a.v.compartilhado = true;                 // v5.4.0 · prova antes de apagar
+      a.v.compartilhado = true;                 // v5.4.2 · prova antes de apagar
       delete a.v.dataUrl;                       // só agora
       if(!a.v.driveLink) a.v.driveLink = 'https://drive.google.com/file/d/' + a.v.driveId + '/view';
       ok++;
@@ -15628,7 +15638,7 @@ function publicarProposta(id){
   var htmlAprovado='';
   try{ htmlAprovado=_buildPropostaHTML(o); }
   catch(e){ toast('❌ Falha ao montar a proposta: '+(e.message||e),'error'); return; }
-  var payload={ v:2, html:htmlAprovado, contato:_propContato(o), criadoEm:Date.now(), expiraEm:Date.now()+(o.validadeDias||7)*86400000, /* v5.4.0 · sem o orcId, a ponte não sabe de quem é a abertura */ orcId:o.id };
+  var payload={ v:2, html:htmlAprovado, contato:_propContato(o), criadoEm:Date.now(), expiraEm:Date.now()+(o.validadeDias||7)*86400000, /* v5.4.2 · sem o orcId, a ponte não sabe de quem é a abertura */ orcId:o.id };
   _fbDb.ref('desenrola_publico/propostas/'+token).set(payload).then(function(){
     o.publicToken=token; o.publicadoEm=Date.now();
     saveToStorage(); if(typeof syncOrcamentoFirebase==='function') syncOrcamentoFirebase(o);
@@ -18332,7 +18342,7 @@ window.addEventListener('load', init);
 
 <!-- ════════════════════════════════════════════════════════════
      MODAL DRE — Demonstrativo de Resultado do Exercício
-     v5.4.0 · Desenrola Turismo · uso interno
+     v5.4.2 · Desenrola Turismo · uso interno
      ════════════════════════════════════════════════════════════ -->
 <div id="modal-dre" class="modal-overlay">
   <div class="modal" style="max-width:900px;width:100%;padding:0;border-radius:16px;overflow:hidden">
