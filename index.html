@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v5.9.3</title>
+<title>Desenrola Turismo — Sistema de Gestão v5.9.9</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -400,7 +400,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v5.9.3
+    ✦ Desenrola Turismo · v5.9.9
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -980,7 +980,7 @@ tbody tr:hover{background:var(--surface2)}
 
   <div id="reg-tab-ingressos" class="tab-panel" style="display:none">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-      <div class="card"><div class="card-title">🎟️ Tipos de Ingresso</div><div id="tipos-ingresso-list" style="margin-bottom:10px"></div><div style="display:flex;gap:8px"><div style="display:flex;flex-direction:column;gap:4px;flex:1"><input type="text" class="form-input" id="new-tipo-ingresso" placeholder="Nome do tipo (ex: Disney Park Hopper)"/><input type="text" class="form-input" id="new-tipo-ingresso-desc" placeholder="Descrição (ex: Acesso a todos os parques Disney...)" style="font-size:12px"/><div style="display:flex;gap:6px"><input type="text" class="form-input" id="new-tipo-ingresso-foto" placeholder="URL da foto (opcional)" style="font-size:12px"/><button class="btn btn-ghost btn-sm" onclick="_selecionarFotoDrive('new-tipo-ingresso-foto')" title="Selecionar do Drive" style="flex-shrink:0">📁</button></div></div><button class="btn btn-primary btn-sm" onclick="addTipoIngresso()">+</button></div></div>
+      <div class="card"><div class="card-title">🎟️ Tipos de Ingresso</div><div id="tipos-ingresso-list" style="margin-bottom:10px"></div><div style="display:flex;gap:8px"><div style="display:flex;flex-direction:column;gap:4px;flex:1"><input type="text" class="form-input" id="new-tipo-ingresso" placeholder="Nome do tipo (ex: Disney Park Hopper)"/><input type="text" class="form-input" id="new-tipo-ingresso-desc" placeholder="Descrição (ex: Acesso a todos os parques Disney...)" style="font-size:12px"/><div style="display:flex;gap:6px"><input type="text" class="form-input" id="new-tipo-ingresso-foto" placeholder="URL da foto (opcional)" style="font-size:12px"/><button class="btn btn-ghost btn-sm" onclick="_selecionarFotoDrive('new-tipo-ingresso-foto')" title="Selecionar do Drive" style="flex-shrink:0">📁</button></div></div><button id="btn-add-ingresso" class="btn btn-primary btn-sm" onclick="addTipoIngresso()">+</button></div></div>
       <div class="card"><div class="card-title">🏷️ Tags do Pipeline (CRM)</div>
         <div id="tags-crm-list" style="margin-bottom:10px;display:flex;flex-wrap:wrap;gap:6px"></div>
         <div style="display:flex;gap:8px;align-items:center">
@@ -1174,6 +1174,13 @@ tbody tr:hover{background:var(--surface2)}
         <input id="at-busca" placeholder="Buscar por nome ou número" oninput="renderAtConversas()"
                style="width:100%;border:1px solid #ddd;border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px">
       </div>
+      <div style="padding:6px 12px;border-bottom:1px solid #f0f0f0">
+      <select id="at-filtro-lida" onchange="renderAtConversas()" style="width:100%;border:1px solid #ddd;border-radius:8px;padding:6px 8px;font-family:Nunito,sans-serif;font-size:12px;color:#333;background:#fff">
+        <option value="">Todas as conversas</option>
+        <option value="nao">Somente não lidas</option>
+        <option value="sim">Somente lidas</option>
+      </select>
+    </div>
       <div id="at-filtro-vendedor-wrap" style="display:none;padding:6px 12px;border-bottom:1px solid #f0f0f0">
       <select id="at-filtro-vendedor" onchange="renderAtConversas()" style="width:100%;border:1px solid #ddd;border-radius:8px;padding:6px 8px;font-family:Nunito,sans-serif;font-size:12px;color:#333;background:#fff">
         <option value="">Todos os vendedores</option>
@@ -1182,6 +1189,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <div style="padding:6px 12px;border-bottom:1px solid #f0f0f0">
       <button id="at-massa-toggle" onclick="_atToggleModoMassa()" style="width:100%;border:1px dashed #b9770e;background:#fff8ef;color:#b9770e;border-radius:8px;padding:6px 8px;font-family:Nunito,sans-serif;font-size:12px;font-weight:700;cursor:pointer">☑ Atribuir vendedor a várias de uma vez</button>
+      <button onclick="atReparoCards()" style="width:100%;margin-top:6px;border:1px solid #ddd;background:#fff;color:#666;border-radius:8px;padding:5px 8px;font-family:Nunito,sans-serif;font-size:11.5px;cursor:pointer">🔧 Reparar cards trocados</button>
     </div>
     <div id="at-massa-barra" style="display:none;padding:8px 12px;border-bottom:1px solid #f0d9a8;background:#fffbf2">
       <div style="font-size:11px;color:#b9770e;font-weight:700;margin-bottom:6px"><span id="at-massa-contador">0</span> selecionadas — escolha o vendedor:</div>
@@ -1497,6 +1505,20 @@ tbody tr:hover{background:var(--surface2)}
   </div>
 </div>
 
+<!-- ════════════ MODAL: REPARO DE CARDS (Bug 7) ════════════ -->
+<div id="modal-reparo-cards" class="modal-overlay">
+  <div class="modal" style="max-width:600px;width:100%;max-height:88vh;display:flex;flex-direction:column">
+    <div class="modal-header">
+      <div class="modal-title">🔧 Reparar cards trocados</div>
+      <button class="modal-close" onclick="closeModal('modal-reparo-cards')">✕</button>
+    </div>
+    <div id="reparo-cards-body" style="padding:16px;overflow:auto"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-reparo-cards')">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════════ MODAL: VOUCHERS ════════════ -->
 <div id="modal-vouchers" class="modal-overlay">
   <div class="modal" style="max-width:720px;width:100%;max-height:92vh;display:flex;flex-direction:column">
@@ -1626,6 +1648,7 @@ tbody tr:hover{background:var(--surface2)}
 
 <!-- ═══════════════════════════════════ PAGE: TEMPLATES WHATSAPP ═══════════════════════════ -->
 <div id="page-templates" class="page">
+  <div style="padding:0 4px 8px 4px"><button class="btn btn-ghost btn-sm" onclick="atSubAba('conversas')">← Voltar para Conversas</button></div>
   <div class="page-header">
     <h1>💬 Templates WhatsApp</h1>
     <p>✦ Mensagens prontas para cada etapa do funil de vendas — copie, edite ou crie novos</p>
@@ -1642,6 +1665,7 @@ tbody tr:hover{background:var(--surface2)}
         <option value="prevenda">✈️ Pré-Viagem</option>
         <option value="guiamento">🗺️ Guiamento</option>
         <option value="posvenda">⭐ Pós-Venda</option>
+        <option value="campanhas">📣 Campanhas</option>
       </select>
     </div>
   </div>
@@ -1660,6 +1684,7 @@ tbody tr:hover{background:var(--surface2)}
 <!-- ═══════════════════════════════════ PAGE: CALENDÁRIO TEMPORADA ════════════════════════ -->
 <!-- ═══════════════════════ PAGE: CAMPANHAS ═══════════════════════ -->
 <div id="page-campanhas" class="page">
+  <div style="padding:0 4px 8px 4px"><button class="btn btn-ghost btn-sm" onclick="atSubAba('conversas')">← Voltar para Conversas</button></div>
   <div class="page-header">
     <h1>📣 Campanhas WhatsApp</h1>
     <p>✦ Envio em massa com sequência de etapas — respeita o opt-out de marketing (LGPD)</p>
@@ -1679,6 +1704,7 @@ tbody tr:hover{background:var(--surface2)}
 
 <!-- ═══════════════════════ PAGE: ASSISTENTE (IA Corporativa) ═══════════════════════ -->
 <div id="page-assistente" class="page">
+  <div style="padding:0 4px 8px 4px"><button class="btn btn-ghost btn-sm" onclick="atSubAba('conversas')">← Voltar para Conversas</button></div>
   <div class="page-header">
     <h1>🧠 Assistente Desenrola</h1>
     <p>✦ Pergunte sobre o seu negócio em linguagem natural — a IA lê os dados do sistema e responde</p>
@@ -2262,7 +2288,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v5.9.3</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v5.9.9</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -2286,7 +2312,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v5.9.3</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v5.9.9</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -3396,7 +3422,7 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v5.9.3',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v5.9.9',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_turismo_v3')||'{}'); // v3.57: chave correta
   if (_fbDb) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); else payload.dados.firebaseVazio = true; } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -3652,7 +3678,7 @@ function _atGestor(){
 function _atVendedorDaConversa(c){
   if(!c) return '';
   if(c.vendedor) return c.vendedor;               // atribuição manual
-  var lead = c.crmId != null ? (DB.crm||[]).filter(Boolean).find(function(l){ return l.id === c.crmId; }) : null;
+  var lead = c.crmId != null ? (DB.crm||[]).filter(Boolean).find(function(l){ return String(l.id) === String(c.crmId); }) : null;
   return (lead && lead.vendedor) || '';           // herda do card
 }
 
@@ -3828,6 +3854,13 @@ function renderAtConversas(){
       var _donoF = _atVendedorDaConversa(c);
       if(_fv.value === '__livre__'){ if(_donoF) return false; }
       else if(_donoF !== _fv.value){ return false; }
+    }
+    // Feature A (v5.9.4) - filtro lida/não lida
+    var _fl = g('at-filtro-lida');
+    if(_fl && _fl.value){
+      var _naoLida = !!(c.naoLidas && c.naoLidas > 0);
+      if(_fl.value === 'nao' && !_naoLida) return false;
+      if(_fl.value === 'sim' && _naoLida) return false;
     }
     if(!termo) return true;
     return _atNome(c).toLowerCase().indexOf(termo) >= 0 || String(c.waId||'').indexOf(termo) >= 0;
@@ -4228,6 +4261,46 @@ function _atAliases(waId){
   return out.filter(function(x,i,a){ return x && a.indexOf(x) === i; });
 }
 
+// ── Bug 7: reparo de cards trocados (conversas que caíram no mesmo crmId) ──
+function atReparoCards(){
+  _atContarCrm();
+  var conflitos = {};
+  Object.keys(AT.conversas).forEach(function(k){
+    var c = AT.conversas[k]; var cr = c && c.crmId;
+    if(cr != null && (_atCrmCount[cr]||0) > 1){ (conflitos[cr]=conflitos[cr]||[]).push(k); }
+  });
+  var ids = Object.keys(conflitos);
+  var box = g('reparo-cards-body');
+  if(box){
+    if(!ids.length){
+      box.innerHTML = '<div style="padding:20px;text-align:center;color:#2e7d32;font-weight:700">\u2705 Nenhum card compartilhado. Est\u00e1 tudo certo!</div>';
+    } else {
+      box.innerHTML = '<div style="font-size:12.5px;color:#666;margin-bottom:10px">Estas conversas apontam para o MESMO card (o v\u00ednculo furou). Desvincule as que est\u00e3o na pessoa errada; depois abra a conversa e clique em "vincular" no lead certo.</div>' +
+        ids.map(function(cr){
+          var lead = (DB.crm||[]).filter(Boolean).find(function(l){ return String(l.id)===String(cr); });
+          var nomeLead = lead ? (lead.nome||('#'+cr)) : ('#'+cr+' \u2014 lead n\u00e3o encontrado');
+          return '<div style="border:1px solid #f0d0d0;border-radius:10px;padding:10px;margin-bottom:10px;background:#fff8f8">' +
+            '<div style="font-weight:700;color:#c0392b;margin-bottom:4px">CRM #'+esc(String(cr))+' \u2014 '+esc(nomeLead)+' <span style="font-weight:400;color:#999;font-size:11px">('+conflitos[cr].length+' conversas)</span></div>' +
+            conflitos[cr].map(function(k){
+              var cc = AT.conversas[k];
+              return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid #f5e5e5">' +
+                '<span style="font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(cc.nome||cc.waId)+' <span style="color:#999;font-size:11px">+'+esc(cc.waId||'')+'</span></span>' +
+                '<button onclick="atDesvincularWa(\''+k+'\')" style="flex-shrink:0;background:#fff;border:1px solid #c0392b;color:#c0392b;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer">desvincular</button>' +
+              '</div>';
+            }).join('') +
+          '</div>';
+        }).join('');
+    }
+  }
+  openModal('modal-reparo-cards');
+}
+function atDesvincularWa(k){
+  var c = AT.conversas[k]; if(!c) return;
+  if(!confirm('Desvincular '+(c.nome||c.waId)+' do CRM #'+c.crmId+'?\n\nO card fica "sem cadastro". Depois abra a conversa e clique em "vincular" no lead certo.')) return;
+  _fbDb.ref('desenrola_wa/conversations/'+k+'/crmId').remove()
+    .then(function(){ toast('Desvinculado. Abra a conversa e vincule no lead certo.'); renderAtConversas(); atReparoCards(); })
+    .catch(function(e){ toast('Erro: '+(e&&e.message),'error'); });
+}
 function atAbrirVinculo(){
   var c = AT.conversas[AT.atual]; if(!c) return;
   g('at-vinc-busca').value = c.nome || '';
@@ -4274,7 +4347,7 @@ function renderAtVinculo(){
 // conversa permanece — mas avisamos, porque a próxima mensagem se perderia.
 async function atVincularA(crmId){
   var c = AT.conversas[AT.atual]; if(!c) return;
-  var lead = (DB.crm||[]).filter(Boolean).find(function(l){ return l.id === crmId; });
+  var lead = (DB.crm||[]).filter(Boolean).find(function(l){ return String(l.id) === String(crmId); });
   if(!lead){ toast('Lead não encontrado.', 'error'); return; }
 
   try {
@@ -5890,14 +5963,20 @@ function _campRenderEditor(){
   var ed = g('camp-editor'); if(!ed || !_campEditando) return;
   var c = _campEditando;
   // opções de template aprovado (dos templates que o Sistema já conhece)
-  var tpls = (typeof TEMPLATES!=='undefined' && TEMPLATES) ? TEMPLATES : {};
+  // #9: lista TODOS os templates do Sistema (o espelho de status da Meta em
+  // desenrola_wa/templates pode não ter sincronizado). O \u2705 marca os que o
+  // Sistema JÁ sabe estarem aprovados; os demais continuam selecionáveis.
   var optsTpl = '<option value="">— escolha um template —</option>';
-  Object.keys(tpls).forEach(function(k){
-    var t = tpls[k];
-    if(t && (t.status==='APPROVED' || t.status==='approved')){
-      optsTpl += '<option value="'+esc(t.name||k)+'"'+((c._tplSel===(t.name||k))?' selected':'')+'>'+esc(t.name||k)+'</option>';
-    }
+  var _todosTpl = (typeof _getTemplatesAtivos==='function' ? _getTemplatesAtivos() : []);
+  _todosTpl.forEach(function(t){
+    var val = _nomeMetaDe(t);
+    var st = (typeof _statusMeta==='function') ? _statusMeta(t) : null;
+    var selo = (st==='APPROVED') ? ' \u2705' : (st ? ' ('+String(st).toLowerCase()+')' : '');
+    optsTpl += '<option value="'+esc(val)+'">'+esc(((t.emoji||'')+' '+(t.titulo||val)).trim())+selo+'</option>';
   });
+  if(!_todosTpl.length){
+    optsTpl += '<option value="" disabled>Crie um template na aba Templates primeiro</option>';
+  }
 
   // vendedores para o filtro
   var optsVend = '<option value="">Todos os vendedores</option><option value="__livre__">Só as livres (sem vendedor)</option>';
@@ -5954,11 +6033,14 @@ function _campConfigPublico(optsVend){
   if(c.publico.modo === 'filtros'){
     var destinos = ['Nacional','Internacional','Orlando','Disney','Universal','Cruzeiro'];
     var optsDest = '<option value="">Qualquer destino</option>' + destinos.map(function(d){ return '<option value="'+d+'"'+((c.publico.filtros&&c.publico.filtros.destino===d)?' selected':'')+'>'+d+'</option>'; }).join('');
+    var optsTag = '<option value="">Qualquer tag</option>' + (((DB.config&&DB.config.tagsCRM)||[]).map(function(t){ return '<option value="'+esc(t.nome)+'"'+((c.publico.filtros&&c.publico.filtros.tag===t.nome)?' selected':'')+'>'+esc(t.nome)+'</option>'; }).join(''));
     return '<div style="background:#f7faff;border:1px solid #dce8f5;border-radius:8px;padding:10px 12px;font-size:12px">' +
       '<div style="margin-bottom:8px"><span style="color:#666">Vendedor:</span><br>' +
         '<select id="camp-f-vend" onchange="_campSetFiltro(\'vendedor\',this.value)" style="width:100%;border:1px solid #ddd;border-radius:6px;padding:5px 8px;margin-top:3px">' + optsVend + '</select></div>' +
       '<div><span style="color:#666">Destino:</span><br>' +
         '<select id="camp-f-dest" onchange="_campSetFiltro(\'destino\',this.value)" style="width:100%;border:1px solid #ddd;border-radius:6px;padding:5px 8px;margin-top:3px">' + optsDest + '</select></div>' +
+      '<div style="margin-top:8px"><span style="color:#666">Tag (do lead):</span><br>' +
+        '<select id="camp-f-tag" onchange="_campSetFiltro(\'tag\',this.value)" style="width:100%;border:1px solid #ddd;border-radius:6px;padding:5px 8px;margin-top:3px">' + optsTag + '</select></div>' +
     '</div>';
   }
   if(c.publico.modo === 'lista'){
@@ -6224,7 +6306,7 @@ function atFecharLead(){ var el = g('at-lead'); if(el) el.style.display = 'none'
 function _atLeadDe(waId){
   var c = AT.conversas[waId];
   if(!c || c.crmId == null) return null;
-  return (DB.crm || []).filter(Boolean).find(function(l){ return l.id === c.crmId; }) || null;
+  return (DB.crm || []).filter(Boolean).find(function(l){ return String(l.id) === String(c.crmId); }) || null;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -6408,6 +6490,11 @@ function _atAplicarColetado(){
   toast('Campos preenchidos — revise e clique em Salvar');
 }
 
+function _alToggleTag(inp){
+  var on = inp.checked, cor = inp.getAttribute('data-cor') || '#2C6AA3';
+  inp.parentNode.style.background = on ? cor : '#fff';
+  inp.parentNode.style.color = on ? '#fff' : cor;
+}
 function renderAtLead(){
   var el = g('at-lead'), corpo = g('at-lead-corpo');
   if(!el || !corpo) return;
@@ -6431,6 +6518,15 @@ function renderAtLead(){
   var rot = 'font-size:11px;color:#777;margin:8px 0 3px;display:block';
   var inp = 'width:100%;border:1px solid #ddd;border-radius:7px;padding:7px;font-family:Nunito,sans-serif;font-size:13px';
 
+  var _tagsCfg = (DB.config && DB.config.tagsCRM) || [];
+  var tagsHtml = '<label style="' + rot + '">\ud83c\udff7\ufe0f Tags</label><div id="al-tags-wrap" style="display:flex;flex-wrap:wrap;gap:6px;padding:6px;background:#fafafa;border:1px solid #eee;border-radius:7px;min-height:34px">' +
+    (_tagsCfg.map(function(t){
+      var on = ((lead.tags||[]).indexOf(t.nome) >= 0);
+      return '<label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;background:' + (on?t.cor:'#fff') + ';color:' + (on?'#fff':t.cor) + ';border:1px solid ' + t.cor + ';border-radius:12px;padding:2px 9px;font-size:11.5px;font-weight:700">' +
+        '<input type="checkbox" class="al-tag" value="' + esc(t.nome) + '" data-cor="' + t.cor + '"' + (on?' checked':'') + ' style="display:none" onchange="_alToggleTag(this)">' +
+        esc(t.nome) + '</label>';
+    }).join('') || '<span style="color:#aaa;font-size:11px">Crie tags em Registros \u2192 Tags do Pipeline</span>') +
+    '</div>';
   corpo.innerHTML =
     _atTrilhaFunil(lead) +
     _atBlocoVendedor() +
@@ -6455,6 +6551,7 @@ function renderAtLead(){
     '<label style="' + rot + '">Observações</label>' +
     '<textarea id="al-obs" rows="5" style="' + inp + ';resize:vertical" placeholder="O que importa desta conversa…">' +
       esc(lead.obs || '') + '</textarea>' +
+    tagsHtml +
     '<button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="atSalvarLead()">Salvar</button>' +
     '<div style="font-size:10px;color:#aaa;margin-top:6px;text-align:center">Atualizado ' +
       (lead.atualizadoEm ? esc(String(lead.atualizadoEm).slice(0,10).split('-').reverse().join('/')) : '—') + '</div>' +
@@ -6469,7 +6566,13 @@ function atSalvarLead(){
   if(!lead){ toast('Lead não encontrado.', 'error'); return; }
 
   var novoStage = g('al-stage').value;
-  if(novoStage !== lead.stage){
+  var _stageMudou = (novoStage !== lead.stage);
+  if(_stageMudou){
+    // Bug 8: obrigações ao mudar de etapa pelo Atendimento
+    if(novoStage === 'proposta'){
+      var _temOrc = (DB.orcamentos||[]).some(function(o){ return o && String(o.leadId) === String(lead.id); });
+      if(!_temOrc && !confirm('Este lead ainda não tem orçamento anexado.\n\nO ideal é anexar um orçamento antes de mover para Proposta. Mover mesmo assim?')) return;
+    }
     lead.stage = novoStage;
     lead.stageChangedAt = new Date().toISOString();
   }
@@ -6480,10 +6583,12 @@ function atSalvarLead(){
   var v = parseFloat(g('al-valor').value);
   if(!isNaN(v) && v > 0) lead.valorProposta = v; else delete lead.valorProposta;
   lead.obs = g('al-obs').value || '';
+  lead.tags = [].slice.call(document.querySelectorAll('.al-tag:checked')).map(function(c){ return c.value; });
   lead.atualizadoEm = new Date().toISOString();
 
   try { saveToStorage(); } catch(e){ toast('Falha ao salvar: ' + e.message, 'error'); return; }
   toast('Card atualizado.');
+  if(_stageMudou && novoStage === 'fechado'){ try { openModal('modal-venda'); toast('Registre a venda deste cliente.'); } catch(e){} }
   renderAtLead();
   if(typeof renderCRM === 'function' && g('page-crm') && !g('page-crm').classList.contains('hid')) renderCRM();
 }
@@ -6843,6 +6948,7 @@ var _IA_PROMPT_PADRAO = {
 };
 var _IA_RECEPCAO_PADRAO = 'Você é a assistente virtual de recepção da Desenrola Turismo, agência de viagens especializada em Disney, Universal e cruzeiros. Dê as boas-vindas de forma calorosa e curta e colete três informações: destino ou tipo de viagem, período/datas, e quantas pessoas vão. Máximo 3 linhas por mensagem, em português do Brasil. Nunca informe preços, nunca dê conselhos, nunca prometa nada. Se perguntarem preço ou pedirem conselho, diga que um consultor especialista vai continuar. Deixe claro que você é uma assistente virtual e que um consultor humano assume em seguida.';
 
+var _IA_GUIA_PADRAO = 'Você é a Guia IA da Desenrola Turismo, especialista em parques (Disney, Universal Orlando, Epic Universe), cruzeiros e destinos. Ajuda o guia/consultor durante o guiamento a tirar dúvidas sobre atrações, filas (Lightning Lane, Express Pass), altura mínima, horários, roteiro e logística. Responda em português do Brasil, prática e objetiva, com base no conhecimento da Desenrola. Não invente dados: se não souber, diga que vai confirmar. Não informe preços que não estejam no material.';
 var _IA_MODELO_PADRAO = {
   sugestao: 'gemini-3.5-flash',
   recepcao: 'gemini-3.1-flash-lite',
@@ -9469,7 +9575,7 @@ function renderTemplates(){
   const todos = _getTemplatesAtivos();
   const list  = todos.filter(t=>(cat==='all'||t.cat===cat)&&(!q||t.titulo.toLowerCase().includes(q)||t.texto.toLowerCase().includes(q)));
   if(!list.length){ grid.innerHTML='<div style="color:var(--text2);padding:30px;text-align:center"><div style="font-size:36px">💬</div><p>Nenhum template encontrado.</p><button class="btn btn-primary" onclick="openModalNovoTemplate()">+ Novo Template</button></div>'; return; }
-  const catColors={captacao:'#2563eb',briefing:'#7c3aed',orcamento:'#d97706',fechamento:'#16a34a',prevenda:'#0891b2',guiamento:'#9333ea',posvenda:'#dc2626',custom:'#475569'};
+  const catColors={captacao:'#2563eb',briefing:'#7c3aed',orcamento:'#d97706',fechamento:'#16a34a',prevenda:'#0891b2',guiamento:'#9333ea',posvenda:'#dc2626',campanhas:'#e91e63',custom:'#475569'};
   grid.innerHTML = list.map(t=>{
     const txt = applyVars(t.texto);
     const waLink = 'https://wa.me/?text='+encodeURIComponent(txt);
@@ -9480,6 +9586,7 @@ function renderTemplates(){
         <span style="background:${catColors[t.cat]||'#666'};color:#fff;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;text-transform:uppercase">${t.cat}</span>
         <span style="font-size:13px;font-weight:700;color:var(--text1)">${t.emoji||'💬'} ${esc(t.titulo)}</span>
       </div>
+      ${t.imagem?`<img src="${esc(t.imagem)}" alt="" style="max-width:100%;border-radius:8px;max-height:120px;object-fit:cover" onerror="this.style.display='none'">`:''}
       <div style="background:var(--bg);border-radius:8px;padding:10px;font-size:11.5px;line-height:1.6;color:var(--text1);white-space:pre-wrap;max-height:160px;overflow:hidden;position:relative;cursor:pointer" onclick="this.style.maxHeight=this.style.maxHeight==='none'?'160px':'none'">${esc(txt)}<div style="position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,var(--bg))"></div></div>
       <div style="display:flex;gap:6px;justify-content:space-between;align-items:center">
         <div style="display:flex;gap:6px">
@@ -9503,8 +9610,8 @@ function openModalNovoTemplate(){ editarTemplate(null); }
 function editarTemplate(id){
   const todos = _getTemplatesAtivos();
   const t = id ? todos.find(x=>x.id===id) : null;
-  const cats = ['captacao','briefing','orcamento','fechamento','prevenda','guiamento','posvenda'];
-  const catLabels = {captacao:'📥 Captação',briefing:'📝 Briefing',orcamento:'💰 Orçamento',fechamento:'✅ Fechamento',prevenda:'✈️ Pré-Viagem',guiamento:'🗺️ Guiamento',posvenda:'⭐ Pós-Venda'};
+  const cats = ['captacao','briefing','orcamento','fechamento','prevenda','guiamento','posvenda','campanhas'];
+  const catLabels = {captacao:'📥 Captação',briefing:'📝 Briefing',orcamento:'💰 Orçamento',fechamento:'✅ Fechamento',prevenda:'✈️ Pré-Viagem',guiamento:'🗺️ Guiamento',posvenda:'⭐ Pós-Venda',campanhas:'📣 Campanhas'};
   const isNew = !id;
   // Modal inline para editar/criar template
   const existing = g('modal-template-editor');
@@ -9530,6 +9637,9 @@ function editarTemplate(id){
         <input id="tpl-edit-emoji" class="form-input" value="${esc(t?.emoji||'💬')}" placeholder="💬" style="margin-top:4px;width:70px"/>
       </label>
     </div>
+    <label style="font-size:12px;font-weight:600;color:var(--text2)">🖼️ Imagem (URL) — opcional
+      <input id="tpl-edit-imagem" class="form-input" value="${esc(t?.imagem||'')}" placeholder="https://exemplo.com/imagem.jpg" style="margin-top:4px"/>
+    </label>
     <label style="font-size:12px;font-weight:600;color:var(--text2)">Mensagem *
       <div style="font-size:10px;color:var(--text3);margin:2px 0 4px">Use {cliente}, {destino}, {data}, {vendedor} para variáveis</div>
       <textarea id="tpl-edit-texto" class="form-textarea" rows="12" placeholder="Escreva o template aqui..." style="margin-top:4px;font-family:inherit;white-space:pre-wrap;line-height:1.6">${esc(t?.texto||'')}</textarea>
@@ -9548,6 +9658,7 @@ function _v342_salvarTemplateCustom(idOriginal){
   const cat    = g('tpl-edit-cat')?.value||'captacao';
   const emoji  = g('tpl-edit-emoji')?.value||'💬';
   const texto  = g('tpl-edit-texto')?.value||'';
+  const imagem = (g('tpl-edit-imagem')?.value||'').trim();
   if(!titulo){ toast('Preencha o título do template.','error'); return; }
   if(!texto)  { toast('Escreva a mensagem do template.','error'); return; }
   if(!DB.templatesCustom) DB.templatesCustom=[];
@@ -9558,15 +9669,15 @@ function _v342_salvarTemplateCustom(idOriginal){
 
   if(isCustomEdit){
     const idx = DB.templatesCustom.findIndex(t=>t.id===idOriginal);
-    DB.templatesCustom[idx] = {...DB.templatesCustom[idx], titulo, cat, emoji, texto, updatedAt:Date.now()};
+    DB.templatesCustom[idx] = {...DB.templatesCustom[idx], titulo, cat, emoji, texto, imagem, updatedAt:Date.now()};
     toast('Template atualizado!','success');
   } else if(isPadraoEdit){
     // Editing a padrao template → save as custom override
-    DB.templatesCustom.push({id:'tc_'+Date.now(), idOrigem:idOriginal, cat, emoji, titulo, texto, createdAt:Date.now(), updatedAt:Date.now()});
+    DB.templatesCustom.push({id:'tc_'+Date.now(), idOrigem:idOriginal, cat, emoji, titulo, texto, imagem, createdAt:Date.now(), updatedAt:Date.now()});
     toast('Cópia personalizada salva!','success');
   } else {
     const newId = 'tc_'+Date.now();
-    DB.templatesCustom.push({id:newId, cat, emoji, titulo, texto, createdAt:Date.now(), updatedAt:Date.now()});
+    DB.templatesCustom.push({id:newId, cat, emoji, titulo, texto, imagem, createdAt:Date.now(), updatedAt:Date.now()});
     toast('Novo template salvo!','success');
   }
   saveToStorage();
@@ -17896,6 +18007,15 @@ function _saveOrcamento(){
       guiaParques:Array.prototype.slice.call(document.querySelectorAll('.orc-guia-pk-'+i+':checked')).map(function(c){return c.value;}).join(' · '),
       guiaDescricao:(g('orc-guia-desc-'+i)||{value:''}).value.trim(),
     };
+    // Bug 11: hotel digitado direto no orçamento entra no Registro (se for novo)
+    if(itemObj.hotelNome){
+      var _jaReg = (DB.hoteisCustom||[]).some(function(h){ return h.nome===itemObj.hotelNome; }) ||
+                   (typeof HOTEIS_KB!=='undefined' && HOTEIS_KB.some(function(h){ return h.nome===itemObj.hotelNome; }));
+      if(!_jaReg){
+        if(!DB.hoteisCustom) DB.hoteisCustom=[];
+        DB.hoteisCustom.push({ id:Date.now()+Math.floor(Math.random()*1000), nome:itemObj.hotelNome, destino:'', categoria:itemObj.hotelCategoria||'', descricao:itemObj.hotelDescricao||'', fotos:(itemObj.hotelFotos||[]).slice() });
+      }
+    }
     // Trechos de voo (novo formato com escalas)
     if(tipo==='Voo'){
       itemObj.trechos=[];
@@ -18410,7 +18530,7 @@ function renderIngressosTab(){
         '<div><div style="font-size:13px;font-weight:600">'+escapeHtml(nm)+'</div>'+
         (dsc?'<div style="font-size:11px;color:var(--text3)">'+escapeHtml(dsc)+'</div>':'')+
         '</div>'+
-        '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="removeTipoIngresso('+i+')">✕</button></div>';
+        '<div style="display:flex;gap:4px;flex-shrink:0"><button class="btn btn-ghost btn-sm" onclick="editTipoIngresso('+i+')" title="Editar">✏️</button><button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="removeTipoIngresso('+i+')">✕</button></div></div>';
     }).join('')||'<p style="color:var(--text3);font-size:13px">Nenhum tipo cadastrado</p>';
   }
   var fo=g('formas-op-list');
@@ -18457,6 +18577,20 @@ function delTagCRM(i){
   });
 }
 
+var _editIngIdx = null;
+function editTipoIngresso(i){
+  var arr = DB.config.tiposIngresso||[];
+  var t = arr[i]; if(t==null) return;
+  var a = (typeof t==='object') ? t : {nome:t,desc:'',foto:''};
+  var elN=g('new-tipo-ingresso'), elD=g('new-tipo-ingresso-desc'), elF=g('new-tipo-ingresso-foto');
+  if(elN) elN.value = a.nome||'';
+  if(elD) elD.value = a.desc||'';
+  if(elF) elF.value = a.foto||'';
+  _editIngIdx = i;
+  var b = g('btn-add-ingresso'); if(b) b.textContent = '\ud83d\udcbe';
+  if(elN){ elN.focus(); try{ elN.scrollIntoView({block:'center'}); }catch(e){} }
+  toast('Editando "'+(a.nome||'')+'". Ajuste (inclusive a foto pelo \ud83d\udcc1) e clique em \ud83d\udcbe.');
+}
 function addTipoIngresso(){
   var el=g('new-tipo-ingresso');
   var elDesc=g('new-tipo-ingresso-desc');
@@ -18466,7 +18600,14 @@ function addTipoIngresso(){
   var elFoto=g('new-tipo-ingresso-foto');
   var foto=(elFoto&&elFoto.value.trim())||'';
   // Salvar como objeto {nome,desc,foto}
-  DB.config.tiposIngresso.push((desc||foto) ? {nome:v,desc:desc,foto:foto} : v);
+  var _novoIng = (desc||foto) ? {nome:v,desc:desc,foto:foto} : v;
+  if(_editIngIdx != null && DB.config.tiposIngresso[_editIngIdx] != null){
+    DB.config.tiposIngresso[_editIngIdx] = _novoIng;
+    _editIngIdx = null;
+    var _bi = g('btn-add-ingresso'); if(_bi) _bi.textContent = '+';
+  } else {
+    DB.config.tiposIngresso.push(_novoIng);
+  }
   if(foto && foto.indexOf('data:')===0) _backupDataUrlDrive(foto, v.replace(/\s+/g,'_')+'.jpg', ['Servi\u00e7os','Ingressos', v]);
   el.value=''; if(elDesc) elDesc.value=''; if(elFoto) elFoto.value='';
   saveToStorage(); renderIngressosTab();
