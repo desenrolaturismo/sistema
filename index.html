@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v5.9.20</title>
+<title>Desenrola Turismo — Sistema de Gestão v5.9.22</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -400,7 +400,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v5.9.20
+    ✦ Desenrola Turismo · v5.9.22
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -948,6 +948,31 @@ tbody tr:hover{background:var(--surface2)}
       <p id="ia-cfg-plantao-resumo" style="font-size:12px;color:#2C6AA3;margin:10px 0 0;font-weight:700"></p>
     </div>
 
+    <div class="card" style="margin-bottom:16px;border:2px solid #dce8cf">
+      <h4 style="margin:0 0 4px">🎟️ Fila de leads (rodízio)</h4>
+      <p style="font-size:12px;color:#888;margin:0 0 12px">Quando LIGADA, todo lead que <b>responder</b> à recepcionista é entregue ao próximo vendedor da roda, um a um, na ordem. Quem só mandou "oi" e sumiu <b>não</b> é entregue a ninguém. Vendedor inativo no cadastro é pulado sozinho; se não sobrar ninguém, o lead fica livre.</p>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f7faf2;border:1px solid #dce8cf;border-radius:8px;margin-bottom:12px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:700;color:#6b8034">
+          <input type="checkbox" id="ia-cfg-fila-ativo" style="width:18px;height:18px;cursor:pointer">
+          Fila LIGADA
+        </label>
+        <span style="font-size:12px;color:#999">— desligada, ninguém recebe lead automaticamente</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Quem entra na roda</label>
+        <p style="font-size:12px;color:#888;margin:2px 0 6px">A ordem do rodízio é a ordem desta lista, de cima para baixo.</p>
+        <div id="ia-cfg-fila-vendedores" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="salvarIaFila()">💾 Salvar fila</button>
+        <span id="ia-cfg-fila-status" style="font-size:12px;color:#1e7e34;font-weight:600"></span>
+      </div>
+      <p id="ia-cfg-fila-resumo" style="font-size:12px;color:#6b8034;margin:10px 0 0;font-weight:700"></p>
+    </div>
+
     <div class="card" style="border-left:3px solid #79ACD9">
       <h4 style="margin:0 0 4px">🧠 Prompt Matriz da Guia IA</h4>
       <p style="font-size:12px;color:#888;margin:2px 0 6px">A instrução base da <strong>Guia IA</strong> (a do GuiD, que responde sobre destinos usando o Knowledge Base). Só afeta a Guia IA — não mexe na recepção nem na análise. Aqui você define o tom, o nível de detalhe e as regras que ela segue ao orientar os guias.</p>
@@ -1025,16 +1050,37 @@ tbody tr:hover{background:var(--surface2)}
   </div>
 
   <div id="reg-tab-operadoras" class="tab-panel">
-    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
-      <button class="btn btn-primary" onclick="openModal('modal-operadora')">+ Cadastrar Operadora</button>
+    <div class="tab-bar" id="reg-sub-oper" style="margin-bottom:12px">
+      <button class="tab-btn active" onclick="switchOperSub('lista',this)">🏢 Operadoras</button>
+      <button class="tab-btn" id="reg-sub-oper-forn" onclick="switchOperSub('fornecedores',this)">🤝 Parceiros / Fornecedores</button>
     </div>
-    <div class="table-wrapper">
-      <table>
-        <thead><tr><th>Operadora</th><th>Executivo</th><th>Contato</th><th>Email</th><th>Pagamento</th><th>Status</th><th>OBS</th><th>Ações</th></tr></thead>
-        <tbody id="reg-operadoras-body"></tbody>
-      </table>
+
+    <div id="oper-sub-lista">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+        <button class="btn btn-primary" onclick="openModal('modal-operadora')">+ Cadastrar Operadora</button>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Operadora</th><th>Executivo</th><th>Contato</th><th>Email</th><th>Pagamento</th><th>Status</th><th>OBS</th><th>Ações</th></tr></thead>
+          <tbody id="reg-operadoras-body"></tbody>
+        </table>
+      </div>
+      <div id="operadoras-empty" class="empty-state" style="display:none"><div class="empty-icon">🏢</div><p>Nenhuma operadora cadastrada.</p></div>
     </div>
-    <div id="operadoras-empty" class="empty-state" style="display:none"><div class="empty-icon">🏢</div><p>Nenhuma operadora cadastrada.</p></div>
+
+    <div id="oper-sub-fornecedores" style="display:none">
+      <p style="font-size:12px;color:#888;margin:0 0 12px">Quem não é cliente: parceiros, fornecedores e representantes. Podem ou não ser operadoras. Marque uma conversa como parceiro no Atendimento e ela vem para cá — o card de lead deixa de existir e ninguém mais perde tempo tentando vender para eles.</p>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+        <button class="btn btn-primary" onclick="abrirFornecedor()">+ Cadastrar Parceiro</button>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Nome</th><th>Telefone</th><th>Empresa</th><th>Cupom</th><th>Site</th><th>Ações</th></tr></thead>
+          <tbody id="reg-fornecedores-body"></tbody>
+        </table>
+      </div>
+      <div id="fornecedores-empty" class="empty-state" style="display:none"><div class="empty-icon">🤝</div><p>Nenhum parceiro cadastrado ainda.</p></div>
+    </div>
   </div>
 
   <div id="reg-tab-ingressos" class="tab-panel" style="display:none">
@@ -2126,6 +2172,34 @@ tbody tr:hover{background:var(--surface2)}
 </div>
 
 <!-- MODAL: OPERADORA -->
+<div id="modal-fornecedor" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-fornecedor-title">Cadastrar Parceiro</div>
+      <button class="modal-close" onclick="closeModal('modal-fornecedor')">✕</button>
+    </div>
+    <input type="hidden" id="fo-id"/>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nome *</label><input type="text" class="form-input" id="fo-nome" required/></div>
+      <div class="form-group"><label class="form-label">Telefone *</label><input type="text" class="form-input" id="fo-telefone" required/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nome da empresa</label><input type="text" class="form-input" id="fo-empresa"/></div>
+      <div class="form-group"><label class="form-label">CNPJ</label><input type="text" class="form-input" id="fo-cnpj"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Endereço</label><input type="text" class="form-input" id="fo-endereco"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Site</label><input type="text" class="form-input" id="fo-site" placeholder="https://"/></div>
+      <div class="form-group"><label class="form-label">Cupom de desconto</label><input type="text" class="form-input" id="fo-cupom"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Observações</label><textarea class="form-textarea" id="fo-obs" rows="2"></textarea></div>
+    <div class="modal-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
+      <button class="btn btn-ghost" onclick="closeModal('modal-fornecedor')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarFornecedor()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-operadora" class="modal-overlay">
   <div class="modal">
     <div class="modal-header">
@@ -2351,7 +2425,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v5.9.20</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v5.9.22</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -2375,7 +2449,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v5.9.20</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v5.9.22</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -2641,6 +2715,7 @@ const DB = {
     {id:3,nome:'Marcelo',sobrenome:'',cpf:'',nascimento:'',cnpj:'',inicio:'2023-06-01',obs:'',status:'ativo'},
     {id:4,nome:'Paula',sobrenome:'',cpf:'',nascimento:'',cnpj:'',inicio:'2023-06-01',obs:'',status:'ativo'}
   ],
+  fornecedores: [],
   operadoras: [
     {id:1,nome:'HotelDo',exec:'',contato:'',email:'',forma:'Pix',obs:'',status:'ativo'},
     {id:2,nome:'Azul Viagens',exec:'',contato:'',email:'',forma:'Pix',obs:'',status:'ativo'},
@@ -3233,7 +3308,7 @@ function saveToFirebase(payload){
     delete fbPayload.crm;
     _crmSincronizarDelta();
 
-    // v5.9.20 · RAIZ DO "1 CARD COM 10 CONTATOS".
+    // v5.9.22 · RAIZ DO "1 CARD COM 10 CONTATOS".
     // `nextCrmId` é um contador COMPARTILHADO com a ponte, que o avança por
     // transação atômica a cada lead novo. Este save mandava junto a cópia LOCAL
     // dele — quase sempre atrasada, porque a ponte não mexe em `_lastSaved` e o
@@ -3497,7 +3572,7 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v5.9.20',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v5.9.22',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_turismo_v3')||'{}'); // v3.57: chave correta
   if (_fbDb) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); else payload.dados.firebaseVazio = true; } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -3889,7 +3964,26 @@ async function atAtribuirVendedor(nome){
   }
 
   // Bloco de vendedor no painel do lead: mostra o dono; só o Thomaz pode trocar.
-  function _atBlocoVendedor(){
+  // v5.9.22 · O filtro por vendedor já existia e já funcionava na lista — mas o
+// bloco nascia com display:none e o select nunca era preenchido com os nomes.
+// Estava pronto e invisível. Agora aparece para o gestor, com os vendedores.
+function _atFiltroVendedorSetup(){
+  var wrap = g('at-filtro-vendedor-wrap'), sel = g('at-filtro-vendedor');
+  if(!wrap || !sel) return;
+  if(typeof _atGestor === 'function' && !_atGestor()){ wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  var vds = (DB.vendedores || []).filter(function(v){ return v && v.status === 'ativo'; });
+  var assin = vds.map(function(v){ return v.nome; }).join('|');
+  if(sel.getAttribute('data-vds') === assin) return;   // já montado: não perde a escolha
+  var atual = sel.value;
+  sel.innerHTML = '<option value="">Todos os vendedores</option>' +
+    '<option value="__livre__">Somente as livres (sem dono)</option>' +
+    vds.map(function(v){ return '<option value="' + esc(v.nome) + '">' + esc(v.nome) + '</option>'; }).join('');
+  sel.setAttribute('data-vds', assin);
+  if(atual){ sel.value = atual; if(sel.value !== atual) sel.value = ''; }
+}
+
+function _atBlocoVendedor(){
     var c = AT.conversas[AT.atual]; if(!c) return '';
     var dono = _atVendedorDaConversa(c);
     var herdado = !c.vendedor && dono;   // veio do card, não foi atribuído à mão
@@ -3919,6 +4013,7 @@ function renderAtConversas(){
   _atContarCrm();   // v5.9.3 - recalcula vinculos p/ detectar lead super-vinculado
   var termo = (g('at-busca') && g('at-busca').value || '').trim().toLowerCase();
 
+  try { _atFiltroVendedorSetup(); } catch(e){}
   var lista = Object.keys(AT.conversas).map(function(k){
     var c = Object.assign({}, AT.conversas[k]); c._k = k; return c;
   }).filter(function(c){
@@ -4449,6 +4544,65 @@ async function atVincularA(crmId){
 }
 
 // Desvincular: erra-se ao vincular, e o erro tem que ter volta.
+// ── VIRAR PARCEIRO ───────────────────────────────────────────────────────────
+// Parceiro não é lead. Sai do funil (o card deixa de existir), larga o vendedor
+// e ganha cadastro próprio — mas a CONVERSA fica: o histórico do WhatsApp com um
+// fornecedor vale tanto quanto o de um cliente. Só o gestor faz isso.
+async function atVirarParceiro(){
+  if(!isAdm()){ toast('Apenas o gestor','error'); return; }
+  var c = AT.conversas[AT.atual]; if(!c){ return; }
+  var lead = _atLeadDe(AT.atual);
+  var nome = (lead && lead.nome) || c.nome || '';
+  var tel  = (lead && lead.telefone) || String(c.waId || '').replace(/\D/g, '');
+  if(!tel){ toast('Sem telefone — não dá para cadastrar como parceiro.','error'); return; }
+
+  if(!confirm('Marcar "' + (nome || tel) + '" como PARCEIRO/FORNECEDOR?\n\n' +
+              '• o card do CRM' + (lead ? ' #' + lead.id : '') + ' será excluído\n' +
+              '• a conversa perde o vendedor\n' +
+              '• ele sai do funil e vai para Registros → Operadoras → Parceiros\n\n' +
+              'A conversa do WhatsApp continua aqui, com todo o histórico.')) return;
+
+  try {
+    // 1) cadastro do parceiro (não duplica quem já está lá pelo telefone)
+    if(!DB.fornecedores) DB.fornecedores = [];
+    var _so = function(x){ return String(x||'').replace(/\D/g,''); };
+    var ja = DB.fornecedores.find(function(x){ return _so(x.telefone) === _so(tel); });
+    if(!ja){
+      var novoId = DB.fornecedores.reduce(function(m,x){ return x.id > m ? x.id : m; }, 0) + 1;
+      DB.fornecedores.push({
+        id: novoId, nome: nome || ('Parceiro ' + String(tel).slice(-4)), telefone: tel,
+        empresa: '', cnpj: '', endereco: '', site: '', cupom: '',
+        obs: 'Veio do Atendimento' + (lead ? ' (era o CRM #' + lead.id + ')' : ''),
+        criadoEm: new Date().toISOString(), atualizadoEm: new Date().toISOString()
+      });
+    }
+
+    // 2) a conversa larga o vendedor e o card, e passa a se identificar como parceiro
+    if(_fbDb && c.waId){
+      await _fbDb.ref('desenrola_wa/conversations/' + c.waId).update({
+        vendedor: null, vendedorPorFila: null, crmId: null, fornecedor: true
+      });
+    }
+
+    // 3) o card sai do funil — sem ele, ninguém tenta vender para um fornecedor
+    if(lead){
+      DB.crm = (DB.crm || []).filter(function(l){ return l.id !== lead.id; });
+      if(_fbDb){
+        await _fbDb.ref('desenrola_v3/crm/l_' + lead.id).remove()
+          .catch(function(e){ console.warn('remocao do card:', e && e.message); });
+      }
+    }
+
+    saveToStorage();
+    toast('🤝 Agora é parceiro. A conversa continua aqui.','success');
+    try { renderAtendimento(); } catch(e){}
+    try { if(typeof renderCRM === 'function') renderCRM(); } catch(e){}
+    try { renderFornecedores(); } catch(e){}
+  } catch(e){
+    toast('Não consegui converter: ' + (e.message || e), 'error');
+  }
+}
+
 async function atDesvincular(){
   var c = AT.conversas[AT.atual]; if(!c || !c.crmId) return;
   if(!confirm('Desvincular esta conversa do CRM #' + c.crmId + '?')) return;
@@ -6009,19 +6163,26 @@ function _atTrilhaFunil(lead){
     '<div style="display:flex;gap:1px">' + passos + '</div></div>';
 }
 
+// v5.9.22 · A trilha mudava a etapa DIRETO, sem cobrar nada: dava para ir a
+// Proposta sem orçamento e a Fechado sem registrar venda. As regras existiam,
+// mas só dentro do botão "Salvar" — e ninguém clica nele para mudar de etapa.
+// Agora o Atendimento usa o MESMO fluxo do CRM (openMoveStage), que já exige o
+// orçamento na Proposta e cliente + orçamento na venda ao Fechar. Uma regra, um
+// lugar: o que valer no CRM vale aqui, para sempre.
 function _atMoverStage(stageId){
   if(!AT.atual) return;
   var lead = _atLeadDe(AT.atual);
   if(!lead || lead.stage === stageId) return;
-  lead.stage = stageId;
-  lead.stageChangedAt = new Date().toISOString();
-  lead.atualizadoEm = lead.stageChangedAt;
-  _tagCotacaoEtapa(lead, stageId);   // tag "montar cotação" (entra qualificado / sai proposta)
-  try { saveToStorage(); } catch(e){}
-  try { renderAtLead(); } catch(e){}
-  try { if(typeof renderCRM === 'function') renderCRM(); } catch(e){}
-  toast('Movido para ' + stageId + '.');
+
+  if(typeof openMoveStage === 'function'){
+    _atLeadVoltarPara = AT.atual;      // depois do fluxo, o painel se atualiza
+    openMoveStage(lead.id, stageId);
+    return;
+  }
+  // Sem o fluxo do CRM não inventamos regra frouxa: melhor avisar.
+  toast('Não consegui abrir o fluxo de etapa. Use a aba CRM.','error');
 }
+var _atLeadVoltarPara = null;
 
 // ══════════════════════════════════════════════════════════════════════════
 // TEMPLATES como sub-aba do Atendimento  (v5.9.3 · D-75)
@@ -6823,6 +6984,7 @@ function _atAplicarColetado(){
   toast('Campos preenchidos — revise e clique em Salvar');
 }
 
+function _alToggleTagAuto(){ try { _atAutoSalvar(); } catch(e){} }
 function _alToggleTag(inp){
   var on = inp.checked, cor = inp.getAttribute('data-cor') || '#2C6AA3';
   inp.parentNode.style.background = on ? cor : '#fff';
@@ -6856,7 +7018,7 @@ function renderAtLead(){
     (_tagsCfg.map(function(t){
       var on = ((lead.tags||[]).indexOf(t.nome) >= 0);
       return '<label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;background:' + (on?t.cor:'#fff') + ';color:' + (on?'#fff':t.cor) + ';border:1px solid ' + t.cor + ';border-radius:12px;padding:2px 9px;font-size:11.5px;font-weight:700">' +
-        '<input type="checkbox" class="al-tag" value="' + esc(t.nome) + '" data-cor="' + t.cor + '"' + (on?' checked':'') + ' style="display:none" onchange="_alToggleTag(this)">' +
+        '<input type="checkbox" class="al-tag" value="' + esc(t.nome) + '" data-cor="' + t.cor + '"' + (on?' checked':'') + ' style="display:none" onchange="_alToggleTag(this);_alToggleTagAuto()">' +
         esc(t.nome) + '</label>';
     }).join('') || '<span style="color:#aaa;font-size:11px">Crie tags em Registros \u2192 Tags do Pipeline</span>') +
     '</div>';
@@ -6868,47 +7030,67 @@ function renderAtLead(){
     '<div style="font-size:11px;color:#999;margin-bottom:6px">CRM #' + lead.id +
       (lead.autoCriado ? ' · <span style="color:#8a6100">⚡ criado automaticamente</span>' : '') + '</div>' +
     '<label style="' + rot + '">Nome</label>' +
-    '<input id="al-nome" style="' + inp + '" value="' + esc(lead.nome || '') + '">' +
+    '<input id="al-nome" oninput="_atAutoSalvar()" style="' + inp + '" value="' + esc(lead.nome || '') + '">' +
     '<label style="' + rot + '">Etapa</label>' +
-    '<select id="al-stage" style="' + inp + '">' + opts + '</select>' +
+    '<select id="al-stage" style="' + inp + '" onchange="_atEtapaPeloSelect(this)">' + opts + '</select>' +
     '<label style="' + rot + '">Destino</label>' +
-    '<select id="al-destino" style="' + inp + '"><option value="">—</option>' + destinos + '</select>' +
+    '<select id="al-destino" onchange="_atAutoSalvar()" style="' + inp + '"><option value="">—</option>' + destinos + '</select>' +
     '<div style="display:flex;gap:8px">' +
       '<div style="flex:1"><label style="' + rot + '">Adultos</label>' +
-        '<input id="al-pax" type="number" min="0" style="' + inp + '" value="' + (lead.pax || 0) + '"></div>' +
+        '<input id="al-pax" type="number" min="0" oninput="_atAutoSalvar()" style="' + inp + '" value="' + (lead.pax || 0) + '"></div>' +
       '<div style="flex:1"><label style="' + rot + '">Crianças</label>' +
-        '<input id="al-cri" type="number" min="0" style="' + inp + '" value="' + (lead.criancas || 0) + '"></div>' +
+        '<input id="al-cri" type="number" min="0" oninput="_atAutoSalvar()" style="' + inp + '" value="' + (lead.criancas || 0) + '"></div>' +
     '</div>' +
     '<label style="' + rot + '">Valor da proposta</label>' +
-    '<input id="al-valor" type="number" step="0.01" min="0" style="' + inp + '" value="' + (lead.valorProposta || '') + '">' +
+    '<input id="al-valor" type="number" step="0.01" min="0" oninput="_atAutoSalvar()" style="' + inp + '" value="' + (lead.valorProposta || '') + '">' +
     '<label style="' + rot + '">Observações</label>' +
-    '<textarea id="al-obs" rows="5" style="' + inp + ';resize:vertical" placeholder="O que importa desta conversa…">' +
+    '<textarea id="al-obs" rows="5" oninput="_atAutoSalvar()" style="' + inp + ';resize:vertical" placeholder="O que importa desta conversa…">' +
       esc(lead.obs || '') + '</textarea>' +
     tagsHtml +
-    '<button class="btn btn-primary btn-sm" style="width:100%;margin-top:10px" onclick="atSalvarLead()">Salvar</button>' +
+    '<div style="display:flex;align-items:center;gap:8px;margin-top:10px">' +
+      '<button class="btn btn-primary btn-sm" style="flex:1" onclick="atSalvarLead()">Salvar</button>' +
+      '<span id="al-auto-aviso" style="font-size:11px;color:#1e7e34;font-weight:700;min-width:64px"></span>' +
+    '</div>' +
+    '<div style="font-size:10px;color:#aaa;margin-top:4px;text-align:center">Salva sozinho enquanto você escreve</div>' +
     '<div style="font-size:10px;color:#aaa;margin-top:6px;text-align:center">Atualizado ' +
       (lead.atualizadoEm ? esc(String(lead.atualizadoEm).slice(0,10).split('-').reverse().join('/')) : '—') + '</div>' +
     // v5.9.3 · o consentimento mora ao lado de quem conversa com a pessoa
     (AT.atual ? _seloOptin(AT.atual) : '') +
-    _atBotaoHistorico();   // v5.9.3 · D-73 · histórico 360° se vinculado
+    _atBotaoHistorico() +   // v5.9.3 · D-73 · histórico 360° se vinculado
+    (_atGestor()
+      ? '<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;border:1px dashed #b9770e;color:#b9770e" ' +
+        'onclick="atVirarParceiro()" title="Tira do funil e cadastra como parceiro. A conversa continua.">🤝 É parceiro/fornecedor</button>'
+      : '');
 }
 
 // Altera o lead em memória e deixa o delta da v3.86 gravar só este registro.
-function atSalvarLead(){
-  var lead = AT.atual ? _atLeadDe(AT.atual) : null;
-  if(!lead){ toast('Lead não encontrado.', 'error'); return; }
+// A etapa NÃO se muda mais por aqui: quem manda é o fluxo do CRM, que cobra o
+// que cada etapa exige. O select só dispara esse fluxo.
+function _atEtapaPeloSelect(sel){
+  if(!sel) return;
+  var alvo = sel.value;
+  try { _atMoverStage(alvo); } finally { try { renderAtLead(); } catch(e){} }
+}
 
-  var novoStage = g('al-stage').value;
-  var _stageMudou = (novoStage !== lead.stage);
-  if(_stageMudou){
-    // Bug 8: obrigações ao mudar de etapa pelo Atendimento
-    if(novoStage === 'proposta'){
-      var _temOrc = (DB.orcamentos||[]).some(function(o){ return o && String(o.leadId) === String(lead.id); });
-      if(!_temOrc && !confirm('Este lead ainda não tem orçamento anexado.\n\nO ideal é anexar um orçamento antes de mover para Proposta. Mover mesmo assim?')) return;
-    }
-    lead.stage = novoStage;
-    lead.stageChangedAt = new Date().toISOString();
-  }
+// ── SALVAR SOZINHO ───────────────────────────────────────────────────────────
+// Ninguém deve perder o que escreveu porque esqueceu de clicar num botão. O que
+// for digitado no card é gravado ~1s depois da última tecla.
+var _atAutoTimer = null;
+function _atAutoSalvar(){
+  clearTimeout(_atAutoTimer);
+  var av = g('al-auto-aviso'); if(av) av.textContent = 'digitando…';
+  _atAutoTimer = setTimeout(function(){ atSalvarLead(true); }, 900);
+}
+function _atAutoAviso(txt){
+  var av = g('al-auto-aviso'); if(!av) return;
+  av.textContent = txt;
+  if(txt === '✓ salvo') setTimeout(function(){ if(av.textContent === '✓ salvo') av.textContent = ''; }, 2000);
+}
+
+function atSalvarLead(silencioso){
+  var lead = AT.atual ? _atLeadDe(AT.atual) : null;
+  if(!lead){ if(!silencioso) toast('Lead não encontrado.', 'error'); return; }
+
   lead.nome     = (g('al-nome').value || '').trim();
   lead.destino  = g('al-destino').value || '';
   lead.pax      = parseInt(g('al-pax').value, 10) || 0;
@@ -6917,13 +7099,18 @@ function atSalvarLead(){
   if(!isNaN(v) && v > 0) lead.valorProposta = v; else delete lead.valorProposta;
   lead.obs = g('al-obs').value || '';
   lead.tags = [].slice.call(document.querySelectorAll('.al-tag:checked')).map(function(c){ return c.value; });
-  if(_stageMudou){ _tagCotacaoEtapa(lead, lead.stage); }   // tag automática na transição de etapa
   lead.atualizadoEm = new Date().toISOString();
 
-  try { saveToStorage(); } catch(e){ toast('Falha ao salvar: ' + e.message, 'error'); return; }
-  toast('Card atualizado.');
-  if(_stageMudou && novoStage === 'fechado'){ try { openModal('modal-venda'); toast('Registre a venda deste cliente.'); } catch(e){} }
-  renderAtLead();
+  try { saveToStorage(); }
+  catch(e){ _atAutoAviso('⚠️ não salvou'); if(!silencioso) toast('Falha ao salvar: ' + e.message, 'error'); return; }
+
+  if(silencioso){
+    // Sem re-render: redesenhar o painel enquanto ele digita apagaria o cursor.
+    _atAutoAviso('✓ salvo');
+  } else {
+    toast('Card atualizado.');
+    renderAtLead();
+  }
   if(typeof renderCRM === 'function' && g('page-crm') && !g('page-crm').classList.contains('hid')) renderCRM();
 }
 
@@ -7650,6 +7837,12 @@ async function renderIaConfig(){
   var plmo = g('ia-cfg-plantao-msgocupado'); if(plmo) plmo.value = pl.msgOcupado || _PLANTAO_PADRAO.msgOcupado;
   _plantaoResumo();
 
+  // fila de leads
+  var fl = cfg.fila || {};
+  var fa = g('ia-cfg-fila-ativo'); if(fa){ fa.checked = (fl.ativo === true); fa.onchange = _filaResumo; }
+  _filaRender(Array.isArray(fl.vendedores) ? fl.vendedores : []);
+  _filaResumo();
+
   // prompt matriz da Guia IA (usado pela Guia IA do GuiD; não afeta as outras)
   var gp = g('ia-cfg-guia-prompt'); if(gp) gp.value = cfg.guiaPrompt || _IA_GUIA_PADRAO;
 
@@ -7792,6 +7985,62 @@ function _plantaoResumo(){
   var aberto = !!dias[hoje] && (a===b ? false : (b>a ? (mm>=a && mm<b) : (mm>=a || mm<b)));
   el.textContent = 'Atendendo ' + _plantaoDescr(dias, ini, fim) + ' · agora: ' + (aberto ? 'ABERTO' : 'FECHADO');
   el.style.color = aberto ? '#1e7e34' : '#c0392b';
+}
+
+// ── FILA DE LEADS ────────────────────────────────────────────────────────────
+function _filaRender(escolhidos){
+  var box = g('ia-cfg-fila-vendedores'); if(!box) return;
+  var vds = (DB.vendedores || []).filter(function(v){ return v && v.status === 'ativo'; });
+  if(!vds.length){ box.innerHTML = '<div style="font-size:12px;color:#c0392b">Nenhum vendedor ativo no cadastro.</div>'; return; }
+  var sel = escolhidos || [];
+  box.innerHTML = vds.map(function(v){
+    var on = sel.indexOf(v.nome) >= 0;
+    return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid ' + (on?'#6b8034':'#e2e2e2')
+      + ';border-radius:8px;background:' + (on?'#f7faf2':'#fff') + ';cursor:pointer;font-size:13px;font-weight:600;color:' + (on?'#4d5f26':'#777') + '">'
+      + '<input type="checkbox" class="fila-vd" value="' + esc(v.nome) + '"' + (on?' checked':'')
+      + ' onchange="_filaMudou()" style="width:16px;height:16px;cursor:pointer">' + esc(v.nome) + '</label>';
+  }).join('');
+}
+function _filaLer(){
+  return [].slice.call(document.querySelectorAll('.fila-vd:checked')).map(function(c){ return c.value; });
+}
+function _filaMudou(){ _filaRender(_filaLer()); _filaResumo(); }
+function _filaResumo(){
+  var el = g('ia-cfg-fila-resumo'); if(!el) return;
+  var n = _filaLer();
+  var lig = !!(g('ia-cfg-fila-ativo') && g('ia-cfg-fila-ativo').checked);
+  if(!lig){ el.textContent = 'Fila desligada — os leads ficam livres para quem pegar.'; el.style.color = '#999'; return; }
+  el.textContent = n.length ? ('Rodízio: ' + n.join(' → ') + ' → (recomeça)') : '⚠️ Ligada sem ninguém na roda — os leads ficarão livres.';
+  el.style.color = n.length ? '#6b8034' : '#c0392b';
+}
+async function salvarIaFila(){
+  if(!isAdm()){ toast('Apenas administradores','error'); return; }
+  var st = g('ia-cfg-fila-status'); if(st) st.textContent = 'Salvando…';
+  var ativo = !!(g('ia-cfg-fila-ativo') && g('ia-cfg-fila-ativo').checked);
+  var vendedores = _filaLer();
+  if(ativo && !vendedores.length){
+    if(st) st.textContent = '';
+    toast('Escolha pelo menos um vendedor para a roda','error'); return;
+  }
+  try {
+    if(_fbDb){
+      // .update() e NUNCA .set(): o `cursor` (a posição da roda) é da ponte.
+      // Um .set() daqui zeraria o rodízio a cada save — o mesmo tipo de erro
+      // que embaralhou os cards com o nextCrmId.
+      await _fbDb.ref('desenrola_wa/config/ia/fila').update({ ativo: ativo, vendedores: vendedores });
+      var conf = await _fbDb.ref('desenrola_wa/config/ia/fila/ativo').once('value');
+      if(conf.val() !== ativo){
+        if(st) st.textContent = '';
+        toast('⚠️ Não persistiu. Verifique as regras do Firebase (config/ia).','error'); return;
+      }
+    }
+    if(st){ st.textContent = ativo ? '✓ Ligada' : '✓ Desligada'; setTimeout(function(){ st.textContent=''; }, 2500); }
+    _filaResumo();
+    toast(ativo ? '🎟️ Fila LIGADA' : '🎟️ Fila desligada','success');
+  } catch(e){
+    if(st) st.textContent = '';
+    toast('Falha ao salvar: ' + (e.message||e), 'error');
+  }
 }
 
 async function salvarIaPlantao(){
@@ -11050,7 +11299,7 @@ function switchRegTab(tab, btn){
   if(panel) panel.style.display='block'; // 'block' sobrepõe .tab-panel{display:none} do CSS
   if(tab==='sistema'){ try{ renderPesoWidget(); }catch(e){} try{ renderSlaWidget(); }catch(e){} try{ renderAutomacoes(); }catch(e){} }
   if(tab==='vendedores') renderVendedores();
-  if(tab==='operadoras') renderOperadoras();
+  if(tab==='operadoras'){ try { _fornSubSetup(); } catch(e){} renderOperadoras(); }
   if(tab==='ingressos')  renderIngressosTab();
   if(tab==='conteudo')   renderConteudoTab();
   if(tab==='seguradoras') renderSeguradoras();
@@ -11337,6 +11586,94 @@ function _v342_salvarCorteComissoes(){
 // Wrappers para switchRegTab — chamam renderRegistros() que renderiza ambas as abas
 function renderVendedores(){ renderRegistros(); }
 function renderOperadoras(){ renderRegistros(); }
+
+// ══════════════════════════════════════════════════════════════════════════
+// PARCEIROS / FORNECEDORES  (v5.9.22)
+// Nem toda conversa é um cliente. Parceiro no meio do funil polui o pipeline e
+// distorce toda a métrica. Aqui ele sai do CRM e passa a ter cadastro próprio —
+// mas a CONVERSA continua: o histórico do WhatsApp não se joga fora.
+// Só o gestor vê e mexe.
+// ══════════════════════════════════════════════════════════════════════════
+function switchOperSub(sub, btn){
+  document.querySelectorAll('#reg-sub-oper .tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  var a = g('oper-sub-lista'), b2 = g('oper-sub-fornecedores');
+  if(a)  a.style.display  = (sub === 'lista') ? 'block' : 'none';
+  if(b2) b2.style.display = (sub === 'fornecedores') ? 'block' : 'none';
+  if(sub === 'fornecedores') renderFornecedores(); else renderOperadoras();
+}
+function _fornSubSetup(){
+  var b = g('reg-sub-oper-forn'); if(!b) return;
+  b.style.display = isAdm() ? '' : 'none';
+}
+function renderFornecedores(){
+  var tb = g('reg-fornecedores-body'); if(!tb) return;
+  if(!isAdm()){ tb.innerHTML = ''; return; }
+  var lista = DB.fornecedores || [];
+  var vazio = g('fornecedores-empty'); if(vazio) vazio.style.display = lista.length ? 'none' : 'block';
+  tb.innerHTML = lista.map(function(fo){
+    return '<tr>' +
+      '<td><b>' + esc(fo.nome || '') + '</b></td>' +
+      '<td>' + esc(fo.telefone || '') + '</td>' +
+      '<td>' + esc(fo.empresa || '—') + '</td>' +
+      '<td>' + (fo.cupom ? '<span style="background:#eaf2fa;color:#2C6AA3;border-radius:10px;padding:2px 8px;font-weight:700;font-size:12px">' + esc(fo.cupom) + '</span>' : '—') + '</td>' +
+      '<td>' + (fo.site ? '<a href="' + esc(fo.site) + '" target="_blank" rel="noopener">abrir</a>' : '—') + '</td>' +
+      '<td><button class="btn btn-ghost btn-sm" onclick="abrirFornecedor(' + fo.id + ')">✏️</button> ' +
+          '<button class="btn btn-ghost btn-sm" onclick="excluirFornecedor(' + fo.id + ')">🗑️</button></td>' +
+    '</tr>';
+  }).join('');
+}
+function abrirFornecedor(id){
+  if(!isAdm()){ toast('Apenas o gestor','error'); return; }
+  var fo = (DB.fornecedores || []).find(function(x){ return x.id === id; }) || {};
+  g('fo-id').value       = fo.id || '';
+  g('fo-nome').value     = fo.nome || '';
+  g('fo-telefone').value = fo.telefone || '';
+  g('fo-empresa').value  = fo.empresa || '';
+  g('fo-cnpj').value     = fo.cnpj || '';
+  g('fo-endereco').value = fo.endereco || '';
+  g('fo-site').value     = fo.site || '';
+  g('fo-cupom').value    = fo.cupom || '';
+  g('fo-obs').value      = fo.obs || '';
+  g('modal-fornecedor-title').textContent = fo.id ? 'Editar Parceiro' : 'Cadastrar Parceiro';
+  openModal('modal-fornecedor');
+}
+function salvarFornecedor(){
+  if(!isAdm()){ toast('Apenas o gestor','error'); return; }
+  var nome = (g('fo-nome').value || '').trim();
+  var tel  = (g('fo-telefone').value || '').trim();
+  if(!nome){ toast('O nome é obrigatório.','error'); return; }
+  if(!tel){ toast('O telefone é obrigatório.','error'); return; }
+  if(!DB.fornecedores) DB.fornecedores = [];
+  var id = parseInt(g('fo-id').value, 10);
+  var dados = {
+    nome: nome, telefone: tel,
+    empresa: (g('fo-empresa').value||'').trim(),
+    cnpj: (g('fo-cnpj').value||'').trim(),
+    endereco: (g('fo-endereco').value||'').trim(),
+    site: (g('fo-site').value||'').trim(),
+    cupom: (g('fo-cupom').value||'').trim(),
+    obs: (g('fo-obs').value||'').trim(),
+    atualizadoEm: new Date().toISOString()
+  };
+  var ex = id ? (DB.fornecedores.find(function(x){ return x.id === id; })) : null;
+  if(ex){ Object.assign(ex, dados); }
+  else {
+    var novoId = (DB.fornecedores.reduce(function(m,x){ return x.id > m ? x.id : m; }, 0)) + 1;
+    dados.id = novoId; dados.criadoEm = new Date().toISOString();
+    DB.fornecedores.push(dados);
+  }
+  saveToStorage();
+  closeModal('modal-fornecedor');
+  renderFornecedores();
+  toast('Parceiro salvo.','success');
+}
+function excluirFornecedor(id){
+  if(!isAdm()){ toast('Apenas o gestor','error'); return; }
+  if(!confirm('Excluir este parceiro do cadastro?')) return;
+  DB.fornecedores = (DB.fornecedores || []).filter(function(x){ return x.id !== id; });
+  saveToStorage(); renderFornecedores(); toast('Parceiro excluído.');
+}
 
 function renderRegistros(){
   var corteEl=g('cfg-data-corte');
