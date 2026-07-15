@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Desenrola Turismo — Sistema de Gestão v5.9.17</title>
+<title>Desenrola Turismo — Sistema de Gestão v5.9.20</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Anton&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet"/>
@@ -400,7 +400,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
   </div>
   <div class="sidebar-footer">
-    ✦ Desenrola Turismo · v5.9.17
+    ✦ Desenrola Turismo · v5.9.20
     <br><button id="sidebar-reset-btn" onclick="resetSystem()" style="margin-top:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.35);font-size:9px;padding:3px 8px;border-radius:4px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px" title="Zerar todos os lançamentos">🗑 Zerar sistema</button>
   </div>
 </nav>
@@ -889,6 +889,63 @@ tbody tr:hover{background:var(--surface2)}
         <span id="ia-cfg-recepcao-status" style="font-size:12px;color:#1e7e34;font-weight:600"></span>
       </div>
       <div id="ia-cfg-recepcao-diag" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;border:2px solid #cfe3f3">
+      <h4 style="margin:0 0 4px">🕘 Horário de atendimento</h4>
+      <p style="font-size:12px;color:#888;margin:0 0 12px">Fora do horário, quem escrever recebe um aviso de que estamos fechados e que o consultor retorna — inclusive quem já tem vendedor. Dentro do horário, quem está esperando o consultor há alguns minutos recebe um "já te respondo". Funciona mesmo com a recepcionista desligada. Sempre no horário de Brasília.</p>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f4f9fd;border:1px solid #cfe3f3;border-radius:8px;margin-bottom:12px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:700;color:#2C6AA3">
+          <input type="checkbox" id="ia-cfg-plantao-ativo" style="width:18px;height:18px;cursor:pointer">
+          Avisos de horário LIGADOS
+        </label>
+        <span style="font-size:12px;color:#999">— desligado, ninguém recebe aviso de horário</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Dias em que vocês atendem</label>
+        <div id="ia-cfg-plantao-dias" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"></div>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div class="form-group" style="flex:1;min-width:130px">
+          <label class="form-label">Abre às</label>
+          <input type="time" id="ia-cfg-plantao-inicio" class="form-input" value="09:00" onchange="_plantaoResumo()">
+        </div>
+        <div class="form-group" style="flex:1;min-width:130px">
+          <label class="form-label">Fecha às</label>
+          <input type="time" id="ia-cfg-plantao-fim" class="form-input" value="20:00" onchange="_plantaoResumo()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Mensagem de fora do horário</label>
+        <p style="font-size:12px;color:#888;margin:2px 0 6px">Escreva <b>{vendedor}</b> para virar o nome do vendedor da conversa (ou "nossa equipe", se não tiver dono) e <b>{horario}</b> para virar o horário configurado aqui em cima.</p>
+        <textarea id="ia-cfg-plantao-msgfora" class="form-input" rows="3" style="font-family:Nunito,sans-serif;font-size:13px;line-height:1.4;resize:vertical"></textarea>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#f9f9f9;border:1px solid #e8e8e8;border-radius:8px;margin:4px 0 12px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600">
+          <input type="checkbox" id="ia-cfg-plantao-ocupado" style="width:16px;height:16px;cursor:pointer">
+          Avisar quando o consultor demora
+        </label>
+        <span style="font-size:12px;color:#888">depois de</span>
+        <input type="number" id="ia-cfg-plantao-min" min="1" max="120" step="1" value="5" style="width:62px;padding:5px 6px;border:1px solid #ddd;border-radius:6px;font-size:13px">
+        <span style="font-size:12px;color:#888">minutos sem resposta</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Mensagem de "consultor ocupado"</label>
+        <textarea id="ia-cfg-plantao-msgocupado" class="form-input" rows="2" style="font-family:Nunito,sans-serif;font-size:13px;line-height:1.4;resize:vertical"></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="salvarIaPlantao()">💾 Salvar horário</button>
+        <button class="btn btn-ghost btn-sm" onclick="restaurarIaPlantao()" title="Volta aos horários e textos padrão">↩️ Restaurar padrão</button>
+        <span id="ia-cfg-plantao-status" style="font-size:12px;color:#1e7e34;font-weight:600"></span>
+      </div>
+      <p id="ia-cfg-plantao-resumo" style="font-size:12px;color:#2C6AA3;margin:10px 0 0;font-weight:700"></p>
     </div>
 
     <div class="card" style="border-left:3px solid #79ACD9">
@@ -2294,7 +2351,7 @@ tbody tr:hover{background:var(--surface2)}
       <img src="data:image/jpeg;base64,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/wD/AP8A/wD/AP8A/wD/AP8A+v3n/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+vyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/TD/APr8o/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+4zfLP8Aevyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/vTzzfPDxzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A+zztf/e9vzyj/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Ah/zb/sb/AP7/AJf/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/p89c7q9W/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AOP7uPNTP/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AO8s0/rp9/3Or/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP18b/8A1/8Ad3zxT/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD6PLDP89vfPPF//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wDTzzzztx/x7/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8AM547fd/Q0/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2gAMAwEAAgADAAAAEPfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffav7/ffffffffffffffffffffffffffffavPPffffffffffffffffffffffffffffavPPfffffffffffffffffffffffffPvfavPPffffffffffffffffffffffcD/ADxzGDzz3333333333333333333332zzzjrzzzzz333333333333333333332XzkX3W0jzzz333333333333333333337Txf3nP33jD/AN999999999999999999978r+53TX9999999999999999999999996889LGAFd99999999999999999999999r8sd95Tf9qfp999999999999999999999X8599N9if8se99999999999999999999K88s8yj/088W999999999999999999999+88888t+U839999999999999999999999e/8AdJf/AFTr33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333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" alt="Desenrola" style="width:64px;height:64px;border-radius:14px;object-fit:cover;box-shadow:0 8px 24px rgba(44,106,163,0.4)"/>
     </div>
     <div style="font-family:'Anton',sans-serif;font-size:28px;letter-spacing:2px;color:#fff;text-transform:uppercase">Desenrola Turismo</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v5.9.17</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;margin-top:4px">SISTEMA DE GESTÃO v5.9.20</div>
   </div>
   <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:36px;width:360px;max-width:95vw">
     <div id="login-error" style="display:none;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff9090;margin-bottom:16px;text-align:center"></div>
@@ -2318,7 +2375,7 @@ tbody tr:hover{background:var(--surface2)}
     </div>
     <button onclick="doLogin()" style="width:100%;padding:13px;background:var(--accent);color:#0f2d4e;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;border:none;border-radius:9px;cursor:pointer;text-transform:uppercase">Entrar</button>
   </div>
-  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v5.9.17</div>
+  <div style="margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2)">✦ Desenrola Turismo · v5.9.20</div>
 </div>
 
 <!-- ════════════ USER BADGE (top right) ════════════ -->
@@ -3176,6 +3233,18 @@ function saveToFirebase(payload){
     delete fbPayload.crm;
     _crmSincronizarDelta();
 
+    // v5.9.20 · RAIZ DO "1 CARD COM 10 CONTATOS".
+    // `nextCrmId` é um contador COMPARTILHADO com a ponte, que o avança por
+    // transação atômica a cada lead novo. Este save mandava junto a cópia LOCAL
+    // dele — quase sempre atrasada, porque a ponte não mexe em `_lastSaved` e o
+    // listener nunca traz o valor novo. Resultado: o contador VOLTAVA no tempo,
+    // a ponte reusava ids já existentes e o `.set()` sobrescrevia o lead antigo,
+    // grudando vários telefones no mesmo card. Pior nas ondas de leads, quando a
+    // diferença entre o valor local e o real é maior.
+    // Quem reserva id é _reservarCrmId() (transação). Um save em bloco JAMAIS
+    // pode escrever este número.
+    delete fbPayload.nextCrmId;
+
     // v5.9.3 · D-69 · as coleções pesadas vão por REGISTRO, não em bloco.
     // `update({posVendas: [...]})` substituía o array inteiro: dois vendedores
     // editando cards diferentes, e o último apagava o trabalho do primeiro.
@@ -3428,7 +3497,7 @@ function openConfirm(msg, callback, btnLabel, btnClass){
 // ══════════════════════════════════════════════════════════════
 async function exportarBackupCompleto() {
   const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
-  const payload = {versao:'DesenrolaSistema-v5.9.17',exportadoEm:new Date().toISOString(),dados:{}};
+  const payload = {versao:'DesenrolaSistema-v5.9.20',exportadoEm:new Date().toISOString(),dados:{}};
   payload.dados.local = JSON.parse(localStorage.getItem('desenrola_turismo_v3')||'{}'); // v3.57: chave correta
   if (_fbDb) {
     try { const snap = await _fbDb.ref('desenrola_v3').once('value'); if(snap&&snap.exists()) payload.dados.firebase = snap.val(); else payload.dados.firebaseVazio = true; } catch(e) { payload.dados.firebase_erro=e.message; }
@@ -4632,6 +4701,53 @@ var _VAR_ORDEM_EXEMPLO = { cliente:'Cristiane', vendedor:'Thomaz', destino:'Orla
 
 // {cliente} … {destino} → {{1}} … {{2}}, renumerado por ordem de aparição.
 // É a MESMA conversão do script de upload. Uma regra, um lugar.
+// ── FOTO DO TEMPLATE ─────────────────────────────────────────────────────────
+// A Meta limita o cabeçalho a 5 MB, e foto de celular passa disso fácil. Em vez
+// de recusar o arquivo do usuário, encolhemos aqui no navegador: ele escolhe a
+// foto que quiser e o problema não é dele. Sai sempre JPEG, no máximo 1600px.
+var _TPL_FOTO_MAX_PX = 1600;
+function _tplFotoEscolhida(input){
+  var file = input && input.files && input.files[0];
+  if(!file) return;
+  if(!/^image\/(jpeg|png)$/.test(file.type)){ toast('Use uma foto JPG ou PNG.','error'); input.value=''; return; }
+  var reader = new FileReader();
+  reader.onerror = function(){ toast('Não consegui ler o arquivo.','error'); };
+  reader.onload = function(ev){
+    var img = new Image();
+    img.onerror = function(){ toast('Arquivo de imagem inválido.','error'); };
+    img.onload = function(){
+      var w = img.width, h = img.height;
+      var escala = Math.min(1, _TPL_FOTO_MAX_PX / Math.max(w, h));
+      var cv = document.createElement('canvas');
+      cv.width = Math.round(w * escala); cv.height = Math.round(h * escala);
+      var ctx = cv.getContext('2d');
+      // PNG com transparência viraria preto no JPEG: fundo branco primeiro.
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);
+      ctx.drawImage(img, 0, 0, cv.width, cv.height);
+      var q = 0.85, dataUrl = cv.toDataURL('image/jpeg', q);
+      // Se ainda passar de ~4 MB, baixa a qualidade até caber. A Meta corta em 5.
+      while(dataUrl.length > 4 * 1024 * 1024 && q > 0.4){ q -= 0.1; dataUrl = cv.toDataURL('image/jpeg', q); }
+      var alvo = g('tpl-edit-imagem'); if(alvo) alvo.value = dataUrl;
+      _tplFotoPrevia(dataUrl, Math.round(dataUrl.length / 1024) + ' KB · ' + cv.width + '×' + cv.height);
+      toast('Foto pronta — salve o template e envie à Meta.','success');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function _tplFotoPrevia(valor, info){
+  var box = g('tpl-edit-imagem-previa'); if(!box) return;
+  if(!valor){ box.innerHTML = ''; return; }
+  box.innerHTML = '<div style="display:flex;gap:10px;align-items:center;padding:8px;background:var(--surface2,#f7f7f7);border-radius:8px">'
+    + '<img src="' + esc(valor) + '" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid #ddd">'
+    + '<div style="font-size:11px;color:var(--text3)">' + esc(info || 'foto atual') + '</div></div>';
+}
+function _tplFotoLimpar(){
+  var alvo = g('tpl-edit-imagem'); if(alvo) alvo.value = '';
+  var arq = g('tpl-edit-arquivo'); if(arq) arq.value = '';
+  _tplFotoPrevia('');
+}
+
 function _converterParaMeta(texto){
   var ordem = [];
   var corpo = String(texto).replace(/\{(\w+)\}/g, function(m, nome){
@@ -4658,11 +4774,15 @@ async function enviarTemplateParaMeta(id){
   try {
     var fns = _atFuncoes();
     if(!fns) throw new Error('SDK de functions ausente');
-    var r = await fns.httpsCallable('criarTemplate')({
+    var payload = {
       nome: _nomeMetaDe(t), corpo: c.corpo, exemplos: c.exemplos,
       categoria: CAT_META[t.cat] || 'UTILITY', idioma: 'pt_BR'
-    });
-    toast('Enviado. Estado: ' + (r.data.status || 'PENDING') + '. A Meta avisa quando aprovar.');
+    };
+    // Só arquivo vira cabeçalho de foto. URL antiga digitada à mão continua
+    // guardada no template (retrocompatível), mas a Meta exige o arquivo.
+    if(/^data:image\//.test(String(t.imagem || ''))) payload.headerImagemBase64 = t.imagem;
+    var r = await fns.httpsCallable('criarTemplate')(payload);
+    toast('Enviado' + (payload.headerImagemBase64 ? ' com foto' : '') + '. Estado: ' + (r.data.status || 'PENDING') + '. A Meta avisa quando aprovar.');
   } catch(e){
     toast('Não enviei: ' + ((e && e.message) || 'erro'), 'error');
   }
@@ -7515,6 +7635,21 @@ async function renderIaConfig(){
   var rca = g('ia-cfg-recepcao-ativo'); if(rca) rca.checked = (recep.ativo === true);
   var rcp = g('ia-cfg-recepcao-prompt'); if(rcp) rcp.value = recep.prompt || _IA_RECEPCAO_PADRAO;
 
+  // horário de atendimento (plantão)
+  var pl = cfg.plantao || {};
+  var pld = {}; Object.keys(_PLANTAO_PADRAO.dias).forEach(function(k){
+    pld[k] = (pl.dias && typeof pl.dias[k] === 'boolean') ? pl.dias[k] : _PLANTAO_PADRAO.dias[k];
+  });
+  var pa = g('ia-cfg-plantao-ativo'); if(pa) pa.checked = (pl.ativo === true);
+  _plantaoRenderDias(pld);
+  var pli = g('ia-cfg-plantao-inicio'); if(pli) pli.value = pl.inicio || _PLANTAO_PADRAO.inicio;
+  var plf = g('ia-cfg-plantao-fim');    if(plf) plf.value = pl.fim || _PLANTAO_PADRAO.fim;
+  var plmf = g('ia-cfg-plantao-msgfora'); if(plmf) plmf.value = pl.msgFora || _PLANTAO_PADRAO.msgFora;
+  var plo = g('ia-cfg-plantao-ocupado'); if(plo) plo.checked = (pl.ocupadoAtivo !== false);
+  var plm = g('ia-cfg-plantao-min');     if(plm) plm.value = pl.ocupadoMin || _PLANTAO_PADRAO.ocupadoMin;
+  var plmo = g('ia-cfg-plantao-msgocupado'); if(plmo) plmo.value = pl.msgOcupado || _PLANTAO_PADRAO.msgOcupado;
+  _plantaoResumo();
+
   // prompt matriz da Guia IA (usado pela Guia IA do GuiD; não afeta as outras)
   var gp = g('ia-cfg-guia-prompt'); if(gp) gp.value = cfg.guiaPrompt || _IA_GUIA_PADRAO;
 
@@ -7588,6 +7723,129 @@ async function salvarIaRecepcao(){
 function restaurarIaRecepcao(){
   var rcp = g('ia-cfg-recepcao-prompt'); if(rcp) rcp.value = _IA_RECEPCAO_PADRAO;
   toast('Texto padrão restaurado — clique em Salvar para aplicar');
+}
+
+// ── HORÁRIO DE ATENDIMENTO (plantão) ─────────────────────────────────────────
+// Espelho do lib/plantao.js da ponte. Os textos padrão e a frase do horário
+// precisam bater com os de lá: o que ele vê aqui é o que o cliente recebe.
+var _PLANTAO_PADRAO = {
+  ativo: false,
+  dias: { dom:false, seg:true, ter:true, qua:true, qui:true, sex:true, sab:true },
+  inicio: '09:00', fim: '20:00',
+  msgFora: 'Oi! 😊 Você chegou na *Desenrola Turismo* fora do nosso horário de atendimento ({horario}). Sua mensagem já está registrada e {vendedor} vai te responder assim que possível. Até já!',
+  ocupadoAtivo: true, ocupadoMin: 5,
+  msgOcupado: 'Oi! 😊 {vendedor} está finalizando outro atendimento e já te responde por aqui. Obrigado pela paciência!'
+};
+var _PLANTAO_DIAS = [['seg','Seg'],['ter','Ter'],['qua','Qua'],['qui','Qui'],['sex','Sex'],['sab','Sáb'],['dom','Dom']];
+
+function _plantaoRenderDias(dias){
+  var box = g('ia-cfg-plantao-dias'); if(!box) return;
+  box.innerHTML = _PLANTAO_DIAS.map(function(d){
+    var on = !!dias[d[0]];
+    return '<label style="display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border:1px solid ' + (on?'#2C6AA3':'#ddd')
+      + ';border-radius:8px;background:' + (on?'#eaf2fa':'#fff') + ';cursor:pointer;font-size:13px;font-weight:600;color:' + (on?'#2C6AA3':'#777') + '">'
+      + '<input type="checkbox" data-dia="' + d[0] + '"' + (on?' checked':'') + ' onchange="_plantaoDiaMudou()" style="cursor:pointer">' + d[1] + '</label>';
+  }).join('');
+}
+function _plantaoLerDias(){
+  var out = {}; _PLANTAO_DIAS.forEach(function(d){ out[d[0]] = false; });
+  var box = g('ia-cfg-plantao-dias'); if(!box) return out;
+  Array.prototype.forEach.call(box.querySelectorAll('input[data-dia]'), function(i){
+    out[i.getAttribute('data-dia')] = i.checked;
+  });
+  return out;
+}
+function _plantaoDiaMudou(){ _plantaoRenderDias(_plantaoLerDias()); _plantaoResumo(); }
+
+function _plantaoHora(x){
+  var m = /^(\d{1,2}):(\d{2})$/.exec(x||''); if(!m) return x||'';
+  return Number(m[2])===0 ? (Number(m[1])+'h') : (Number(m[1])+'h'+m[2]);
+}
+function _plantaoDescr(dias, inicio, fim){
+  var ORD = ['seg','ter','qua','qui','sex','sab','dom'];
+  var NOM = {dom:'domingo',seg:'segunda',ter:'terça',qua:'quarta',qui:'quinta',sex:'sexta',sab:'sábado'};
+  var blocos = [], ini = null, ant = null;
+  ORD.forEach(function(d){
+    if(dias[d]){ if(ini===null) ini = d; ant = d; }
+    else if(ini!==null){ blocos.push([ini,ant]); ini = null; }
+  });
+  if(ini!==null) blocos.push([ini,ant]);
+  if(!blocos.length) return 'sob consulta';
+  var partes = blocos.map(function(b){
+    if(b[0]===b[1]) return NOM[b[0]];
+    return (ORD.indexOf(b[1])-ORD.indexOf(b[0])===1) ? (NOM[b[0]]+' e '+NOM[b[1]]) : ('de '+NOM[b[0]]+' a '+NOM[b[1]]);
+  });
+  var ds = partes.length===1 ? partes[0] : (partes.slice(0,-1).join(', ') + ' e ' + partes[partes.length-1]);
+  return ds + ', das ' + _plantaoHora(inicio) + ' às ' + _plantaoHora(fim);
+}
+// Mostra na hora o que foi configurado e se, neste momento, está aberto.
+function _plantaoResumo(){
+  var el = g('ia-cfg-plantao-resumo'); if(!el) return;
+  var dias = _plantaoLerDias();
+  var ini = (g('ia-cfg-plantao-inicio')||{}).value || '09:00';
+  var fim = (g('ia-cfg-plantao-fim')||{}).value || '20:00';
+  function mins(x){ var m=/^(\d{1,2}):(\d{2})$/.exec(x||''); return m ? (Number(m[1])*60+Number(m[2])) : 0; }
+  var d = new Date();
+  var hoje = ['dom','seg','ter','qua','qui','sex','sab'][d.getDay()];
+  var mm = d.getHours()*60 + d.getMinutes();
+  var a = mins(ini), b = mins(fim);
+  var aberto = !!dias[hoje] && (a===b ? false : (b>a ? (mm>=a && mm<b) : (mm>=a || mm<b)));
+  el.textContent = 'Atendendo ' + _plantaoDescr(dias, ini, fim) + ' · agora: ' + (aberto ? 'ABERTO' : 'FECHADO');
+  el.style.color = aberto ? '#1e7e34' : '#c0392b';
+}
+
+async function salvarIaPlantao(){
+  if(!isAdm()){ toast('Apenas administradores','error'); return; }
+  var st = g('ia-cfg-plantao-status'); if(st) st.textContent = 'Salvando…';
+  var ativo = !!(g('ia-cfg-plantao-ativo') && g('ia-cfg-plantao-ativo').checked);
+  var dias = _plantaoLerDias();
+  var algum = Object.keys(dias).some(function(k){ return dias[k]; });
+  if(ativo && !algum){
+    if(st) st.textContent = '';
+    toast('Marque pelo menos um dia de atendimento','error'); return;
+  }
+  var min = parseInt((g('ia-cfg-plantao-min')||{}).value, 10);
+  if(!(min >= 1 && min <= 120)) min = 5;
+  var cfg = {
+    ativo: ativo,
+    dias: dias,
+    inicio: (g('ia-cfg-plantao-inicio')||{}).value || '09:00',
+    fim: (g('ia-cfg-plantao-fim')||{}).value || '20:00',
+    msgFora: (((g('ia-cfg-plantao-msgfora')||{}).value)||'').trim() || _PLANTAO_PADRAO.msgFora,
+    ocupadoAtivo: !!(g('ia-cfg-plantao-ocupado') && g('ia-cfg-plantao-ocupado').checked),
+    ocupadoMin: min,
+    msgOcupado: (((g('ia-cfg-plantao-msgocupado')||{}).value)||'').trim() || _PLANTAO_PADRAO.msgOcupado
+  };
+  try {
+    if(_fbDb){
+      await _fbDb.ref('desenrola_wa/config/ia/plantao').set(cfg);
+      // Mesma verificação da recepcionista: se as regras bloquearem, o .set()
+      // falha calado. Aqui isso aparece.
+      var conf = await _fbDb.ref('desenrola_wa/config/ia/plantao/ativo').once('value');
+      if(conf.val() !== ativo){
+        if(st) st.textContent = '';
+        toast('⚠️ Não persistiu. Verifique as regras do Firebase (config/ia).','error'); return;
+      }
+    }
+    if(st){ st.textContent = ativo ? '✓ Ligado' : '✓ Desligado'; setTimeout(function(){ st.textContent=''; }, 2500); }
+    _plantaoResumo();
+    toast(ativo ? '🕘 Avisos de horário LIGADOS' : '🕘 Avisos de horário desligados','success');
+  } catch(e){
+    if(st) st.textContent = '';
+    toast('Falha ao salvar: ' + (e.message||e), 'error');
+  }
+}
+function restaurarIaPlantao(){
+  var p = _PLANTAO_PADRAO;
+  _plantaoRenderDias(p.dias);
+  var pi=g('ia-cfg-plantao-inicio'); if(pi) pi.value = p.inicio;
+  var pf=g('ia-cfg-plantao-fim');    if(pf) pf.value = p.fim;
+  var pmf=g('ia-cfg-plantao-msgfora'); if(pmf) pmf.value = p.msgFora;
+  var po=g('ia-cfg-plantao-ocupado'); if(po) po.checked = true;
+  var pm=g('ia-cfg-plantao-min');     if(pm) pm.value = p.ocupadoMin;
+  var pmo=g('ia-cfg-plantao-msgocupado'); if(pmo) pmo.value = p.msgOcupado;
+  _plantaoResumo();
+  toast('Padrão restaurado — clique em Salvar horário para aplicar');
 }
 
 // Testa a recepcionista AGORA (chama diagRecepcao na ponte) e mostra, passo a
@@ -9910,9 +10168,14 @@ function editarTemplate(id){
         <input id="tpl-edit-emoji" class="form-input" value="${esc(t?.emoji||'💬')}" placeholder="💬" style="margin-top:4px;width:70px"/>
       </label>
     </div>
-    <label style="font-size:12px;font-weight:600;color:var(--text2)">🖼️ Imagem (URL) — opcional
-      <input id="tpl-edit-imagem" class="form-input" value="${esc(t?.imagem||'')}" placeholder="https://exemplo.com/imagem.jpg" style="margin-top:4px"/>
-    </label>
+    <label style="font-size:12px;font-weight:600;color:var(--text2)">🖼️ Foto do cabeçalho — opcional</label>
+    <div style="font-size:10px;color:var(--text3);margin:2px 0 6px">Esta foto vai junto com o template para o cliente, toda vez que ele for enviado. Escolha o arquivo — encolho sozinho para caber no limite da Meta.</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+      <input type="file" id="tpl-edit-arquivo" accept="image/jpeg,image/png" onchange="_tplFotoEscolhida(this)" style="font-size:12px;flex:1;min-width:180px">
+      <button type="button" class="btn btn-ghost btn-sm" onclick="_tplFotoLimpar()">🗑️ Tirar foto</button>
+    </div>
+    <input type="hidden" id="tpl-edit-imagem" value="${esc(t?.imagem||'')}"/>
+    <div id="tpl-edit-imagem-previa" style="margin-bottom:10px">${t?.imagem ? '<div style="display:flex;gap:10px;align-items:center;padding:8px;background:var(--surface2,#f7f7f7);border-radius:8px"><img src="'+esc(t.imagem)+'" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid #ddd"><div style="font-size:11px;color:var(--text3)">foto atual</div></div>' : ''}</div>
     <label style="font-size:12px;font-weight:600;color:var(--text2)">Mensagem *
       <div style="font-size:10px;color:var(--text3);margin:2px 0 4px">Use {cliente}, {destino}, {data}, {vendedor} para variáveis</div>
       <textarea id="tpl-edit-texto" class="form-textarea" rows="12" placeholder="Escreva o template aqui..." style="margin-top:4px;font-family:inherit;white-space:pre-wrap;line-height:1.6">${esc(t?.texto||'')}</textarea>
